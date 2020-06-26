@@ -13,3 +13,4 @@ data/process/.DS_Store
 mothur*logfile
 *temp*
 *.docx
+*.out
