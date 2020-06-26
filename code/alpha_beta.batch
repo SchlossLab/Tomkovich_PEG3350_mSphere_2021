@@ -1,0 +1,19 @@
+# Generate subsample shared files, 2D nmds files, and PCoA files
+# Decide subsampling parameter based on count.groups results. Currently set at 3000 sequences
+set.dir(input=data/mothur, output=data/mothur)
+
+# Shorten filenames
+rename.file(taxonomy=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.0.03.cons.taxonomy, shared=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.shared)
+
+# Subsample data
+sub.sample(shared=peg3350.opti_mcc.shared, size=3000)
+
+rarefaction.single(shared=peg3350.opti_mcc.shared, calc=sobs, freq=100)
+summary.single(shared=peg3350.opti_mcc.shared, calc=nseqs-coverage-invsimpson-shannon-sobs, subsample=3000)
+dist.shared(shared=peg3350.opti_mcc.shared, calc=thetayc-jclass-braycurtis, subsample=3000)
+
+# Generate 2 dimensional NMDS
+nmds(phylip=peg3350.opti_mcc.thetayc.0.03.lt.ave.dist)
+
+#Generate PCoA based on Bray-Curtis distance
+pcoa(phylip=peg3350.opti_mcc.thetayc.0.03.lt.ave.dist)

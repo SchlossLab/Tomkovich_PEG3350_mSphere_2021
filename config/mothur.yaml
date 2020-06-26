@@ -1,0 +1,6 @@
+name: mothur_v1.43
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - mothur=1.43.0

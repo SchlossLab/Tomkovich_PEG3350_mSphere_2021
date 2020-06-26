@@ -1,0 +1,35 @@
+#Copies PEG3350 project samples' sequence data files from miseq_runs folder in schloss-lab turbo storage to the Tomkovich_PEG3350_XXXX_2020 project directory, specifically data/raw. This script is a record of bash commands used, since it is just moving/renaming files there is no need to submit as a job. For each library, the water & mock fastqs will be renamed to match the motility project plate number they were in. After sequences from all libraries have been transferred to the project's raw data directory, we will remove the dashes of the sample names to make downstream analysis easier.
+
+#After logging onto Great lakes go to labs turbo storage:
+cd /nfs/turbo/schloss-lab
+
+#Library for plates 1-2
+#Copy raw data files into CDI_clinical_samples directory for data analysis
+
+#These plates were part of the library for plates 45-47 from the CDI clinical samples sequencing project. We only need some of the samples from plate 47 since plates 45-47 were all part of the CDI clinical samples sequencing project. Because this library is a mix of 2 sequencing projects, we need to be specific about the files we copy over (Only want samples that match M*D*.fastq.gz).
+cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/M*D*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/mock*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/water*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+rm mock1_*.gz
+rm mock2_*.gz
+rename 'mock3_' mock1_ *.gz
+rename 'mock4_' mock2_ *.gz
+rm water1_*.gz
+rm water2_*.gz
+rename 'water3_' water1_ *.gz
+rename 'water4_' water2 *.gz
+#Remove the mock and waters for the first 2 plates of this library, as all of those samples were part of a different project.
+
+go to labs turbo storage:
+cd /nfs/turbo/schloss-lab
+
+#Future libraries should be easier to transfer all .fastq.gzfiles in one go
+cp miseq_runs/2020_runs/_________/Data/Intensities/BaseCalls/*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+#Change into raw data directory
+cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+
+#Renaming steps that will apply to all files
+
+#Change into raw data directory
+cd tomkoset/CDI_clinical_samples/data/raw/
