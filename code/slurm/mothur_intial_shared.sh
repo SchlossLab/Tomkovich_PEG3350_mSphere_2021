@@ -38,5 +38,4 @@
 #                   #
 #####################
 
-mothur code/get_good_seqs.batch
 mothur code/get_shared_otus.batch
