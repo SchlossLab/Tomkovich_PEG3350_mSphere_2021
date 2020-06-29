@@ -17,6 +17,16 @@ fig1_metadata <- metadata %>%
 fig1_mice <- length(unique(fig1_metadata$m_id_unique)) 
 # 62 mice total for figure 1
 
+#C. difficile CFU dataframe----
+#Narrow fig1_metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
+fig1_cfudata <- fig1_metadata %>% 
+  filter(day > -1)
+fig1_cfu_na <- sum(is.na(fig1_cfudata$avg_cfu)) #182 samples with NA values. Represent times when we either did not collect stool samples, weren't able to get a stool sample from a particular mouse, weren't able to plate the sample we did collect immediately after due to chamber issues or time constraints, or the mouse died early
+#Drop rows with NA values for fig1_cfu:
+fig1_cfudata <- fig1_cfudata %>% 
+  filter(!is.na(avg_cfu))
+
+#Weight change dataframe
 #Note baseline weight for each group of mice (based on the earliest timepoint recorded for each experiment)----
 baseline <- fig1_metadata %>% #Baseline weight was taken at day -5 for groups C, WM, and WMC
   filter(group == "C" & day == -5| #20 mice in C group
@@ -31,24 +41,38 @@ fig1_weightdata <- inner_join(fig1_metadata, baseline, by = "m_id_unique") %>% #
   group_by(m_id_unique, day) %>% #Group by each unique mouse and experiment day
   mutate(weight_change = weight-baseline_weight) %>% #Make a new column that represents the change in weight from baseline (all weights recorded in grams)
   ungroup() %>% 
-  filter(!is.na(weight)) #drop rows with NA values for fig1_weightdata. 1050 samples including NAs, 880 samples after excluding NAs
+  filter(!is.na(weight)) #drop rows with NA values for fig1_weightdata. 1040 samples including NAs, 870 samples after excluding NAs
 
-#C. diff CFU plot----
-#Narrow fig1_metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
-fig1_cfudata <- fig1_metadata %>% 
-  filter(day > -1)
-fig1_cfu_na <- sum(is.na(fig1_cfudata$avg_cfu)) #182 samples with NA values. Represent times when we either did not collect stool samples, weren't able to get a stool sample from a particular mouse, weren't able to plate the sample we did collect immediately after due to chamber issues or time constraints, or the mouse died early
-#Drop rows with NA values for fig1_cfu:
-fig1_cfudata <- fig1_cfudata %>% 
-  filter(!is.na(avg_cfu))
+#Statistical Analysis----
 
+#Shapiro-Wilk test to see if cfu and weight change data is normally distributed:
+#Note: p-value > 0.05 means the data is normally distributed
+shapiro.test(fig1_cfudata$avg_cfu) #p-value < 2.2e-16
+shapiro.test(fig1_weightdata$weight_change) #p-value = 1.485e-09
+#Since p-value < 0.05 for both variables, we will use non-parametric tests
+
+#Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
+kruskal_wallis_cfu <- fig1_cfudata %>% 
+  filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 15, 20, 25, 30)) %>%  #only test days that we have CFU data for #Only have cfu for WMR group on D7, exclude that day
+  group_by(day) %>% 
+  do(tidy(kruskal.test(avg_cfu~factor(group), data=.))) %>% ungroup() %>% 
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+  arrange(p.value.adj) 
+#Timepoints where C. diff CFU is significantly different across the sources of mice
+sig_C.diff_CFU_timepoints <- kruskal_wallis_cfu %>% 
+  filter(p.value.adj <= 0.05) %>% 
+  pull(day)
+
+#Plot data----
+
+#Plots of CFU data----
 plot_cfu <- function(df){
-  mean_summary <- df %>% 
+  median_summary <- df %>% 
     group_by(group, day) %>% 
-    summarize(mean_avg_cfu = mean(avg_cfu, na.rm = TRUE))
+    summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
   ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = .2, size = .5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_avg_cfu, color = group), alpha = 0.6, size = 1) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                    values=color_scheme,
                   breaks=color_groups,
@@ -66,12 +90,12 @@ save_plot(filename = "results/figures/fig1_cfu.png", fig1_cfu, base_height = 4, 
 
 #plot cfu for just the inital 10days
 plot_cfu_10d <- function(df){
-  mean_summary <- df %>% 
+  median_summary <- df %>% 
     group_by(group, day) %>% 
-    summarize(mean_avg_cfu = mean(avg_cfu, na.rm = TRUE))
+    summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
   ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = .2, size = .5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_avg_cfu, color = group), alpha = 0.6, size = 1) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -91,12 +115,12 @@ save_plot(filename = "results/figures/fig1_cfu_10d.png", fig1_cfu_10d, base_heig
 #Weight change plot----
 #Function to plot weight. Argument = dataframe you want to plot
 plot_weight <- function(df){
-  mean_summary <- df %>% 
+  median_summary <- df %>% 
     group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
+    summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = .5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                    values=color_scheme,
                   breaks=color_groups,
@@ -108,13 +132,13 @@ plot_weight <- function(df){
     theme_classic()
 }
 
-#Simplified function to plot weight that only plots the mean of each group and no points for individual mice. Argument = dataframe you want to plot.
+#Simplified function to plot weight that only plots the median of each group and no points for individual mice. Argument = dataframe you want to plot.
 plot_weight_simple <- function(df){
-  mean_summary <- df %>% 
+  median_summary <- df %>% 
     group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
+    summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                   values=color_scheme,
                  breaks=color_groups,
@@ -131,14 +155,6 @@ save_plot(filename = "results/figures/fig1_weight.png", fig1_weight, base_height
 fig1v2_weight <- plot_weight_simple(fig1_weightdata)
 save_plot(filename = "results/figures/fig1v2_weight.png", fig1v2_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-#Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
-kruskal_wallis_cfu <- fig1_cfudata %>% 
-  filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 15, 20, 25, 30)) %>%  #only test days that we have CFU data for #Only have cfu for WMR group on D7, exclude that day
-  group_by(day) %>% 
-  do(tidy(kruskal.test(avg_cfu~factor(group), data=.))) %>% ungroup() %>% 
-  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
-  arrange(p.value.adj) 
-#Timepoints where C. diff CFU is significantly different across the sources of mice
-sig_C.diff_CFU_timepoints <- kruskal_wallis_cfu %>% 
-  filter(p.value.adj <= 0.05) %>% 
-  pull(day) 
+
+
+
