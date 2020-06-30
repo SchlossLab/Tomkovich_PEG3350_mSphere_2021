@@ -1,0 +1,24 @@
+#Copies output files from data/mothur  needed for downstream analysis into process/
+#Shortens file names in process/
+
+cp data/mothur/peg3350.opti_mcc.shared data/process/peg3350.opti_mcc.shared
+
+cp data/mothur/peg3350.taxonomy data/process/peg3350.taxonomy
+
+cp data/mothur/peg3350.taxonomy data/process/peg3350.taxonomy
+
+cp data/mothur/peg3350.opti_mcc.groups.ave-std.summary data/process/peg3350.opti_mcc.groups.ave-std.summary
+
+cp data/mothur/peg3350.opti_mcc.groups.rarefaction data/process/peg3350.opti_mcc.groups.rarefaction
+
+cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist
+
+cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.axes data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.axes
+
+cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.iters data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.iters
+
+cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.stress data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.stress
+
+cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes
+
+cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings
