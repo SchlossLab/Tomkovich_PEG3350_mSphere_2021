@@ -15,4 +15,8 @@ n_1500 <- seq_count_data %>% filter(nseqs < 1500) %>% select(sample) %>% nrow()
 n_2000 <- seq_count_data %>% filter(nseqs < 2000) %>% select(sample) %>% nrow()
 # We'll lose 3 samples
 
+#Choose 2000 sequences per sample as current cutoff
 
+#If we rarefy to 3000 sequences per sample
+n_3000 <- seq_count_data %>% filter(nseqs < 3000) %>% select(sample) %>% nrow()
+# We'll lose 10 samples
