@@ -31,3 +31,26 @@ fancy_scientific <- function(l) {
   # return this as an expression
   parse(text=l)
 }
+
+#Function to calculate the median cfu values per group from a dataframe (x)
+get_cfu_median <- function(x){
+  x %>%
+    group_by(group) %>%
+    summarize(median=median(avg_cfu)) %>%
+    spread(key=group, value=median)
+}
+
+#Function to calculate the median weight_change values per group from a dataframe (x)
+get_weight_median <- function(x){
+  x %>%
+    group_by(group) %>%
+    summarize(median=median(weight_change)) %>%
+    spread(key=group, value=median)
+}
+
+#Function to tidy pairwise comparisons to use for adding stats to plots----
+tidy_pairwise <- function(spread_pairwise){
+  spread_pairwise %>%
+    pivot_longer(-day, names_to = "compare", values_to = "p.adj") %>%
+    separate(col = compare, c("group1", "group2"), sep = "-", remove = TRUE)
+}
