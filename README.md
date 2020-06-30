@@ -97,6 +97,13 @@ mv zymo.align data/references/zymo_mock.align
 rm -rf zymo* ZymoBIOMICS.STD.refseq.v2* zymo_temp.fasta
 ```
 
+Run the 16S rRNA sequencing data through mothur:
+```
+mothur code/get_error.batch
+mothur code/get_good_seqs.batch
+mothur code/get_shared_otus.batch
+mothur code/alpha_beta.batch
+```
 ```
 make write.paper
 ```
