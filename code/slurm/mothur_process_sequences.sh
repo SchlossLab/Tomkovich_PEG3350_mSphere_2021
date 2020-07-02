@@ -39,7 +39,7 @@
 #####################
 
 
-mothur code/get_error.batch
 mothur code/get_good_seqs.batch
 mothur code/get_shared_otus.batch
+mothur code/get_error.batch
 mothur code/alpha_beta.batch
