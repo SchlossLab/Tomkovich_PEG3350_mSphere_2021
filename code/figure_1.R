@@ -1,6 +1,6 @@
 source("code/functions.R") #Reads in metadata
 
-#Define color scheme----
+#Define color scheme for this figure----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
@@ -26,7 +26,7 @@ fig1_cfu_na <- sum(is.na(fig1_cfudata$avg_cfu)) #182 samples with NA values. Rep
 fig1_cfudata <- fig1_cfudata %>% 
   filter(!is.na(avg_cfu))
 
-#Weight change dataframe
+#Weight change dataframe----
 #Note baseline weight for each group of mice (based on the earliest timepoint recorded for each experiment)----
 baseline <- fig1_metadata %>% #Baseline weight was taken at day -5 for groups C, WM, and WMC
   filter(group == "C" & day == -5| #20 mice in C group
@@ -36,7 +36,7 @@ baseline <- fig1_metadata %>% #Baseline weight was taken at day -5 for groups C,
   mutate(baseline_weight = weight) %>% #This column represents the initial weight that was recorded for each mouse
   select(m_id_unique, baseline_weight) #Will use m_id_unique to join baseline_weights to fig1_metadata
 
-#Make a new column that represents weight_change from baseline_weight----
+#Make a new column that represents weight_change from baseline_weight
 fig1_weightdata <- inner_join(fig1_metadata, baseline, by = "m_id_unique") %>% #Join baseline weight to fig1_metadata
   group_by(m_id_unique, day) %>% #Group by each unique mouse and experiment day
   mutate(weight_change = weight-baseline_weight) %>% #Make a new column that represents the change in weight from baseline (all weights recorded in grams)
@@ -145,29 +145,6 @@ weight_plot_format_stats <- weight_stats_pairwise %>%
   bind_rows()
 
 #Plots of CFU and weight data----
-#Function to plot cfu data
-#Arguments: df = dataframe to plot
-#When using the function can add ggplot lines to specify x axis scale
-plot_cfu_data <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
-  #Plot cfu for just the inital 10days
-  cfu_plot <- ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, color = group), alpha = 0.6, size = 1.5) +
-    scale_colour_manual(name=NULL,
-                        values=color_scheme,
-                        breaks=color_groups,
-                        labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "CFU/g Feces") +
-    scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
-    geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
-    geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
-    theme(text = element_text(size = 16))+  # Change font size for entire plot
-    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
-}
 
 #Dataframe of cfu data for just the initial 10 days of the experiment
 fig1_cfudata_10dsubset <- fig1_cfudata %>% 
@@ -212,45 +189,7 @@ fig1_cfu <- plot_cfu_data(fig1_cfudata) +
 save_plot(filename = "results/figures/fig1_cfu.png", fig1_cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Weight change plot----
-#Function to plot weight. 
-#Arguments: df = dataframe you want to plot
-plot_weight <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(median_weight_change = median(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
-    scale_colour_manual(name=NULL,
-                   values=color_scheme,
-                  breaks=color_groups,
-                labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-    theme(text = element_text(size = 16))+  # Change font size for entire plot
-    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
-}
 
-#Simplified function that only plots the median line for each group. 
-plot_weight_medians <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(median_weight_change = median(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
-    scale_colour_manual(name=NULL,
-                  values=color_scheme,
-                 breaks=color_groups,
-                 labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-    theme(text = element_text(size = 16))+  # Change font size for entire plot
-    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
-}
-
-  
 #Dataframe of weight data for days -15 through 10 of the experiment:  
 fig1_weight_subset <- fig1_weightdata %>% 
   filter(day < 12)

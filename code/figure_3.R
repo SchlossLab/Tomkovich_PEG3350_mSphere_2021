@@ -137,30 +137,8 @@ weight_plot_format_stats <- weight_stats_pairwise %>%
   bind_rows()
 
 #Plots of CFU and weight data----
-#Function to plot cfu data
-#Arguments: df = dataframe to plot
-#When using the function can add ggplot lines to specify x axis scale
-plot_cfu_data <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
-  #Plot cfu for just the inital 10days
-  cfu_plot <- ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, color = group), alpha = 0.6, size = 1.5) +
-    scale_colour_manual(name=NULL,
-                        values=color_scheme,
-                        breaks=color_groups,
-                        labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "CFU/g Feces") +
-    scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
-    geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
-    geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
-    theme(text = element_text(size = 16))+  # Change font size for entire plot
-    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
-}
 
+#Plot of CFU data----
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for first 10 days of experiment:
 x_annotation <- cfu_kruskal_wallis_adjust %>% 
   filter(p.value.adj <= 0.05) %>% 
@@ -179,43 +157,7 @@ fig3_cfu <- plot_cfu_data(fig3_cfudata) +
                      limits = c(-1, 11)) 
 save_plot(filename = "results/figures/fig3_cfu.png", fig3_cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-
-#Weight change plot----
-#Function to plot weight. Argument = dataframe you want to plot
-plot_weight <- function(df){
-  mean_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = .5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
-    scale_colour_manual(name=NULL,
-                   values=color_scheme,
-                  breaks=color_groups,
-                 labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-
-    theme_classic()
-}
-
-#Simplified function to plot weight that only plots the mean of each group and no points for individual mice. Argument = dataframe you want to plot.
-plot_weight_simple <- function(df){
-  mean_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
-    scale_colour_manual(name=NULL,
-                   values=color_scheme,
-                  breaks=color_groups,
-                 labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-    scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10),
-                       limits = c(-16, 11)) +
-    theme_classic()
-}
+#Plot of weight change data----
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for first 10 days of experiment:
 x_annotation <- weight_kruskal_wallis_adjust %>% 
   filter(p.value.adj <= 0.05) %>% 
