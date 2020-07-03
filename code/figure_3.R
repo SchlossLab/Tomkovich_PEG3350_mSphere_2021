@@ -42,7 +42,8 @@ fig3_weightdata <- inner_join(fig3_metadata, baseline, by = "m_id_unique") %>% #
   ungroup() %>% 
   filter(!is.na(weight)) #drop rows with NA values for fig3_weightdata. 378 samples including NAs, 306 samples after excluding NAs
 
-#Statiscal analysis of C. difficile CFU data----
+#Statistical analysis of C. difficile CFU data----
+set.seed(19760620) #Same seed used for mothur analysis
 #Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
 cfu_kruskal_wallis <- fig3_cfudata %>% 
   filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 7, 8)) %>%  #only test days that we have cfu data for at least 3 groups
