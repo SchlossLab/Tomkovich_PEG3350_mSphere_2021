@@ -1,6 +1,6 @@
 source("code/functions.R") #Reads in metadata
 
-#Define color scheme----
+#Define color scheme for this figure----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "CWM", "FRM", "RM")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
@@ -13,11 +13,20 @@ fig4_metadata <- metadata %>%
          group == "FRM" & exp_num %in% c("M9")) %>% 
   mutate(group=factor(group, levels=c("C", "CWM", "RM", "FRM")))  # Make sure group is treated as a factor
 
-
 # of mice represented in the figure
 fig4_mice <- length(unique(fig4_metadata$m_id_unique)) 
 # 48 mice total for figure 1
 
+#C. difficile CFU dataframe----
+#Narrow fig4_metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
+fig4_cfudata <- fig4_metadata %>% 
+  filter(day > -1)
+fig4_cfu_na <- sum(is.na(fig4_cfudata$avg_cfu)) #14 samples with NA values. Represent times when we either did not collect stool samples or weren't able to get a stool sample from a particular mouse
+#Drop rows with NA values for fig4_cfu:
+fig4_cfudata <- fig4_cfudata %>% 
+  filter(!is.na(avg_cfu))
+
+#Weight change dataframe----
 #Note baseline weight for each group of mice (based on the earliest timepoint recorded for each experiment)----
 baseline <- fig4_metadata %>% #Baseline weight was taken at day -5 for groups C, WM, and WMC
   filter(group == "C" & day == -2| #12 mice in C group
@@ -35,109 +44,157 @@ fig4_weightdata <- inner_join(fig4_metadata, baseline, by = "m_id_unique") %>% #
   ungroup() %>% 
   filter(!is.na(weight)) #drop rows with NA values for fig4_weightdata. 744 samples including NAs, 744 samples after excluding NAs
 
-#C. diff CFU plot----
-#Narrow fig4_metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
-fig4_cfudata <- fig4_metadata %>% 
-  filter(day > -1)
-fig4_cfu_na <- sum(is.na(fig4_cfudata$avg_cfu)) #14 samples with NA values. Represent times when we either did not collect stool samples or weren't able to get a stool sample from a particular mouse
-#Drop rows with NA values for fig4_cfu:
-fig4_cfudata <- fig4_cfudata %>% 
-  filter(!is.na(avg_cfu))
+#Statistical Analysis----
+set.seed(19760620) #Same seed used for mothur analysis
 
-plot_cfu <- function(df){
-  mean_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(mean_avg_cfu = mean(avg_cfu, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = .2, size = .5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_avg_cfu, color = group), alpha = 0.6, size = 1) +
-    scale_colour_manual(name=NULL,
-                   values=color_scheme,
-                  breaks=color_groups,
-                 labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "CFU/g Feces") +
-    scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
-                       limits = c(-1, 31)) +
-    geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
-    geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
-    scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9))+ #Scientific notation labels for y-axis
-    theme_classic()
-}
-fig4_cfu <- plot_cfu(fig4_cfudata)
-save_plot(filename = "results/figures/fig4_cfu.png", fig4_cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-
-#Weight change plot----
-#Function to plot weight. Argument = dataframe you want to plot
-plot_weight <- function(df){
-  mean_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = .5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
-    scale_colour_manual(name=NULL,
-                   values=color_scheme,
-                  breaks=color_groups,
-                 labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-    scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
-                       limits = c(-16, 31)) +
-    theme_classic()
-}
-
-#Simplified function to plot weight that only plots the mean of each group and no points for individual mice. Argument = dataframe you want to plot.
-plot_weight_simple <- function(df){
-  mean_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
-    scale_colour_manual(name=NULL,
-                   values=color_scheme,
-                  breaks=color_groups,
-                 labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-    scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
-                       limits = c(-16, 31)) +
-    theme_classic()
-}
-
-#Function to plot weight that only plots the mean of each group from D0 through D10 and no points for individual mice. Argument = dataframe you want to plot.
-plot_weight_10d <- function(df){
-  mean_summary <- df %>% 
-    group_by(group, day) %>% 
-    summarize(mean_weight_change = mean(weight_change, na.rm = TRUE))
-  ggplot(NULL) +
-    geom_line(mean_summary, mapping = aes(x = day, y = mean_weight_change, color = group), alpha = 0.6, size = 1) +
-    scale_colour_manual(name=NULL,
-                        values=color_scheme,
-                        breaks=color_groups,
-                        labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
-    ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
-    scale_x_continuous(breaks = c(-2, 0, 2, 4, 6, 8, 10),
-                       limits = c(-3, 11)) +
-    theme_classic()
-}
-
-fig4_weight <- plot_weight(fig4_weightdata) 
-save_plot(filename = "results/figures/fig4_weight.png", fig4_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-fig4v2_weight <- plot_weight_simple(fig4_weightdata)
-save_plot(filename = "results/figures/fig4v2_weight.png", fig4v2_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-fig4_weight_10d <- plot_weight_10d(fig4_weightdata)
-save_plot(filename = "results/figures/fig4_weight_10d.png", fig4_weight_10d, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
+#Statiscal analysis of C. difficile CFU data----
 #Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
-kruskal_wallis_cfu <- fig4_cfudata %>% 
-  filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15)) %>%  #only test days that we have CFU data for #Only have cfu for CWM group on D20,25,30, exclude those days
+cfu_kruskal_wallis <- fig4_cfudata %>% 
+  filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 15)) %>%  #only test days that we have CFU data for at least 3 groups
+  select(day, group, avg_cfu) %>% 
   group_by(day) %>% 
-  do(tidy(kruskal.test(avg_cfu~factor(group), data=.))) %>% ungroup() %>% 
+  nest() %>% 
+  mutate(model=map(data, ~kruskal.test(x=.x$avg_cfu, g=as.factor(.x$group)) %>% tidy())) %>% 
+  mutate(median = map(data, get_cfu_median)) %>% 
+  unnest(c(model, median)) %>% 
+  ungroup()
+#Adjust p-values for testing multiple days and write results to table:
+cfu_kruskal_wallis_adjust <- cfu_kruskal_wallis %>% 
+  select(day, statistic, p.value, parameter, method, C, CWM, RM, FRM) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
-  arrange(p.value.adj) 
-#Timepoints where C. diff CFU is significantly different across the sources of mice
-sig_C.diff_CFU_timepoints <- kruskal_wallis_cfu %>% 
+  arrange(p.value.adj) %>% 
+  write_tsv("data/process/fig4_cfu_stats_all_days.tsv")
+
+#Timepoints where C. difficile CFU is significantly different across the groups of mice after BH adjustment of p-values:
+sig_cfu_days <- cfu_kruskal_wallis_adjust %>%  
   filter(p.value.adj <= 0.05) %>% 
   pull(day)
+
+#Perform pairwise Wilcoxan rank sum tests for days that were significant by Kruskal-Wallis test
+cfu_stats_pairwise <- cfu_kruskal_wallis %>% 
+  filter(day %in% sig_cfu_days) %>% #only perform pairwise tests for days that were significant 
+  group_by(day) %>% 
+  mutate(model=map(data, ~pairwise.wilcox.test(x=.x$avg_cfu, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                     tidy() %>% 
+                     mutate(compare=paste(group1, group2, sep="-")) %>% 
+                     select(-group1, -group2) %>% 
+                     pivot_wider(names_from=compare, values_from=p.value)
+  )
+  ) %>% 
+  unnest(model) %>% 
+  select(-data, -parameter, -statistic) %>% 
+  write_tsv("data/process/fig4_cfu_stats_sig_days.tsv")
+
+#Format pairwise stats to use with ggpubr package
+cfu_plot_format_stats <- cfu_stats_pairwise %>%
+  #Remove all columns except pairwise comparisons and day
+  select(-p.value, -method,-C, -CWM, -RM, -FRM) %>% 
+  group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+  lapply(tidy_pairwise) %>% 
+  bind_rows()
+
+#Statistical analysis of mouse weight change data----
+#Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
+weight_kruskal_wallis <- fig4_weightdata %>% 
+  filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15)) %>%  #only test days that we have weight data for at least 3 groups
+  select(day, group, weight_change) %>% 
+  group_by(day) %>% 
+  nest() %>% 
+  mutate(model=map(data, ~kruskal.test(x=.x$weight_change, g=as.factor(.x$group)) %>% tidy())) %>% 
+  mutate(median = map(data, get_weight_median)) %>% 
+  unnest(c(model, median)) %>% 
+  ungroup()
+#Adjust p-values for testing multiple days and write results to table:
+weight_kruskal_wallis_adjust <- weight_kruskal_wallis %>% 
+  select(day, statistic, p.value, parameter, method, C, CWM, RM, FRM) %>% 
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+  arrange(p.value.adj) %>% 
+  write_tsv("data/process/fig4_weight_stats_all_days.tsv")
+
+#Timepoints where C. difficile CFU is significantly different across the groups of mice after BH adjustment of p-values:
+sig_weight_days <- weight_kruskal_wallis_adjust %>%  
+  filter(p.value.adj <= 0.05) %>% 
+  pull(day)
+
+#Perform pairwise Wilcoxan rank sum tests for days that were significant by Kruskal-Wallis test
+weight_stats_pairwise <- weight_kruskal_wallis %>% 
+  filter(day %in% sig_weight_days) %>% #only perform pairwise tests for days that were significant 
+  group_by(day) %>% 
+  mutate(model=map(data, ~pairwise.wilcox.test(x=.x$weight_change, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                     tidy() %>% 
+                     mutate(compare=paste(group1, group2, sep="-")) %>% 
+                     select(-group1, -group2) %>% 
+                     pivot_wider(names_from=compare, values_from=p.value)
+  )
+  ) %>% 
+  unnest(model) %>% 
+  select(-data, -parameter, -statistic) %>% 
+  write_tsv("data/process/fig4_weight_stats_sig_days.tsv")
+
+#Format pairwise stats to use with ggpubr package
+weight_plot_format_stats <- weight_stats_pairwise %>%
+  #Remove all columns except pairwise comparisons and day
+  select(-p.value, -method,-C, -CWM, -RM, -FRM) %>% 
+  group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+  lapply(tidy_pairwise) %>% 
+  bind_rows()
+
+#Plots of CFU and weight data----
+
+#C. diff CFU plot
+#Statistical annotation labels based on adjusted kruskal-wallis p-values for first 10 days of experiment:
+x_annotation <- cfu_kruskal_wallis_adjust %>% 
+  filter(p.value.adj <= 0.05) %>% 
+  pull(day)
+y_position <- max(fig4_cfudata$avg_cfu) + 500000000
+label <- cfu_kruskal_wallis_adjust %>% 
+  filter(p.value.adj <= 0.05) %>%
+  mutate(p.signif = case_when(
+    p.value.adj > 0.05 ~ "NS",
+    p.value.adj <= 0.05 ~ "*"
+  )) %>% 
+  pull(p.signif)
+
+fig4_cfu <- plot_cfu_data(fig4_cfudata) + 
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 15, 20, 25, 30),
+                     limits = c(-1, 31)) 
+save_plot(filename = "results/figures/fig4_cfu.png", fig4_cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Plot of just a subset of data (through day 15)
+fig4_cfu_subset <- plot_cfu_data(fig4_cfudata %>% filter(day < 16)) + 
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 15),
+                     limits = c(-1, 16)) 
+save_plot(filename = "results/figures/fig4_cfu_subset.png", fig4_cfu_subset, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Weight change plot----
+x_annotation <- weight_kruskal_wallis_adjust %>% 
+  filter(p.value.adj <= 0.05) %>% 
+  pull(day)
+y_position <- max(fig4_weightdata$weight_change)
+label <- weight_kruskal_wallis_adjust %>% 
+  filter(p.value.adj <= 0.05) %>%
+  mutate(p.signif = case_when(
+    p.value.adj > 0.05 ~ "NS",
+    p.value.adj <= 0.05 ~ "*"
+  )) %>% 
+  pull(p.signif)
+
+
+fig4_weight <- plot_weight(fig4_weightdata %>% filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15))) + #Narrow weight data to just timepoints where we have data for at least 3 groups
+  scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10, 15),
+                     limits = c(-3, 16))   
+save_plot(filename = "results/figures/fig4_weight.png", fig4_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Show just median lines for each group
+y_position <- 2 #Change for the plot showing just the median lines
+fig4v2_weight <- plot_weight_medians(fig4_weightdata %>% filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15))) + #Narrow weight data to just timepoints where we have data for at least 3 groups
+  scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10, 15),
+                     limits = c(-3, 16))  
+save_plot(filename = "results/figures/fig4v2_weight.png", fig4v2_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+fig4_weight_10d <- plot_weight_medians(fig4_weightdata %>% filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))) + #Narrow weight data to just timepoints where we have data for at least 3 groups
+  scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10),
+                     limits = c(-3, 11)) 
+save_plot(filename = "results/figures/fig4_weight_10d.png", fig4_weight_10d, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+
