@@ -5,6 +5,9 @@ library(writexl)
 library(cowplot)
 library(broom)
 library(ggpubr)
+library(gganimate)
+library(glue)
+library(ggtext)
 
 #Read in metadata
 metadata <- read_excel("data/process/metadata.xlsx", col_types = c("numeric", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "text", "numeric", "numeric")) %>% #specify column types
@@ -15,7 +18,8 @@ metadata <- read_excel("data/process/metadata.xlsx", col_types = c("numeric", "t
          day = Day,
          weight = Weight,
          avg_cfu = avgCFU) %>% #get rid of spaces in column names and make all variables lowercase
-  unite(col = m_id_unique, c(mouse_id, exp_num), sep = "_", remove = FALSE) #add column to differentiate individual mice by merging mouse ID # and experiment number
+  unite(col = m_id_unique, c(mouse_id, exp_num), sep = "_", remove = FALSE) %>%  #add column to differentiate individual mice by merging mouse ID # and experiment number
+  unite(col = unique_cage, c(cage, exp_num), sep = "_", remove = FALSE) 
 
 #Check for duplicated unique_labels
 duplicated <- metadata %>% 
@@ -65,11 +69,66 @@ tidy_pairwise <- function(spread_pairwise){
     separate(col = compare, c("group1", "group2"), sep = "-", remove = TRUE)
 }
 
+#Function to calculate the median agg_rel_abund values from a dataframe (x) grouped by treatment
+get_rel_abund_median_group <- function(x){
+  x %>%
+    group_by(group) %>%
+    summarize(median=median(agg_rel_abund)) %>%
+    spread(key=group, value=median)
+}
+
+#Function to calculate the median agg_rel_abund values from a dataframe (x) grouped by day
+get_rel_abund_median_day <- function(x){
+  x %>%
+    group_by(day) %>%
+    summarize(median=median(agg_rel_abund)) %>%
+    spread(key=day, value=median)
+}
+
+#Function to pull significant taxa (adjusted p value < 0.05) after statistical analysis
+pull_significant_taxa <- function(dataframe, taxonomic_level){
+  dataframe %>% 
+    filter(p.value.adj <= 0.05) %>% 
+    pull({{ taxonomic_level }}) #Embracing transforms taxonomic_level argument into a column name
+}
+
 #Function to tidy pairwise histology comparisons to use for adding stats to plots
 tidy_histology_pairwise <- function(spread_pairwise){
   spread_pairwise %>%
     pivot_longer(-Tissue, names_to = "compare", values_to = "p.adj") %>%
     separate(col = compare, c("group1", "group2"), sep = "-", remove = TRUE)
+}
+
+#Functions related to 16S rRNA sequencing analysis----
+#Function to format distance matrix generated with mothur for use in R. 
+#Source: Sze et al. mSphere 2019 https://github.com/SchlossLab/Sze_PCRSeqEffects_mSphere_2019/blob/master/code/vegan_analysis.R
+read_dist <- function(dist_file_name){
+  
+  linear_data <- scan(dist_file_name, what="character", sep="\n", quiet=TRUE)
+  
+  n_samples <- as.numeric(linear_data[1])
+  linear_data <- linear_data[-1]
+  
+  samples <- str_replace(linear_data, "\t.*", "")
+  linear_data <- str_replace(linear_data, "[^\t]*\t", "")
+  linear_data <- linear_data[-1]
+  
+  distance_matrix <- matrix(0, nrow=n_samples, ncol=n_samples)
+  
+  for(i in 1:(n_samples-1)){
+    row <- as.numeric(unlist(str_split(linear_data[i], "\t")))
+    distance_matrix[i+1,1:length(row)] <- row
+  }
+  
+  distance_matrix <- distance_matrix + t(distance_matrix)
+  rownames(distance_matrix) <- samples
+  
+  as.dist(distance_matrix)
+}
+
+#Function to find which significant otus/genera/families are shared
+intersect_all <- function(a,b,...){
+  Reduce(intersect, list(a,b,...))
 }
 
 #Functions used to plot data----
