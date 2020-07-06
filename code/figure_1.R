@@ -97,7 +97,6 @@ cfu_plot_format_stats <- cfu_stats_pairwise %>%
   lapply(tidy_pairwise) %>% 
   bind_rows()
 
-
 #Statistical analysis of mouse weight change data----
 #Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
 weight_kruskal_wallis <- fig1_weightdata %>% 
