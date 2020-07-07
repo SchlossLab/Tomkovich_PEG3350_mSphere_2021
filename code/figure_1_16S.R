@@ -24,7 +24,10 @@ pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa
          unique_label = replace(unique_label, unique_label == "M5WMR8D11", "M5WMR8D1"),
          unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D11", "M5WMR9D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4")) %>% 
+         unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
+         unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
+         unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
+         unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
   filter(unique_label != "M8C18D4") %>% #Remove this sample, since I discovered this mouse was pregnant during tissue collection
   left_join(metadata, by= "unique_label") #merge metadata and PCoA data frames
 
@@ -128,7 +131,10 @@ diversity_data <- read_tsv("data/process/peg3350.opti_mcc.groups.ave-std.summary
          unique_label = replace(unique_label, unique_label == "M5WMR8D11", "M5WMR8D1"),
          unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D11", "M5WMR9D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4")) %>% 
+         unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
+         unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
+         unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
+         unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
   filter(unique_label != "M8C18D4") %>% #Remove this sample, since I discovered this mouse was pregnant during tissue collection
   inner_join(metadata, by = "unique_label") #Match only the samples we have sequence data for
 
@@ -281,7 +287,10 @@ otu_data <- read_tsv("data/process/peg3350.opti_mcc.shared", col_types=cols(Grou
          unique_label = replace(unique_label, unique_label == "M5WMR8D11", "M5WMR8D1"),
          unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D11", "M5WMR9D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4")) %>% 
+         unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
+         unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
+         unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
+         unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
   filter(unique_label != "M8C18D4") %>% #Remove this sample, since I discovered this mouse was pregnant during tissue collection
   gather(-unique_label, key="otu", value="count") %>% 
   mutate(rel_abund=count/2000) #Use 2000, because this is the subsampling parameter chosen.
@@ -368,9 +377,9 @@ shared_sig_otus_d1_4 <- intersect_all(sig_otu_day1, sig_otu_day4)
 shared_sig_otus_d1_10 <- intersect_all(sig_otu_day1, sig_otu_day10)
 shared_sig_otus_d4_10 <- intersect_all(sig_otu_day4, sig_otu_day10)
 
-#Only Lachnospiraceae (OTU 134) varies across all 3 timepoints
-#7 OTUs vary on day 1: 1 OTU shared with day 10
-#124 OTUs on day 4: 6 OTus shared with day 1
+#Only Lachnospiraceae (OTU 134) and Lachnospiraceae (OTU 87) varies across all 3 timepoints
+#25 OTUs vary on day 1: 2 OTUs shared with day 10
+#124 OTUs on day 4: 16 OTUs shared with day 1
 #25 OTUs on day 10: 23/25 shared with day 4
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
