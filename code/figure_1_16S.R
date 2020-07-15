@@ -6,9 +6,7 @@ color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
 
 metadata <- metadata %>% 
-  mutate(day = as.integer(day)) %>%  #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  select(-stool_tube_label, -tissue_type, -tissue_tube_label) %>% #Get rid of columns not needed
-  mutate(day = as.integer(day))
+  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
 #Lost 3 samples since we subsampled to 2000 sequences per sample
 pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
@@ -39,11 +37,11 @@ set.seed(19881117) #Match seed used in mothur analysis scripts
 fig1_dist <- read_dist("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 
 #Get factor levels for mouse_id variable:
-mouse_id_levels <- unique(as.factor(pcoa_data$m_id_unique))
+mouse_id_levels <- unique(as.factor(pcoa_data$unique_mouse_id))
 #48 levels
 
-#Get factor levels for unique_cage variable:
-unique_cage_levels <- unique(as.factor(pcoa_data$unique_cage))
+#Get factor levels for unique_cage_no variable:
+unique_cage_levels <- unique(as.factor(pcoa_data$unique_cage_no))
 #25 levels
 
 #Plot PCoA data----
@@ -433,12 +431,12 @@ save_plot("results/figures/fig1_otus_d10.png", otus_d10, base_height = 7, base_w
 C_dn5_d1_pairs <- agg_otu_data %>% 
   filter(group == "C" & otu == "Bacteroides (OTU 1)") %>% #Limit to group "C" and randomly pick an OTU just to figure out what mice have sequence data
   filter(day == -5 | day == 1) %>% 
-  filter(duplicated(m_id_unique)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
-  pull(m_id_unique) #6 mice
+  filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
+  pull(unique_mouse_id) #6 mice
 
 #Dataframe for statistical test at the OTU level
 C_paired_otu <- agg_otu_data %>% 
-  filter(m_id_unique %in% C_dn5_d1_pairs) %>% #Only select pairs with data for day -1 & day 0
+  filter(unique_mouse_id %in% C_dn5_d1_pairs) %>% #Only select pairs with data for day -1 & day 0
   filter(day == -5 | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
   mutate(day = as.factor(day)) %>% 
   select(day, otu, agg_rel_abund)
@@ -472,12 +470,12 @@ C_top10_OTUs <- head(C_top_OTUs, 10) %>% pull(otu)
 WM_dn5_d1_pairs <- agg_otu_data %>% 
   filter(group == "WM" & otu == "Bacteroides (OTU 1)") %>% #Limit to group "C" and randomly pick an OTU just to figure out what mice have sequence data
   filter(day == -5 | day == 1) %>% 
-  filter(duplicated(m_id_unique)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
-  pull(m_id_unique) #9 mice
+  filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
+  pull(unique_mouse_id) #9 mice
 
 #Dataframe for statistical test at the OTU level
 WM_paired_otu <- agg_otu_data %>% 
-  filter(m_id_unique %in% WM_dn5_d1_pairs) %>% #Only select pairs with data for day -1 & day 0
+  filter(unique_mouse_id %in% WM_dn5_d1_pairs) %>% #Only select pairs with data for day -1 & day 0
   filter(day == -5 | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
   mutate(day = as.factor(day)) %>% 
   select(day, otu, agg_rel_abund)

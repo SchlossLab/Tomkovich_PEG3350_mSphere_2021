@@ -7,6 +7,7 @@ color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery
 
 #Narrow metadata to relevant groups and experiments (C, CWM, RM, FRM)----
 fig4_metadata <- metadata %>% 
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
   filter(group == "C" & exp_num %in% c("M7","M9")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
          group == "CWM" & exp_num %in% c("M6","M7", "M9")|
          group == "RM" & exp_num %in% c("M7","M9")|
@@ -14,8 +15,12 @@ fig4_metadata <- metadata %>%
   mutate(group=factor(group, levels=c("C", "CWM", "RM", "FRM")))  # Make sure group is treated as a factor
 
 # of mice represented in the figure
-fig4_mice <- length(unique(fig4_metadata$m_id_unique)) 
+fig4_mice <- length(unique(fig4_metadata$unique_mouse_id)) 
 # 48 mice total for figure 1
+
+fig4_sum <- fig4_metadata %>% 
+  group_by(group) %>% 
+  count(day)
 
 #C. difficile CFU dataframe----
 #Narrow fig4_metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
@@ -35,11 +40,11 @@ baseline <- fig4_metadata %>% #Baseline weight was taken at day -5 for groups C,
          group == "RM" & day == -2| #12 mice in RM group
          group == "FRM" & day == -2) %>% #6 mice in FRM group
   mutate(baseline_weight = weight) %>% #This column represents the initial weight that was recorded for each mouse
-  select(m_id_unique, baseline_weight) #Will use m_id_unique to join baseline_weights to fig4_metadata
+  select(unique_mouse_id, baseline_weight) #Will use unique_mouse_id to join baseline_weights to fig4_metadata
 
 #Make a new column that represents weight_change from baseline_weight----
-fig4_weightdata <- inner_join(fig4_metadata, baseline, by = "m_id_unique") %>% #Join baseline weight to fig4_metadata
-  group_by(m_id_unique, day) %>% #Group by each unique mouse and experiment day
+fig4_weightdata <- inner_join(fig4_metadata, baseline, by = "unique_mouse_id") %>% #Join baseline weight to fig4_metadata
+  group_by(unique_mouse_id, day) %>% #Group by each unique mouse and experiment day
   mutate(weight_change = weight-baseline_weight) %>% #Make a new column that represents the change in weight from baseline (all weights recorded in grams)
   ungroup() %>% 
   filter(!is.na(weight)) #drop rows with NA values for fig4_weightdata. 744 samples including NAs, 744 samples after excluding NAs

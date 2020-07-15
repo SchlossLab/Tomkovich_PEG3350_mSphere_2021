@@ -10,16 +10,7 @@ library(glue)
 library(ggtext)
 
 #Read in metadata
-metadata <- read_excel("data/process/metadata.xlsx", col_types = c("numeric", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "text", "numeric", "numeric")) %>% #specify column types
-  rename(mouse_id = `Mouse ID`,
-         group = Group,
-         cage = `Cage #`,
-         ear_mark = `Ear Mark`,
-         day = Day,
-         weight = Weight,
-         avg_cfu = avgCFU) %>% #get rid of spaces in column names and make all variables lowercase
-  unite(col = m_id_unique, c(mouse_id, exp_num), sep = "_", remove = FALSE) %>%  #add column to differentiate individual mice by merging mouse ID # and experiment number
-  unite(col = unique_cage, c(cage, exp_num), sep = "_", remove = FALSE) 
+metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
 
 #Check for duplicated unique_labels
 duplicated <- metadata %>% 
@@ -194,3 +185,4 @@ plot_weight_medians <- function(df){
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme_classic()
 }
+
