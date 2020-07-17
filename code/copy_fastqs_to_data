@@ -11,6 +11,7 @@ cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/M*D*
 cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/mock*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/water*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+#Remove the mock and waters for the first 2 plates of this library, as all of those samples were part of a different project.
 rm mock1_*.gz
 rm mock2_*.gz
 rename 'mock3_' mock1_ *.gz
@@ -19,7 +20,39 @@ rm water1_*.gz
 rm water2_*.gz
 rename 'water3_' water1_ *.gz
 rename 'water4_' water2 *.gz
-#Remove the mock and waters for the first 2 plates of this library, as all of those samples were part of a different project.
+
+#Rename the following files to reflect their unique_labels in the finalized metadata file. These 2 plates were planned before the unique_labels were finalized so updates need to be made to the WMR samples:
+rename 'M5WMR5D6_' M5WMR5Dn4_ *.gz
+rename 'M5WMR6D6_' M5WMR6Dn4_ *.gz
+rename 'M5WMR7D6_' M5WMR7Dn4_ *.gz
+rename 'M5WMR8D6_' M5WMR8Dn4_ *.gz
+rename 'M5WMR9D6_' M5WMR9Dn4_ *.gz
+rename 'M5WMR10D6_' M5WMR10Dn4_ *.gz
+rename 'M5WMR5D11_' M5WMR5D1_ *.gz
+rename 'M5WMR6D11_' M5WMR6D1_ *.gz
+rename 'M5WMR7D11_' M5WMR7D1_ *.gz
+rename 'M5WMR8D11_' M5WMR8D1_ *.gz
+rename 'M5WMR9D11_' M5WMR9D1_ *.gz
+rename 'M5WMR10D11_' M5WMR10D1_ *.gz
+rename 'M5WMR5D14_' M5WMR5D4_ *.gz
+rename 'M5WMR6D14_' M5WMR6D4_ *.gz
+rename 'M5WMR7D14_' M5WMR7D4_ *.gz
+rename 'M5WMR8D14_' M5WMR8D4_ *.gz
+rename 'M5WMR9D14_' M5WMR9D4_ *.gz
+rename 'M5WMR10D14_' M5WMR10D4_ *.gz
+rename 'M5WMR5D20_' M5WMR5D10_ *.gz
+rename 'M5WMR6D20_' M5WMR6D10_ *.gz
+rename 'M5WMR7D20_' M5WMR7D10_ *.gz
+rename 'M5WMR8D20_' M5WMR8D10_ *.gz
+rename 'M5WMR9D20_' M5WMR9D10_ *.gz
+rename 'M5WMR10D20_' M5WMR10D10_ *.gz
+#Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap. Make a temporary intermediate file name (M4C19Dn5_true_) so no files are overwritten during renaming steps.
+rename 'M5C19D1_' M4C19Dn5_true_ *.gz
+rename 'M4C19Dn5_' M5C19D1_ *.gz
+rename 'M4C19Dn5_true_' M4C19Dn5_ *.gz
+#Remove this sample, which was dropped from the study because the mouse turned out to be pregnant:
+rm M8C18D4_*.gz
+
 
 go to labs turbo storage:
 cd /nfs/turbo/schloss-lab
