@@ -12,24 +12,37 @@ metadata <- metadata %>%
 pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename(unique_label = group) %>% #group is the same as id in the metadata data frame
-  mutate(unique_label = replace(unique_label, unique_label == "M5WMR10D11", "M5WMR10D1"), #correct unique_labels that have typos so that they'll match up with metadata
+  mutate(unique_label = replace(unique_label, unique_label == "M5WMR5D6", "M5WMR5Dn4"), #correct unique_labels that have typos so that they'll match up with metadata
+         unique_label = replace(unique_label, unique_label == "M5WMR6D6", "M5WMR6Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D6", "M5WMR7Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D6", "M5WMR8Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D6", "M5WMR9Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D6", "M5WMR10Dn4"),
          unique_label = replace(unique_label, unique_label == "M5WMR5D11", "M5WMR5D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR5D14", "M5WMR5D4"), 
          unique_label = replace(unique_label, unique_label == "M5WMR6D11", "M5WMR6D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR6D14", "M5WMR6D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR7D11", "M5WMR7D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR7D14", "M5WMR7D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR8D11", "M5WMR8D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D11", "M5WMR9D1"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D11", "M5WMR10D1"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D14", "M5WMR5D4"), 
+         unique_label = replace(unique_label, unique_label == "M5WMR6D14", "M5WMR6D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D14", "M5WMR7D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D14", "M5WMR10D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D10", "M5WMR5D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR6D10", "M5WMR6D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D10", "M5WMR7D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D10", "M5WMR8D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D10", "M5WMR9D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D10", "M5WMR10D20"),
          unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
   filter(unique_label != "M8C18D4") %>% #Remove this sample, since I discovered this mouse was pregnant during tissue collection
   left_join(metadata, by= "unique_label") #merge metadata and PCoA data frames
 
-test <- pcoa_data %>% count(day)
+n_per_day_summary <- pcoa_data %>% count(day)
 
 #Statistical Analysis----
 set.seed(19881117) #Match seed used in mothur analysis scripts
@@ -119,22 +132,39 @@ diversity_data <- read_tsv("data/process/peg3350.opti_mcc.groups.ave-std.summary
   filter(method == "ave") %>% 
   select(group, sobs, shannon, invsimpson, coverage) %>%   
   rename(unique_label = group) %>% #group is the same as unique_label in the metadata data frame
-  mutate(unique_label = replace(unique_label, unique_label == "M5WMR10D11", "M5WMR10D1"), #correct unique_labels that have typos so that they'll match up with metadata
+  mutate(unique_label = replace(unique_label, unique_label == "M5WMR5D6", "M5WMR5Dn4"), #correct unique_labels that have typos so that they'll match up with metadata
+         unique_label = replace(unique_label, unique_label == "M5WMR6D6", "M5WMR6Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D6", "M5WMR7Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D6", "M5WMR8Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D6", "M5WMR9Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D6", "M5WMR10Dn4"),
          unique_label = replace(unique_label, unique_label == "M5WMR5D11", "M5WMR5D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR5D14", "M5WMR5D4"), 
          unique_label = replace(unique_label, unique_label == "M5WMR6D11", "M5WMR6D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR6D14", "M5WMR6D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR7D11", "M5WMR7D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR7D14", "M5WMR7D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR8D11", "M5WMR8D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D11", "M5WMR9D1"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D11", "M5WMR10D1"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D14", "M5WMR5D4"), 
+         unique_label = replace(unique_label, unique_label == "M5WMR6D14", "M5WMR6D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D14", "M5WMR7D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D14", "M5WMR10D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D10", "M5WMR5D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR6D10", "M5WMR6D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D10", "M5WMR7D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D10", "M5WMR8D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D10", "M5WMR9D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D10", "M5WMR10D20"),
          unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
   filter(unique_label != "M8C18D4") %>% #Remove this sample, since I discovered this mouse was pregnant during tissue collection
   inner_join(metadata, by = "unique_label") #Match only the samples we have sequence data for
+
+group_day_summary <- diversity_data %>% 
+  group_by(group) %>% 
+  count(day)
 
 #Plot of shannon diversity at days 1, 4, and 10 when we have sequencing data for 3 groups
 shannon_d1_4_10 <- diversity_data %>% 
@@ -275,17 +305,30 @@ taxonomy <- read_tsv(file="data/process/peg3350.taxonomy") %>%
 otu_data <- read_tsv("data/process/peg3350.opti_mcc.shared", col_types=cols(Group=col_character())) %>% 
   select(-label, -numOtus) %>% 
   rename(unique_label = Group) %>% #group is the same as unique_label in the metadata data frame
-  mutate(unique_label = replace(unique_label, unique_label == "M5WMR10D11", "M5WMR10D1"), #correct unique_labels that have typos so that they'll match up with metadata
+  mutate(unique_label = replace(unique_label, unique_label == "M5WMR5D6", "M5WMR5Dn4"), #correct unique_labels that have typos so that they'll match up with metadata
+         unique_label = replace(unique_label, unique_label == "M5WMR6D6", "M5WMR6Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D6", "M5WMR7Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D6", "M5WMR8Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D6", "M5WMR9Dn4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D6", "M5WMR10Dn4"),
          unique_label = replace(unique_label, unique_label == "M5WMR5D11", "M5WMR5D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR5D14", "M5WMR5D4"), 
          unique_label = replace(unique_label, unique_label == "M5WMR6D11", "M5WMR6D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR6D14", "M5WMR6D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR7D11", "M5WMR7D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR7D14", "M5WMR7D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR8D11", "M5WMR8D1"),
-         unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D11", "M5WMR9D1"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D11", "M5WMR10D1"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D14", "M5WMR5D4"), 
+         unique_label = replace(unique_label, unique_label == "M5WMR6D14", "M5WMR6D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D14", "M5WMR7D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D14", "M5WMR10D4"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D10", "M5WMR5D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR6D10", "M5WMR6D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D10", "M5WMR7D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D10", "M5WMR8D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D10", "M5WMR9D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D10", "M5WMR10D20"),
          unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
