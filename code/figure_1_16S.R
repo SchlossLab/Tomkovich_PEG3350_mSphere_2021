@@ -30,12 +30,12 @@ pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa
          unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR10D14", "M5WMR10D4"),
-         unique_label = replace(unique_label, unique_label == "M5WMR5D10", "M5WMR5D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR6D10", "M5WMR6D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR7D10", "M5WMR7D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR8D10", "M5WMR8D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR9D10", "M5WMR9D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR10D10", "M5WMR10D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D20", "M5WMR5D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR6D20", "M5WMR6D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D20", "M5WMR7D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D20", "M5WMR8D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D20", "M5WMR9D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D20", "M5WMR10D10"),
          unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
@@ -150,12 +150,12 @@ diversity_data <- read_tsv("data/process/peg3350.opti_mcc.groups.ave-std.summary
          unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR10D14", "M5WMR10D4"),
-         unique_label = replace(unique_label, unique_label == "M5WMR5D10", "M5WMR5D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR6D10", "M5WMR6D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR7D10", "M5WMR7D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR8D10", "M5WMR8D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR9D10", "M5WMR9D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR10D10", "M5WMR10D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D20", "M5WMR5D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR6D20", "M5WMR6D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D20", "M5WMR7D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D20", "M5WMR8D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D20", "M5WMR9D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D20", "M5WMR10D10"),
          unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
@@ -323,12 +323,12 @@ otu_data <- read_tsv("data/process/peg3350.opti_mcc.shared", col_types=cols(Grou
          unique_label = replace(unique_label, unique_label == "M5WMR8D14", "M5WMR8D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR9D14", "M5WMR9D4"),
          unique_label = replace(unique_label, unique_label == "M5WMR10D14", "M5WMR10D4"),
-         unique_label = replace(unique_label, unique_label == "M5WMR5D10", "M5WMR5D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR6D10", "M5WMR6D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR7D10", "M5WMR7D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR8D10", "M5WMR8D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR9D10", "M5WMR9D20"),
-         unique_label = replace(unique_label, unique_label == "M5WMR10D10", "M5WMR10D20"),
+         unique_label = replace(unique_label, unique_label == "M5WMR5D20", "M5WMR5D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR6D20", "M5WMR6D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR7D20", "M5WMR7D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR8D20", "M5WMR8D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR9D20", "M5WMR9D10"),
+         unique_label = replace(unique_label, unique_label == "M5WMR10D20", "M5WMR10D10"),
          unique_label = replace(unique_label, unique_label == "M5C19D1", "M4C19Dn5_true"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5", "M5C19D1"), #Correct 2 samples that were swapped while putting samples into extraction plate, but were never updated on the miseq platemap
          unique_label = replace(unique_label, unique_label == "M4C19Dn5_true", "M4C19Dn5")) %>% 
@@ -414,14 +414,18 @@ for (d in test_days){
 
 #OTUs that varied across treatment groups and were shared across days 1, 4 and 10
 shared_sig_otus_d1_4_10 <- intersect_all(sig_otu_day1, sig_otu_day4, sig_otu_day10)
+#2 OTUs
 shared_sig_otus_d1_4 <- intersect_all(sig_otu_day1, sig_otu_day4)
+#15 OTUs
 shared_sig_otus_d1_10 <- intersect_all(sig_otu_day1, sig_otu_day10)
+#2 OTUs
 shared_sig_otus_d4_10 <- intersect_all(sig_otu_day4, sig_otu_day10)
+#39 OTUs
 
-#Only Lachnospiraceae (OTU 134) and Lachnospiraceae (OTU 87) varies across all 3 timepoints
+#Only Lachnospiraceae (OTU 134) and Lachnospiraceae (OTU 126) varies across all 3 timepoints
 #25 OTUs vary on day 1: 2 OTUs shared with day 10
-#124 OTUs on day 4: 16 OTUs shared with day 1
-#25 OTUs on day 10: 23/25 shared with day 4
+#123 OTUs on day 4: 16 OTUs shared with day 1
+#47 OTUs on day 10: 23/25 shared with day 4
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
@@ -550,6 +554,6 @@ WM_top10_OTUs <- head(WM_top_OTUs, 10) %>% pull(otu)
 
 #Compare OTUs impacted by clindamycin and PEG3350
 WM_C_otus <- intersect_all(C_top10_OTUs, WM_top10_OTUs)
-#2 OTUs overlap: Enterobacteriaceae (OTU 3) and Porphyromonadaceae (OTU 16)
+#4 OTUs overlap: Enterobacteriaceae (OTU 3) and Porphyromonadaceae (OTUs 8, 11, 16)
 
 
