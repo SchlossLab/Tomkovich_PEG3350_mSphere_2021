@@ -82,6 +82,18 @@ rm Undetermined*.fastq.gz
 cd /nfs/turbo/schloss-lab
 
 #Library for plates 11-13:
+#These plates were part of the library for plate 52 from the CDI clinical samples sequencing project. Because this library is a mix of 2 sequencing projects, we need to be specific about the files we copy over (Only want samples that match M*D*.fastq.gz).
+cp miseq_runs/2020_runs/CDIp52_Motility11-13/M*D*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp miseq_runs/2020_runs/CDIp52_Motility11-13/mock*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp miseq_runs/2020_runs/CDIp52_Motility11-13/water*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+
+#Remove mock and water controls for plate 52 from the CDI clinical samples sequencing project.
+rm mock52_*.gz
+rm water52_*.gz
+
+#go to labs turbo storage:
+cd /nfs/turbo/schloss-lab
 
 #Future libraries should be easier to transfer all .fastq.gzfiles in one go
 cp miseq_runs/2020_runs/_________/Data/Intensities/BaseCalls/*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
