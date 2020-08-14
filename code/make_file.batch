@@ -1,0 +1,1 @@
+make.file(inputdir=data/raw, type=gz, prefix=peg3350)
