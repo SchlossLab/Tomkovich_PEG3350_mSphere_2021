@@ -1,4 +1,4 @@
-source("code/functions.R") #Loads libraries, reads in metadata, functions
+source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
 #Define color scheme to match 5_days_PEG plots----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4

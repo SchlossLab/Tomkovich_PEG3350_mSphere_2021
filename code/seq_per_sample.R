@@ -1,8 +1,8 @@
-library(tidyverse)
+source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
-seq_count_data <- read_tsv("data/mothur/peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count.summary", col_names=c("sample", "nseqs")) %>% 
+seq_count_data <- read_tsv("data/mothur/peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count.summary", col_names=c("sample", "nseqs")) %>%
   filter(!str_detect(sample, "water")) #Removes water control samples
-  
+
 #If we rarefy to 1000 sequences per sample:
 n_1000 <- seq_count_data %>% filter(nseqs < 1000) %>% select(sample) %>% nrow()
 # We'll lose 0 samples

@@ -1,4 +1,4 @@
-source("code/functions.R") #Reads in metadata
+source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
 #Define color scheme for this figure----
 color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
