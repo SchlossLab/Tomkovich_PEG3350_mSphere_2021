@@ -9,13 +9,31 @@ library(gganimate)
 library(glue)
 library(ggtext)
 
-#Read in metadata
+#Read in metadata----
 metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
 
 #Check for duplicated unique_labels
 duplicated <- metadata %>% 
   filter(duplicated(unique_label)) #0 duplicates
 
+#Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
+seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") #specify the col_types]
+
+#The Notes column has important notes from the 16S library preparation that should be examined before 16S rRNA sequencing analysis:
+prep_notes <- unique(seq_prep_metadata$notes)
+#13 different types of notes, rest are NA (blank)
+
+#Notes that need no further action (already corrected in file):
+"5/17/19 was not labeleled on the side of the tube"
+"Katie's note lists D19 for these samples instead of D20, which was already sequenced as part of plates1_2 library"
+"swapped with A6 when samples were arrayed into extraction plates"
+"swapped with B7 when samples were arrayed into extraction plates"
+"Realized from Katie's note there was tube_label date typo that has now been corrected in make_metadata_file, D5 was initially entered as 3/21/19 instead of 3/31/19"
+
+#Samples with a note that means this sample was sequenced twice (initial + leftover stool pellets that were put back in -80):
+
+
+#Functions----
 #Function to have y-axis in scientific notation----
 fancy_scientific <- function(l) {
   # turn in to character string in scientific notation
