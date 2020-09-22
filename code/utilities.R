@@ -19,18 +19,44 @@ duplicated <- metadata %>%
 #Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
 seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") #specify the col_types]
 
-#The Notes column has important notes from the 16S library preparation that should be examined before 16S rRNA sequencing analysis:
+#The notes column has important notes from the 16S library preparation that should be examined before 16S rRNA sequencing analysis:
 prep_notes <- unique(seq_prep_metadata$notes)
 #13 different types of notes, rest are NA (blank)
 
-#Notes that need no further action (already corrected in file):
+#notes that indicate contaminated samples that should be dropped from the dataset:
+"NOTE from Lucas: columns 9 and 10 contain material from 9-12 on the bead plate because of epMotion mistake."
+"NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
+"Lucas' note had a C or 6, left sample label as is, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
+"Lucas' note had a WM 18 listed, but there is no mouse with this group and mouse number label from motility, kept as is, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
+"Lucas' note had day 7 but likely a legability issue since the samples are organized chronologically in the boxes., NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
+"Leftover stool from when this sample was arrayed for sequencing in plate_2, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
+#List of values in notes that indicate samples were contaminated:
+contaminated_notes <- c("NOTE from Lucas: columns 9 and 10 contain material from 9-12 on the bead plate because of epMotion mistake.",
+                        "NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically.",
+                        "Lucas' note had a C or 6, left sample label as is, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically.",
+                        "Lucas' note had a WM 18 listed, but there is no mouse with this group and mouse number label from motility, kept as is, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically.",
+                        "Lucas' note had day 7 but likely a legability issue since the samples are organized chronologically in the boxes., NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically.",
+                        "Leftover stool from when this sample was arrayed for sequencing in plate_2, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
+)
+
+contaminated_samples <- seq_prep_metadata %>% 
+  filter(notes %in% contaminated_notes) %>% 
+  mutate(command = "rm -i ^", # -i will ask for confirmation before deleting, ^ indicates the start of a string
+         file_end = "_*.gz") %>%  #Add columns to construct command to remove these sequences from the project data/raw folder to exclude contaminated samples from 16S gene rRNA sequencing analysis
+  unite(col = "bash_command", command, unique_label, file_end, sep = "", remove = TRUE) %>% #merge the 3 columns into 1 column to create the bash commands
+  pull(bash_command) %>% 
+  noquote() # remove quotes around bash commands
+#Check samples with these notes during analysis:
+"From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,"
+"Whole cecum frozen, Lucas took a snip for sequencing with scalpel"
+"Note that sample yielded no DNA from Lucas"
+
+#notes that need no further action (already corrected in file):
 "5/17/19 was not labeleled on the side of the tube"
 "Katie's note lists D19 for these samples instead of D20, which was already sequenced as part of plates1_2 library"
 "swapped with A6 when samples were arrayed into extraction plates"
 "swapped with B7 when samples were arrayed into extraction plates"
 "Realized from Katie's note there was tube_label date typo that has now been corrected in make_metadata_file, D5 was initially entered as 3/21/19 instead of 3/31/19"
-
-#Samples with a note that means this sample was sequenced twice (initial + leftover stool pellets that were put back in -80):
 
 
 #Functions----
