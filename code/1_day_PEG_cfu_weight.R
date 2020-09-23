@@ -183,7 +183,7 @@ weight <- plot_weight(weightdata_subset) +
 save_plot(filename = "results/figures/1_day_PEG_weight.png", weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 y_position <- 2 #Change for the plot showing just the median lines
-1_day_PEGv2_weight <- plot_weight_medians(weightdata_subset)+
+v2_weight <- plot_weight_medians(weightdata_subset)+
   scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10),
                      limits = c(-3, 11))
 save_plot(filename = "results/figures/1_day_PEGv2_weight.png", 1_day_PEGv2_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
