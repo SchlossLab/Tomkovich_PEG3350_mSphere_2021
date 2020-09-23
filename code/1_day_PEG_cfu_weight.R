@@ -6,7 +6,7 @@ color_groups <- c( "1RM1", "C", "M1")
 color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
 
 #Narrow metadata to relevant groups and experiments (C, 1RM1, M1)----
-1_day_PEG_metadata <- metadata %>%
+metadata <- metadata %>%
   filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
   filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
          group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
@@ -15,38 +15,38 @@ color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350"
 
 
 # of mice represented in the figure
-1_day_PEG_mice <- length(unique(1_day_PEG_metadata$unique_mouse_id))
+mice <- length(unique(metadata$unique_mouse_id))
 # 18 mice total for figure 3
 
 #C. difficile CFU dataframe----
-#Narrow 1_day_PEG_metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
-1_day_PEG_cfudata <- 1_day_PEG_metadata %>%
+#Narrow metadata to just timepoints relevant to C. difficile CFU tracking (Anything on or after day 0)
+cfudata <- metadata %>%
   filter(day > -1)
-1_day_PEG_cfu_na <- sum(is.na(1_day_PEG_cfudata$avg_cfu)) #53 samples with NA values. 5 samples, where we weren't able to get a stool sample. Rest of NAs are from timepoints after D15 which is the day we stopped tracking C. diff CFU
-#Drop rows with NA values for 1_day_PEG_cfu:
-1_day_PEG_cfudata <- 1_day_PEG_cfudata %>%
+cfu_na <- sum(is.na(cfudata$avg_cfu)) #53 samples with NA values. 5 samples, where we weren't able to get a stool sample. Rest of NAs are from timepoints after D15 which is the day we stopped tracking C. diff CFU
+#Drop rows with NA values for cfu:
+cfudata <- cfudata %>%
   filter(!is.na(avg_cfu)) #181 samples total
 
 #Weight change dataframe----
 #Note baseline weight for each group of mice (based on the earliest timepoint recorded for each experiment)----
-baseline <- 1_day_PEG_metadata %>% #Baseline weight was taken at day -5 for groups C, WM, and WMC
+baseline <- metadata %>% #Baseline weight was taken at day -5 for groups C, WM, and WMC
   filter(group == "C" & day == -15| #6 mice in C group
            group == "1RM1" & day == -2| #6 mice in 1RM1 group
            group == "M1" & day == -11) %>%  #6 mice in M1 group
   mutate(baseline_weight = weight) %>% #This column represents the initial weight that was recorded for each mouse
-  select(unique_mouse_id, baseline_weight) #Will use unique_mouse_id to join baseline_weights to 1_day_PEG_metadata
+  select(unique_mouse_id, baseline_weight) #Will use unique_mouse_id to join baseline_weights to metadata
 
 #Make a new column that represents weight_change from baseline_weight----
-1_day_PEG_weightdata <- inner_join(1_day_PEG_metadata, baseline, by = "unique_mouse_id") %>% #Join baseline weight to 1_day_PEG_metadata
+weightdata <- inner_join(metadata, baseline, by = "unique_mouse_id") %>% #Join baseline weight to metadata
   group_by(unique_mouse_id, day) %>% #Group by each unique mouse and experiment day
   mutate(weight_change = weight-baseline_weight) %>% #Make a new column that represents the change in weight from baseline (all weights recorded in grams)
   ungroup() %>%
-  filter(!is.na(weight)) #drop rows with NA values for 1_day_PEG_weightdata. 378 samples including NAs, 306 samples after excluding NAs
+  filter(!is.na(weight)) #drop rows with NA values for weightdata. 378 samples including NAs, 306 samples after excluding NAs
 
 #Statistical analysis of C. difficile CFU data----
 set.seed(19760620) #Same seed used for mothur analysis
 #Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
-cfu_kruskal_wallis <- 1_day_PEG_cfudata %>%
+cfu_kruskal_wallis <- cfudata %>%
   filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 7, 8)) %>%  #only test days that we have cfu data for at least 3 groups
   select(day, group, avg_cfu) %>%
   group_by(day) %>%
@@ -93,7 +93,7 @@ cfu_plot_format_stats <- cfu_stats_pairwise %>%
 
 #Statistical analysis of mouse weight change data----
 #Kruskal_wallis test for differences across groups at different timepoints with Benjamini-Hochburg correction----
-weight_kruskal_wallis <- 1_day_PEG_weightdata %>%
+weight_kruskal_wallis <- weightdata %>%
   filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)) %>%  #only test days that we have weight data for at least 3 groups
   select(day, group, weight_change) %>%
   group_by(day) %>%
@@ -145,7 +145,7 @@ weight_plot_format_stats <- weight_stats_pairwise %>%
 x_annotation <- cfu_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   pull(day)
-y_position <- max(1_day_PEG_cfudata$avg_cfu) + 100000000
+y_position <- max(cfudata$avg_cfu) + 100000000
 label <- cfu_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   mutate(p.signif = case_when(
@@ -154,17 +154,17 @@ label <- cfu_kruskal_wallis_adjust %>%
   )) %>%
   pull(p.signif)
 
-1_day_PEG_cfu <- plot_cfu_data(1_day_PEG_cfudata) +
+cfu <- plot_cfu_data(cfudata) +
   scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10),
                      limits = c(-1, 11))
-save_plot(filename = "results/figures/1_day_PEG_cfu.png", 1_day_PEG_cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/1_day_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of weight change data----
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for first 10 days of experiment:
 x_annotation <- weight_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   pull(day)
-y_position <- max(1_day_PEG_weightdata$weight_change)
+y_position <- max(weightdata$weight_change)
 label <- weight_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   mutate(p.signif = case_when(
@@ -174,16 +174,16 @@ label <- weight_kruskal_wallis_adjust %>%
   pull(p.signif)
 
 #Narrow data to just the timepoints tested in statistical analysis, when we have weight data for all 3 groups
-1_day_PEG_weightdata_subset <- 1_day_PEG_weightdata %>%
+weightdata_subset <- weightdata %>%
   filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
-1_day_PEG_weight <- plot_weight(1_day_PEG_weightdata_subset) +
+weight <- plot_weight(weightdata_subset) +
   scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10),
                      limits = c(-3, 11))
-save_plot(filename = "results/figures/1_day_PEG_weight.png", 1_day_PEG_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/1_day_PEG_weight.png", weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 y_position <- 2 #Change for the plot showing just the median lines
-1_day_PEGv2_weight <- plot_weight_medians(1_day_PEG_weightdata_subset)+
+1_day_PEGv2_weight <- plot_weight_medians(weightdata_subset)+
   scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10),
                      limits = c(-3, 11))
 save_plot(filename = "results/figures/1_day_PEGv2_weight.png", 1_day_PEGv2_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
