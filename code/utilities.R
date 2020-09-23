@@ -19,6 +19,15 @@ duplicated <- metadata %>%
 #Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
 seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") #specify the col_types]
 
+#Identify samples that were sequenced twice in metadata
+duplicated <- seq_prep_metadata %>% 
+  filter(duplicated(unique_label)) %>% #5 samples sequenced twice
+  pull(unique_label)
+
+#Metadata for samples that were sequenced twice:
+duplicated_seq_samples <- seq_prep_metadata %>% 
+  filter(unique_label %in% duplicated)
+
 #The notes column has important notes from the 16S library preparation that should be examined before 16S rRNA sequencing analysis:
 prep_notes <- unique(seq_prep_metadata$notes)
 #13 different types of notes, rest are NA (blank)
@@ -39,13 +48,40 @@ contaminated_notes <- c("NOTE from Lucas: columns 9 and 10 contain material from
                         "Leftover stool from when this sample was arrayed for sequencing in plate_2, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
 )
 
+#Create list of unique_label for the contaminated files to remove
 contaminated_samples <- seq_prep_metadata %>% 
   filter(notes %in% contaminated_notes) %>% 
-  mutate(command = "rm -i ^", # -i will ask for confirmation before deleting, ^ indicates the start of a string
-         file_end = "_*.gz") %>%  #Add columns to construct command to remove these sequences from the project data/raw folder to exclude contaminated samples from 16S gene rRNA sequencing analysis
-  unite(col = "bash_command", command, unique_label, file_end, sep = "", remove = TRUE) %>% #merge the 3 columns into 1 column to create the bash commands
-  pull(bash_command) %>% 
+  mutate(grep_prefix = "'^", # ^ indicates the start of a string
+         grep_suffix = "_.*'") %>%  #Add columns to construct regexp to remove these sequences from the project data/raw folder to exclude contaminated samples from 16S gene rRNA sequencing analysis. . in _.* is to avoid matching to files that don't have an underscore after pattern is matched
+  unite(col = "grep_name", grep_prefix, unique_label, grep_suffix, sep = "", remove = TRUE) %>% #merge the 3 columns into 1 column to create the bash commands
+  pull(grep_name) %>% 
   noquote() # remove quotes around bash commands
+paste(contaminated_samples, sep =" \n", collapse = " ") # print all rows
+#Use this list with a for loop from the command line to remove these sequences from data raw
+
+#39 samples, but 43 sets of sequence files were removed
+#Figure out which 4 additional sets of sequence files 
+removed_samples <- c("M3WM3Dn1", "M3C14D4", "M3C15D4", "M3C13D0", 
+                     "M3WM3D2", "M3WMC4D2", "M3WMC6D3", "M3C13D3",
+                     "M3C15D5", "M4WMC12Dn5", "M4C18Dn1", "M4C19Dn1",
+                     "M4WMC16D0", "M4C18D0", "M4WMC15D3", "M4WMC16D3", 
+                     "M4C21D3", "M4WM5D5", "M4WM6D5","M4C18D5", "M4C19D5",
+                     "M4C20D5", "M5WMR7Dn10", "M5WMR8Dn10", "M5WM14Dn1",
+                     "M5WM16Dn1", "M5C18Dn1", "M5WM13D0","M5WM16D0",
+                     "M5C17D0", "M5WMR9D0", "M5WMR10D0", "M5WMR5D10",
+                     "M5WMR5D11", "M5WMR5D14", "M5WMR5D15", "M5WMR5D1",
+                     "M5WM15D2", "M5C18D2","M5C19D2","M5WM11D3","M5WM12D3",
+                     "M5WM13D3"
+)
+#Figure out which additional 4 samples were removed:
+contaminated_samples_removed <- seq_prep_metadata %>% 
+  filter(notes %in% contaminated_notes) %>% 
+  select(unique_label)
+
+additional_removed_samples <- as.tibble(removed_samples) %>% 
+  rename(unique_label = value) %>% 
+  anti_join(contaminated_samples_removed, by = "unique_label")
+
 #Check samples with these notes during analysis:
 "From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,"
 "Whole cecum frozen, Lucas took a snip for sequencing with scalpel"
