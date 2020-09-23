@@ -58,29 +58,7 @@ contaminated_samples <- seq_prep_metadata %>%
   noquote() # remove quotes around bash commands
 paste(contaminated_samples, sep =" \n", collapse = " ") # print all rows
 #Use this list with a for loop from the command line to remove these sequences from data raw
-
-#39 samples, but 43 sets of sequence files were removed
-#Figure out which 4 additional sets of sequence files 
-removed_samples <- c("M3WM3Dn1", "M3C14D4", "M3C15D4", "M3C13D0", 
-                     "M3WM3D2", "M3WMC4D2", "M3WMC6D3", "M3C13D3",
-                     "M3C15D5", "M4WMC12Dn5", "M4C18Dn1", "M4C19Dn1",
-                     "M4WMC16D0", "M4C18D0", "M4WMC15D3", "M4WMC16D3", 
-                     "M4C21D3", "M4WM5D5", "M4WM6D5","M4C18D5", "M4C19D5",
-                     "M4C20D5", "M5WMR7Dn10", "M5WMR8Dn10", "M5WM14Dn1",
-                     "M5WM16Dn1", "M5C18Dn1", "M5WM13D0","M5WM16D0",
-                     "M5C17D0", "M5WMR9D0", "M5WMR10D0", "M5WMR5D10",
-                     "M5WMR5D11", "M5WMR5D14", "M5WMR5D15", "M5WMR5D1",
-                     "M5WM15D2", "M5C18D2","M5C19D2","M5WM11D3","M5WM12D3",
-                     "M5WM13D3"
-)
-#Figure out which additional 4 samples were removed:
-contaminated_samples_removed <- seq_prep_metadata %>% 
-  filter(notes %in% contaminated_notes) %>% 
-  select(unique_label)
-
-additional_removed_samples <- as.tibble(removed_samples) %>% 
-  rename(unique_label = value) %>% 
-  anti_join(contaminated_samples_removed, by = "unique_label")
+#See code/copy_fastqs_to_data
 
 #Check samples with these notes during analysis:
 "From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,"
