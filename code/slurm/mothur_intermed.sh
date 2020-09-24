@@ -38,4 +38,4 @@
 #                   #
 #####################
 
-mothur code/alpha_beta.batch
+mothur code/make_file.batch
