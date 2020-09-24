@@ -47,7 +47,7 @@ n_per_day_summary <- pcoa_data %>% count(day)
 #Statistical Analysis----
 set.seed(19881117) #Match seed used in mothur analysis scripts
 
-5_days_PEG_dist <- read_dist("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
+dist <- read_dist("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 
 #Get factor levels for mouse_id variable:
 mouse_id_levels <- unique(as.factor(pcoa_data$unique_mouse_id))
@@ -84,30 +84,30 @@ all_axis1 <- all_axis_labels %>% filter(axis == 1) %>% pull(loading) %>% round(d
 all_axis2 <- all_axis_labels %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
 #PCoA plot that combines the 2 experiments and save the plot----
-5_days_PEG_pcoa_plot <- plot_pcoa(pcoa_data)+
+pcoa_plot <- plot_pcoa(pcoa_data)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/5_days_PEG_pcoa.png"), 5_days_PEG_pcoa_plot, base_height = 5, base_width = 4.5)
+save_plot(filename = paste0("results/figures/5_days_PEG_pcoa.png"), pcoa_plot, base_height = 5, base_width = 4.5)
 
-5_days_PEG_pcoa_plot_time <- plot_pcoa(pcoa_data)+
+pcoa_plot_time <- plot_pcoa(pcoa_data)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   theme(legend.position = "none")+ #remove legend
   facet_wrap(~ day)
 
-5_days_PEG_pcoa_plot_dn5 <- plot_pcoa(pcoa_data %>% filter(day == "-5"))+
+pcoa_plot_dn5 <- plot_pcoa(pcoa_data %>% filter(day == "-5"))+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
 
-5_days_PEG_pcoa_plot_d1 <- plot_pcoa(pcoa_data %>% filter(day == "1"))+
+pcoa_plot_d1 <- plot_pcoa(pcoa_data %>% filter(day == "1"))+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
 
-5_days_PEG_pcoa_plot_d4 <- plot_pcoa(pcoa_data %>% filter(day == "4"))+
+pcoa_plot_d4 <- plot_pcoa(pcoa_data %>% filter(day == "4"))+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
 
-5_days_PEG_pcoa_plot_d10 <- plot_pcoa(pcoa_data %>% filter(day == "10"))+
+pcoa_plot_d10 <- plot_pcoa(pcoa_data %>% filter(day == "10"))+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
 
