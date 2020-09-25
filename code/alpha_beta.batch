@@ -1,5 +1,5 @@
 # Generate subsample shared files, 2D nmds files, and PCoA files
-# Decide subsampling parameter based on count.groups results. Currently set at 3000 sequences
+# Decide subsampling parameter based on count.groups results. Currently set at 2000 sequences
 set.dir(input=data/mothur, output=data/mothur, seed=19760620)
 
 # Shorten filenames
