@@ -1,4 +1,4 @@
-#Copies PEG3350 project samples' sequence data files from miseq_runs folder in schloss-lab turbo storage to the Tomkovich_PEG3350_XXXX_2020 project directory, specifically data/raw. This script is a record of bash commands used, since it is just moving/renaming files there is no need to submit as a job. For each library, the water & mock fastqs will be renamed to match the motility project plate number they were in. After sequences from all libraries have been transferred to the project's raw data directory, we will remove the dashes of the sample names to make downstream analysis easier.
+#Copies PEG3350 project samples' sequence data files from /nfs/locker/microbio-schloss-data/miseq_runs/ folder in schloss-lab Locker storage to the /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020 project directory, specifically data/raw. This script is a record of bash commands used, since it is just moving/renaming files there is no need to submit as a job. For each library, the water & mock fastqs will be renamed to match the motility project plate number they were in. After sequences from all libraries have been transferred to the project's raw data directory, we will remove the dashes of the sample names to make downstream analysis easier.
 
 #After logging onto Great lakes go to labs turbo storage:
 cd /nfs/turbo/schloss-lab
@@ -7,10 +7,10 @@ cd /nfs/turbo/schloss-lab
 #Copy raw data files into CDI_clinical_samples directory for data analysis
 
 #These plates were part of the library for plates 45-47 from the CDI clinical samples sequencing project. We only need some of the samples from plate 47 since plates 45-47 were all part of the CDI clinical samples sequencing project. Because this library is a mix of 2 sequencing projects, we need to be specific about the files we copy over (Only want samples that match M*D*.fastq.gz).
-cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/M*D*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/mock*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cp miseq_runs/2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/water*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/M*D*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/mock*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/SarahCDI_p45p46_motility/Data/Intensities/BaseCalls/water*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cd /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 #Remove the mock and waters for the first 2 plates of this library, as all of those samples were part of a different project.
 rm mock1_*.gz
 rm mock2_*.gz
@@ -57,8 +57,8 @@ rm M8C18D4_*.gz
 cd /nfs/turbo/schloss-lab
 
 #Library for plates 3-6:
-cp miseq_runs/2020_runs/Motility_p3-p6/Data/Intensities/BaseCalls/*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/Motility_p3-p6/Data/Intensities/BaseCalls/*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cd /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 
 #I made some changes to the sample sheet after Lucas had already started the run. Rename these 3 samples (from plate 5: positions A12, B10 and F4) to reflect the updates:
 rename 'M9CWM19D1_' FMT1D4_ *.gz
@@ -74,8 +74,8 @@ rename 'PBS-Gavage-from-D4-Motility-9_' PBSD4Motility9_ *.gz
 cd /nfs/turbo/schloss-lab
 
 #Library for plates 7-10:
-cp miseq_runs/2020_runs/SarahMotility_p7-10/Data/Intensities/BaseCalls/*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/SarahMotility_p7-10/Data/Intensities/BaseCalls/*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cd /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 rm Undetermined*.fastq.gz
 
 #go to labs turbo storage:
@@ -83,10 +83,10 @@ cd /nfs/turbo/schloss-lab
 
 #Library for plates 11-13:
 #These plates were part of the library for plate 52 from the CDI clinical samples sequencing project. Because this library is a mix of 2 sequencing projects, we need to be specific about the files we copy over (Only want samples that match M*D*.fastq.gz).
-cp miseq_runs/2020_runs/CDIp52_Motility11-13/M*D*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cp miseq_runs/2020_runs/CDIp52_Motility11-13/mock*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cp miseq_runs/2020_runs/CDIp52_Motility11-13/water*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/CDIp52_Motility11-13/M*D*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/CDIp52_Motility11-13/mock*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/CDIp52_Motility11-13/water*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cd /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 
 #Remove mock and water controls for plate 52 from the CDI clinical samples sequencing project.
 rm mock52_*.gz
@@ -96,7 +96,7 @@ rm water52_*.gz
 cd /nfs/turbo/schloss-lab
 
 #Future libraries should be easier to transfer all .fastq.gzfiles in one go
-cp miseq_runs/2020_runs/_________/Data/Intensities/BaseCalls/*.fastq.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
+cp /nfs/locker/microbio-schloss-data/miseq_runs//2020_runs/_________/Data/Intensities/BaseCalls/*.fastq.gz /nfs/turbo/schloss-lab/tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 #Change into raw data directory
 cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 
