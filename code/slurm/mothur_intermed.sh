@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=mothur_motilityp1-2
+#SBATCH --job-name=mothur_motility_alpha_beta
 
 # Resources
 # For MPI, increase ntasks-per-node
@@ -15,7 +15,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=8GB
+#SBATCH --mem=24GB
 #SBATCH --time=10:00:00
 
 # Account
@@ -38,4 +38,4 @@
 #                   #
 #####################
 
-mothur code/make_file.batch
+mothur code/alpha_beta.batch
