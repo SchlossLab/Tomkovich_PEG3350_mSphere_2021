@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=mothur_motilityp1-2
+#SBATCH --job-name=mothur_motilityp1-13
 
 # Resources
 # For MPI, increase ntasks-per-node
