@@ -1,4 +1,4 @@
 ### Contains error functions for mothur batch analysis
 set.current(inputdir=data/mothur, outputdir=data/mothur, processors=8)
-get.groups(count=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.count_table, fasta=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta, groups=mock1-mock2)
+get.groups(count=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.count_table, fasta=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta, groups=mock1-mock2-mock3-mock4-mock5-mock6-mock7-mock8-mock9-mock10-mock11-mock12-mock13)
 seq.error(fasta=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.fasta, count=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, reference=data/references/zymo_mock.align, aligned=F)
