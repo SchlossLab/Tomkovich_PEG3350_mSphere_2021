@@ -1,5 +1,5 @@
 make.file(inputdir=data/raw, type=gz, prefix=peg3350)
-make.contigs(file=peg3350.files, inputdir=data/raw/, outputdir=data/mothur/, processors=8)
+make.contigs(file=peg3350.files, inputdir=data/raw/, outputdir=data/mothur/, processors=10)
 summary.seqs(fasta=peg3350.trim.contigs.fasta)
 screen.seqs(fasta=current, group=current, maxambig=0, maxlength=275, maxhomop=8)
 unique.seqs(fasta=current)
