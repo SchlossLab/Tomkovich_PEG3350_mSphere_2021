@@ -102,7 +102,7 @@ cd tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
 
 #Renaming steps that will apply to all files
 
-#Change into raw data directory
+#Change into raw data directory:
 cd tomkoset/CDI_clinical_samples/data/raw/
 
 #Count the number of files before and after with this command:
@@ -113,23 +113,14 @@ ls -l | wc -l
 #Note: if unsure about pattern matching, use -i which will ask for confirmation before removing files
 # xargs -d"\n" rm # command executes rm line once for every line that is piped to it.
 
-
-#Removed the files without the . in _.* pattern and accidentally removed 4 files that match the beginning of M5WMR5D1.
-#Count the number of files after removing contaminated sequence data files:
-ls -l | wc -l
-#2289 files remaining
-#Some samples that were sequenced twice were removed: 43 sets of sequences removed instead of 39.
-#4 samples removed that shouldn't have been
-
-#Once turbo space is restored copy over same fastqs from Ana's project:
-cp anataylo/Tomkovich_PEG3350_XXXX_2020/data/raw/*.gz tomkoset/Tomkovich_PEG3350_XXXX_2020/data/raw/
-
-Then remove the 39 pairs of contaminated sequence files with:
-
 for filepattern in '^M3WM3Dn1_.*' '^M3C14D4_.*' '^M3C15D4_.*' '^M3C13D0_.*' '^M3WM3D2_.*' '^M3WMC4D2_.*' '^M3WMC6D3_.*' '^M3C13D3_.*' '^M3C15D5_.*' '^M4WMC12Dn5_.*' '^M4C18Dn1_.*' '^M4C19Dn1_.*' '^M4WMC16D0_.*' '^M4C18D0_.*' '^M4WMC15D3_.*' '^M4WMC16D3_.*' '^M4C21D3_.*' '^M4WM5D5_.*' '^M4WM6D5_.*' '^M4C18D5_.*' '^M4C19D5_.*' '^M4C20D5_.*' '^M5WMR7Dn10_.*' '^M5WMR8Dn10_.*' '^M5WM14Dn1_.*' '^M5WM16Dn1_.*' '^M5C18Dn1_.*' '^M5WM13D0_.*' '^M5WM16D0_.*' '^M5C17D0_.*' '^M5WMR9D0_.*' '^M5WMR10D0_.*' '^M5WMR5D1_.*' '^M5WM15D2_.*' '^M5C18D2_.*' '^M5C19D2_.*' '^M5WM11D3_.*' '^M5WM12D3_.*' '^M5WM13D3_.*'
 do
-    ls | grep $filepattern | xargs -d"\n" rm -i
+    ls | grep $filepattern | xargs -d"\n" rm
 done
 
 #Count the number of files after removing contaminated sequence data files:
 ls -l | wc -l
+#2297 files remaining. 39 pairs of fastq files were removed.
+
+#Go to main folder in project directory:
+cd ../..
