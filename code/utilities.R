@@ -202,7 +202,10 @@ plot_cfu_data <- function(df){
     geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
+    theme_classic()+
+    theme(legend.position = "bottom",
+          legend.key= element_rect(colour = "transparent", fill = "transparent"),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
 
 #Function to plot weight. 
@@ -223,7 +226,9 @@ plot_weight <- function(df){
     ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
+    theme_classic()+
+    theme(legend.position = "none", #Get rid of legend 
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
 
 #Simplified function that only plots the median line for each group. 
