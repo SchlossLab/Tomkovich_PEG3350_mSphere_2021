@@ -46,22 +46,32 @@ YOUR PAPER'S ABSTRACT GOES HERE
 
 #### Dependencies and locations
 * Gnu Make should be located in the user's PATH
-* mothur (v1.XX.0) should be located in the user's PATH
-* R (v. 3.X.X) should be located in the user's PATH
+* mothur (v1.43.0) should be located in the user's PATH
+* FFmpeg should be located in the user's PATH
+* R (v. 4.0.2) should be located in the user's PATH
 * R packages:
-  * `knitr`
-  * `rmarkdown`
-* etc
+    * broom v0.7.0
+    * tidyverse_1.3.0
+    * cowplot v1.0.0
+    * vegan v2.5-6
+    * knitr v1.29
+    * rmarkdown v2.3
+    * ggpubr v.0.4.0
+    * gganimate v1.0.6
+    * writexl v1.3
+    * glue v1.4.1
+    * ggtext v0.1.0
+* Analysis assumes the use of 10 processors 
 
 
 #### Running analysis
 Download 16S rRNA sequencing dataset from the NCBI Sequence Read Archive (BioProject Accession no. _______).
 ```
-git clone ________
+git clone https://github.com/tomkoset/Tomkovich_PEG3350_XXXX_2020
 ```
-Transfer 16S rRNA sequencing fastq.gz files into  ________
+Transfer 16S rRNA sequencing fastq.gz files into  Tomkovich_PEG3350_XXXX_2020/data/raw
 ```
-cd  ________
+cd  Tomkovich_PEG3350_XXXX_2020
 ```
 Obtain the SILVA reference alignment from version 132 described at https://mothur.org/blog/2018/SILVA-v132-reference-files/. We will use the SEED v. 132, which contain 12,083 bacterial sequences. This also contains the reference taxonomy. We will limit the databases to only include bacterial sequences.
 ```
