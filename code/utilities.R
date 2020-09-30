@@ -206,8 +206,8 @@ intersect_all <- function(a,b,...){
 #Arguments: df = dataframe to plot
 #When using the function can add line to specify x axis scale (scale_x_continuous())
 plot_cfu_data <- function(df){
-  median_summary <- df %>%
-    group_by(group, day) %>%
+  median_summary <- df %>% 
+    group_by(group, day) %>% 
     summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
   #Plot cfu for just the inital 10days
   cfu_plot <- ggplot(NULL) +
@@ -223,15 +223,18 @@ plot_cfu_data <- function(df){
     geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
+    theme_classic()+
+    theme(legend.position = "bottom",
+          legend.key= element_rect(colour = "transparent", fill = "transparent"),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
 
-#Function to plot weight.
+#Function to plot weight. 
 #Arguments: df = dataframe you want to plot
 #When using the function can add line to specify x axis scale (scale_x_continuous())
 plot_weight <- function(df){
-  median_summary <- df %>%
-    group_by(group, day) %>%
+  median_summary <- df %>% 
+    group_by(group, day) %>% 
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
@@ -244,13 +247,15 @@ plot_weight <- function(df){
     ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
+    theme_classic()+
+    theme(legend.position = "none", #Get rid of legend 
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
 
-#Simplified function that only plots the median line for each group.
+#Simplified function that only plots the median line for each group. 
 plot_weight_medians <- function(df){
-  median_summary <- df %>%
-    group_by(group, day) %>%
+  median_summary <- df %>% 
+    group_by(group, day) %>% 
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
     geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
