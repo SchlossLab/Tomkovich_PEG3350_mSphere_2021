@@ -13,26 +13,47 @@ library(ggtext)
 metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
 
 #Check for duplicated unique_labels
-duplicated <- metadata %>% 
+duplicated <- metadata %>%
   filter(duplicated(unique_label)) #0 duplicates
 
 #Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
 seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") #specify the col_types]
 
 #Identify samples that were sequenced twice in metadata
-duplicated <- seq_prep_metadata %>% 
+duplicated <- seq_prep_metadata %>%
   filter(duplicated(unique_label)) %>% #5 samples sequenced twice
   pull(unique_label)
 
 #Metadata for samples that were sequenced twice:
-duplicated_seq_samples <- seq_prep_metadata %>% 
+duplicated_seq_samples <- seq_prep_metadata %>%
   filter(unique_label %in% duplicated)
 
 #The notes column has important notes from the 16S library preparation that should be examined before 16S rRNA sequencing analysis:
 prep_notes <- unique(seq_prep_metadata$notes)
 #13 different types of notes, rest are NA (blank)
 
-#notes that indicate contaminated samples that should be dropped from the dataset:
+#Read in peg3350.files and cross check with seq_prep_metadata making sure there is no typos in NIAIDS, and all IDs match)
+#NOTE: Samples from plates 14-17 have not yet been sequenced so are not in peg3350.files
+
+peg3350.files <- read_csv("data/raw/peg3350.files", col_names = FALSE) #no columns in .files format
+
+peg3350.files$X1 <- sub("\\s.*", "", peg3350.files$X1) #Read only the unique label
+
+peg3350.files$X1[!peg3350.files$X1 %in% seq_prep_metadata$unique_label] #Check which samples in peg3350 files are not in seq_prep_metadata
+#[1] "FMTMotility9"   "M3WM1Dn5_S97"   "M3WM3D1_S98"    "M5WMR10D11"     "M5WMR10D14"     "M5WMR10D6_S285"
+#[7] "M5WMR5D11"      "M5WMR5D14"      "M5WMR5D6_S369"  "M5WMR6D11"      "M5WMR6D14"      "M5WMR6D6_S370"
+#[13] "M5WMR7D11"      "M5WMR7D14"      "M5WMR7D6_S371"  "M5WMR8D11"      "M5WMR8D14"      "M5WMR8D6_S283"
+#[19] "M5WMR9D11"      "M5WMR9D14"      "M5WMR9D6_S284"  "PBSD4Motility9" "mock10"         "mock11"
+#[25] "mock12"         "mock13"         "mock1"          "mock2"          "mock3"          "mock4"
+#[31] "mock5"          "mock6"          "mock7"          "mock8"          "mock9"          "water10"
+#[37] "water11"        "water12"        "water13"        "water1"         "water2"         "water3"
+#[43] "water4"         "water5"         "water6"         "water7"         "water8"         "water9"
+## All these above samples are in peg3350 files and not in seq_prep_metadata
+
+sum(duplicated(seq_prep_metadata$unique_label)) #Total: 5 duplicates
+seq_prep_metadata$unique_label[duplicated(seq_prep_metadata$unique_label)] # Duplicates M5WMR5D1"  "M3WM1Dn5"  "M3WM3D1"   "M5WMR5D10" "M5WMR7D10"
+
+notes that indicate contaminated samples that should be dropped from the dataset:
 "NOTE from Lucas: columns 9 and 10 contain material from 9-12 on the bead plate because of epMotion mistake."
 "NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
 "Lucas' note had a C or 6, left sample label as is, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
@@ -49,12 +70,12 @@ contaminated_notes <- c("NOTE from Lucas: columns 9 and 10 contain material from
 )
 
 #Create list of unique_label for the contaminated files to remove
-contaminated_samples <- seq_prep_metadata %>% 
-  filter(notes %in% contaminated_notes) %>% 
+contaminated_samples <- seq_prep_metadata %>%
+  filter(notes %in% contaminated_notes) %>%
   mutate(grep_prefix = "'^", # ^ indicates the start of a string
          grep_suffix = "_.*'") %>%  #Add columns to construct regexp to remove these sequences from the project data/raw folder to exclude contaminated samples from 16S gene rRNA sequencing analysis. . in _.* is to avoid matching to files that don't have an underscore after pattern is matched
   unite(col = "grep_name", grep_prefix, unique_label, grep_suffix, sep = "", remove = TRUE) %>% #merge the 3 columns into 1 column to create the bash commands
-  pull(grep_name) %>% 
+  pull(grep_name) %>%
   noquote() # remove quotes around bash commands
 paste(contaminated_samples, sep =" \n", collapse = " ") # print all rows
 #Use this list with a for loop from the command line to remove these sequences from data raw
@@ -136,8 +157,8 @@ get_rel_abund_median_day <- function(x){
 
 #Function to pull significant taxa (adjusted p value < 0.05) after statistical analysis
 pull_significant_taxa <- function(dataframe, taxonomic_level){
-  dataframe %>% 
-    filter(p.value.adj <= 0.05) %>% 
+  dataframe %>%
+    filter(p.value.adj <= 0.05) %>%
     pull({{ taxonomic_level }}) #Embracing transforms taxonomic_level argument into a column name
 }
 
@@ -149,29 +170,29 @@ tidy_histology_pairwise <- function(spread_pairwise){
 }
 
 #Functions related to 16S rRNA sequencing analysis----
-#Function to format distance matrix generated with mothur for use in R. 
+#Function to format distance matrix generated with mothur for use in R.
 #Source: Sze et al. mSphere 2019 https://github.com/SchlossLab/Sze_PCRSeqEffects_mSphere_2019/blob/master/code/vegan_analysis.R
 read_dist <- function(dist_file_name){
-  
+
   linear_data <- scan(dist_file_name, what="character", sep="\n", quiet=TRUE)
-  
+
   n_samples <- as.numeric(linear_data[1])
   linear_data <- linear_data[-1]
-  
+
   samples <- str_replace(linear_data, "\t.*", "")
   linear_data <- str_replace(linear_data, "[^\t]*\t", "")
   linear_data <- linear_data[-1]
-  
+
   distance_matrix <- matrix(0, nrow=n_samples, ncol=n_samples)
-  
+
   for(i in 1:(n_samples-1)){
     row <- as.numeric(unlist(str_split(linear_data[i], "\t")))
     distance_matrix[i+1,1:length(row)] <- row
   }
-  
+
   distance_matrix <- distance_matrix + t(distance_matrix)
   rownames(distance_matrix) <- samples
-  
+
   as.dist(distance_matrix)
 }
 
@@ -185,8 +206,8 @@ intersect_all <- function(a,b,...){
 #Arguments: df = dataframe to plot
 #When using the function can add line to specify x axis scale (scale_x_continuous())
 plot_cfu_data <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
+  median_summary <- df %>%
+    group_by(group, day) %>%
     summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
   #Plot cfu for just the inital 10days
   cfu_plot <- ggplot(NULL) +
@@ -202,18 +223,15 @@ plot_cfu_data <- function(df){
     geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()+
-    theme(legend.position = "bottom",
-          legend.key= element_rect(colour = "transparent", fill = "transparent"),
-          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
+    theme_classic()
 }
 
-#Function to plot weight. 
+#Function to plot weight.
 #Arguments: df = dataframe you want to plot
 #When using the function can add line to specify x axis scale (scale_x_continuous())
 plot_weight <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
+  median_summary <- df %>%
+    group_by(group, day) %>%
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
@@ -226,15 +244,13 @@ plot_weight <- function(df){
     ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()+
-    theme(legend.position = "none", #Get rid of legend 
-          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
+    theme_classic()
 }
 
-#Simplified function that only plots the median line for each group. 
+#Simplified function that only plots the median line for each group.
 plot_weight_medians <- function(df){
-  median_summary <- df %>% 
-    group_by(group, day) %>% 
+  median_summary <- df %>%
+    group_by(group, day) %>%
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
     geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
@@ -248,4 +264,3 @@ plot_weight_medians <- function(df){
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme_classic()
 }
-
