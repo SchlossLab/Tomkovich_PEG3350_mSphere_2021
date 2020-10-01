@@ -155,8 +155,10 @@ label <- cfu_kruskal_wallis_adjust %>%
   pull(p.signif)
 
 cfu <- plot_cfu_data(cfudata) +
-  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10),
-                     limits = c(-1, 11))
+  scale_x_continuous(breaks = c(0:10),
+                     limits = c(-1, 11),
+                     minor_breaks = c(-.5:10.5))
+
 save_plot(filename = "results/figures/1_day_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of weight change data----
@@ -178,13 +180,15 @@ weightdata_subset <- weightdata %>%
   filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
 weight <- plot_weight(weightdata_subset) +
-  scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10),
-                     limits = c(-3, 11))
+  scale_x_continuous(breaks = c(-2:10),
+                     limits = c(-2.5, 10.5),
+                     minor_breaks = c(-2.5:10.5))
 save_plot(filename = "results/figures/1_day_PEG_weight.png", weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 y_position <- 2 #Change for the plot showing just the median lines
 v2_weight <- plot_weight_medians(weightdata_subset)+
-  scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10),
-                     limits = c(-3, 11))
+  scale_x_continuous(breaks = c(-2:10),
+                     limits = c(-3, 11),
+                     minor_breaks = c(-2.5:10.5))
 save_plot(filename = "results/figures/1_day_PEGv2_weight.png", v2_weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 

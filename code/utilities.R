@@ -54,7 +54,7 @@ peg3350.files$X1[!peg3350.files$X1 %in% seq_prep_metadata$unique_label] #Check w
 sum(duplicated(seq_prep_metadata$unique_label)) #Total: 5 duplicates
 seq_prep_metadata$unique_label[duplicated(seq_prep_metadata$unique_label)] # Duplicates M5WMR5D1"  "M3WM1Dn5"  "M3WM3D1"   "M5WMR5D10" "M5WMR7D10"
 
-notes that indicate contaminated samples that should be dropped from the dataset:
+#notes that indicate contaminated samples that should be dropped from the dataset:
 "NOTE from Lucas: columns 9 and 10 contain material from 9-12 on the bead plate because of epMotion mistake."
 "NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
 "Lucas' note had a C or 6, left sample label as is, NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
@@ -268,5 +268,7 @@ plot_weight_medians <- function(df){
     ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()
+    theme_classic()+
+    theme(legend.position = "none", #Get rid of legend
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
