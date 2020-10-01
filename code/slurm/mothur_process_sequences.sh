@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=mothur_motilityp1-13
+#SBATCH --job-name=mothur_motilityp1-17
 
 # Resources
 # For MPI, increase ntasks-per-node
@@ -16,10 +16,10 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=40GB
-#SBATCH --time=20:00:00
+#SBATCH --time=10:00:00
 
 # Account
-#SBATCH --account=pschloss99
+#SBATCH --account=pschloss1
 #SBATCH --partition=standard
 
 # Logs
