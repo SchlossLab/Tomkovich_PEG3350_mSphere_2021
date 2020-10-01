@@ -18,7 +18,9 @@ duplicated <- metadata %>%
   filter(duplicated(unique_label)) #0 duplicates
 
 #Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
-seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") #specify the col_types]
+seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") %>% #specify the col_types]
+  mutate(unique_label = replace(unique_label, unique_label == "FMT_from_Motility_9", "FMTMotility9"), #rename FMT & PBS gavage samples by removing the underscores to match fastq file names 
+         unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9"))       
 
 #Identify samples that were sequenced twice in metadata
 duplicated <- seq_prep_metadata %>%
@@ -32,28 +34,6 @@ duplicated_seq_samples <- seq_prep_metadata %>%
 #The notes column has important notes from the 16S library preparation that should be examined before 16S rRNA sequencing analysis:
 prep_notes <- unique(seq_prep_metadata$notes)
 #13 different types of notes, rest are NA (blank)
-
-#Read in peg3350.files and cross check with seq_prep_metadata making sure there is no typos in NIAIDS, and all IDs match)
-#NOTE: Samples from plates 14-17 have not yet been sequenced so are not in peg3350.files
-
-peg3350.files <- read_csv("data/raw/peg3350.files", col_names = FALSE) #no columns in .files format
-
-peg3350.files$X1 <- sub("\\s.*", "", peg3350.files$X1) #Read only the unique label
-
-peg3350.files$X1[!peg3350.files$X1 %in% seq_prep_metadata$unique_label] #Check which samples in peg3350 files are not in seq_prep_metadata
-#[1] "FMTMotility9"   "M3WM1Dn5_S97"   "M3WM3D1_S98"    "M5WMR10D11"     "M5WMR10D14"     "M5WMR10D6_S285"
-#[7] "M5WMR5D11"      "M5WMR5D14"      "M5WMR5D6_S369"  "M5WMR6D11"      "M5WMR6D14"      "M5WMR6D6_S370"
-#[13] "M5WMR7D11"      "M5WMR7D14"      "M5WMR7D6_S371"  "M5WMR8D11"      "M5WMR8D14"      "M5WMR8D6_S283"
-#[19] "M5WMR9D11"      "M5WMR9D14"      "M5WMR9D6_S284"  "PBSD4Motility9" "mock10"         "mock11"
-#[25] "mock12"         "mock13"         "mock1"          "mock2"          "mock3"          "mock4"
-#[31] "mock5"          "mock6"          "mock7"          "mock8"          "mock9"          "water10"
-#[37] "water11"        "water12"        "water13"        "water1"         "water2"         "water3"
-#[43] "water4"         "water5"         "water6"         "water7"         "water8"         "water9"
-## All these above samples are in peg3350 files and not in seq_prep_metadata
-
-sum(duplicated(seq_prep_metadata$unique_label)) #Total: 5 duplicates
-seq_prep_metadata$unique_label[duplicated(seq_prep_metadata$unique_label)] # Duplicates M5WMR5D1"  "M3WM1Dn5"  "M3WM3D1"   "M5WMR5D10" "M5WMR7D10"
-
 #notes that indicate contaminated samples that should be dropped from the dataset:
 "NOTE from Lucas: columns 9 and 10 contain material from 9-12 on the bead plate because of epMotion mistake."
 "NOTE from Lucas: Columns 3,4,5 contain contamination from plate_7, column 1 due to epMotion error. A conservative estimate because only column 4 got the excess liquid from another column on plate 7, but since it was overflowing I couldn't tell if the contents ran into the columns next to it (3 and 5) or just stayed in a puddle in the grooves in the top of the plate. But better safe than sorry I figured. Check if possiblee to examine bioinformatically."
@@ -94,6 +74,24 @@ paste(contaminated_samples, sep =" \n", collapse = " ") # print all rows
 "swapped with B7 when samples were arrayed into extraction plates"
 "Realized from Katie's note there was tube_label date typo that has now been corrected in make_metadata_file, D5 was initially entered as 3/21/19 instead of 3/31/19"
 
+#Read in peg3350.files and cross check with seq_prep_metadata making sure there is no typos in NIAIDS, and all IDs match)
+#NOTE: Samples from plates 14-17 have not yet been sequenced so are not in peg3350.files
+
+peg3350.files <- read_csv("data/raw/peg3350.files", col_names = FALSE) #no columns in .files format
+
+peg3350.files$X1 <- sub("\\s.*", "", peg3350.files$X1) #Read only the unique label
+
+peg3350.files$X1[!peg3350.files$X1 %in% seq_prep_metadata$unique_label] #Check which samples in peg3350 files are not in seq_prep_metadata
+#[1] "mock10"  "mock11"  "mock12"  "mock13"  "mock14"  "mock15"  "mock16"  "mock17" 
+#[9] "mock1"   "mock2"   "mock3"   "mock4"   "mock5"   "mock6"   "mock7"   "mock8"  
+#[17] "mock9"   "water10" "water11" "water12" "water13" "water14" "water15" "water16"
+#[25] "water17" "water1"  "water2"  "water3"  "water4"  "water5"  "water6"  "water7" 
+#[33] "water8"  "water9"
+## All these control samples are in peg3350 files and not in seq_prep_metadata
+
+sum(duplicated(seq_prep_metadata$unique_label)) #Total: 5 duplicates
+seq_prep_metadata$unique_label[duplicated(seq_prep_metadata$unique_label)] # Duplicates M5WMR5D1"  "M3WM1Dn5"  "M3WM3D1"   "M5WMR5D10" "M5WMR7D10"
+#Removed the second set of sequences for all 5 duplicate's second sample from plate 8, 11, and 12 since all of these samples underwent an additional freeze thaw cycle
 
 #Functions----
 #Function to have y-axis in scientific notation----
