@@ -77,11 +77,13 @@ paste(contaminated_samples, sep =" \n", collapse = " ") # print all rows
 #Read in peg3350.files and cross check with seq_prep_metadata making sure there is no typos in NIAIDS, and all IDs match)
 #NOTE: Samples from plates 14-17 have not yet been sequenced so are not in peg3350.files
 
-peg3350.files <- read_csv("data/raw/peg3350.files", col_names = FALSE) #no columns in .files format
+peg3350.files <- read_tsv("data/raw/peg3350.files", col_names=c("unique_label", "read_1", "read_2")) #no columns in .files format
 
-peg3350.files$X1 <- sub("\\s.*", "", peg3350.files$X1) #Read only the unique label
+peg3350.files_unique_label <- peg3350.files %>% select(unique_label) #Read only the unique label
 
-peg3350.files$X1[!peg3350.files$X1 %in% seq_prep_metadata$unique_label] #Check which samples in peg3350 files are not in seq_prep_metadata
+#Check which samples in peg3350 files are not in seq_prep_metadata
+seq_files_missing_from_metadata <- anti_join(peg3350.files, seq_prep_metadata) %>% 
+  pull(unique_label)
 #[1] "mock10"  "mock11"  "mock12"  "mock13"  "mock14"  "mock15"  "mock16"  "mock17" 
 #[9] "mock1"   "mock2"   "mock3"   "mock4"   "mock5"   "mock6"   "mock7"   "mock8"  
 #[17] "mock9"   "water10" "water11" "water12" "water13" "water14" "water15" "water16"
