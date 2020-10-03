@@ -167,8 +167,9 @@ label <- cfu_kruskal_wallis_adjust %>%
 
 #Plot cfu for just the inital 10days
 cfu_10d <- plot_cfu_data(cfudata_10dsubset) +
-      scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10),
-                         limits = c(-1, 11))
+      scale_x_continuous(breaks = c(0:10),
+                         limits = c(-1, 11),
+                         minor_breaks = c(-.5:10.5))
 save_plot(filename = "results/figures/5_days_PEG_cfu_10d.png", cfu_10d, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for all timepoints:
@@ -185,7 +186,8 @@ label <- cfu_kruskal_wallis_adjust %>%
 #Plot of cfu data for all days of the experiment
 cfu <- plot_cfu_data(cfudata) +
   scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
-                     limits = c(-1, 31))
+                     limits = c(-1, 31),
+                     minor_breaks = c(-.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines separating days on days with statistically sig points
 save_plot(filename = "results/figures/5_days_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Weight change plot----
@@ -213,7 +215,8 @@ label <- weight_kruskal_wallis_adjust %>%
 #Plot of weight data for days -15 through 10 of the experiment:
 weight_subset_plot <- plot_weight(weight_subset) +
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10),
-                     limits = c(-16, 11))
+                     limits = c(-16, 11),
+                     minor_breaks = c(-5.5:1.5)) #only show grey lines separating days on days with statistically sig points)
 save_plot(filename = "results/figures/5_days_PEG_weight_subset.png", weight_subset_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 
@@ -221,14 +224,17 @@ save_plot(filename = "results/figures/5_days_PEG_weight_subset.png", weight_subs
 #Note don't need to redo statistical annotations since there were no significant differences past 1 day post-infection
 weight_plot <- plot_weight(weightdata) +
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
-                     limits = c(-16, 31))
+                     limits = c(-16, 31),
+                     minor_breaks = c(-5.5,1.5)) #only show grey lines around days on days with statistically sig points)
 
 #Plots with just the median lines for each group
 v2_weight_subset <- plot_weight_medians(weight_subset) +
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10),
-                     limits = c(-16, 11))
+                     limits = c(-16, 11),
+                     minor_breaks = c(-5.5:1.5)) #only show grey lines separating days on days with statistically sig points)
 save_plot(filename = "results/figures/5_days_PEGv2_weight_subset.png", v2_weight_subset, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 v2_weight <- plot_weight_medians(weightdata) +
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
-                     limits = c(-16, 31))
+                     limits = c(-16, 31),
+                     minor_breaks = c(-5.5,1.5)) #only show grey lines around days on days with statistically sig points
