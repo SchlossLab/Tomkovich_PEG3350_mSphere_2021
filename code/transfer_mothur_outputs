@@ -5,8 +5,6 @@ cp data/mothur/peg3350.opti_mcc.shared data/process/peg3350.opti_mcc.shared
 
 cp data/mothur/peg3350.taxonomy data/process/peg3350.taxonomy
 
-cp data/mothur/peg3350.taxonomy data/process/peg3350.taxonomy
-
 cp data/mothur/peg3350.opti_mcc.groups.ave-std.summary data/process/peg3350.opti_mcc.groups.ave-std.summary
 
 cp data/mothur/peg3350.opti_mcc.groups.rarefaction data/process/peg3350.opti_mcc.groups.rarefaction
