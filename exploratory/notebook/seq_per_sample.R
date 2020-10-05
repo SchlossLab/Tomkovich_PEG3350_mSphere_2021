@@ -48,7 +48,7 @@ data %>% ggplot(aes(x=nseqs)) + geom_histogram() + scale_x_log10(limits = c(-1, 
 
 #Rarefy to 1000:
 n_1000 <- data %>% filter(nseqs < 1000) %>% select(unique_label) %>% nrow()
-#Lose 125 samples
+#Lose 125 samples (number includes 14 water controls & PBS gavage solution)
 
 #Rarefy to 500:
 n_500 <- data %>% filter(nseqs < 500) %>% select(unique_label) %>% nrow()
