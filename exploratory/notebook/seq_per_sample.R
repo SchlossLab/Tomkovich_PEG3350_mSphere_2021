@@ -56,12 +56,12 @@ n_500 <- data %>% filter(nseqs < 500) %>% select(unique_label) %>% nrow()
 
 #Rarefy to 1500:
 n_1500 <- data %>% filter(nseqs < 1500) %>% select(unique_label) %>% nrow()
-#I'll lose 158 samples.
+#Lose 158 samples.
 
 #Rarefy to 2000:
 n_2000 <- data %>% filter(nseqs < 2000) %>% select(unique_label) %>% nrow()
-#I'll lose 189 samples.
+#Lose 189 samples.
 
 #Rarefy to 4000:
 n_4000 <- data %>% filter(nseqs < 4000) %>% select(unique_label) %>% nrow()
-#I'll lose 291 samples.
+#Lose 291 samples.
