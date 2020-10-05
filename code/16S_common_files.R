@@ -25,9 +25,13 @@ pcoa_water <- all_pcoa_data %>%
   ggplot(aes(x=axis1, y=axis2, color = group))+
   geom_point(size=2)+
   theme_classic()+
+  theme(legend.position = c(.9, .2))+
+  theme(legend.position = c(.9, .3))+
+  xlim(-0.425, 0.65)+
+  ylim(-0.525, 0.5)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-save_plot(filename = paste0("exploratory/notebook/pcoa_samples_water.png"), pcoa_water, base_height = 5, base_width = 4.5)
+save_plot(filename = paste0("exploratory/notebook/pcoa_samples_water.png"), pcoa_water, base_height = 5, base_width = 5)
 
 #PCoA data of tissue samples collected from the experiment endpoint with their corresponding stool samples
 pcoa_tissues_v_stool <- all_pcoa_data %>% 
@@ -35,9 +39,12 @@ pcoa_tissues_v_stool <- all_pcoa_data %>%
   ggplot(aes(x=axis1, y=axis2, color = sample_type))+
   geom_point(size=2)+
   theme_classic()+
+  theme(legend.position = c(.9, .3))+
+  xlim(-0.425, 0.65)+
+  ylim(-0.525, 0.5)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-save_plot(filename = paste0("exploratory/notebook/pcoa_tissues_v_stools.png"), pcoa_tissues_v_stool, base_height = 5, base_width = 4.5)
+save_plot(filename = paste0("exploratory/notebook/pcoa_tissues_v_stools.png"), pcoa_tissues_v_stool, base_height = 5, base_width = 5)
 
 #Read in alpha diversity metrics for all samples----
 diversity_data <- read_tsv("data/process/peg3350.opti_mcc.groups.ave-std.summary") %>%
