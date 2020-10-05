@@ -69,7 +69,7 @@ taxonomy <- read_tsv(file="data/process/peg3350.taxonomy") %>%
 #Warning message: ~80 OTUs that are unknown, filled in with NAs
 
 # Import otu_data for samples
-otu_data <- read_tsv("data/process/peg3350.opti_mcc.shared", col_types=cols(Group=col_character())) %>%
+otu_data <- read_tsv("data/process/peg3350.opti_mcc.0.03.subsample.shared", col_types=cols(Group=col_character())) %>%
   select(-label, -numOtus) %>%
   rename(unique_label = Group) %>% #group is the same as unique_label in the metadata data frame
   gather(-unique_label, key="otu", value="count") %>%

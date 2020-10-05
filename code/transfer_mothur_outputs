@@ -1,7 +1,7 @@
 #Copies output files from data/mothur  needed for downstream analysis into process/
 #Shortens file names in process/
 
-cp data/mothur/peg3350.opti_mcc.shared data/process/peg3350.opti_mcc.shared
+cp data/mothur/peg3350.opti_mcc.0.03.subsample.shared data/process/peg3350.opti_mcc.0.03.subsample.shared
 
 cp data/mothur/peg3350.taxonomy data/process/peg3350.taxonomy
 
