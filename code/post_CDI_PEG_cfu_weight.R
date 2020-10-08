@@ -163,14 +163,14 @@ label <- cfu_kruskal_wallis_adjust %>%
 cfu <- plot_cfu_data(cfudata) +
   scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 15, 20, 25, 30),
                      limits = c(-1, 31),
-                     minor_breaks = c(.5:10.5, 14.5, 15.5)) #only show grey lines indicating day for stat sig days
+                     minor_breaks = c(.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))
 save_plot(filename = "results/figures/post_CDI_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of just a subset of data (through day 15)
 cfu_subset <- plot_cfu_data(cfudata %>% filter(day < 16)) +
   scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 15),
                      limits = c(-1, 16),
-                     minor_breaks = c(.5:10.5, 14.5, 15.5)) #only show grey lines indicating day for stat sig days
+                     minor_breaks = c(-.5:10.5, 14.5, 15.5)) #only show grey lines indicating day for stat sig days
 save_plot(filename = "results/figures/post_CDI_PEG_cfu_subset.png", cfu_subset, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Weight change plot----
@@ -190,7 +190,7 @@ label <- weight_kruskal_wallis_adjust %>%
 weight <- plot_weight(weightdata %>% filter(day %in% c(-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15))) + #Narrow weight data to just timepoints where we have data for at least 3 groups
   scale_x_continuous(breaks = c(-2, -4, -2, 0, 2, 4, 6, 8, 10, 15),
                      limits = c(-3, 16),
-                     minor_breaks = c(.5:8.5)) #only show grey lines indicating day for stat sig days
+                     minor_breaks = c(-2.5:10.5, 14.5, 15.5)) 
 save_plot(filename = "results/figures/post_CDI_PEG_weight.png", weight, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Show just median lines for each group
