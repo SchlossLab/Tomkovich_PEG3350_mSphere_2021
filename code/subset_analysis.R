@@ -1,37 +1,9 @@
 source("code/utilities.R")
 
 #Check for overlap in CFU/Weight figs----------
-#1 day PEG Subset
-one_day_PEG_metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
-           group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
-           group == "M1" & exp_num %in% c("M6"))%>%
-  mutate(group=factor(group, levels=c("C", "1RM1", "M1")))
-
-
-
-#5 days PEG Subset
-five_day_PEG_metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M3","M4", "M5", "M8")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
-           group == "WM" & exp_num %in% c("M3","M4", "M5", "M8")|
-           group == "WMC" & exp_num %in% c("M3","M4")|
-           group == "WMR" & exp_num %in% c("M5","M6")) %>%
-  mutate(group=factor(group, levels=c("C", "WM", "WMC", "WMR"))) 
-
-
-#Post CDI PEG Subset
-post_cdi_PEG_metadata <- metadata %>%
-filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M7","M9")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
-           group == "CWM" & exp_num %in% c("M6","M7", "M9")|
-           group == "RM" & exp_num %in% c("M7","M9")|
-           group == "FRM" & exp_num %in% c("M9")) %>%
-  mutate(group=factor(group, levels=c("C", "CWM", "RM", "FRM")))  
-
-#inner join to check for overlap
-one_day_PEG %>% rbind(five_day_PEG) %>% inner_join(post_cdi_PEG)
+#inner join to check for overlap (no overlap present)
+one_day_PEG_metadata %>% inner_join(five_day_PEG_metadata)
+one_day_PEG_metadata %>% rbind(five_day_PEG_metadata) %>% inner_join(post_cdi_PEG_metadata)
 
 
 #Split sequenced samples into 1 day PEG, 5 day PEG, and post-CDI subsets----------

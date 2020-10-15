@@ -5,14 +5,8 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http
 color_groups <- c("C", "CWM", "FRM", "RM")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
 
-#Narrow metadata to relevant groups and experiments (C, CWM, RM, FRM)----
-metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M7","M9")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
-         group == "CWM" & exp_num %in% c("M6","M7", "M9")|
-         group == "RM" & exp_num %in% c("M7","M9")|
-         group == "FRM" & exp_num %in% c("M9")) %>%
-  mutate(group=factor(group, levels=c("C", "CWM", "RM", "FRM")))  # Make sure group is treated as a factor
+#Read in narrowed down metadata to relevant groups and experiments (C, CWM, RM, FRM)----
+metadata <- post_cdi_PEG_metadata
 
 # of mice represented in the figure
 mice <- length(unique(metadata$unique_mouse_id))

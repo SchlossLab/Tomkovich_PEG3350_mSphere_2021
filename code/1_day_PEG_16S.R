@@ -6,13 +6,9 @@ color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbre
 color_groups <- c( "1RM1", "C", "M1")
 color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
 
-#Read in and create 1_Day_PEG metadata
-metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
-           group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
-           group == "M1" & exp_num %in% c("M6"))%>%
-  mutate(group=factor(group, levels=c("C", "1RM1", "M1")))  # Make sure group is treated as a factor
+#Read in 1_Day_PEG metadata
+metadata <- one_day_PEG_metadata
+
 
 # Pull in diversity for alpha diversity analysis
 diversity_data <- semi_join(diversity_data, metadata, by = c("unique_label")) #Only the samples that correspond to the 1_Day_PEG Subset

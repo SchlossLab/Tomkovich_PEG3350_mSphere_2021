@@ -5,14 +5,8 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http
 color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
 
-#Narrow metadata to relevant groups and experiments (WM, WMC, WMR, C)----
-metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M3","M4", "M5", "M8")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
-         group == "WM" & exp_num %in% c("M3","M4", "M5", "M8")|
-         group == "WMC" & exp_num %in% c("M3","M4")|
-         group == "WMR" & exp_num %in% c("M5","M6")) %>%
-  mutate(group=factor(group, levels=c("C", "WM", "WMC", "WMR")))  # Make sure group is treated as a factor
+#Read in narrowed down metadata to relevant groups and experiments (WM, WMC, WMR, C)----
+metadata <- five_day_PEG_metadata
 
 # of mice represented in the figure
 mice <- length(unique(metadata$unique_mouse_id))
