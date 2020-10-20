@@ -15,7 +15,7 @@ metadata <- metadata %>%
   mutate(group=factor(group, levels=c("C", "1RM1", "M1")))  # Make sure group is treated as a factor
 
 # Pull in diversity for alpha diversity analysis
-diversity_data <- semi_join(diversity_data, metadata, by = c("unique_label")) #Only the samples that correspond to the 1_Day_PEG Subset
+diversity_data_subset <- semi_join(diversity_data, metadata, by = c("unique_label")) #Only the samples that correspond to the 1_Day_PEG Subset
 
 #Alpha Diversity Analysis - Shannon Plot 
 shannon_1_Day_PEG <- diversity_data %>%
@@ -50,23 +50,10 @@ diversity_data_subset <- diversity_data %>%
 
 
 #Plot Shannon Diversity overtime
-Shannon_1_Day_PEG_Overtime <- diversity_data_subset %>%
-  group_by(group, day) %>%
-  mutate(median_shannon = median(shannon)) %>%
-  ggplot(x = day, y = shannon, colour = group)+
-  geom_point(mapping = aes(x = day, y = shannon, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_shannon, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                    values=color_scheme,
-                    breaks=color_groups,
-                    labels=color_labels) +
+Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset) +
   scale_x_continuous(breaks = c(-2:7),
-                     limits = c(-3, 8),
-                     minor_breaks = c(-2.5:7.5))+
-  theme_classic()+
-  theme(legend.position = c(1,.25),
-        text = element_text(size = 14), # Change font size for entire plot
-        axis.ticks.x = element_blank())
+                     limits = c(-3,8),
+                     minor_breaks = c(-2.5:7.5))
   save_plot("results/figures/shannon_1_Day_PEG_Overtime.png", Shannon_1_Day_PEG_Overtime)
   
 

@@ -300,3 +300,25 @@ plot_weight_medians <- function(df){
     theme(legend.position = "none", #Get rid of legend
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
+
+#Function to Plot Shannon Diversity Overtime
+plot_shannon_overtime <- function(df) {
+  median_summary <- df %>%
+    group_by(group, day) %>%
+    mutate(median_shannon = median(shannon)) %>%
+    ggplot(x = day, y = shannon, colour = group)+
+    geom_point(mapping = aes(x = day, y = shannon, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_line(mapping = aes(x = day, y = median_shannon, color = group), alpha = 0.6, size = 1) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels) +
+    theme_classic()+
+    theme(legend.position = c(.9,.25),
+          text = element_text(size = 14), # Change font size for entire plot
+          axis.ticks.x = element_blank())
+}
+
+
+
+
