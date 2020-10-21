@@ -9,7 +9,7 @@ one_day_PEG_metadata %>% rbind(five_day_PEG_metadata) %>% inner_join(post_cdi_PE
 #Split sequenced samples into 1 day PEG, 5 day PEG, and post-CDI subsets----------
 
 #Full list of samples with sequence data that includes all timepoints
-pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>% slice_sample(n=100) %>%
+pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>% 
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename(unique_label = group) %>% #group is the same as unique_label in the metadata data frame
   right_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
