@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=mothur_m_1-17_alpha_beta_test
+#SBATCH --job-name=pcoa_subsets
 
 # Resources
 # For MPI, increase ntasks-per-node
@@ -38,4 +38,4 @@
 #                   #
 #####################
 
-mothur code/alpha_beta.batch
+mothur code/subset_dist_pcoa.batch
