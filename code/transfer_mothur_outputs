@@ -20,3 +20,13 @@ cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.nmds.stress data/process/
 cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes
 
 cp data/mothur/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings
+
+#Make directories for PCoA subsets
+mkdir data/process/1_day_PEG
+mkdir data/process/5_day_PEG
+mkdir data/process/post_CDI_PEG
+
+#Transfer bray-curtis output files from 3 subset analyses to corresponding folder in data/process/1_day_PEG
+cp data/mothur/1_day_PEG/*braycurtis* data/process/1_day_PEG/
+cp data/mothur/5_day_PEG/*braycurtis* data/process/5_day_PEG/
+cp data/mothur/post_CDI_PEG/*braycurtis* data/process/post_CDI_PEG/
