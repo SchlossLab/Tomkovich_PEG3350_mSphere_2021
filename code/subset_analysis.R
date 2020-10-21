@@ -33,7 +33,7 @@ pcoa_5_day_PEG <- pcoa_data %>%
 #Concatenate output and add - between each sample.
 five_day_PEG_unique_labels <- (paste(pcoa_5_day_PEG, collapse = "-"))
 
-#5 day PEG samples----
+#Post-CDI PEG samples----
 pcoa_post_CDI_PEG <- pcoa_data %>% 
   inner_join(post_cdi_PEG_metadata) %>% 
   pull(unique_label) %>%
