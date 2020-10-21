@@ -76,6 +76,53 @@ $(REFS)/trainset14_032015.% :
 #	Run scripts to generate figures and tables
 #
 ################################################################################
+$(FIGS)/1_day_PEG_cfu.png : code/utilities.R\
+code/1_day_PEG_cfu_weight.R
+	 Rscript code/1_day_PEG_cfu_weight.R
+
+$(FIGS)/1_day_PEG_weight.png : code/utilities.R\
+code/1_day_PEG_cfu_weight.R
+	Rscript code/1_day_PEG_cfu_weight.R
+
+$(FIGS)/1_day_PEGv2_weight.png : code/utilities.R\
+code/1_day_PEG_cfu_weight.R
+	Rscript code/1_day_PEG_cfu_weight.R
+
+$(FIGS)/5_days_PEG_cfu_10d.png : code/utilities.R\
+code/5_days_PEG_cfu_weight.R
+	Rscript code/5_days_PEG_cfu_weight.R
+
+$(FIGS)/5_days_PEG_cfu.png : code/utilities.R\
+code/5_days_PEG_cfu_weight.R
+	Rscript code/5_days_PEG_cfu_weight.R
+
+$(FIGS)/5_days_PEG_weight_subset.png : code/utilities.R\
+code/5_days_PEG_cfu_weight.R
+	Rscript code/5_days_PEG_cfu_weight.R
+
+$(FIGS)/5_days_PEGv2_weight_subset.png : code/utilities.R\
+code/5_days_PEG_cfu_weight.R
+	Rscript code/5_days_PEG_cfu_weight.R
+
+$(FIGS)/post_CDI_PEG_cfu_subset.png : code/utilities.R\
+code/post_CDI_PEG_cfu_weight.R
+	Rscript code/post_CDI_PEG_cfu_weight.R
+
+$(FIGS)/post_CDI_PEG_cfu.png : code/utilities.R\
+code/post_CDI_PEG_cfu_weight.R
+	Rscript code/post_CDI_PEG_cfu_weight.R
+
+$(FIGS)/post_CDI_PEG_weight_10d.png : code/utilities.R\
+code/post_CDI_PEG_cfu_weight.R
+	Rscript code/post_CDI_PEG_cfu_weight.R
+
+$(FIGS)/post_CDI_PEG_weight.png : code/utilities.R\
+code/post_CDI_PEG_cfu_weight.R
+	Rscript code/post_CDI_PEG_cfu_weight.R
+
+$(FIGS)/post_CDI_PEGv2_weight.png : code/utilities.R\
+code/post_CDI_PEG_cfu_weight.R
+	Rscript code/post_CDI_PEG_cfu_weight.R
 
 
 
