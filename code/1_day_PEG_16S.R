@@ -1,24 +1,22 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
+source("code/subset_analysis.R") #Read in PCoA subsets
+
 
 #Define color scheme to match 1 Day Peg Plots
 color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c( "1RM1", "C", "M1")
 color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
 
-#Read in and create 1_Day_PEG metadata
-metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
-           group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
-           group == "M1" & exp_num %in% c("M6"))%>%
-  mutate(group=factor(group, levels=c("C", "1RM1", "M1")))  # Make sure group is treated as a factor
 
-# Pull in diversity for alpha diversity analysis
-diversity_data_subset <- semi_join(diversity_data, metadata, by = c("unique_label")) #Only the samples that correspond to the 1_Day_PEG Subset
+# Pull in diversity for alpha diversity analysis using one day PEG subset from defined in utilties.R
+diversity_data_subset <- semi_join(diversity_data, one_day_PEG_metadata, by = c("unique_label")) #Only the samples that correspond to the 1_Day_PEG Subset
+
+#Statistical Analysis----
+set.seed(19881117) #Match seed used in mothur analysis scripts
 
 #Alpha Diversity Analysis - Shannon Plot 
-shannon_1_Day_PEG <- diversity_data %>%
+shannon_1_Day_PEG <- one_day %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>%
   ggplot(aes(x=group, y=shannon, colour=group))+
@@ -47,7 +45,6 @@ save_plot("results/figures/shannon_1_Day_PEG.png", shannon_1_Day_PEG)
 
 diversity_data_subset <- diversity_data %>%
   filter(day %in% c(-2, -1, 0, 1, 2, 4, 7))
-
 
 #Plot Shannon Diversity overtime
 Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset) +
@@ -78,6 +75,40 @@ Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset) +
   save_plot("results/figures/richness_1_Day_PEG.png", sobs_1_Day_PEG)
   
   
+#Plot PCoA data----
+  plot_pcoa <- function(df){
+    ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day)) +
+      geom_point(size=2) +
+      scale_colour_manual(name=NULL,
+                          values=color_scheme,
+                          breaks=color_groups,
+                          labels=color_labels)+
+      #    scale_alpha_continuous(range = c(.3, 1),
+      #                           breaks= c(2, 4, 6, 8, 10),
+      #                           labels=c(2, 4, 6, 8, 10))+
+      coord_fixed() +
+      #    xlim(-0.4, 0.65)+
+      #    ylim(-0.45, 0.6)+
+      labs(x="PCoA 1",
+           y="PCoA 2",
+           alpha= "Day") +
+      theme_classic()
+  }
   
+  #Pull 1_Day_PEG subset of PCoA data
+  pcoa_1_day_PEG <- pcoa_data %>% 
+    inner_join(one_day_PEG_metadata)
+  
+  #PCoA plot that combines the 2 experiments and save the plot----
+  pcoa_plot <- plot_pcoa(pcoa_1_day_PEG)+
+    labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+         y = paste("PCokA 2 (", all_axis2,"%)", sep = ""))
+  save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_plot, base_height = 5, base_width = 4.5)
+  
+  pcoa_plot_time <- plot_pcoa(pcoa_1_day_PEG)+
+    labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+         y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
+    theme( legend.position = "none")+ #remove legend
+    facet_wrap(~ day)
   
   
