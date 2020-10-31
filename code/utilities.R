@@ -319,6 +319,26 @@ plot_shannon_overtime <- function(df) {
           axis.ticks.x = element_blank())
 }
 
+#Function to plot PCoA data
+plot_pcoa <- function(df){
+  ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day)) +
+    geom_point(size=2) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    #    scale_alpha_continuous(range = c(.3, 1),
+    #                           breaks= c(2, 4, 6, 8, 10),
+    #                           labels=c(2, 4, 6, 8, 10))+
+    coord_fixed() +
+    #    xlim(-0.4, 0.65)+
+    #    ylim(-0.45, 0.6)+
+    labs(x="PCoA 1",
+         y="PCoA 2",
+         alpha= "Day") +
+    theme_classic()
+}
+
 
 
 
