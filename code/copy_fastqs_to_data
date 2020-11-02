@@ -121,7 +121,7 @@ ls -l | wc -l
 #3065 files remaining. 39 pairs of fastq files were removed.
 
 #Remove 2nd set of sequences for the 5 samples that were accidentally sequenced twice:
-#The second time these sequneces were sampled was in plate 8, 11, and 12. We will specify the S### to remove the sequences that correspond to those samples.
+#The second time these sequences were sampled was in plate 8, 11, and 12. We will specify the S### to remove the sequences that correspond to those samples.
 #Keep the sequences from these samples that were part of plate 1 and 2:
 #M5WMR5D1_S341, M5WMR5D10_S348, M5WMR7D10_350, M3WM1Dn5_S199, M3WM3D1_S288
 
