@@ -2,7 +2,7 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
 #List of unique_labels corresponding to the stool samples for the tissue samples that were sequenced
 stool_corresponding_to_tissues <- metadata %>% 
-  filter(sample_type == "cecum") %>% #select oone of the 3 types of tissue that were sequenced for each mouse
+  filter(sample_type == "cecum") %>% #select one of the 3 types of tissue that were sequenced for each mouse
   separate(unique_label, into = c("tissue", "corresponding_stool_sample"), sep = 1) %>% 
   pull(corresponding_stool_sample)
 
@@ -12,6 +12,7 @@ all_pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.
   rename(unique_label = group) %>% #group is the same as id in the metadata data frame
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
+                                 str_detect(unique_label, "FMT") ~ "FMT",
                                  TRUE ~ sample_type))
 
 #Read in .loadings file to add percent variation represented by PCoA axis
