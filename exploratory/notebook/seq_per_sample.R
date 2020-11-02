@@ -181,3 +181,25 @@ tibble(effects = c("sample_type", "miseq_run", "miseq_run:ext_plate", "sample_ty
                              r_sq = sample_miseq_ext_plate_adonis$aov.tab$R2[1:5],
                              p = sample_miseq_ext_plate_adonis$aov.tab$Pr[1:5]) %>% 
   write_tsv("exploratory/notebook/adonis_sample_miseq_plate.tsv") 
+
+#Plot PCoA data with different variables of interest assigned to the color aesthetic----
+plot_pcoa_variable <- function(color_variable){
+  all_pcoa_data %>%   
+    left_join(prep_variables, by = "unique_label") %>% #Add variables for ext plate number and miseq run
+    ggplot(aes(x=axis1, y=axis2, color = {{ color_variable }}))+
+    geom_point(size=2)+
+    theme_classic()+
+    theme(legend.position = "bottom")+
+    xlim(-0.425, 0.65)+
+    ylim(-0.525, 0.5)+
+    labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+         y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
+}
+
+#PCoA plot by sample_type
+plot_pcoa_variable(sample_type)+
+  ggsave("exploratory/notebook/pcoa_sample_type.pdf")
+plot_pcoa_variable(ext_plate)+
+  ggsave("exploratory/notebook/pcoa_ext_plate.pdf")
+plot_pcoa_variable(miseq_run)+
+  ggsave("exploratory/notebook/pcoa_miseq_run.pdf")
