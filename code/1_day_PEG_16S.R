@@ -73,42 +73,39 @@ Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset) +
           text = element_text(size = 14), # Change font size for entire plot
           axis.ticks.x = element_blank())
   save_plot("results/figures/richness_1_Day_PEG.png", sobs_1_Day_PEG)
+
+ #Pull 1_Day_PEG subset of PCoA data
+  pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+    select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+    rename("unique_label" = group) %>%
+    right_join(diversity_data_subset, by= "unique_label") %>% #merge metadata and PCoA data frames
+    mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
+    filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
   
+  #Pull axes from loadings file
+  pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+  axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+  axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
   
-#Plot PCoA data----
-  plot_pcoa <- function(df){
-    ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day)) +
-      geom_point(size=2) +
-      scale_colour_manual(name=NULL,
-                          values=color_scheme,
-                          breaks=color_groups,
-                          labels=color_labels)+
-      #    scale_alpha_continuous(range = c(.3, 1),
-      #                           breaks= c(2, 4, 6, 8, 10),
-      #                           labels=c(2, 4, 6, 8, 10))+
-      coord_fixed() +
-      #    xlim(-0.4, 0.65)+
-      #    ylim(-0.45, 0.6)+
-      labs(x="PCoA 1",
-           y="PCoA 2",
-           alpha= "Day") +
-      theme_classic()
-  }
-  
-  #Pull 1_Day_PEG subset of PCoA data
-  pcoa_1_day_PEG <- pcoa_data %>% 
-    inner_join(one_day_PEG_metadata)
-  
-  #PCoA plot that combines the 2 experiments and save the plot----
-  pcoa_plot <- plot_pcoa(pcoa_1_day_PEG)+
-    labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-         y = paste("PCokA 2 (", all_axis2,"%)", sep = ""))
-  save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_plot, base_height = 5, base_width = 4.5)
-  
-  pcoa_plot_time <- plot_pcoa(pcoa_1_day_PEG)+
-    labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-         y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
-    theme( legend.position = "none")+ #remove legend
-    facet_wrap(~ day)
+    
+  pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
+    labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+         y = paste("PCoA 2 (", axis2,"%)", sep = ""))
+    save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
+    
+    pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
+      labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Anotations for each axis from loadings file
+           y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+      labs(title = 'Day: {frame_time}') + #Adds time variable to title
+      transition_time(day)+  #Day variable used to cycle through time on animation
+      shadow_mark() #Shows previous timepoints
+    
+    # Implement better frames per second for animation
+    pcoa_gif <- animate(pcoa_animated, duration = 7, fps = 10,
+                        res = 150, width = 20, height = 20, unit = "cm", renderer = gifski_renderer())
+    
+    # Save as gif file
+    anim_save(animation = pcoa_gif, filename = 'results/1_Day_PEG_pcoa_over_time.gif')
+
   
   
