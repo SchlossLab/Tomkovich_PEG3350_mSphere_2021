@@ -14,36 +14,12 @@ n_per_day_summary <- pcoa_data %>% count(day)
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
-dist <- read_dist("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
-
-#Get factor levels for mouse_id variable:
-mouse_id_levels <- unique(as.factor(pcoa_data$unique_mouse_id))
-#48 levels
-
-#Get factor levels for unique_cage_no variable:
-unique_cage_levels <- unique(as.factor(pcoa_data$unique_cage_no))
-#25 levels
+#Distance matrix of 5_day_PEG PCoA subset
+dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 
 #Plot PCoA data----
-#Function to plot PCoA data
-plot_pcoa <- function(df){
-  ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day)) +
-    geom_point(size=2) +
-    scale_colour_manual(name=NULL,
-                        values=color_scheme,
-                        breaks=color_groups,
-                        labels=color_labels)+
-#    scale_alpha_continuous(range = c(.3, 1),
-#                           breaks= c(2, 4, 6, 8, 10),
-#                           labels=c(2, 4, 6, 8, 10))+
-    coord_fixed() +
-#    xlim(-0.4, 0.65)+
-#    ylim(-0.45, 0.6)+
-    labs(x="PCoA 1",
-         y="PCoA 2",
-         alpha= "Day") +
-    theme_classic()
-}
+
+#Read in pcoa loadings and axes for 5_day_PEG PCoA subset
 
 
 #PCoA plot that combines the 2 experiments and save the plot----
@@ -58,26 +34,12 @@ pcoa_plot_time <- plot_pcoa(pcoa_data)+
   theme(legend.position = "none")+ #remove legend
   facet_wrap(~ day)
 
-pcoa_plot_dn5 <- plot_pcoa(pcoa_data %>% filter(day == "-5"))+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-
-pcoa_plot_d1 <- plot_pcoa(pcoa_data %>% filter(day == "1"))+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-
-pcoa_plot_d4 <- plot_pcoa(pcoa_data %>% filter(day == "4"))+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-
-pcoa_plot_d10 <- plot_pcoa(pcoa_data %>% filter(day == "10"))+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
+#PCoAs of select timepoints of interst
 
 #Animation of PCoA plot over time for all sequenced samples ----
 #Source: Will Close's Code Club from 4/12/2020 on plot animation
 pcoa_animated <- plot_pcoa(pcoa_data)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Anotations for each axis from loadings file
+  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
   transition_time(day)+  #Day variable used to cycle through time on animation
@@ -92,13 +54,16 @@ anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time.gi
 
 #Alpha diversity analysis----
 
+#Subset diversity data to just the 5-day PEG subset:
+diversity_data <- five_day_PEG_subset(diversity_data)
+
 group_day_summary <- diversity_data %>%
   group_by(group) %>%
   count(day)
 
 #Plot of shannon diversity at days 1, 4, and 10 when we have sequencing data for 3 groups
-shannon_d1_4_10 <- diversity_data %>%
-  filter(day %in% c(1, 4, 10)) %>%
+shannon_select_days <- diversity_data %>%
+  filter(day %in% c(-15, -10, -5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 15, 20, 25, 30)) %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>% #create a column of median values for each group
   ungroup() %>%
@@ -117,14 +82,14 @@ shannon_d1_4_10 <- diversity_data %>%
   labs(title=NULL,
        x=NULL,
        y="Shannon Diversity Index")+
-  ylim(0, 3.5)+
+  ylim(0, 4)+
   facet_wrap(~ day)+
   theme_classic()+
   theme(legend.position = "none",
         text = element_text(size = 16), # Change font size for entire plot
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank()) #Remove x axis ticks
-save_plot("results/figures/shannon_d1_4_10.png", shannon_d1_4_10) #Use save_plot instead of ggsave because it works better with cowplot
+save_plot("results/figures/5_days_PEG_shannon.png", shannon_select_days) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of WMR group over the days we have sequencing data for 3 groups
 shannon_WMR <- diversity_data %>%
@@ -147,18 +112,18 @@ shannon_WMR <- diversity_data %>%
   labs(title=NULL,
        x=NULL,
        y="Shannon Diversity Index")+
-  ylim(0, 3.5)+
+  ylim(0, 4)+
   facet_wrap(~ day)+
   theme_classic()+
   theme(legend.position = "none",
         text = element_text(size = 16), # Change font size for entire plot
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank()) #Remove x axis ticks
-save_plot("results/figures/shannon_WMR.png", shannon_WMR) #Use save_plot instead of ggsave because it works better with cowplot
+save_plot("results/figures/5_days_PEG_shannon_WMR.png", shannon_WMR) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of sobs (richness) at days 1, 4, and 10 when we have sequencing data for 3 groups
-sobs_d1_4_10 <- diversity_data %>%
-  filter(day %in% c(1, 4, 10)) %>%
+sobs_select_days <- diversity_data %>%
+  filter(day %in% c(-15, -10, -5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 15, 20, 25, 30)) %>%
   group_by(group, day) %>%
   mutate(median_sobs = median(sobs)) %>% #create a column of median values for each group
   ungroup() %>%
@@ -184,7 +149,7 @@ sobs_d1_4_10 <- diversity_data %>%
         text = element_text(size = 16), # Change font size for entire plot
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank()) #Remove x axis ticks
-save_plot("results/figures/richness_d1_4_10.png", sobs_d1_4_10) #Use save_plot instead of ggsave because it works better with cowplot
+save_plot("results/figures/5_days_PEG_richness.png", sobs_select_days) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of sobs (richness) for the WMR group over the days we have sequencing data for 3 groups
 sobs_WMR <- diversity_data %>%
@@ -214,9 +179,11 @@ sobs_WMR <- diversity_data %>%
         text = element_text(size = 16), # Change font size for entire plot
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank()) #Remove x axis ticks
-save_plot("results/figures/richness_WMR.png", sobs_WMR) #Use save_plot instead of ggsave because it works better with cowplot
+save_plot("results/figures/5_days_PEG_richness_WMR.png", sobs_WMR) #Use save_plot instead of ggsave because it works better with cowplot
 
 #OTU analysis----
+#11/4/20 Note this was implemented for only plates1_2 of 16S sequenced samples.
+#Need to update to include all timepoints/tissues now that we have all the sequence data
 
 #Figure out which days we have sequencing data for from the 3 groups:
 test <- pcoa_data %>% group_by(group) %>% count(day)
