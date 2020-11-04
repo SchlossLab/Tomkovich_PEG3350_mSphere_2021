@@ -6,14 +6,11 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http
 color_groups <- c("C", "CWM", "FRM", "RM")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
 
-
-
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
-
 #Plot PCoA data----
-#Pull post_CDI_PEG subset of PCoA data
+#Pull post_CDI_PEG subset of PCoA data (check 1_day_PEG_16S.R, need to read in the mothur output files for this subset)
 pcoa_post_cdi_peg <- all_pcoa_data %>% 
   inner_join(post_cdi_PEG_metadata)
 
@@ -29,12 +26,11 @@ pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
   theme( legend.position = "none")+ #remove legend
   facet_wrap(~ day)
 
-
-
 #Alpha Diversity Shannon Analysis----
 
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
-diversity_data_subset <- semi_join(diversity_data, post_cdi_PEG_metadata, by = c("unique_label")) #Only the samples that correspond to the post CDI PEG subset
+diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>% 
+  add_row(diversity_data %>% filter(str_detect(unique_label, "FMT"))) #Also add the FMT gavage samples to this subset
 
 shannon_post_cdi_peg <- diversity_data_subset %>%
   group_by(group, day) %>%
