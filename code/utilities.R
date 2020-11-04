@@ -11,7 +11,8 @@ library(ggtext)
 library(vegan)
 
 #Read in metadata----
-metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
+metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) %>%  #specify column types
+  mutate(group = factor(group, levels = unique(as.factor(group))))#Transform group variable into factor variable
 
 #Check for duplicated unique_labels
 duplicated <- metadata %>%
@@ -91,39 +92,55 @@ seq_files_missing_from_metadata <- anti_join(peg3350.files, seq_prep_metadata) %
 #[33] "water8"  "water9"
 ## All these control samples are in peg3350 files and not in seq_prep_metadata
 
-sum(duplicated(seq_prep_metadata$unique_label)) #Total: 5 duplicates
-seq_prep_metadata$unique_label[duplicated(seq_prep_metadata$unique_label)] # Duplicates M5WMR5D1"  "M3WM1Dn5"  "M3WM3D1"   "M5WMR5D10" "M5WMR7D10"
 #Removed the second set of sequences for all 5 duplicate's second sample from plate 8, 11, and 12 since all of these samples underwent an additional freeze thaw cycle
+duplicates_to_drop <- seq_prep_metadata %>% 
+  filter(unique_label %in% duplicated) %>% 
+  filter(miseq_run != "motility_plates_1-2") #Drop all duplicate samples that were sequenced after the library that containted plates1-2
 
-#Define Subsets 1 day PEG, 5 day PEG, post CDI PEG--------
-#1 day PEG Subset
-one_day_PEG_metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
-           group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
-           group == "M1" & exp_num %in% c("M6"))%>%
-  mutate(group=factor(group, levels=c("C", "1RM1", "M1"))) # Make sure group is treated as a factor
-
-#5 days PEG Subset
-five_day_PEG_metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M3","M4", "M5", "M8")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
-           group == "WM" & exp_num %in% c("M3","M4", "M5", "M8")|
-           group == "WMC" & exp_num %in% c("M3","M4")|
-           group == "WMR" & exp_num %in% c("M5","M6")) %>%
-  mutate(group=factor(group, levels=c("C", "WM", "WMC", "WMR"))) # Make sure group is treated as a factor
-
-#Post CDI PEG Subset
-post_cdi_PEG_metadata <- metadata %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) %>% #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-  filter(group == "C" & exp_num %in% c("M7","M9")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
-           group == "CWM" & exp_num %in% c("M6","M7", "M9")|
-           group == "RM" & exp_num %in% c("M7","M9")|
-           group == "FRM" & exp_num %in% c("M9")) %>%
-  mutate(group=factor(group, levels=c("C", "CWM", "RM", "FRM"))) # Make sure group is treated as a factor
-
+#Drop the 5 duplicates from seq_prep_metadata (these were already removed from data/raw, see code/copy_fastqs_to_data)
+seq_prep_metadata <- seq_prep_metadata %>% 
+  anti_join(duplicates_to_drop)
 
 #Functions----
+
+#Functions to define the 3 main subsets of mice used throughout the paper----
+#Function to create 1 day PEG Subset of a given dataframe (df) :
+one_day_PEG_subset <- function(df){
+  df %>% 
+  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
+           group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
+           group == "M1" & exp_num %in% c("M6"))
+} 
+
+#Test
+one_day_PEG_metadata <- one_day_PEG_subset(metadata)
+  
+#5 days PEG Subset
+five_day_PEG_subset <- function(df){
+  df %>% 
+    filter(group == "C" & exp_num %in% c("M3","M4", "M5", "M8")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
+             group == "WM" & exp_num %in% c("M3","M4", "M5", "M8")|
+             group == "WMC" & exp_num %in% c("M3","M4")|
+             group == "WMR" & exp_num %in% c("M5","M6")) 
+}    
+
+#Test
+five_day_PEG_metadata <- five_day_PEG_subset(metadata) %>%
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
+ 
+#Post CDI PEG Subset
+post_cdi_PEG_subset <- function(df){
+  df %>% 
+    filter(group == "C" & exp_num %in% c("M7","M9")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
+             group == "CWM" & exp_num %in% c("M6","M7", "M9")|
+             group == "RM" & exp_num %in% c("M7","M9")|
+             group == "FRM" & exp_num %in% c("M9"))
+} 
+#Test
+post_cdi_PEG_metadata <- post_cdi_PEG_subset(metadata) %>%
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon"))  #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
+
+
 #Function to have y-axis in scientific notation----
 fancy_scientific <- function(l) {
   # turn in to character string in scientific notation
@@ -230,7 +247,7 @@ intersect_all <- function(a,b,...){
   Reduce(intersect, list(a,b,...))
 }
 
-#Functions used to plot data----
+#Functions to plot data----
 #Function to plot cfu data
 #Arguments: df = dataframe to plot
 #When using the function can add line to specify x axis scale (scale_x_continuous())
