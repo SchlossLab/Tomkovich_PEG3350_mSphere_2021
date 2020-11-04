@@ -5,8 +5,8 @@ color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbre
 color_groups <- c( "1RM1", "C", "M1")
 color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
 
-#Read in narrowed down metadata to relevant groups and experiments (C, 1RM1, M1)----
-metadata <- one_day_PEG_metadata
+#Subset metadata to relevant groups and experiments (C, 1RM1, M1) for this subset of mice----
+metadata <- one_day_PEG_subset(metadata)
 
 
 # of mice represented in the figure

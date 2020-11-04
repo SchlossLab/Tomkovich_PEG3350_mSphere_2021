@@ -111,9 +111,6 @@ one_day_PEG_subset <- function(df){
            group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
            group == "M1" & exp_num %in% c("M6"))
 } 
-
-#Test
-one_day_PEG_metadata <- one_day_PEG_subset(metadata)
   
 #5 days PEG Subset
 five_day_PEG_subset <- function(df){
