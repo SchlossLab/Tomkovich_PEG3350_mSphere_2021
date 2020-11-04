@@ -1,6 +1,5 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
-source("code/subset_analysis.R") #Read in PCoA subsets
 
 #Define color scheme to match post_CDI_PEG Plots----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
