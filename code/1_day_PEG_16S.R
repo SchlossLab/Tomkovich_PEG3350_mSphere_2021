@@ -13,7 +13,7 @@ color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350"
 diversity_data_subset <- semi_join(diversity_data, one_day_PEG_metadata, by = c("unique_label")) #Only the samples that correspond to the 1_Day_PEG Subset
 
 #Statistical Analysis----
-set.seed(19881117) #Match seed used in mothur analysis scripts
+set.seed(19760620) #Same seed used for mothur analysis
 
 #Alpha Diversity Analysis - Shannon Plot 
 shannon_1_Day_PEG <- one_day %>%

@@ -10,7 +10,7 @@ color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery
 
 
 #Statistical Analysis----
-set.seed(19881117) #Match seed used in mothur analysis scripts
+set.seed(19760620) #Same seed used for mothur analysis
 
 
 #Plot PCoA data----

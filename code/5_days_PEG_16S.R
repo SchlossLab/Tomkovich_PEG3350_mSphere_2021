@@ -12,7 +12,7 @@ metadata <- metadata %>%
 n_per_day_summary <- pcoa_data %>% count(day)
 
 #Statistical Analysis----
-set.seed(19881117) #Match seed used in mothur analysis scripts
+set.seed(19760620) #Same seed used for mothur analysis
 
 dist <- read_dist("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 
