@@ -121,10 +121,6 @@ five_day_PEG_subset <- function(df){
              group == "WMR" & exp_num %in% c("M5","M6")) 
 }    
 
-#Test
-five_day_PEG_metadata <- five_day_PEG_subset(metadata) %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
- 
 #Post CDI PEG Subset
 post_cdi_PEG_subset <- function(df){
   df %>% 
@@ -133,10 +129,6 @@ post_cdi_PEG_subset <- function(df){
              group == "RM" & exp_num %in% c("M7","M9")|
              group == "FRM" & exp_num %in% c("M9"))
 } 
-#Test
-post_cdi_PEG_metadata <- post_cdi_PEG_subset(metadata) %>%
-  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon"))  #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
-
 
 #Function to have y-axis in scientific notation----
 fancy_scientific <- function(l) {
