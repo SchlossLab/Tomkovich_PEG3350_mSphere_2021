@@ -5,8 +5,9 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http
 color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
 
-#Read in narrowed down metadata to relevant groups and experiments (WM, WMC, WMR, C)----
-metadata <- five_day_PEG_metadata
+#Subset metadata to relevant groups and experiments (WM, WMC, WMR, C)----
+metadata <- five_day_PEG_subset(metadata) %>% 
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon"))  #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
 
 # of mice represented in the figure
 mice <- length(unique(metadata$unique_mouse_id))
@@ -225,6 +226,6 @@ weight_plot <- plot_weight(weightdata) +
 v2_weight_subset <- plot_weight_medians(weight_subset) +
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10),
                      limits = c(-16, 11),
-                     minor_breaks = c(-5.5:1.5)) #only show grey lines separating days on days with statistically sig points)
+                     minor_breaks = c(-15.5:10.5)) #only show grey lines separating days on days with statistically sig points)
 save_plot(filename = "results/figures/5_days_PEGv2_weight_subset.png", v2_weight_subset, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
