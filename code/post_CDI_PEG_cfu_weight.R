@@ -5,8 +5,9 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http
 color_groups <- c("C", "CWM", "FRM", "RM")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
 
-#Read in narrowed down metadata to relevant groups and experiments (C, CWM, RM, FRM)----
-metadata <- post_cdi_PEG_metadata
+#Subset metadata to relevant groups and experiments (C, CWM, RM, FRM)----
+metadata <- post_cdi_PEG_subset(metadata) %>% 
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon"))  #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
 
 # of mice represented in the figure
 mice <- length(unique(metadata$unique_mouse_id))
