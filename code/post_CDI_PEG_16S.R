@@ -6,19 +6,31 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http
 color_groups <- c("C", "CWM", "FRM", "RM")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
 
+# Subset alpha diversity data (16S_common_files) to analyze one day PEG subset mice
+diversity_data_subset <- post_cdi_PEG_subset(diversity_data)
+
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
 #Plot PCoA data----
 #Pull post_CDI_PEG subset of PCoA data (check 1_day_PEG_16S.R, need to read in the mothur output files for this subset)
-pcoa_post_cdi_peg <- all_pcoa_data %>% 
-  inner_join(post_cdi_PEG_metadata)
+pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  right_join(diversity_data_subset, by= "unique_label") %>% #merge metadata and PCoA data frames (This drops some of our 16S data for early timepoints)
+  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+
+#Pull axes from loadings file
+pcoa_axes_1_day_PEG <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
 #PCoA plot that combines the 2 experiments and save the plot----
-pcoa_plot <- plot_pcoa(pcoa_post_cdi_peg)+
+pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCokA 2 (", all_axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_plot, base_height = 5, base_width = 4.5)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
 
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
