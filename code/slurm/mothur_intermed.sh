@@ -38,4 +38,4 @@
 #                   #
 #####################
 
-mothur code/communitytype.batch
+mothur code/community_type.batch
