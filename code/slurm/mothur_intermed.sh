@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=pcoa_subsets
+#SBATCH --job-name=communitytype
 
 # Resources
 # For MPI, increase ntasks-per-node
@@ -38,4 +38,4 @@
 #                   #
 #####################
 
-mothur code/subset_dist_pcoa.batch
+mothur code/communitytype.batch

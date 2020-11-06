@@ -1,0 +1,6 @@
+# Generate community type analysis based on shared file at the genus level
+#Use Dirichlet Multinomial Mixtures method (the default in mothur) to create the community types
+set.dir(input=data/process, output=data/process, seed=19760620)
+
+# Shorten filenames
+get.communitytype(shared = peg3350.subsample.genus.shared, method = dmm)
