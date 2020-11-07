@@ -1,0 +1,44 @@
+[3J[H[2JLinux version
+
+Using ReadLine,Boost,HDF5,GSL
+mothur v.1.43.0
+Last updated: 11/06/2020
+by
+Patrick D. Schloss
+
+Department of Microbiology & Immunology
+
+University of Michigan
+http://www.mothur.org
+
+When using, please cite:
+Schloss, P.D., et al., Introducing mothur: Open-source, platform-independent, community-supported software for describing and comparing microbial communities. Appl Environ Microbiol, 2009. 75(23):7537-41.
+
+Distributed under the GNU General Public License
+
+Type 'help()' for information on the commands that are available
+
+For questions and analysis support, please visit our forum at https://forum.mothur.org
+
+Type 'quit()' to exit program
+
+[NOTE]: Setting random seed to 19760620.
+
+Batch Mode
+
+Unable to open code/communitytype.batch. Trying mothur's executable location /home/tomkoset/miniconda3/envs/mothur_v1.43/bin/communitytype.batch.
+Unable to open /home/tomkoset/miniconda3/envs/mothur_v1.43/bin/communitytype.batch.
+[ERROR]: unable to open /home/tomkoset/miniconda3/envs/mothur_v1.43/bin/communitytype.batch batch file, please correct.
+
+
+It took 0 seconds to run 0 commands from /home/tomkoset/miniconda3/envs/mothur_v1.43/bin/communitytype.batch batch file.
+
+
+
+************************************************************
+************************************************************
+************************************************************
+Detected 1 [ERROR] messages, please review.
+************************************************************
+************************************************************
+************************************************************
