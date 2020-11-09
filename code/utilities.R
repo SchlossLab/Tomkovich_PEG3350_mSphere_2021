@@ -21,7 +21,14 @@ duplicated <- metadata %>%
 #Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
 seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") %>% #specify the col_types]
   mutate(unique_label = replace(unique_label, unique_label == "FMT_from_Motility_9", "FMTMotility9"), #rename FMT & PBS gavage samples by removing the underscores to match fastq file names 
-         unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9"))       
+         unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9")) %>% 
+  select(unique_label, ext_plate, miseq_run) #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
+
+#Join metadata to 16S seq prep metadata
+metadata <- full_join(metadata, seq_prep_metadata) %>% 
+  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
+                                 str_detect(unique_label, "FMT") ~ "FMT",
+                                 TRUE ~ sample_type)) 
 
 #Identify samples that were sequenced twice in metadata
 duplicated <- seq_prep_metadata %>%
