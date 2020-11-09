@@ -117,3 +117,4 @@ agg_otu_data <- inner_join(agg_otu, taxa_info, by="key") %>%
   mutate(otu=paste0(gsub('TU0*', 'TU ', otu))) %>%
   separate(otu, into = c("bactname", "OTUnumber"), sep = "\\ [(]", remove = FALSE) %>% #Add columns to separate bacteria name from OTU number to utilize ggtext so that only bacteria name is italicized
   mutate(otu_name = glue("*{bactname}* ({OTUnumber}")) #Markdown notation so that only bacteria name is italicized
+
