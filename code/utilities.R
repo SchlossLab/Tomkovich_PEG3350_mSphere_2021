@@ -20,11 +20,12 @@ duplicated <- metadata %>%
 #Read in metadata from library preparation for samples that underwent 16S rRNA gene sequencing----
 seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") %>% #specify the col_types]
   mutate(unique_label = replace(unique_label, unique_label == "FMT_from_Motility_9", "FMTMotility9"), #rename FMT & PBS gavage samples by removing the underscores to match fastq file names 
-         unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9")) %>% 
-  select(unique_label, ext_plate, miseq_run) #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
-
+         unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9"))
+  
 #Join metadata to 16S seq prep metadata
-metadata <- full_join(metadata, seq_prep_metadata) %>% 
+metadata <- seq_prep_metadata %>% 
+  select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
+  full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
   mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
                                  str_detect(unique_label, "FMT") ~ "FMT",
                                  TRUE ~ sample_type)) %>% 
@@ -85,7 +86,7 @@ paste(contaminated_samples, sep =" \n", collapse = " ") # print all rows
 #Read in peg3350.files and cross check with seq_prep_metadata making sure there is no typos in NIAIDS, and all IDs match)
 #NOTE: Samples from plates 14-17 have not yet been sequenced so are not in peg3350.files
 
-peg3350.files <- read_tsv("data/raw/peg3350.files", col_names=c("unique_label", "read_1", "read_2")) #no columns in .files format
+peg3350.files <- read_tsv("data/process/peg3350.files", col_names=c("unique_label", "read_1", "read_2")) #no columns in .files format
 
 peg3350.files_unique_label <- peg3350.files %>% select(unique_label) #Read only the unique label
 
