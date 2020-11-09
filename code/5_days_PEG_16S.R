@@ -9,48 +9,8 @@ color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day
 metadata <- metadata %>%
   mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
-n_per_day_summary <- pcoa_data %>% count(day)
-
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
-
-#Distance matrix of 5_day_PEG PCoA subset
-dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
-
-#Plot PCoA data----
-
-#Read in pcoa loadings and axes for 5_day_PEG PCoA subset
-
-
-#PCoA plot that combines the 2 experiments and save the plot----
-pcoa_plot <- plot_pcoa(pcoa_data)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/5_days_PEG_pcoa.png"), pcoa_plot, base_height = 5, base_width = 4.5)
-
-pcoa_plot_time <- plot_pcoa(pcoa_data)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
-  theme(legend.position = "none")+ #remove legend
-  facet_wrap(~ day)
-
-#PCoAs of select timepoints of interst
-
-#Animation of PCoA plot over time for all sequenced samples ----
-#Source: Will Close's Code Club from 4/12/2020 on plot animation
-pcoa_animated <- plot_pcoa(pcoa_data)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
-  labs(title = 'Day: {frame_time}') + #Adds time variable to title
-  transition_time(day)+  #Day variable used to cycle through time on animation
-  shadow_mark() #Shows previous timepoints
-
-# Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = 10, fps = 10,
-                    res = 150, width = 20, height = 20, unit = "cm")
-
-# Save as gif file
-anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time.gif')
 
 #Alpha diversity analysis----
 
@@ -72,10 +32,10 @@ shannon_select_days <- diversity_data %>%
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-#  scale_shape_manual(name=NULL,
-#                     values=shape_scheme,
-#                     breaks=shape_experiment,
-#                     labels=shape_experiment) +
+  #  scale_shape_manual(name=NULL,
+  #                     values=shape_scheme,
+  #                     breaks=shape_experiment,
+  #                     labels=shape_experiment) +
   scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   geom_errorbar(aes(ymax = median_shannon, ymin = median_shannon), color = "gray50", size = 1)+ #Add lines to indicate the median for each group to the plot
   geom_jitter(size=2, alpha=0.6, show.legend = FALSE) +
@@ -180,6 +140,45 @@ sobs_WMR <- diversity_data %>%
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank()) #Remove x axis ticks
 save_plot("results/figures/5_days_PEG_richness_WMR.png", sobs_WMR) #Use save_plot instead of ggsave because it works better with cowplot
+
+#Distance matrix of 5_day_PEG PCoA subset----
+dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
+
+#Plot PCoA data----
+
+#Read in pcoa loadings and axes for 5_day_PEG PCoA subset
+
+
+#PCoA plot that combines the 2 experiments and save the plot----
+pcoa_plot <- plot_pcoa(pcoa_data)+
+  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))
+save_plot(filename = paste0("results/figures/5_days_PEG_pcoa.png"), pcoa_plot, base_height = 5, base_width = 4.5)
+
+pcoa_plot_time <- plot_pcoa(pcoa_data)+
+  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
+  theme(legend.position = "none")+ #remove legend
+  facet_wrap(~ day)
+
+#PCoAs of select timepoints of interst
+
+#Animation of PCoA plot over time for all sequenced samples ----
+#Source: Will Close's Code Club from 4/12/2020 on plot animation
+pcoa_animated <- plot_pcoa(pcoa_data)+
+  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
+  labs(title = 'Day: {frame_time}') + #Adds time variable to title
+  transition_time(day)+  #Day variable used to cycle through time on animation
+  shadow_mark() #Shows previous timepoints
+
+# Implement better frames per second for animation
+pcoa_gif <- animate(pcoa_animated, duration = 10, fps = 10,
+                    res = 150, width = 20, height = 20, unit = "cm")
+
+# Save as gif file
+anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time.gif')
+
 
 #OTU analysis----
 #11/4/20 Note this was implemented for only plates1_2 of 16S sequenced samples.
