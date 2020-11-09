@@ -11,9 +11,8 @@ library(ggtext)
 library(vegan)
 
 #Read in metadata----
-metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) %>%  #specify column types
-  mutate(group = factor(group, levels = unique(as.factor(group))))#Transform group variable into factor variable
-
+metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
+ 
 #Check for duplicated unique_labels
 duplicated <- metadata %>%
   filter(duplicated(unique_label)) #0 duplicates
@@ -28,7 +27,8 @@ seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types
 metadata <- full_join(metadata, seq_prep_metadata) %>% 
   mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
                                  str_detect(unique_label, "FMT") ~ "FMT",
-                                 TRUE ~ sample_type)) 
+                                 TRUE ~ sample_type)) %>% 
+  mutate(group = factor(group, levels = unique(as.factor(group)))) #Transform group variable into factor variable
 
 #Identify samples that were sequenced twice in metadata
 duplicated <- seq_prep_metadata %>%
