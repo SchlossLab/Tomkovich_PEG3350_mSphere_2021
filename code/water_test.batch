@@ -22,14 +22,13 @@ count.seqs(name=current, group=current)
 
 set.dir(input=data/water_test, output=data/water_test, seed=19760620)
 set.current(processors=10)
-remove.groups(count=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.count_table, fasta=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta, taxonomy=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pds.wang.pick.taxonomy)
 cluster.split(fasta=current, count=current, taxonomy=current, cutoff=0.03, taxlevel=4)
 count.groups(count=current)
 make.shared(list=current, count=current, label=0.03)
 classify.otu(list=current, count=current, taxonomy=current, label=0.03)
 
 # Shorten filenames
-rename.file(taxonomy=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.0.03.cons.taxonomy, shared=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.shared)
+rename.file(taxonomy=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.cons.taxonomy, shared=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.shared)
 
 # Subsample data
 sub.sample(shared=peg3350.opti_mcc.shared, size=1000)
