@@ -19,7 +19,6 @@ summary.seqs(fasta=current, count=current)
 classify.seqs(fasta=current, count=current, reference=data/references/trainset16_022016.pds.fasta, taxonomy=data/references/trainset16_022016.pds.tax, cutoff=80)
 remove.lineage(fasta=current, count=current, taxonomy=current, taxon=Chloroplast-Mitochondria-unknown-Archaea-Eukaryota)
 count.seqs(name=current, group=current)
-summary.seqs(fasta=current, count=current)
 
 set.dir(input=data/water_test, output=data/water_test, seed=19760620)
 set.current(processors=10)
