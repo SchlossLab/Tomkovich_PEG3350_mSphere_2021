@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=communitytype
+#SBATCH --job-name=water_test
 
 # Resources
 # For MPI, increase ntasks-per-node
@@ -15,7 +15,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
-#SBATCH --mem=2GB
+#SBATCH --mem=20GB
 #SBATCH --time=10:00:00
 
 # Account
@@ -38,4 +38,4 @@
 #                   #
 #####################
 
-mothur code/community_type.batch
+mothur code/water_test.batch

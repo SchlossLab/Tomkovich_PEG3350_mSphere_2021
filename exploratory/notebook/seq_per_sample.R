@@ -116,7 +116,20 @@ sample_type_otus <- agg_otu_data %>%
   coord_flip()+
   theme_classic()+
   ggsave("exploratory/notebook/tissues_top_10_otus.pdf")
-  
+
+#See how OTUs in the water controls compare to the mock community controls. ----
+#In particular, examine the water and mocks from plates 14-17  
+#Make a new batch script that goes back to remove.groups and removes all samples except for the mock and water controls
+#Create list of samples to remove: 
+water_test_remove_samples <- seq_prep_metadata %>% 
+  filter(!str_detect(unique_label, "water")) %>%  #Select all samples except for the water controls
+  pull(unique_label) %>%
+  noquote() #Remove quotations from the characters
+#Concatenate output and add - between each sample.
+water_test_remove <- (paste(water_test_remove_samples, collapse = "-"))
+#Run batch script and have results go into the data/water_test directory
+
+
 # See how plate number and library number contribute to community structure----
 #Statistical analysis of PCoA data (all samples)
 set.seed(19760620) #Same seed used for mothur analysis
