@@ -22,15 +22,6 @@ seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types
   mutate(unique_label = replace(unique_label, unique_label == "FMT_from_Motility_9", "FMTMotility9"), #rename FMT & PBS gavage samples by removing the underscores to match fastq file names 
          unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9"))
   
-#Join metadata to 16S seq prep metadata
-metadata <- seq_prep_metadata %>% 
-  select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
-  full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
-  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
-                                 str_detect(unique_label, "FMT") ~ "FMT",
-                                 TRUE ~ sample_type)) %>% 
-  mutate(group = factor(group, levels = unique(as.factor(group)))) #Transform group variable into factor variable
-
 #Identify samples that were sequenced twice in metadata
 duplicated <- seq_prep_metadata %>%
   filter(duplicated(unique_label)) %>% #5 samples sequenced twice
@@ -108,6 +99,18 @@ duplicates_to_drop <- seq_prep_metadata %>%
 #Drop the 5 duplicates from seq_prep_metadata (these were already removed from data/raw, see code/copy_fastqs_to_data)
 seq_prep_metadata <- seq_prep_metadata %>% 
   anti_join(duplicates_to_drop)
+
+#Join metadata to 16S seq prep metadata
+metadata <- seq_prep_metadata %>% 
+  select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
+  full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
+  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
+                                 str_detect(unique_label, "FMT") ~ "FMT",
+                                 TRUE ~ sample_type),
+         group = case_when(str_detect(unique_label, "water") ~ "water",
+                           str_detect(unique_label, "FMT") ~ "FMT",
+                           TRUE ~ group)) %>% 
+  mutate(group = factor(group, levels = unique(as.factor(group)))) #Transform group variable into factor variable
 
 #Functions----
 
