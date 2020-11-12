@@ -12,9 +12,9 @@ set.seed(19760620) #Same seed used for mothur analysis
 #Alpha Diversity Shannon Analysis----
 
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
-diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>% 
+diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>%
   add_row(diversity_data %>% filter(str_detect(unique_label, "FMT")) %>% #Also add the FMT gavage samples to this subset
-            mutate(group = as.factor("FMT"))) 
+            mutate(group = as.factor("FMT")))
 
 shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
@@ -42,8 +42,8 @@ shannon_post_cdi_peg <- diversity_data_subset %>%
         text = element_text(size = 14), # Change font size for entire plot
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank())
-shannon_post_cdi_peg_no_legend <- shannon_post_cdi_peg + 
-  theme(legend.position = "none") #Remove legend 
+shannon_post_cdi_peg_no_legend <- shannon_post_cdi_peg +
+  theme(legend.position = "none") #Remove legend
 save_plot("results/figures/post_CDI_PEG_shannon.png", shannon_post_cdi_peg_no_legend) #Save Shannon plot without legend
 
 #Extract Shannon Legend for all plots
@@ -60,15 +60,15 @@ shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
   scale_y_continuous(limits = c(0,4))+
   labs(x = "Day",
        y = "Shannon Diversity Index") +
-  theme(legend.position = "none") #Removing legend to save separately 
+  theme(legend.position = "none") #Removing legend to save separately
 save_plot("results/figures/post_CDI_PEG_shannon_overtime.png", shannon_post_cdi_peg_overtime_full) #Save full Shannon over time plot without legend
 
 
 #Plot Shannon over time for first 10 days for post CDI PEG subset
-diversity_data_subset_10d <- diversity_data_subset %>% 
+diversity_data_subset_10d <- diversity_data_subset %>%
   filter(group != "FMT", #Drop FMTs
     day %in% c(-1:10))
-shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>% 
+shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10),
                      limits = c(-2,11),
@@ -81,7 +81,7 @@ save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_
 
 
 #Plot PCoA data----
-#Pull post_CDI_PEG subset of PCoA data 
+#Pull post_CDI_PEG subset of PCoA data
 pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
@@ -105,4 +105,3 @@ pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   theme( legend.position = "none")+ #remove legend
   facet_wrap(~ day)
-
