@@ -2,9 +2,9 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
 
 #Define color scheme to match post_CDI_PEG Plots----
-color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
-color_groups <- c("C", "CWM", "FRM", "RM")
-color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
+color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8", "7f5f1e") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("C", "CWM", "FRM", "RM", "FMT")
+color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350", "FMT")
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
@@ -13,7 +13,8 @@ set.seed(19760620) #Same seed used for mothur analysis
 
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
 diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>% 
-  add_row(diversity_data %>% filter(str_detect(unique_label, "FMT"))) #Also add the FMT gavage samples to this subset
+  add_row(diversity_data %>% filter(str_detect(unique_label, "FMT")) %>% #Also add the FMT gavage samples to this subset
+            mutate(group = as.factor("FMT"))) 
 
 shannon_post_cdi_peg <- diversity_data_subset %>%
   group_by(group, day) %>%
@@ -36,7 +37,7 @@ shannon_post_cdi_peg <- diversity_data_subset %>%
   ylim(0, 3.5)+
   facet_wrap(~ day)+
   theme_classic()+
-  theme(legend.position = c(.75,.25),
+  theme(legend.position = c(.88,.15),
         text = element_text(size = 14), # Change font size for entire plot
         axis.text.x= element_blank(),#Remove x axis labels
         axis.ticks.x = element_blank())
@@ -63,16 +64,11 @@ shannon_post_cdi_peg_overtime_10d <- plot_shannon_overtime(diversity_data_subset
 
 
 #Plot PCoA data----
-#Pull post_CDI_PEG subset of PCoA data (check 1_day_PEG_16S.R, need to read in the mothur output files for this subset)
-
-
-
+#Pull post_CDI_PEG subset of PCoA data 
 pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
-  #add_row(FMT) %>% 
-  #add_row(tissues_post_CDI_PEG) %>% 
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
 
@@ -85,7 +81,7 @@ axis2 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 2) %>% pull(loading) %>% roun
 pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 7, base_width = 7)
 
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
