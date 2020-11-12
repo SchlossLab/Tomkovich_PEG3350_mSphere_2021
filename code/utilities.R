@@ -100,7 +100,7 @@ duplicates_to_drop <- seq_prep_metadata %>%
 seq_prep_metadata <- seq_prep_metadata %>% 
   anti_join(duplicates_to_drop)
 
-#Join metadata to 16S seq prep metadata
+#Join metadata to 16S seq prep metadata----
 metadata <- seq_prep_metadata %>% 
   select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
   full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
