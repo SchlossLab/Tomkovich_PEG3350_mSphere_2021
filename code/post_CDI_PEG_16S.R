@@ -80,7 +80,10 @@ shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
 save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
 
 
-#Plot PCoA data----
+
+
+
+#Plot Stool + Tissue PCoA data----
 #Pull post_CDI_PEG subset of PCoA data
 pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
@@ -94,7 +97,7 @@ pcoa_axes_post_cdi_PEG <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.b
 axis1 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-#PCoA plot and save the plot----
+#PCoA plot and save the plot
 pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
@@ -122,3 +125,54 @@ pcoa_gif <- animate(pcoa_animated, duration = , fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 # Save as gif file
 anim_save(animation = pcoa_gif, filename = 'results/post_CDI_PEG_pcoa_over_time.gif')
+
+#Plot Stool Only PCoA data----
+pcoa_post_cdi_peg_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
+  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+
+#Pull axes from loadings file
+pcoa_axes_post_cdi_PEG_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+pcoa_subset_plot_stool <- plot_pcoa(pcoa_post_cdi_peg_stool)+
+  labs(x = paste("PCoA 1 (", axis1_stool, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))
+save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 7, base_width = 14)
+
+#Animate stool only PCoA over time
+pcoa_animated_stool <- pcoa_post_cdi_peg_stool %>%
+  filter(group != "FMT") %>%
+  plot_pcoa()+
+  labs(x = paste("PCoA 1 (", axis1_stool, "%)", sep = ""), #Anotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))+
+  labs(title = 'Day: {frame_time}') + #Adds time variable to title
+  transition_time(day)+  #Day variable used to cycle through time on animation
+  shadow_mark() #Shows previous timepoints
+
+# Implement better frames per second for animation
+pcoa_gif_stool <- animate(pcoa_animated, duration = , fps = 10,
+                    res = 150, width = 20, height = 20, unit = "cm")
+# Save as gif file
+anim_save(animation = pcoa_gif_stool, filename = 'results/post_CDI_PEG_stool_pcoa_over_time.gif')
+
+#Plot Tissue Only PCoA data----
+pcoa_post_cdi_peg_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
+  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+#Pull axes from loadings file
+pcoa_axes_post_cdi_PEG_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+pcoa_subset_plot_tissues <- plot_pcoa(pcoa_post_cdi_peg_tissues)+
+  labs(x = paste("PCoA 1 (", axis1_tissues, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2_tissues,"%)", sep = ""))
+save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pcoa_subset_plot_tissues, base_height = 7, base_width = 14)
