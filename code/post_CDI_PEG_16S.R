@@ -94,14 +94,31 @@ pcoa_axes_post_cdi_PEG <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.b
 axis1 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-#PCoA plot that combines the 2 experiments and save the plot----
+#PCoA plot and save the plot----
 pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 7, base_width = 7)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 7, base_width = 14)
 
+#PCoA plot over time as a still and a as an animation
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   theme( legend.position = "none")+ #remove legend
   facet_wrap(~ day)
+
+
+pcoa_animated <- pcoa_post_cdi_peg %>%
+  filter(group != "FMT") %>%
+  plot_pcoa()+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Anotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+  labs(title = 'Day: {frame_time}') + #Adds time variable to title
+  transition_time(day)+  #Day variable used to cycle through time on animation
+  shadow_mark() #Shows previous timepoints
+
+# Implement better frames per second for animation
+pcoa_gif <- animate(pcoa_animated, duration = , fps = 10,
+                    res = 150, width = 20, height = 20, unit = "cm")
+# Save as gif file
+anim_save(animation = pcoa_gif, filename = 'results/post_CDI_PEG_pcoa_over_time.gif')
