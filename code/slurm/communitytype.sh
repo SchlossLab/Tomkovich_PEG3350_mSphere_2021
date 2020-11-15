@@ -16,7 +16,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=2GB
-#SBATCH --time=10:00:00
+#SBATCH --time=24:00:00
 
 # Account
 #SBATCH --account=pschloss1
