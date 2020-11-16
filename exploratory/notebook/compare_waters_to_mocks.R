@@ -139,5 +139,7 @@ all_samples_otus <- agg_otu_data %>%
        x=NULL,
        y="Relative abundance")+
   coord_flip()+
-  theme_classic()+
-  ggsave("exploratory/notebook/waters_mock_fmts_top_30_otus.pdf")
+  theme_classic()
+save_plot(filename = "exploratory/notebook/waters_mock_fmts_top_30_otus.png", all_samples_otus, base_height = 4.5, base_width = 8.5, base_aspect_ratio = 2)
+
+
