@@ -12,7 +12,9 @@ diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
          day = replace(day, day == -2, "PT")) #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
 
  diversity_data_subset <- diversity_data_subset %>%
-   filter(day %in% c(0, 1, 2, 4, 5, 7, "PT"))
+   filter(day %in% c("PT", 0, 1, 2, 4, 5, 7)) %>%
+   mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
+ 
 
 #Get exp days sequenced in both pretreatment and other days
 exp_days_seq <- unique(diversity_data_subset %>% pull(day))
@@ -140,13 +142,8 @@ sobs_1_Day_PEG <- diversity_data_subset %>%
 save_plot("results/figures/1_Day_PEG_sobs_overtime.png", sobs_1_Day_PEG)
 
 #Plot Shannon Diversity overtime
-Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset) +
-  scale_x_continuous(breaks = c(-2:7),
-                     limits = c(-3,8),
-                     minor_breaks = c(-2.5:7.5)) +
-  #Add rectangle to signify pre-treatment
-  geom_rect(mapping = aes(xmin = -2.25, xmax = -0.6, ymin = 2.5, ymax = Inf), fill = 'grey94', alpha = .01, color = 'red', show.legend = FALSE)
-save_plot("results/figures/1_Day_PEG__shannon_overtime.png", Shannon_1_Day_PEG_Overtime)
+Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset)
+save_plot("results/figures/1_Day_PEG_shannon_overtime.png", Shannon_1_Day_PEG_Overtime)
 
  #Pull 1_Day_PEG subset of PCoA data
 pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
@@ -156,12 +153,10 @@ pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
 
-
 #Pull axes from loadings file
 pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
 axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-
 
 pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
