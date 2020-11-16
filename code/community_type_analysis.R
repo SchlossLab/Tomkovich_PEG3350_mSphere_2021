@@ -41,3 +41,14 @@ select(genus_shared, -label, -numOtus) %>%
   rename("OTU"="otu", "Size"="count", "Taxonomy"="taxon") %>%
   write_tsv(path ="data/process/peg3350.genus.taxonomy")
 
+#Visualize get.communitytype analysis results----
+#Read in data to evaluate community type fit depending on the number of community types
+dmm_fit <- read_tsv("data/process/peg3350.subsample.genus.genus.dmm.mix.fit")
+
+laplace_plot <- dmm_fit %>% 
+  ggplot()+
+  geom_line(aes(x = K, y = Laplace))+
+  theme_classic()
+#Save results
+save_plot(filename = "exploratory/notebook/motility_community_type_laplace.png", laplace_plot)
+
