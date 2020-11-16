@@ -15,14 +15,14 @@ set.seed(19760620) #Same seed used for mothur analysis
 #Alpha diversity analysis----
 
 #Subset diversity data to just the 5-day PEG subset:
-diversity_data <- five_day_PEG_subset(diversity_data)
+diversity_data_subset <- five_day_PEG_subset(diversity_data)
 
-group_day_summary <- diversity_data %>%
+group_day_summary <- diversity_data_subset %>%
   group_by(group) %>%
   count(day)
 
 #Plot of shannon diversity at days 1, 4, and 10 when we have sequencing data for 3 groups
-shannon_select_days <- diversity_data %>%
+shannon_select_days <- diversity_data_subset %>%
   filter(day %in% c(-15, -10, -5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 15, 20, 25, 30)) %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>% #create a column of median values for each group
@@ -52,7 +52,7 @@ shannon_select_days <- diversity_data %>%
 save_plot("results/figures/5_days_PEG_shannon.png", shannon_select_days) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of WMR group over the days we have sequencing data for 3 groups
-shannon_WMR <- diversity_data %>%
+shannon_WMR <- diversity_data_subset %>%
   filter(group == "WMR") %>%
   group_by(day) %>%
   mutate(median_shannon = median(shannon)) %>% #create a column of median values for each group
@@ -182,7 +182,7 @@ pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG)+
 
 #Animation of PCoA plot over time for all sequenced samples ----
 #Source: Will Close's Code Club from 4/12/2020 on plot animation
-pcoa_animated <- plot_pcoa(pcoa_data)+
+pcoa_animated <- plot_pcoa(pcoa_5_day_PEG)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
@@ -190,7 +190,7 @@ pcoa_animated <- plot_pcoa(pcoa_data)+
   shadow_mark() #Shows previous timepoints
 
 # Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = 10, fps = 10,
+pcoa_gif <- animate(pcoa_animated, duration = 6, fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 
 # Save as gif file
@@ -202,7 +202,7 @@ anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time.gi
 #Need to update to include all timepoints/tissues now that we have all the sequence data
 
 #Figure out which days we have sequencing data for from the 3 groups:
-test <- pcoa_data %>% group_by(group) %>% count(day)
+test <- all_pcoa_data %>% group_by(group) %>% count(day)
 #Days that we have data for all 3 groups: 1, 4, 10
 test_days <- c(1, 4, 10)
 
