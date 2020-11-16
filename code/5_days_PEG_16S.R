@@ -5,6 +5,8 @@ source("code/16S_common_files.R") #Reads in mothur output files
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
+#Need to create an additional color scheme with 6 colors (or consider keeping colors and doing open/closed for mock challenged mice)
+#See 5_days_PEG_histology_scores.R for how mock challenged mice were presented
 
 metadata <- metadata %>%
   mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
@@ -12,17 +14,56 @@ metadata <- metadata %>%
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
+#Create functions to further subset our data by sample type and or add mock challenged mice (CN and WMN groups)
+#Function to filter dataframe (df) to examine stool samples
+subset_stool <- function(df){
+  df %>% filter(sample_type == "stool")
+}
+#Function to filter dataframe (df) to examine tissue samples
+subset_tissue <- function(df){
+  df %>% filter(!sample_type == "stool")
+}
+
+#Function to add the mock challenged mice (CN and WMN groups) to a dataframe (diversity_data or agg_otu_data)
+add_mocks <- function(subset_df, original_df){
+  subset_df %>% 
+  add_row(original_df %>% filter(group %in% c("CN", "WMN"))) #Add the groups of mock challenged mice
+}
+
 #Alpha diversity analysis----
 
 #Subset diversity data to just the 5-day PEG subset:
-diversity_data <- five_day_PEG_subset(diversity_data)
+diversity_subset <- five_day_PEG_subset(diversity_data)
+#five_day_PEG_subset() will exclude mock challenged mice (group = WMN or CN)
 
-group_day_summary <- diversity_data %>%
-  group_by(group) %>%
-  count(day)
+#Create dataframes of diversity data for just stool samples, tissues. 
+diversity_stools <- subset_stool(diversity_subset)
+diversity_tissues <- subset_tissue(diversity_subset)
+#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
+diversity_mock_stools <- subset_stool(add_mocks(diversity_subset, diversity_data))
+diversity_mock_tissues <- subset_tissue(add_mocks(diversity_subset, diversity_data))
 
-#Plot of shannon diversity at days 1, 4, and 10 when we have sequencing data for 3 groups
-shannon_select_days <- diversity_data %>%
+#Figure out how many samples we have per group per day for each subset
+count_subset <- function(subset){
+  subset %>% 
+    group_by(group) %>%
+    count(day) %>% 
+    arrange(day)
+}
+
+no_stool <- count_subset(diversity_stool) #Number of stool samples per group per day
+no_tissue <- count_subset(diversity_tissues) #Number of tissue samples per group per day
+no_mock_stool <- count_subset(diversity_mock_stools)#Number of stool samples per group per day + mock challenged mice
+no_mock_tissue <- count_subset(diversity_mock_tissues) #Number of stool samples per group per day + mock challenged mice
+
+#Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
+stool_days <- c(-5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 30)
+stool_mock_days
+tissue_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
+tissue_mock_days
+
+#Plot of shannon diversity of days we have sequencing data for at least 1 group
+shannon_select_days <- diversity_subset %>%
   filter(day %in% c(-15, -10, -5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 15, 20, 25, 30)) %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>% #create a column of median values for each group
@@ -52,7 +93,7 @@ shannon_select_days <- diversity_data %>%
 save_plot("results/figures/5_days_PEG_shannon.png", shannon_select_days) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of WMR group over the days we have sequencing data for 3 groups
-shannon_WMR <- diversity_data %>%
+shannon_WMR <- diversity_subset %>%
   filter(group == "WMR") %>%
   group_by(day) %>%
   mutate(median_shannon = median(shannon)) %>% #create a column of median values for each group
@@ -82,7 +123,7 @@ shannon_WMR <- diversity_data %>%
 save_plot("results/figures/5_days_PEG_shannon_WMR.png", shannon_WMR) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of sobs (richness) at days 1, 4, and 10 when we have sequencing data for 3 groups
-sobs_select_days <- diversity_data %>%
+sobs_select_days <- diversity_subset %>%
   filter(day %in% c(-15, -10, -5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 15, 20, 25, 30)) %>%
   group_by(group, day) %>%
   mutate(median_sobs = median(sobs)) %>% #create a column of median values for each group
@@ -113,7 +154,7 @@ save_plot("results/figures/5_days_PEG_richness.png", sobs_select_days) #Use save
 
 
 #Plot of sobs (richness) for the WMR group over the days we have sequencing data for 3 groups
-sobs_WMR <- diversity_data %>%
+sobs_WMR <- diversity_subset %>%
   filter(group == "WMR") %>%
   group_by(day) %>%
   mutate(median_sobs = median(sobs)) %>% #create a column of median values for each group
@@ -147,17 +188,17 @@ save_plot("results/figures/5_days_PEG_richness_WMR.png", sobs_WMR) #Use save_plo
 dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 
 #Plot PCoA data----
-#PCoA plot that combines the 2 experiments and save the plot----
 
 #Read in pcoa loadings and axes for 5_day_PEG PCoA subset
 #Pull 5_Day_PEG subset of PCoA data
-pcoa_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") 
-select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+pcoa_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>% 
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
-  right_join(diversity_data, by= "unique_label") %>% #merge metadata and PCoA data frames (This drops some of our 16S data for early timepoints)
+  left_join(metadata, by= "unique_label") %>% #merge metadata and use left_join to keep all samples in pcoa data frame
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-
+  filter(!is.na(axis1)) %>%  #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(!group %in% c("WMN", "CN")) #Remove the mock challenged mice
+  
 #Pull axes from loadings file
 pcoa_axes_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
 axis1 <- pcoa_axes_5_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
@@ -166,7 +207,6 @@ axis2 <- pcoa_axes_5_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(d
 pcoa_subset_plot <- plot_pcoa(pcoa_5_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-
 
 save_plot(filename = paste0("results/figures/5_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
 
@@ -182,7 +222,7 @@ pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG)+
 
 #Animation of PCoA plot over time for all sequenced samples ----
 #Source: Will Close's Code Club from 4/12/2020 on plot animation
-pcoa_animated <- plot_pcoa(pcoa_data)+
+pcoa_animated <- plot_pcoa(pcoa_5_day_PEG)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
@@ -198,6 +238,10 @@ anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time.gi
 
 
 #OTU analysis----
+#Subset otu data to just the 5-day PEG subset:
+diversity_data <- five_day_PEG_subset(diversity_data)
+#five_day_PEG_subset() will exclude mock challenged mice (group = WMN or CN)
+
 #11/4/20 Note this was implemented for only plates1_2 of 16S sequenced samples.
 #Need to update to include all timepoints/tissues now that we have all the sequence data
 
