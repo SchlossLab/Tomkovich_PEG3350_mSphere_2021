@@ -30,20 +30,7 @@ add_mocks <- function(subset_df, original_df){
   add_row(original_df %>% filter(group %in% c("CN", "WMN"))) #Add the groups of mock challenged mice
 }
 
-#Alpha diversity analysis----
-
-#Subset diversity data to just the 5-day PEG subset:
-diversity_subset <- five_day_PEG_subset(diversity_data)
-#five_day_PEG_subset() will exclude mock challenged mice (group = WMN or CN)
-
-#Create dataframes of diversity data for just stool samples, tissues. 
-diversity_stools <- subset_stool(diversity_subset)
-diversity_tissues <- subset_tissue(diversity_subset)
-#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
-diversity_mock_stools <- subset_stool(add_mocks(diversity_subset, diversity_data))
-diversity_mock_tissues <- subset_tissue(add_mocks(diversity_subset, diversity_data))
-
-#Figure out how many samples we have per group per day for each subset
+#Function to figure out how many samples we have per group per day for each subset (subset = dataframe of a subset of samples from the 5-days PEG subset)
 count_subset <- function(subset){
   subset %>% 
     group_by(group) %>%
@@ -51,16 +38,39 @@ count_subset <- function(subset){
     arrange(day)
 }
 
-no_stool <- count_subset(diversity_stool) #Number of stool samples per group per day
-no_tissue <- count_subset(diversity_tissues) #Number of tissue samples per group per day
-no_mock_stool <- count_subset(diversity_mock_stools)#Number of stool samples per group per day + mock challenged mice
-no_mock_tissue <- count_subset(diversity_mock_tissues) #Number of stool samples per group per day + mock challenged mice
+#Alpha diversity analysis----
+
+#Subset diversity data to just the 5-day PEG subset:
+diversity_subset <- five_day_PEG_subset(diversity_data)
+#five_day_PEG_subset() will exclude mock challenged mice (group = WMN or CN)
+
+#Create subset dataframes of the 5-days PEG diversity data for just stool samples, tissues. 
+diversity_stools <- subset_stool(diversity_subset)
+diversity_tissues <- subset_tissue(diversity_subset)
+#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
+diversity_mock_stools <- subset_stool(add_mocks(diversity_subset, diversity_data))
+diversity_mock_tissues <- subset_tissue(add_mocks(diversity_subset, diversity_data))
+
+#Figure out how many samples we have per group per day for each subset
+num_stool <- count_subset(diversity_stools) #Number of stool samples per group per day
+num_tissue <- count_subset(diversity_tissues) #Number of tissue samples per group per day
+num_mock_stool <- count_subset(diversity_mock_stools)#Number of stool samples per group per day + mock challenged mice
+num_mock_tissue <- count_subset(diversity_mock_tissues) #Number of stool samples per group per day + mock challenged mice
 
 #Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
+#Baseline (before treatment) for WMR is day -15. For C, WM, and WMC baseline is day -5
 stool_days <- c(-5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 30)
 stool_mock_days
 tissue_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
 tissue_mock_days
+
+#Plot Shannon diversity over time for the subset of stool samples (excluding mock challenged mice):
+shannon_stools <- plot_shannon_overtime(diversity_stools) +
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of shannon diversity of days we have sequencing data for at least 1 group
 shannon_select_days <- diversity_subset %>%
