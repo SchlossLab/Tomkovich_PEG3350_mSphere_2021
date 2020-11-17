@@ -14,7 +14,7 @@ metadata <- metadata %>%
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
-#Create functions to further subset our data by sample type and or add mock challenged mice (CN and WMN groups)
+#Create functions to further subset our data by sample type and or add mock challenged mice (CN and WMN groups)----
 #Function to filter dataframe (df) to examine stool samples
 subset_stool <- function(df){
   df %>% filter(sample_type == "stool")
