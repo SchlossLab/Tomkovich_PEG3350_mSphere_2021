@@ -15,7 +15,6 @@ diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
    filter(day %in% c("PT", 0, 1, 2, 4, 5, 7)) %>%
    mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
  
-
 #Get exp days sequenced in both pretreatment and other days
 exp_days_seq <- unique(diversity_data_subset %>% pull(day))
 
@@ -26,8 +25,13 @@ exp_days_seq <- exp_days_seq[1:4]  #Removes last two positions of day 0 and day 
 set.seed(19760620) #Same seed used for mothur analysis
 
 #Function to test at the otu level:
+
+agg_otu_data_subset <- one_day_PEG_subset(agg_otu_data) %>%
+  mutate(day = replace(day, day == -1, "PT"),
+         day = replace(day, day == -2, "PT")) #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+
 kruskal_wallis_otu <- function(timepoint){
-  otu_stats <- agg_otu_data %>%
+  otu_stats <- agg_otu_data_subset %>%
     mutate(day = replace(day, day == -1, "PT"),
            day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
     filter(day == timepoint) %>%
