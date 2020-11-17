@@ -64,7 +64,7 @@ stool_mock_days
 tissue_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
 tissue_mock_days
 
-#Shannon and richness plots for stool samples from the 5-days PEG subset
+#Shannon and richness plots for stool samples from the 5-days PEG subset----
 #Plot Shannon diversity over time for the subset of stool samples (excluding mock challenged mice):
 shannon_stools <- plot_shannon_overtime(diversity_stools) +
   scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
@@ -80,6 +80,20 @@ richness_stools <- plot_richness_overtime(diversity_stools)+
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/5_days_PEG_richness_stools.png", richness_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Shannon and richness plots for stool samples from the 5-days PEG subset----
+shannon_tissues <- plot_shannon_overtime(diversity_tissues) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_shannon_tissues.png", shannon_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+richness_tissues <- plot_richness_overtime(diversity_tissues) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_richness_tissues.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
 
 #Distance matrix of 5_day_PEG PCoA subset----
 dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
