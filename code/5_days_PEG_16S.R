@@ -70,7 +70,7 @@ shannon_stools <- plot_shannon_overtime(diversity_stools) +
                      limits = c(-16,31),
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_shannon_stools.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of shannon diversity of days we have sequencing data for at least 1 group
 shannon_select_days <- diversity_subset %>%
