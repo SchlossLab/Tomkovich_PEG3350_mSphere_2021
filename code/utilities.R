@@ -22,15 +22,6 @@ seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types
   mutate(unique_label = replace(unique_label, unique_label == "FMT_from_Motility_9", "FMTMotility9"), #rename FMT & PBS gavage samples by removing the underscores to match fastq file names 
          unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9"))
   
-#Join metadata to 16S seq prep metadata
-metadata <- seq_prep_metadata %>% 
-  select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
-  full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
-  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
-                                 str_detect(unique_label, "FMT") ~ "FMT",
-                                 TRUE ~ sample_type)) %>% 
-  mutate(group = factor(group, levels = unique(as.factor(group)))) #Transform group variable into factor variable
-
 #Identify samples that were sequenced twice in metadata
 duplicated <- seq_prep_metadata %>%
   filter(duplicated(unique_label)) %>% #5 samples sequenced twice
@@ -108,6 +99,18 @@ duplicates_to_drop <- seq_prep_metadata %>%
 #Drop the 5 duplicates from seq_prep_metadata (these were already removed from data/raw, see code/copy_fastqs_to_data)
 seq_prep_metadata <- seq_prep_metadata %>% 
   anti_join(duplicates_to_drop)
+
+#Join metadata to 16S seq prep metadata----
+metadata <- seq_prep_metadata %>% 
+  select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
+  full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
+  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
+                                 str_detect(unique_label, "FMT") ~ "FMT",
+                                 TRUE ~ sample_type),
+         group = case_when(str_detect(unique_label, "water") ~ "water",
+                           str_detect(unique_label, "FMT") ~ "FMT",
+                           TRUE ~ group)) %>% 
+  mutate(group = factor(group, levels = unique(as.factor(group)))) #Transform group variable into factor variable
 
 #Functions----
 
@@ -327,10 +330,38 @@ plot_shannon_overtime <- function(df) {
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels) +
+    scale_y_continuous(limits = c(0,4.1))+
     theme_classic()+
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Shannon Diversity Index")+
     theme(legend.position = c(.9,.25),
           text = element_text(size = 14), # Change font size for entire plot
-          axis.ticks.x = element_blank())
+          axis.ticks.x = element_blank(),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
+}
+
+#Function to Plot Richness (sobs) Overtime
+plot_richness_overtime <- function(df) {
+  median_summary <- df %>%
+    group_by(group, day) %>%
+    mutate(median_sobs = median(sobs)) %>%
+    ggplot(x = day, y = sobs, colour = group)+
+    geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels) +
+    scale_y_continuous(limits = c(0,160))+
+    theme_classic()+
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Number of Observed OTUs")+
+    theme(legend.position = c(.9,.25),
+          text = element_text(size = 14), # Change font size for entire plot
+          axis.ticks.x = element_blank(),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
 }
 
 #Function to plot PCoA data

@@ -3,4 +3,4 @@
 set.dir(input=data/process, output=data/process, seed=19760620)
 
 # Shorten filenames
-get.communitytype(shared = peg3350.subsample.genus.shared, maxpartitions = 16, method = dmm)
+get.communitytype(shared = peg3350.subsample.genus.shared, maxpartitions = 24, method = dmm)

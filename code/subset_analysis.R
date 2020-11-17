@@ -1,6 +1,13 @@
 source("code/utilities.R")
 
 #Check for overlap in CFU/Weight figs----------
+#Create the same metadata subsets used in cfu_weight.R scripts for the 3 subsets----
+one_day_PEG_metadata <- one_day_PEG_subset(metadata)
+five_day_PEG_metadata <- five_day_PEG_subset(metadata) %>%
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon")) #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
+post_cdi_PEG_metadata <- post_cdi_PEG_subset(metadata) %>%
+  filter(!sample_type %in% c("cecum", "distal_colon", "proximal_colon"))  #Get rid of rows corresponding to tissue samples in the metadata as these will create duplicate values for mice at timepoints where tissues were also collected
+
 #inner join to check for overlap (no overlap present)
 one_day_PEG_metadata %>% inner_join(five_day_PEG_metadata)
 one_day_PEG_metadata %>% rbind(five_day_PEG_metadata) %>% inner_join(post_cdi_PEG_metadata)
@@ -50,34 +57,47 @@ unaccounted <- other_subset %>%
                               tissues_post_CDI_PEG$unique_label, FMT_subset$unique_label))
 #Only the 3 water controls remain after creating the 4 additional subsets 
 
+#Create group argument to use in mothur dist.shared() function----
+#Use the following function to remove spacing and quotation around each sample's unique_label
+#df = dataframe representing a subset of samples to put into the group= option in mothur's dist.shared function
+mothur_format <- function(df){
+  df %>% 
+    pull(unique_label) %>%
+    noquote() %>%  #Remove quotations from the characters
+    glue_collapse(sep = "-") #Separate all samples with a -
+}
+
 #1 day PEG samples----
 pcoa_1_day_PEG <- pcoa_data %>% 
-  inner_join(one_day_PEG_metadata) %>% 
-  pull(unique_label) %>%
-  noquote() #Remove quotations from the characters
+  inner_join(one_day_PEG_metadata)
 
 #Concatenate output and add - between each sample.
-one_day_PEG_unique_labels <- (paste(pcoa_1_day_PEG, collapse = "-"))
+one_day_PEG_unique_labels <- mothur_format(pcoa_1_day_PEG)
 
 #5 day PEG samples with mock & 5 day PEG tissues added----
 pcoa_5_day_PEG <- pcoa_data %>% 
   inner_join(five_day_PEG_metadata) %>% 
   add_row(tissue_5_days_PEG) %>% #Add tissues
-  add_row(mock_stools_tissues) %>% #Add samples from mock challenged mice
-  pull(unique_label) %>%
-  noquote() #Remove quotations from the characters
+  add_row(mock_stools_tissues) 
 
 #Concatenate output and add - between each sample.
-five_day_PEG_unique_labels <- (paste(pcoa_5_day_PEG, collapse = "-"))
+five_day_PEG_unique_labels <- mothur_format(pcoa_5_day_PEG)
+
+#Split 5 day PEG into stool (+FMT) and tissue subsets:
+five_day_PEG_stool_labels <- mothur_format(pcoa_5_day_PEG %>% filter(sample_type == "stool"))
+five_day_PEG_tissue_labels <- mothur_format(pcoa_5_day_PEG %>% filter(!sample_type == "stool"))
 
 #Post-CDI PEG samples with FMT solution & Post-CDI PEG tissues added----
 pcoa_post_CDI_PEG <- pcoa_data %>% 
   inner_join(post_cdi_PEG_metadata) %>% 
   add_row(FMT_subset) %>% 
-  add_row(tissues_post_CDI_PEG) %>% 
-  pull(unique_label) %>%
-  noquote() #Remove quotations from the characters
+  add_row(tissues_post_CDI_PEG)
 
 #Concatenate output and add - between each sample.
-post_CDI_PEG_unique_labels <- (paste(pcoa_post_CDI_PEG, collapse = "-"))
+post_CDI_PEG_unique_labels <- mothur_format(pcoa_post_CDI_PEG)
 
+#Split post-CDI PEG into stool (+FMT) and tissue subsets:
+post_CDI_PEG_stool_labels <- mothur_format(pcoa_data %>% 
+                                             inner_join(post_cdi_PEG_metadata) %>% 
+                                             add_row(FMT_subset))
+post_CDI_PEG_tissue_labels <- mothur_format(tissues_post_CDI_PEG)
