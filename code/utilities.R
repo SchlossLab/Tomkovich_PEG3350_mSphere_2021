@@ -185,6 +185,22 @@ tidy_pairwise <- function(spread_pairwise){
     separate(col = compare, c("group1", "group2"), sep = "-", remove = TRUE)
 }
 
+#Function to calculate the median shannon values from a dataframe (x) grouped by treatment
+get_shannon_median_group <- function(x){
+  x %>%
+    group_by(group) %>%
+    summarize(median=median(shannon)) %>%
+    spread(key=group, value=median)
+}
+
+#Function to calculate the median sobs (richness) values from a dataframe (x) grouped by treatment
+get_sobs_median_group <- function(x){
+  x %>%
+    group_by(group) %>%
+    summarize(median=median(sobs)) %>%
+    spread(key=group, value=median)
+}
+
 #Function to calculate the median agg_rel_abund values from a dataframe (x) grouped by treatment
 get_rel_abund_median_group <- function(x){
   x %>%
