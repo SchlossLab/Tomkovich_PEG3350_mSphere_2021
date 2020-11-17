@@ -59,10 +59,63 @@ num_mock_tissue <- count_subset(diversity_mock_tissues) #Number of stool samples
 
 #Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
 #Baseline (before treatment) for WMR is day -15. For C, WM, and WMC baseline is day -5
-stool_days <- c(-5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 30)
-stool_mock_days
-tissue_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
-tissue_mock_days
+stool_test_days <- c(-5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 30)
+stool_mock_test_days
+tissue_test_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
+tissue_mock_test_days
+
+#Function to perform Kruskal-Wallis test for differences in Shannon diversity index across groups on a particular day with Benjamini Hochberg correction
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+#subset_name = label to append to results filename to indicate subset analyzed. Ex. stool, tissues, stool_mock, tissues_mock
+kruskal_wallis_shannon <- function(diversity_subset, timepoints, subset_name){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, shannon, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$shannon, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_shannon_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(day, statistic, p.value, parameter, method, C, WM, WMC, WMR) %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) %>% 
+    write_tsv(path = paste0("data/process/5_days_PEG_shannon_stats_", subset_name, "_subset.tsv"))
+}
+#Test with shannon for stool subset
+kruskal_wallis_shannon(diversity_stools, stool_test_days, "stools")
+#Test with shannon for tissue subset
+kruskal_wallis_shannon(diversity_stools, stool_test_days, "tissues")
+
+#Function to perform Kruskal-Wallis test for differences in richness (sobs) across groups on a particular day with Benjamini Hochberg correction
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+#subset_name = label to append to results filename to indicate subset analyzed. Ex. stool, tissues, stool_mock, tissues_mock
+kruskal_wallis_richness <- function(diversity_subset, timepoints, subset_name){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, sobs, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$sobs, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_sobs_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(day, statistic, p.value, parameter, method, C, WM, WMC, WMR) %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) %>% 
+    write_tsv(path = paste0("data/process/5_days_PEG_richness_stats_", subset_name, "_subset.tsv"))
+}
+#Test with richness for stool subset
+kruskal_wallis_richness(diversity_stools, stool_test_days, "stools")
+#Test with richness for tissue subset
+kruskal_wallis_richness(diversity_stools, stool_test_days, "tissues")
+
 
 #Shannon and richness plots for stool samples from the 5-days PEG subset----
 #Plot Shannon diversity over time for the subset of stool samples (excluding mock challenged mice):
