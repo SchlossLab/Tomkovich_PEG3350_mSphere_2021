@@ -330,10 +330,15 @@ plot_shannon_overtime <- function(df) {
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels) +
+    scale_y_continuous(limits = c(0,4))+
     theme_classic()+
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Shannon Diversity Index")+
     theme(legend.position = c(.9,.25),
           text = element_text(size = 14), # Change font size for entire plot
-          axis.ticks.x = element_blank())
+          axis.ticks.x = element_blank(),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
 }
 
 #Function to plot PCoA data
