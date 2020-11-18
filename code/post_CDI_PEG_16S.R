@@ -172,7 +172,20 @@ pcoa_axes_post_cdi_PEG_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/pe
 axis1_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-pcoa_subset_plot_tissues <- plot_pcoa(pcoa_post_cdi_peg_tissues)+
+shape_scheme <- c(19, 17, 14)
+shape_experiment <- c(1, 2, 3)
+
+pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>% 
+  ggplot(aes(x=axis1, y=axis2, color = group, alpha = day, shape = sample_type)) +
+  geom_point(size=2) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  coord_fixed() + 
+  theme_classic()+
   labs(x = paste("PCoA 1 (", axis1_tissues, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2_tissues,"%)", sep = ""))
+       y = paste("PCoA 2 (", axis2_tissues,"%)", sep = ""),
+       alpha = "Day",
+       shape = "Tissue Type")
 save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pcoa_subset_plot_tissues, base_height = 7, base_width = 14)
