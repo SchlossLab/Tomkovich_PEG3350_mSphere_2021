@@ -147,28 +147,27 @@ save_plot("results/figures/5_days_PEG_richness_WMR.png", sobs_WMR) #Use save_plo
 dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 
 #Plot PCoA data----
-#PCoA plot that combines the 2 experiments and save the plot----
 
 #Read in pcoa loadings and axes for 5_day_PEG PCoA subset
 #Pull 5_Day_PEG subset of PCoA data
-pcoa_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") 
-select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   right_join(diversity_data, by= "unique_label") %>% #merge metadata and PCoA data frames (This drops some of our 16S data for early timepoints)
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
 
 #Pull axes from loadings file
-pcoa_axes_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
-axis1 <- pcoa_axes_5_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-axis2 <- pcoa_axes_5_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+pcoa_axes_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_5_day_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_5_day_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-pcoa_subset_plot <- plot_pcoa(pcoa_5_day_PEG)+
+pcoa_subset_plot <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
 
 
-save_plot(filename = paste0("results/figures/5_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
+save_plot(filename = paste0("results/figures/5_Day_PEG_tissues_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
 
 
 #Remove legend
