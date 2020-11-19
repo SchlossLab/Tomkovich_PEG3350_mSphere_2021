@@ -7,6 +7,9 @@ color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
 #Need to create an additional color scheme with 6 colors (or consider keeping colors and doing open/closed for mock challenged mice)
 #See 5_days_PEG_histology_scores.R for how mock challenged mice were presented
+#Define shape scheme based on Infected status----
+shape_scheme <- c(1, 19)
+shape_infected <- c("no", "yes")
 
 metadata <- metadata %>%
   mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
@@ -246,11 +249,6 @@ diversity_data <- five_day_PEG_subset(diversity_data)
 #11/4/20 Note this was implemented for only plates1_2 of 16S sequenced samples.
 #Need to update to include all timepoints/tissues now that we have all the sequence data
 
-#Figure out which days we have sequencing data for from the 3 groups:
-test <- pcoa_data %>% group_by(group) %>% count(day)
-#Days that we have data for all 3 groups: 1, 4, 10
-test_days <- c(1, 4, 10)
-
 #Function to test for differences across groups at the OTU level for specific timepoints
 #Function to test at the otu level:
 kruskal_wallis_otu <- function(timepoint){
@@ -289,11 +287,6 @@ shared_sig_otus_d1_10 <- intersect_all(sig_otu_day1, sig_otu_day10)
 #2 OTUs
 shared_sig_otus_d4_10 <- intersect_all(sig_otu_day4, sig_otu_day10)
 #39 OTUs
-
-#Only Lachnospiraceae (OTU 134) and Lachnospiraceae (OTU 126) varies across all 3 timepoints
-#25 OTUs vary on day 1: 2 OTUs shared with day 10
-#123 OTUs on day 4: 16 OTUs shared with day 1
-#47 OTUs on day 10: 23/25 shared with day 4
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
