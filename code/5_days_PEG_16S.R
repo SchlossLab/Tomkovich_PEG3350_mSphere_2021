@@ -159,7 +159,6 @@ pcoa_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and use left_join to keep all samples in pcoa data frame
-  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) %>%  #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
   filter(!group %in% c("WMN", "CN")) #Remove the mock challenged mice
   
@@ -174,9 +173,47 @@ pcoa_subset_plot <- plot_pcoa(pcoa_5_day_PEG)+
 
 save_plot(filename = paste0("results/figures/5_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
 
+#Pull 5_Day_PEG subset of PCoA 
+#Tissue subset
+pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  left_join(metadata, by= "unique_label") %>% #merge metadata and use left_join to keep all samples in pcoa data frame
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+
+pcoa_5_day_PEG_tissues<- subset(pcoa_5_day_PEG_tissues, group %in% c("C", "WM", "WMN", "WMC"))
+
+#Pull axes from loadings file
+pcoa_axes_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_5_day_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_5_day_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+pcoa_subset_plot_tissue <- plot_pcoa(pcoa_5_day_PEG_tissues)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
+
+save_plot(filename = paste0("results/figures/5_Day_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 4.5)
+
+#Stool Subset
+pcoa_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  right_join(diversity_data, by= "unique_label") %>% #merge metadata and PCoA data frames (This drops some of our 16S data for early timepoints)
+  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+
+pcoa_5_day_PEG_stool<- subset(pcoa_5_day_PEG_stool, group %in% c("C", "WM", "WMN", "WMC"))
+
+pcoa_axes_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+pcoa_subset_plot_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
+
+save_plot(filename = paste0("results/figures/5_Day_PEG_stool_PCoA.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 4.5)
 
 #Remove legend
-pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG)+
+pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   theme(legend.position = "none")+ #remove legend
@@ -186,7 +223,7 @@ pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG)+
 
 #Animation of PCoA plot over time for all sequenced samples ----
 #Source: Will Close's Code Club from 4/12/2020 on plot animation
-pcoa_animated <- plot_pcoa(pcoa_5_day_PEG)+
+pcoa_animated <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
@@ -194,11 +231,11 @@ pcoa_animated <- plot_pcoa(pcoa_5_day_PEG)+
   shadow_mark() #Shows previous timepoints
 
 # Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = 10, fps = 10,
+pcoa_gif <- animate(pcoa_animated, duration = 6, fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 
 # Save as gif file
-anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time.gif')
+anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time_tissues.gif')
 
 
 #OTU analysis----
