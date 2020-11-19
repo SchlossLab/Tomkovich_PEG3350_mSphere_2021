@@ -113,6 +113,9 @@ d4_plot_pairwise_stats <- d4_colon_pairwise %>%
   bind_rows()
 
 #Plots of summary histology scores for all mice----
+color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("C", "WM", "WMC", "WMR")
+color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
 #Define shape scheme for d4 and d6 histology based on whether mice were challenged with C. difficile:
 #Define shape scheme based on Infected status----
 shape_scheme <- c(1, 19)
