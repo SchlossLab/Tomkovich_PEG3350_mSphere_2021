@@ -263,17 +263,24 @@ anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time_ti
 
 
 #OTU analysis----
-#Subset otu data to just the 5-day PEG subset:
-diversity_data <- five_day_PEG_subset(diversity_data)
-#five_day_PEG_subset() will exclude mock challenged mice (group = WMN or CN)
-
-#11/4/20 Note this was implemented for only plates1_2 of 16S sequenced samples.
-#Need to update to include all timepoints/tissues now that we have all the sequence data
+#Subset otu data to just the 5-day PEG subset and separate by sample type (stools versus tissues)
+otu_subset <- five_day_PEG_subset(agg_otu_data)
+#Create subset dataframes of the 5-days PEG diversity data for just stool samples, tissues. 
+otu_stools <- subset_stool(otu_subset)
+otu_tissues <- subset_tissue(otu_subset)
+#The above subsets exclude mock challenged mice (group = WMN or CN)
+#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
+otu_mock_stools <- subset_stool(add_mocks(otu_subset, agg_otu_data))
+otu_mock_tissues <- subset_tissue(add_mocks(otu_subset, agg_otu_data))
 
 #Function to test for differences across groups at the OTU level for specific timepoints
 #Function to test at the otu level:
-kruskal_wallis_otu <- function(timepoint){
-  otu_stats <- agg_otu_data %>%
+#Arguments:
+# timepoint = day of the experiment
+#sample_df = subset dataframe of just stool or tissue samples
+#sample_type = "stool" or "tissue" to be included in filename
+kruskal_wallis_otu <- function(timepoint, sample_df, sample_type){
+  otu_stats <- sample_df %>%
     filter(day == timepoint) %>%
     select(group, otu, agg_rel_abund) %>%
     group_by(otu) %>%
@@ -284,30 +291,32 @@ kruskal_wallis_otu <- function(timepoint){
     ungroup()
   #Adjust p-values for testing multiple OTUs
   otu_stats_adjust <- otu_stats %>%
-    select(otu, statistic, p.value, parameter, method, C, WM, WMR) %>%
+    select(-data) %>% #Keep everything but the data column
     mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
     arrange(p.value.adj) %>%
-    write_tsv(path = paste0("data/process/5_days_PEG_otu_stats_day_", timepoint, ".tsv"))
+    write_tsv(path = paste0("data/process/5_days_PEG_otu_stats_day_", timepoint, "_", sample_type, ".tsv"))
 }
 
-# Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
-for (d in test_days){
-  kruskal_wallis_otu(d)
+# Perform kruskal wallis tests at the otu level for the stool samples----
+for (d in stool_test_days){
+  kruskal_wallis_otu(d, otu_stools, "stools")
   #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, ".tsv"))
-  name <- paste("sig_otu_day", d, sep = "")
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_stools.tsv"))
+  name <- paste("sig_otu_stools_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
 }
 
-#OTUs that varied across treatment groups and were shared across days 1, 4 and 10
-shared_sig_otus_d1_4_10 <- intersect_all(sig_otu_day1, sig_otu_day4, sig_otu_day10)
-#2 OTUs
-shared_sig_otus_d1_4 <- intersect_all(sig_otu_day1, sig_otu_day4)
-#15 OTUs
-shared_sig_otus_d1_10 <- intersect_all(sig_otu_day1, sig_otu_day10)
-#2 OTUs
-shared_sig_otus_d4_10 <- intersect_all(sig_otu_day4, sig_otu_day10)
-#39 OTUs
+# Perform kruskal wallis tests at the otu level for the tissue samples----
+for (d in tissue_test_days){
+  kruskal_wallis_otu(d, otu_tissues, "tissues")
+  #Make a list of significant otus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_tissues.tsv"))
+  name <- paste("sig_otu_tissues_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, otu))
+}
+
+#OTUs that varied across treatment groups and were shared across days 
+shared_sig_otus <- intersect_all() #fill in different days to compare
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
@@ -355,6 +364,7 @@ otus_d10 <- plot_otus_dx(sig_otu_day10, 10)+
 save_plot("results/figures/5_days_PEG_otus_d10.png", otus_d10, base_height = 7, base_width = 8)
 
 #Examine impacts of clindamycin and PEG3350 treatments on bacterial OTUs----
+#Nov. 2020: Need to update this now that we have data from all timepoints
 
 #Examine changes that happen after clindamycin treatment (baseline day -5 versus day 1)
 C_dn5_d1_pairs <- agg_otu_data %>%
