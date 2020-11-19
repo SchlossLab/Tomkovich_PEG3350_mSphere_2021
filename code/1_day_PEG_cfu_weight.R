@@ -59,9 +59,7 @@ cfu_kruskal_wallis_adjust <- cfu_kruskal_wallis %>%
   write_tsv("data/process/1_day_PEG_cfu_stats_all_days.tsv")
 
 #Timepoints where C. difficile CFU is significantly different across the groups of mice after BH adjustment of p-values:
-sig_cfu_days <- cfu_kruskal_wallis_adjust %>%
-  filter(p.value.adj <= 0.05) %>%
-  pull(day)
+sig_cfu_days <- pull_sig_days(cfu_kruskal_wallis_adjust)
 
 #Perform pairwise Wilcoxan rank sum tests for days that were significant by Kruskal-Wallis test
 cfu_stats_pairwise <- cfu_kruskal_wallis %>%
@@ -106,9 +104,7 @@ weight_kruskal_wallis_adjust <- weight_kruskal_wallis %>%
   write_tsv("data/process/1_day_PEG_weight_stats_all_days.tsv")
 
 #Timepoints where C. difficile CFU is significantly different across the groups of mice after BH adjustment of p-values:
-sig_weight_days <- weight_kruskal_wallis_adjust %>%
-  filter(p.value.adj <= 0.05) %>%
-  pull(day)
+sig_weight_days <-pull_sig_days(weight_kruskal_wallis_adjust)
 
 #Perform pairwise Wilcoxan rank sum tests for days that were significant by Kruskal-Wallis test
 weight_stats_pairwise <- weight_kruskal_wallis %>%
