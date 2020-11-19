@@ -217,6 +217,12 @@ get_rel_abund_median_day <- function(x){
     spread(key=day, value=median)
 }
 
+#Function to pull significant days (adjusted p value < 0.05) after Kruskal-Wallis statistical analysis
+pull_sig_days <- function(dataframe){
+  dataframe %>% 
+    filter(p.value.adj <= 0.05) %>%
+    pull(day)
+}  
 #Function to pull significant taxa (adjusted p value < 0.05) after statistical analysis
 pull_significant_taxa <- function(dataframe, taxonomic_level){
   dataframe %>%
