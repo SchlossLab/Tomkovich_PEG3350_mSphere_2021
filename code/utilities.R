@@ -409,7 +409,7 @@ plot_pcoa <- function(df){
 }
 
 #Function to format Kruskal-Wallis data frame with adjusted p values to use as a label on plots of cfu, weight, diversity, and other variables over time:
-kw_label <- function(){
+kw_label <- function(dataframe){
   dataframe %>% 
     filter(p.value.adj <= 0.05) %>%
     mutate(p.signif = case_when(
