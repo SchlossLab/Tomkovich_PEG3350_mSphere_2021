@@ -162,6 +162,7 @@ shannon_tissues <- plot_shannon_overtime(diversity_tissues) +
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/5_days_PEG_shannon_tissues.png", shannon_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
 #Statistical annotation labels:
 x_annotation <- sig_richness_days_tissues
 y_position <- max(diversity_tissues$sobs)+5
@@ -201,10 +202,11 @@ save_plot(filename = paste0("results/figures/5_Day_PEG_PCoA.png"), pcoa_subset_p
 #Pull 5_Day_PEG subset of PCoA 
 #Tissue subset
 pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and use left_join to keep all samples in pcoa data frame
-  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-
-pcoa_5_day_PEG_tissues<- subset(pcoa_5_day_PEG_tissues, group %in% c("C", "WM", "WMN", "WMC"))
+  filter(!is.na(axis1)) %>%  #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(!group %in% c("WMN", "CN")) #Remove the mock challenged mice
 
 #Pull axes from loadings file
 pcoa_axes_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
@@ -247,7 +249,8 @@ pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG_tissues)+
 
 #Animation of PCoA plot over time for all sequenced samples ----
 #Source: Will Close's Code Club from 4/12/2020 on plot animation
-pcoa_animated <- plot_pcoa(pcoa_5_day_PEG_tissues)+
+##Tissue Subset --
+pcoa_animated_tissues <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
@@ -255,12 +258,26 @@ pcoa_animated <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   shadow_mark() #Shows previous timepoints
 
 # Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = 6, fps = 10,
+pcoa_gif_tissue <- animate(pcoa_animated_tissues, duration = 6, fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 
 # Save as gif file
-anim_save(animation = pcoa_gif, filename = 'results/5_days_PEG_pcoa_over_time_tissues.gif')
+anim_save(animation = pcoa_gif_tissue, filename = 'results/5_days_PEG_pcoa_over_time_tissues.gif')
 
+##Stool Subset--
+pcoa_animated_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
+  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
+  labs(title = 'Day: {frame_time}') + #Adds time variable to title
+  transition_time(day)+  #Day variable used to cycle through time on animation
+  shadow_mark() #Shows previous timepoints
+
+# Implement better frames per second for animation
+pcoa_gif_stool <- animate(pcoa_animated_stool, duration = 6, fps = 10,
+                    res = 150, width = 20, height = 20, unit = "cm")
+
+# Save as gif file
+anim_save(animation = pcoa_gif_stool, filename = 'results/5_days_PEG_pcoa_over_time_stools.gif')
 
 #OTU analysis----
 #Subset otu data to just the 5-day PEG subset and separate by sample type (stools versus tissues)
