@@ -357,6 +357,7 @@ plot_shannon_overtime <- function(df) {
     labs(title=NULL,
          x="Days Post-Infection",
          y="Shannon Diversity Index")+
+    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = c(.9,.25),
           text = element_text(size = 14), # Change font size for entire plot
           axis.ticks.x = element_blank(),
@@ -380,6 +381,7 @@ plot_richness_overtime <- function(df) {
     labs(title=NULL,
          x="Days Post-Infection",
          y="Number of Observed OTUs")+
+    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = c(.9,.25),
           text = element_text(size = 14), # Change font size for entire plot
           axis.ticks.x = element_blank(),
