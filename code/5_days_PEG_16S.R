@@ -324,7 +324,7 @@ plot_otus_dx <- function(otus, timepoint){
   agg_otu_data %>%
     filter(otu %in% otus) %>%
     filter(day == timepoint) %>%
-    mutate(agg_rel_abund = agg_rel_abund + 1/4000) %>% # 4,000 is 2 times the subsampling parameter of 2000
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
     ggplot(aes(x= otu_name, y=agg_rel_abund, color=group))+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -362,6 +362,57 @@ otus_d10 <- plot_otus_dx(sig_otu_day10, 10)+
   ggtitle("Day 10 post-infection")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_d10.png", otus_d10, base_height = 7, base_width = 8)
+
+#Function to plot an otu_over_time
+#otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"
+#sample_df = subset dataframe of just stool or tissue samples
+otu_over_time <- function(otu_plot, sample_df){
+  specify_otu_name <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    pull(otu_name)
+  otu_median <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    group_by(group, day) %>% 
+    summarize(median=(median(agg_rel_abund + 1/2000))) %>% 
+    ungroup
+  otu_mice <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>%
+    select(day, agg_rel_abund, otu, group)
+  otu_time <- ggplot(NULL)+
+    geom_point(otu_mice, mapping = aes(x=day, y=agg_rel_abund, color=group), size  = 1.5, position = position_dodge(width = 0.6))+
+    geom_line(otu_median, mapping = aes(x=day, y=median, color=group), size = 1, show.legend = FALSE)+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/1000, color="gray")+
+    labs(title=specify_otu_name,
+         x="Day",
+         y="Relative abundance (%)") +
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    theme_classic()+
+    theme(plot.title=element_markdown(hjust = 0.5),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"),  # Add gray lines to clearly separate symbols by days)
+          text = element_text(size = 18)) # Change font size for entire plot
+}
+#Examine C. difficile otu over time----
+peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_peptostreptococcaceae_stools.png", peptostrep_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+peptostrep_tissues <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_peptostreptococcaceae_tissues.png", peptostrep_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+
+#Customize days with scale_X_continuous
 
 #Examine impacts of clindamycin and PEG3350 treatments on bacterial OTUs----
 #Nov. 2020: Need to update this now that we have data from all timepoints
