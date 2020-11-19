@@ -137,13 +137,7 @@ x_annotation <- cfu_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   pull(day)
 y_position <- max(cfudata$avg_cfu) + 100000000
-label <- cfu_kruskal_wallis_adjust %>%
-  filter(p.value.adj <= 0.05) %>%
-  mutate(p.signif = case_when(
-    p.value.adj > 0.05 ~ "NS",
-    p.value.adj <= 0.05 ~ "*"
-  )) %>%
-  pull(p.signif)
+label <- kw_label(cfu_kruskal_wallis_adjust)
 
 cfu <- plot_cfu_data(cfudata) +
   scale_x_continuous(breaks = c(0:10),
@@ -158,13 +152,7 @@ x_annotation <- weight_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   pull(day)
 y_position <- max(weightdata$weight_change)
-label <- weight_kruskal_wallis_adjust %>%
-  filter(p.value.adj <= 0.05) %>%
-  mutate(p.signif = case_when(
-    p.value.adj > 0.05 ~ "NS",
-    p.value.adj <= 0.05 ~ "*"
-  )) %>%
-  pull(p.signif)
+label <- kw_label(weight_kruskal_wallis_adjust)
 
 #Narrow data to just the timepoints tested in statistical analysis, when we have weight data for all 3 groups
 weightdata_subset <- weightdata %>%

@@ -147,14 +147,8 @@ x_annotation <- cfu_kruskal_wallis_adjust %>%
   filter(p.value.adj <= 0.05) %>%
   pull(day)
 y_position <- max(cfudata$avg_cfu)
-label <- cfu_kruskal_wallis_adjust %>%
-  filter(day < 12) %>% #Only include results through day 10 for this plot
-  filter(p.value.adj <= 0.05) %>%
-  mutate(p.signif = case_when(
-    p.value.adj > 0.05 ~ "NS",
-    p.value.adj <= 0.05 ~ "*"
-  )) %>%
-  pull(p.signif)
+label <- kw_label(cfu_kruskal_wallis_adjust) %>%
+  filter(day < 12) #Only include results through day 10 for this plot
 
 #Plot cfu for just the inital 10days
 cfu_10d <- plot_cfu_data(cfudata_10dsubset) +
@@ -166,13 +160,7 @@ save_plot(filename = "results/figures/5_days_PEG_cfu_10d.png", cfu_10d, base_hei
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for all timepoints:
 x_annotation <- sig_cfu_days
 y_position <- max(cfudata$avg_cfu)
-label <- cfu_kruskal_wallis_adjust %>%
-  filter(p.value.adj <= 0.05) %>%
-  mutate(p.signif = case_when(
-    p.value.adj > 0.05 ~ "NS",
-    p.value.adj <= 0.05 ~ "*"
-  )) %>%
-  pull(p.signif)
+label <- kw_label(cfu_kruskal_wallis_adjust)
 
 #Plot of cfu data for all days of the experiment
 cfu <- plot_cfu_data(cfudata) +
@@ -194,14 +182,9 @@ x_annotation <- weight_kruskal_wallis_adjust %>%
   pull(day)
 x_annotation == sig_weight_days #All the days where weight change significantly varied across groups of mice occured within the first 10 days post-infection
 y_position <- max(weightdata$weight_change)
-label <- weight_kruskal_wallis_adjust %>%
-  filter(day < 12) %>% #Only include results through day 10 for this plot
-  filter(p.value.adj <= 0.05) %>%
-  mutate(p.signif = case_when(
-    p.value.adj > 0.05 ~ "NS",
-    p.value.adj <= 0.05 ~ "*"
-  )) %>%
-  pull(p.signif)
+label <- kw_label(weight_kruskal_wallis_adjust) %>%
+  filter(day < 12) #Only include results through day 10 for this plot
+
 
 #Plot of weight data for days -15 through 10 of the experiment:
 weight_subset_plot <- plot_weight(weight_subset) +
