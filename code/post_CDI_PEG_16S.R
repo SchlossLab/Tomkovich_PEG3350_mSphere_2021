@@ -9,13 +9,115 @@ color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
-#Alpha Diversity Shannon Analysis----
+
 
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
 diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>%
   add_row(diversity_data %>% filter(str_detect(unique_label, "FMT")) %>% #Also add the FMT gavage samples to this subset
             mutate(group = as.factor("FMT")))
 
+
+#Function to test at the otu level:
+agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data)
+
+kruskal_wallis_otu <- function(timepoint){
+  otu_stats <- agg_otu_data_subset %>%
+    filter(day == timepoint) %>%
+    select(group, otu, agg_rel_abund) %>%
+    group_by(otu) %>%
+    nest() %>%
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>%
+    mutate(median = map(data, get_rel_abund_median_group)) %>%
+    unnest(c(model, median)) %>%
+    ungroup()
+  #Adjust p-values for testing multiple OTUs
+  otu_stats_adjust <- otu_stats %>%
+    select(otu, statistic, p.value, parameter, method, "C", "CWM", "FRM", "RM") %>%
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+    arrange(p.value.adj) %>%
+    write_tsv(path = paste0("data/process/post_CDI_PEG_otu_stats_day_", timepoint, ".tsv"))
+}
+
+#Compare Days with data for all groups
+diversity_data_subset %>% group_by(group, day) %>% count() %>% arrange(day) %>% View()
+#-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15 have all four groups
+
+## Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
+for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
+  kruskal_wallis_otu(d)
+  #Make a list of significant otus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/post_CDI_PEG_otu_stats_day_", d, ".tsv"))
+  name <- paste("sig_otu_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, otu))
+}
+
+#Shared significant genera across from Day 3, 5, 6, 8, 10
+shared_sig_otus_D3toD10 <- intersect_all(sig_otu_day3, sig_otu_day5, sig_otu_day6, sig_otu_day8, sig_otu_day10)
+view(shared_sig_otus_D3toD10)
+print(shared_sig_otus_D3toD10)
+
+#[1] "Lachnospiraceae (OTU 4)"     "Lachnospiraceae (OTU 11)"    "Lachnospiraceae (OTU 33)"   
+#[4] "Lachnospiraceae (OTU 24)"    "Lachnospiraceae (OTU 31)"    "Lachnospiraceae (OTU 30)"   
+#[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 44)"
+
+#Function to plot a list of OTUs across sources of mice at a specific timepoint:
+#Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
+plot_otus_dx <- function(otus, timepoint){
+  post_cdi_PEG_subset(agg_otu_data) %>%
+    filter(otu %in% otus) %>%
+    filter(day == timepoint) %>%
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2000 is 2 times the subsampling parameter of 1000
+    ggplot(aes(x= otu_name, y=agg_rel_abund, color=group))+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/2000, color="gray")+
+    stat_summary(fun = 'median',
+                 fun.max = function(x) quantile(x, 0.75),
+                 fun.min = function(x) quantile(x, 0.25),
+                 position = position_dodge(width = 1)) +
+    labs(title=NULL,
+         x=NULL,
+         y="Relative abundance (%)")+
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/2000, 1))+
+    coord_flip()+
+    theme_classic()+
+    theme(plot.title=element_text(hjust=0.5),
+          legend.position = "bottom",
+          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
+          text = element_text(size = 16)) # Change font size for entire plot
+}
+
+#Plots of the top 20 OTUs that varied across sources at each timepoint----
+#Day 1: top 20 OTUs that vary across sources
+D1top20_otus <- plot_otus_dx(`sig_otu_day1`[1:20], 1) +#Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D1top20_otus.png", D1top20_otus, base_height = 9, base_width = 7)
+#Day 3: top 20 OTUs that vary across sources
+D3top20_otus <- plot_otus_dx(`sig_otu_day3`[1:20], 3) + #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D3top20_otus.png", D3top20_otus, base_height = 9, base_width = 7)
+#Day 6: top 20 OTUs that vary across sources
+D6top20_otus <- plot_otus_dx(`sig_otu_day6`[1:20], 6)+ #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D6top20_otus.png", D6top20_otus, base_height = 9, base_width = 7)
+#Day 8: top 20 OTUs that vary across sources
+D8top20_otus <- plot_otus_dx(`sig_otu_day8`[1:20], 8)+ #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D8top20_otus.png", D8top20_otus, base_height = 9, base_width = 7)
+#Day 10: top 20 OTUs that vary across sources
+D10top20_otus <- plot_otus_dx(`sig_otu_day10`[1:20], 10)+ #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D10top20_otus.png", D10top20_otus, base_height = 9, base_width = 7)
+
+#Alpha Diversity Shannon Analysis----
+#
 shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
   group_by(group, day) %>%
@@ -172,8 +274,6 @@ pcoa_axes_post_cdi_PEG_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/pe
 axis1_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-shape_scheme <- c(19, 17, 14)
-shape_experiment <- c(1, 2, 3)
 
 pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>% 
   ggplot(aes(x=axis1, y=axis2, color = group, alpha = day, shape = sample_type)) +
