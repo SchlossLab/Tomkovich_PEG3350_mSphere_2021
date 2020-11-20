@@ -333,7 +333,16 @@ for (d in tissue_test_days){
 }
 
 #OTUs that varied across treatment groups and were shared across days 
-shared_sig_otus <- intersect_all() #fill in different days to compare
+#Stools
+shared_sig_stools_otus <- intersect_all(`sig_otu_stools_day-1`,`sig_otu_stools_day-5`,sig_otu_stools_day0,
+                                        sig_otu_stools_day1, sig_otu_stools_day10, sig_otu_stools_day2,
+                                        sig_otu_stools_day3, sig_otu_stools_day4, sig_otu_tissues_day30, 
+                                        sig_otu_stools_day5, sig_otu_tissues_day6) #fill in different days to compare
+view(shared_sig_stools_otus)
+
+#Tissues
+shared_sig_tissues_otus <- intersect_all(sig_otu_tissues_day30, sig_otu_tissues_day6) #fill in different days to compare
+view(shared_sig_tissues_otus)
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
@@ -341,13 +350,13 @@ plot_otus_dx <- function(otus, timepoint){
   agg_otu_data %>%
     filter(otu %in% otus) %>%
     filter(day == timepoint) %>%
-    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
+    mutate(agg_rel_abund = agg_rel_abund + 1/1000) %>% # 2,000 is 2 times the subsampling parameter of 1000
     ggplot(aes(x= otu_name, y=agg_rel_abund, color=group))+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    geom_hline(yintercept=1/2000, color="gray")+
+    geom_hline(yintercept=1/1000, color="gray")+
     stat_summary(fun = 'median',
                  fun.max = function(x) quantile(x, 0.75),
                  fun.min = function(x) quantile(x, 0.25),
@@ -365,20 +374,20 @@ plot_otus_dx <- function(otus, timepoint){
 }
 
 #Plots of the relative abundances of OTUs that significantly varied across sources of mice from day -1 to day 1----
-otus_d1 <- plot_otus_dx(sig_otu_day1, 1)+
+otus_d1 <- plot_otus_dx(sig_otu_stools_day1, 1)+
   ggtitle("Day 1 post-infection")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_d1.png", otus_d1, base_height = 7, base_width = 8)
+save_plot("results/figures/5_days_PEG_otus_stools_d1.png", otus_d1, base_height = 7, base_width = 8)
 
-otus_d4 <- plot_otus_dx(sig_otu_day4, 4)+
+otus_d4 <- plot_otus_dx(sig_otu_stools_day4, 4)+
   ggtitle("Day 4 post-infection")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_d4.png", otus_d4, base_height = 7, base_width = 8)
+save_plot("results/figures/5_days_PEG_otus_stools_d4.png", otus_d4, base_height = 7, base_width = 8)
 
-otus_d10 <- plot_otus_dx(sig_otu_day10, 10)+
+otus_d10 <- plot_otus_dx(sig_otu_stools_day10, 10)+
   ggtitle("Day 10 post-infection")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_d10.png", otus_d10, base_height = 7, base_width = 8)
+save_plot("results/figures/5_days_PEG_otus_stools_d10.png", otus_d10, base_height = 7, base_width = 8)
 
 #Function to plot an otu_over_time
 #otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"
