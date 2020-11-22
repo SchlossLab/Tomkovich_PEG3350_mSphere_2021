@@ -321,12 +321,9 @@ axis2_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 2) %>% pull(l
 
 
 pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>% 
-  ggplot(aes(x=axis1, y=axis2, color = group, alpha = day, shape = sample_type)) +
+  mutate(`Mouse Number` = as.factor(mouse_id)) %>%
+  ggplot(aes(x=axis1, y=axis2, color = `Mouse Number`, shape = sample_type)) + #Did not specitfy day since all tissues are from Day 30
   geom_point(size=2) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
   coord_fixed() + 
   theme_classic()+
   labs(x = paste("PCoA 1 (", axis1_tissues, "%)", sep = ""), #Annotations for each axis from loadings file
