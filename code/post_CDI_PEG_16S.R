@@ -10,11 +10,15 @@ color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery
 set.seed(19760620) #Same seed used for mothur analysis
 
 
-
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
+#Diversity data for all days
 diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>%
   add_row(diversity_data %>% filter(str_detect(unique_label, "FMT")) %>% #Also add the FMT gavage samples to this subset
             mutate(group = as.factor("FMT")))
+
+diversity_data_subset_10d <- diversity_data_subset %>%
+  filter(group != "FMT", #Drop FMTs
+         day %in% c(-1:10))
 
 
 #Function to test at the otu level:
@@ -116,6 +120,50 @@ D10top20_otus <- plot_otus_dx(`sig_otu_day10`[1:20], 10)+ #Pick top 20 significa
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/post_CDI_PEG_D10top20_otus.png", D10top20_otus, base_height = 9, base_width = 7)
 
+#Alpha Diversity Sobs Overtime ----
+#Plot Sobs overtime 
+sobs_post_CDI_PEG <- diversity_data_subset %>%
+  filter(group != "FMT") %>% #Remove FMTs
+  group_by(group, day) %>%
+  mutate(median_sobs = median(sobs)) %>%
+  ggplot(x = day, y = sobs, colour =  group) +
+  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  scale_x_continuous(breaks = c(-15, -1:10, 15, 20, 25, 30),
+                     limits = c(-15,35)) +
+  theme_classic()+
+  theme(legend.position = "none") + #Remove legend
+  labs(x = "Day",
+       y = "Number of Observed Species")
+
+save_plot("results/figures/post_CDI_PEG_sobs_overtime.png", sobs_post_CDI_PEG)
+
+#Sobs oVertime 10 Day Version
+sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
+  filter(group != "FMT") %>% #Remove FMTs
+  group_by(group, day) %>%
+  mutate(median_sobs = median(sobs)) %>%
+  ggplot(x = day, y = sobs, colour =  group) +
+  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  scale_x_continuous(breaks = c(-1:10),
+                     limits = c(-1.5,11)) +
+  theme_classic()+
+  theme(legend.position = "none") + #Remove legend
+  labs(x = "Day",
+       y = "Number of Observed Species")
+
+save_plot("results/figures/post_CDI_PEG_sobs_overtime_10d.png", sobs_post_CDI_PEG_10d)
+
+
 #Alpha Diversity Shannon Analysis----
 #
 shannon_post_cdi_peg <- diversity_data_subset %>%
@@ -152,12 +200,12 @@ save_plot("results/figures/post_CDI_PEG_shannon.png", shannon_post_cdi_peg_no_le
 legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg) %>% as_ggplot()
 save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
 
-#Plot Shannon over time for all 30 days for post CDI PEG subset
+#Plot Shannon over time days -1 to 30 for post CDI PEG subset
 shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMTs
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
-                     limits = c(-2,35),
+                     limits = c(-2,35), #removes day -15 here
                      minor_breaks = c(-2.5:7.5)) +
   scale_y_continuous(limits = c(0,4))+
   labs(x = "Day",
@@ -167,9 +215,6 @@ save_plot("results/figures/post_CDI_PEG_shannon_overtime.png", shannon_post_cdi_
 
 
 #Plot Shannon over time for first 10 days for post CDI PEG subset
-diversity_data_subset_10d <- diversity_data_subset %>%
-  filter(group != "FMT", #Drop FMTs
-    day %in% c(-1:10))
 shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10),
