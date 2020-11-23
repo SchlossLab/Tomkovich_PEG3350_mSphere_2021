@@ -331,14 +331,18 @@ for (d in tissue_test_days){
   name <- paste("sig_otu_tissues_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
 }
-
+load("5_days_PEG_otu_stats_day_1_tissues.tsv")
 #OTUs that varied across treatment groups and were shared across days 
 #Stools
-shared_sig_stools_otus <- intersect_all(`sig_otu_stools_day-1`,`sig_otu_stools_day-5`,sig_otu_stools_day0,
-                                        sig_otu_stools_day1, sig_otu_stools_day10, sig_otu_stools_day2,
-                                        sig_otu_stools_day3, sig_otu_stools_day4, sig_otu_tissues_day30, 
-                                        sig_otu_stools_day5, sig_otu_tissues_day6) #fill in different days to compare
-view(shared_sig_stools_otus)
+shared_sig_stools_otus_D1toD6 <- intersect_all(sig_otu_stools_day1, sig_otu_stools_day2,                                              sig_otu_stools_day3, sig_otu_stools_day4, 
+                                             sig_otu_stools_day5, sig_otu_tissues_day6) #fill in different days to compare
+view(shared_sig_stools_otus_D1toD6)
+print(shared_sig_stools_otus_D1toD6)
+
+# "Bacteroides (OTU 1)"            "Peptostreptococcaceae (OTU 12)"
+# "Enterobacteriaceae (OTU 2)"     "Lachnospiraceae (OTU 20)"      
+# "Lachnospiraceae (OTU 4)"        "Lachnospiraceae (OTU 32)"
+
 
 #Tissues
 shared_sig_tissues_otus <- intersect_all(sig_otu_tissues_day30, sig_otu_tissues_day6) #fill in different days to compare
@@ -346,11 +350,11 @@ view(shared_sig_tissues_otus)
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
-plot_otus_dx <- function(otus, timepoint){
-  agg_otu_data %>%
+plot_otus_dx <- function(sample_df, otus, timepoint){
+  sample_df %>%
     filter(otu %in% otus) %>%
     filter(day == timepoint) %>%
-    mutate(agg_rel_abund = agg_rel_abund + 1/1000) %>% # 2,000 is 2 times the subsampling parameter of 1000
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
     ggplot(aes(x= otu_name, y=agg_rel_abund, color=group))+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -374,18 +378,21 @@ plot_otus_dx <- function(otus, timepoint){
 }
 
 #Plots of the relative abundances of OTUs that significantly varied across sources of mice from day -1 to day 1----
-otus_d1 <- plot_otus_dx(sig_otu_stools_day1, 1)+
+otus_d1 <- plot_otus_dx(sig_otu_stools_day1 [1:20], 1)+
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   ggtitle("Day 1 post-infection")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_stools_d1.png", otus_d1, base_height = 7, base_width = 8)
+save_plot("results/figures/5_days_PEG_otus_stools_d1_top20.png", otus_d1, base_height = 7, base_width = 8)
 
-otus_d4 <- plot_otus_dx(sig_otu_stools_day4, 4)+
+otus_d4 <- plot_otus_dx(sig_otu_stools_day4 [1:20], 4)+
   ggtitle("Day 4 post-infection")+ #Title plot
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_stools_d4.png", otus_d4, base_height = 7, base_width = 8)
+save_plot("results/figures/5_days_PEG_otus_stools_d4_top20.png", otus_d4, base_height = 7, base_width = 8)
 
 otus_d10 <- plot_otus_dx(sig_otu_stools_day10, 10)+
   ggtitle("Day 10 post-infection")+ #Title plot
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d10.png", otus_d10, base_height = 7, base_width = 8)
 
