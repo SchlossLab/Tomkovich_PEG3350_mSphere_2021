@@ -61,20 +61,26 @@ pull_significant_taxa(stats, otu)
 
 #Shared significant genera across from Days 1, 2 and 7----
 shared_sig_otus_D1toD7 <- intersect_all(`sig_otu_day1`, sig_otu_day2, sig_otu_day5, sig_otu_day7, sig_otu_dayPT)
-view(shared_sig_otus_D1toD7)
+view(shared_sig_otus_D1toD7) #0
 print(shared_sig_otus_D1toD7)
-#[31] "Bacteroides (OTU 1)"         "Enterobacteriaceae (OTU 2)"  "Porphyromonadaceae (OTU 8)" 
-#[4] "Lachnospiraceae (OTU 20)"    "Lachnospiraceae (OTU 62)"    "Turicibacter (OTU 5)"       
-#[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 6)"  "Porphyromonadaceae (OTU 7)" 
-#[10] "Lachnospiraceae (OTU 32)"    "Lachnospiraceae (OTU 4)"     "Porphyromonadaceae (OTU 10)"
-#[13] "Lachnospiraceae (OTU 11)"    "Lachnospiraceae (OTU 24)"    "Akkermansia (OTU 3)"    
+#0 OTUs overlap
+
+#No taxa significant
+for (d in exp_days_seq){
+  #Make a list of top 10 otus across sources of mice for a specific day
+  top10 <- read_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", d, ".tsv")) %>% 
+    slice_head(n = 10) %>%  #Select the top 10 otus (already arranged by adjusted p values)
+    pull(otu)
+  name <- paste("top10_otu_day", d, sep = "")
+  assign(name, top10)
+}
+
+#Plot top 10 taxa for each day (no significant differences in the relative abundances between groups:
 
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
 plot_otus_dx <- function(otus, timepoint){
-  one_day_PEG_subset(agg_otu_data) %>%
-    mutate(day = replace(day, day == -1, "PT"),
-           day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+  agg_otu_data_subset %>% 
     filter(otu %in% otus) %>%
     filter(day == timepoint) %>%
     mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2000 is 2 times the subsampling parameter of 1000
@@ -83,7 +89,7 @@ plot_otus_dx <- function(otus, timepoint){
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    geom_hline(yintercept=1/2000, color="gray")+
+    geom_hline(yintercept=1/1000, color="gray")+ #Limit of detection = 1/our subsampling parameter
     stat_summary(fun = 'median',
                  fun.max = function(x) quantile(x, 0.75),
                  fun.min = function(x) quantile(x, 0.25),
@@ -101,31 +107,31 @@ plot_otus_dx <- function(otus, timepoint){
 }
 
 #Plots of the top 20 OTUs that varied across sources at each timepoint----
-#Day 1: top 20 OTUs that vary across sources
-D1top20_otus <- plot_otus_dx(`sig_otu_day1`[1:20], 1) +#Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+#Pre-treatment (PT): top 10 OTUs, no difference between groups
+PT_otus <- plot_otus_dx(top10_otu_dayPT, "PT")+ #Pick top 10 OTUs
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_D1top20_otus.png", D1top20_otus, base_height = 9, base_width = 7)
-#Day 2: top 20 OTUs that vary across sources
-D2top20_otus <- plot_otus_dx(`sig_otu_day2`[1:20], 2) + #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+save_plot("results/figures/1_Day_PEG_PT_ns_otus.png", PT_otus, base_height = 9, base_width = 7)
+#Day 1: top 10 OTUs, no difference between groups
+D1_otus <- plot_otus_dx(top10_otu_day1, 1) +#Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_D2top20_otus.png", D2top20_otus, base_height = 9, base_width = 7)
-#Day 5: top 20 OTUs that vary across sources
-D5top20_otus <- plot_otus_dx(`sig_otu_day5`[1:20], 5)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+save_plot("results/figures/1_Day_PEG_D1_ns_otus.png", D1_otus, base_height = 9, base_width = 7)
+#Day 2: top 10 OTUs, no difference between groups
+D2_otus <- plot_otus_dx(top10_otu_day2, 2) + #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_D5top20_otus.png", D5top20_otus, base_height = 9, base_width = 7)
-#Day 7: top 20 OTUs that vary across sources
-D7top20_otus <- plot_otus_dx(`sig_otu_day7`[1:20], 7)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+save_plot("results/figures/1_Day_PEG_D2_ns_otus.png", D2_otus, base_height = 9, base_width = 7)
+#Day 5: top 10 OTUs, no difference between groups
+D5_otus <- plot_otus_dx(top10_otu_day5, 5)+ #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_D7top20_otus.png", D7top20_otus, base_height = 9, base_width = 7)
-#Pre-treatment (PT): top 20 OTUs that vary across sources
-PTtop20_otus <- plot_otus_dx(`sig_otu_dayPT`[1:20], "PT")+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+save_plot("results/figures/1_Day_PEG_D5_ns_otus.png", D5_otus, base_height = 9, base_width = 7)
+#Day 7: top 10 OTUs, no difference between groups
+D7_otus <- plot_otus_dx(top10_otu_day7, 7)+ #Pick top 20 significant OTUs
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_PTtop20_otus.png", PTtop20_otus, base_height = 9, base_width = 7)
+save_plot("results/figures/1_Day_PEG_D7_ns_otus.png", D7_otus, base_height = 9, base_width = 7)
 
 #Plot sobs overtime for 1_day_PEG subset----
 sobs_1_Day_PEG <- diversity_data_subset %>%
