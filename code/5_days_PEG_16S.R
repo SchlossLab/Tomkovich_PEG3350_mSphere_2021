@@ -331,7 +331,7 @@ for (d in tissue_test_days){
   name <- paste("sig_otu_tissues_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
 }
-load("5_days_PEG_otu_stats_day_1_tissues.tsv")
+
 #OTUs that varied across treatment groups and were shared across days 
 #Stools
 shared_sig_stools_otus_D1toD6 <- intersect_all(sig_otu_stools_day1, sig_otu_stools_day2,                                              sig_otu_stools_day3, sig_otu_stools_day4, 
@@ -378,23 +378,36 @@ plot_otus_dx <- function(sample_df, otus, timepoint){
 }
 
 #Plots of the relative abundances of OTUs that significantly varied across sources of mice from day -1 to day 1----
-otus_d1 <- plot_otus_dx(sig_otu_stools_day1 [1:20], 1)+
+otus_d1 <- plot_otus_dx(otu_stools, sig_otu_stools_day1 [1:20], 1)+
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  ggtitle("Day 1 post-infection")+ #Title plot
+  ggtitle("Day 1 post-infection Stools")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d1_top20.png", otus_d1, base_height = 7, base_width = 8)
 
-otus_d4 <- plot_otus_dx(sig_otu_stools_day4 [1:20], 4)+
-  ggtitle("Day 4 post-infection")+ #Title plot
+otus_d4 <- plot_otus_dx(otu_stools, sig_otu_stools_day4 [1:20], 4)+
+  ggtitle("Day 4 post-infection Stools")+ #Title plot
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d4_top20.png", otus_d4, base_height = 7, base_width = 8)
 
-otus_d10 <- plot_otus_dx(sig_otu_stools_day10, 10)+
-  ggtitle("Day 10 post-infection")+ #Title plot
+otus_d10 <- plot_otus_dx(otu_stools, sig_otu_stools_day10, 10)+
+  ggtitle("Day 10 post-infection Stools")+ #Title plot
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d10.png", otus_d10, base_height = 7, base_width = 8)
+
+otus_tissues_d6 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day6[1:20], 6)+
+  ggtitle("Day 6 post-infection Tissue")+ #Title plot
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_otus_tissues_d6.png", otus_tissues_d6, base_height = 7, base_width = 8)
+
+otus_tissues_d30 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day30[1:20], 30)+
+  ggtitle("Day 30 post-infection Tissue")+ #Title plot
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_otus_tissues_d30.png", otus_tissues_d30, base_height = 7, base_width = 8)
+
 
 #Function to plot an otu_over_time
 #otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"
