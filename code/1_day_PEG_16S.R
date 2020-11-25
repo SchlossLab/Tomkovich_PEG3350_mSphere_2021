@@ -16,24 +16,21 @@ diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
    mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
  
 #Get exp days sequenced in both pretreatment and other days
-exp_days_seq <- unique(diversity_data_subset %>% pull(day))
+exp_days_seq <- unique(diversity_data_subset %>% pull(day)) 
 
 #Remove Days 0 and 4 because not all three groups are represented
-exp_days_seq <- exp_days_seq[1:4]  #Removes last two positions of day 0 and day 4
+exp_days_seq <- exp_days_seq[1:5]  #Removes last two positions of day 0 and day 4
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
 #Function to test at the otu level:
-
 agg_otu_data_subset <- one_day_PEG_subset(agg_otu_data) %>%
   mutate(day = replace(day, day == -1, "PT"),
          day = replace(day, day == -2, "PT")) #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
 
 kruskal_wallis_otu <- function(timepoint){
   otu_stats <- agg_otu_data_subset %>%
-    mutate(day = replace(day, day == -1, "PT"),
-           day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
     filter(day == timepoint) %>%
     select(group, otu, agg_rel_abund) %>%
     group_by(otu) %>%
@@ -58,6 +55,9 @@ for (d in exp_days_seq){
   name <- paste("sig_otu_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
 }
+
+pull_significant_taxa(stats, otu)
+
 
 #Shared significant genera across from Days 1, 2 and 7----
 shared_sig_otus_D1toD7 <- intersect_all(`sig_otu_day1`, sig_otu_day2, sig_otu_day5, sig_otu_day7, sig_otu_dayPT)
@@ -131,9 +131,9 @@ save_plot("results/figures/1_Day_PEG_PTtop20_otus.png", PTtop20_otus, base_heigh
 sobs_1_Day_PEG <- diversity_data_subset %>%
   group_by(group, day) %>%
   mutate(median_sobs = median(sobs)) %>%
-  ggplot(x = day, y = sobs, colour =  group) +
+  ggplot(x = day, y = sobs, group = group, colour =  group) +
   geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
+  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
