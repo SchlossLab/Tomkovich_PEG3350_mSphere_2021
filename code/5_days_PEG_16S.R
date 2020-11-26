@@ -334,6 +334,9 @@ for (d in tissue_test_days){
 
 #OTUs that varied across treatment groups and were shared across days 
 #Stools
+view(sig_otu_stools_day1)
+view(sig_otu_stools_day10)
+view(sig_otu_stools_day4)
 shared_sig_stools_otus_D1toD6 <- intersect_all(sig_otu_stools_day1, sig_otu_stools_day2,                                              sig_otu_stools_day3, sig_otu_stools_day4, 
                                              sig_otu_stools_day5, sig_otu_tissues_day6) #fill in different days to compare
 view(shared_sig_stools_otus_D1toD6)
@@ -378,7 +381,7 @@ plot_otus_dx <- function(sample_df, otus, timepoint){
 }
 
 #Plots of the relative abundances of OTUs that significantly varied across sources of mice from day -1 to day 1----
-otus_d1 <- plot_otus_dx(otu_stools, sig_otu_stools_day1 [1:20], 1)+
+otus_d1 <- plot_otus_dx(otu_stools, sig_otu_stools_day1[1:20], 1)+
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   ggtitle("Day 1 post-infection Stools")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
@@ -390,11 +393,17 @@ otus_d4 <- plot_otus_dx(otu_stools, sig_otu_stools_day4 [1:20], 4)+
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d4_top20.png", otus_d4, base_height = 7, base_width = 8)
 
-otus_d10 <- plot_otus_dx(otu_stools, sig_otu_stools_day10, 10)+
+otus_d10 <- plot_otus_dx(otu_stools, sig_otu_stools_day10 [1:20], 10)+
   ggtitle("Day 10 post-infection Stools")+ #Title plot
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d10.png", otus_d10, base_height = 7, base_width = 8)
+
+otus_d6 <- plot_otus_dx(otu_stools, `sig_otu_stools_day6` [1:20], 6)+
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  ggtitle("Day 6 post-infection Stools")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_otus_stools_d6_top20.png", otus_d6, base_height = 7, base_width = 8)
 
 otus_tissues_d6 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day6[1:20], 6)+
   ggtitle("Day 6 post-infection Tissue")+ #Title plot
@@ -457,6 +466,96 @@ peptostrep_tissues <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_tissue
 
 save_plot(filename = "results/figures/5_days_PEG_peptostreptococcaceae_tissues.png", peptostrep_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
+#Examine Bacteroides otu over time----
+bacteroides_stools <- otu_over_time("Bacteroides (OTU 1)", otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_bacteroides_stools.png", bacteroides_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+bacteroides_tissues <- otu_over_time("Bacteroides (OTU 1)", otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_bacteroides_tissues.png", bacteroides_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Enterobacteriaceae (OTU 2) over time----
+entero2_stools <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_entero2_stools.png", entero2_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+entero2_tissues <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_entero2_tissues.png", entero2_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Porphyromonadaceae otu over time----
+porph_stools <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_porph_stools.png", porph_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine "Lachnospiraceae (OTU 20)"  over time----
+lach20_stools <- otu_over_time("Lachnospiraceae (OTU 20)" , otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_lach20_stools.png", lach20_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+lach20_tissues <- otu_over_time("Lachnospiraceae (OTU 20)" , otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_lach20_tissues.png", lach20_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine "Lachnospiraceae (OTU 4)"  over time----
+lach4_stools <- otu_over_time("Lachnospiraceae (OTU 4)" , otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_lach4_stools.png", lach4_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+lach4_tissues <- otu_over_time("Lachnospiraceae (OTU 4)" , otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_lach4_tissues.png", lach4_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+
+#Examine "Lachnospiraceae (OTU 32)"  over time----
+lach32_stools <- otu_over_time("Lachnospiraceae (OTU 32)" , otu_stools)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_lach32_stools.png", lach32_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+lach32_tissues <- otu_over_time("Lachnospiraceae (OTU 32)" , otu_tissues)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+
+save_plot(filename = "results/figures/5_days_PEG_lach32_tissues.png", lach32_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Customize days with scale_X_continuous
 
