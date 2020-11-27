@@ -44,7 +44,7 @@ kruskal_wallis_otu <- function(timepoint){
     select(otu, statistic, p.value, parameter, method, "C", "1RM1", "M1") %>%
     mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
     arrange(p.value.adj) %>%
-    write_tsv(path = paste0("data/process/1_Day_PEG_otu_stats_day_", timepoint, ".tsv"))
+    write_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", timepoint, ".tsv"))
 }
 
 # Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
@@ -55,9 +55,6 @@ for (d in exp_days_seq){
   name <- paste("sig_otu_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
 }
-
-pull_significant_taxa(stats, otu)
-
 
 #Shared significant genera across from Days 1, 2 and 7----
 shared_sig_otus_D1toD7 <- intersect_all(`sig_otu_day1`, sig_otu_day2, sig_otu_day5, sig_otu_day7, sig_otu_dayPT)
@@ -152,14 +149,28 @@ sobs_1_Day_PEG <- diversity_data_subset %>%
 save_plot("results/figures/1_Day_PEG_sobs_overtime.png", sobs_1_Day_PEG)
 
 #Plot Shannon Diversity overtime
-Shannon_1_Day_PEG_Overtime <- plot_shannon_overtime(diversity_data_subset)
+Shannon_1_Day_PEG_Overtime <- diversity_data_subset %>%
+  group_by(group, day) %>%
+  mutate(median_shannon = median(shannon)) %>%
+  ggplot(x = day, y = shannon, colour = group)+
+  geom_point(mapping = aes(x = day, y = shannon, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  theme_classic()+
+  theme(legend.position = c(1,.25),
+        text = element_text(size = 14), # Change font size for entire plot
+        axis.ticks.x = element_blank()) 
+  
 save_plot("results/figures/1_Day_PEG_shannon_overtime.png", Shannon_1_Day_PEG_Overtime)
 
  #Pull 1_Day_PEG subset of PCoA data
 pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
-  full_join(diversity_data_subset, by= "unique_label") %>% #merge metadata and PCoA data frames (This drops some of our 16S data for early timepoints)
+  left_join(diversity_data_subset, by= "unique_label") %>% #merge metadata and PCoA data frames 
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
 
