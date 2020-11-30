@@ -226,7 +226,7 @@ pcoa_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
 
-pcoa_5_day_PEG_stool<- subset(pcoa_5_day_PEG_stool, group %in% c("C", "WM", "WMN", "WMC"))
+pcoa_5_day_PEG_stool<- subset(pcoa_5_day_PEG_stool, !group %in% c("WMN", "CN"))
 
 pcoa_axes_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
 axis1 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
