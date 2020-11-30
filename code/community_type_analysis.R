@@ -176,14 +176,50 @@ percent_group <- sample_best_community_fit %>%
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())  
 
+percent_day <- sample_best_community_fit %>% 
+  group_by(community, day) %>% 
+  summarize(day_community_total = n()) %>%
+  #Make a new variable % day per community type based on total community numbers
+  mutate(percent_community = case_when(community == "1" ~ (day_community_total/74)*100,
+                                       community == "2" ~ (day_community_total/80)*100,
+                                       community == "3" ~ (day_community_total/63)*100,
+                                       community == "4" ~ (day_community_total/112)*100,
+                                       community == "5" ~ (day_community_total/48)*100,
+                                       community == "6" ~ (day_community_total/37)*100,
+                                       community == "7" ~ (day_community_total/189)*100,
+                                       community == "8" ~ (day_community_total/120)*100,
+                                       community == "9" ~ (day_community_total/167)*100,
+                                       community == "10" ~ (day_community_total/42)*100,
+                                       community == "11" ~ (day_community_total/82)*100,
+                                       community == "12" ~ (day_community_total/100)*100,
+                                       community == "13" ~ (day_community_total/33)*100,
+                                       community == "14" ~ (day_community_total/143)*100,
+                                       community == "15" ~ (day_community_total/94)*100,
+                                       TRUE ~ 0)) %>% #No samples should fall into this category
+  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day into factor variable
+  mutate(day = fct_relevel(day, NA, "30", "25", "20", "15", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "0",
+                             "-1", "-2", "-4", "-5", "-10", "-11", "-15")) %>% #Specify the order of the groups
+  ggplot()+
+  geom_tile(aes(x=community, y=day, fill=percent_community))+
+  scale_x_continuous(breaks = c(1:15))+
+  theme_classic()+
+  scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "% Community")+
+  theme(axis.title.y = element_blank(), #Get rid of y axis title
+        axis.title.x = element_blank(), #Get rid of x axis title, text, and ticks. Will combine with bacteria in community
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())  
+
 #Combine plots of percent of each group or sample type that belong to each cluster with the
 #plot of the bacteria relative abundances within each cluster
 #Align heat maps
 combined_heatmaps_sample_type <- align_plots(percent_sample_type, bacteria_in_community, align = 'v', axis = "b")
 combined_heatmaps_group <- align_plots(percent_group, bacteria_in_community, align = 'v', axis = "b")
+combined_heatmaps_day <- align_plots(percent_day, bacteria_in_community, align = 'v', axis = "b")
 #Plot and save the aligned heat maps
 plot_grid(combined_heatmaps_sample_type[[1]], combined_heatmaps_sample_type[[2]], rel_heights = c(1, 3), ncol = 1)+
   ggsave("results/figures/community_types_sample_type.png", height = 6.0, width = 8.5)
 plot_grid(combined_heatmaps_group[[1]], combined_heatmaps_group[[2]], rel_heights = c(1, 1.2), ncol = 1)+
   ggsave("results/figures/community_types_group.png", height = 8.0, width = 8.5)
+plot_grid(combined_heatmaps_day[[1]], combined_heatmaps_day[[2]], rel_heights = c(1.5, 1), ncol = 1)+
+  ggsave("results/figures/community_types_day.png", height = 10.5, width = 8.5)
 
