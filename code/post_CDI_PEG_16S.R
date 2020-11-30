@@ -332,3 +332,42 @@ D10top20_otus <- plot_otus_dx(`sig_otu_day10`[1:20], 10)+ #Pick top 20 significa
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/post_CDI_PEG_D10top20_otus.png", D10top20_otus, base_height = 9, base_width = 7)
+
+
+#Perform pairwise comparisons for day -15 and -1
+# Perform pairwise Wilcoxan rank sum tests for otus that were significantly different across sources of mice on a series of days----
+pairwise_day_otu <- function(timepoint, sig_otu_dayX){
+  otu_stats <- post_cdi_PEG_subset(agg_otu_data) %>% 
+    filter(day == timepoint) %>%
+    select(group, otu, agg_rel_abund) %>% 
+    group_by(otu) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$vendor)) %>% tidy())) %>% 
+    mutate(median = map(data, get_rel_abund_median_vendor)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()
+  pairwise_stats <- otu_stats %>% 
+    filter(otu %in% sig_otu_dayX) %>% 
+    group_by(otu) %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$agg_rel_abund, g=as.factor(.x$vendor), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
+    write_tsv(path = paste0("data/process/otu_stats_day_", timepoint, "_sig.tsv"))
+  #Format pairwise stats to use with ggpubr package
+  plot_format_stats <- pairwise_stats %>% 
+    select(-method,-Schloss, -Young, -Jackson, -`Charles River`, -Taconic, -Envigo) %>% 
+    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+    lapply(tidy_pairwise_otu) %>% 
+    bind_rows()
+  return(plot_format_stats)  
+}
+
+otu_dayn15_stats <- pairwise_day_otu(-15, `sig_otu`)
+otu_dayn1_stats <- pairwise_day_otu(-1, sig_otu_day1)
+
