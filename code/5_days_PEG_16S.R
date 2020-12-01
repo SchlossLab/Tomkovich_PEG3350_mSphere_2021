@@ -121,7 +121,7 @@ kw_richness_stools <- kruskal_wallis_richness(diversity_stools, stool_test_days,
 sig_richness_days_stools <- pull_sig_days(kw_richness_stools)
 #Test with richness for tissue subset
 kw_richness_tissues <- kruskal_wallis_richness(diversity_tissues, tissue_test_days, "tissues")
-sig_richness_days_stissues <- pull_sig_days(kw_richness_tissues)
+sig_richness_days_tissues <- pull_sig_days(kw_richness_tissues)
 
 #Shannon and richness plots for stool samples from the 5-days PEG subset----
 #Plot Shannon diversity over time for the subset of stool samples (excluding mock challenged mice):
