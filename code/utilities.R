@@ -346,7 +346,7 @@ plot_shannon_overtime <- function(df) {
     group_by(group, day) %>%
     mutate(median_shannon = median(shannon)) %>%
     ggplot(x = day, y = shannon, colour = group)+
-    geom_point(mapping = aes(x = day, y = shannon, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_shannon, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -358,7 +358,7 @@ plot_shannon_overtime <- function(df) {
          x="Days Post-Infection",
          y="Shannon Diversity Index")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme(legend.position = c(.9,.25),
+    theme(legend.position = "bottom",
           text = element_text(size = 14), # Change font size for entire plot
           axis.ticks.x = element_blank(),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
@@ -369,7 +369,7 @@ plot_richness_overtime <- function(df) {
   median_summary <- df %>%
     group_by(group, day) %>%
     mutate(median_sobs = median(sobs)) %>%
-    ggplot(x = day, y = sobs, colour = group)+
+    ggplot(x = day, y = sobs, group = group, colour = group)+
     geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
@@ -382,7 +382,7 @@ plot_richness_overtime <- function(df) {
          x="Days Post-Infection",
          y="Number of Observed OTUs")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme(legend.position = c(.9,.25),
+    theme(legend.position = "bottom",
           text = element_text(size = 14), # Change font size for entire plot
           axis.ticks.x = element_blank(),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
