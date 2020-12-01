@@ -28,7 +28,113 @@ set.seed(19760620) #Same seed used for mothur analysis
 agg_otu_data_subset <- one_day_PEG_subset(agg_otu_data) %>%
   mutate(day = replace(day, day == -1, "PT"),
          day = replace(day, day == -2, "PT")) #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+#Kruskal-Wallis Function to test for differences in Shannon Diveristy Index across groups with Benjamini Hochberg correction----
+#Adapted from 5_days_PEG_16S.R script, removed subset_name argument as only one sample type in 1 Day subset
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+kruskal_wallis_shannon <- function(diversity_subset, timepoints){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, shannon, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$shannon, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_shannon_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(day, statistic, p.value, parameter, method, "C", "1RM1", "M1") %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) %>% 
+    write_tsv(path = paste0("data/process/1_days_PEG_shannon_stats_subset.tsv"))
+}
+#Test with shannon (Only stool samples in 1 Day Subset)
+kw_shannon <- kruskal_wallis_shannon(diversity_data_subset, exp_days_seq)
+sig_shannon_days <- pull_sig_days(kw_shannon)
 
+#Kruskal-Wallis Function to test for differences in richness (sobs) between groups on a particular day with Benjamini Hochberg correction----
+#Adapted from 5_days_PEG_16S.R script, removed subset_name argument as only one sample type in 1 Day subset
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+kruskal_wallis_richness <- function(diversity_subset, timepoints){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, sobs, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$sobs, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_sobs_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(day, statistic, p.value, parameter, method, "C", "1RM1", "M1") %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) %>% 
+    write_tsv(path = paste0("data/process/1_days_PEG_richness_stats_subset.tsv"))
+}
+#Test with richness (Only stool samples in 1 Day subset)
+kw_richness <- kruskal_wallis_richness(diversity_data_subset, exp_days_seq)
+sig_richness_days <- pull_sig_days(kw_richness) 
+
+#Shannon and richness plots for the 1 Day PEG subset----
+#Statistical annotation labels:
+x_annotation <- sig_shannon_days
+y_position <- max(diversity_data_subset$shannon)+0.15
+label <- kw_label(kw_shannon)
+#Plot
+shannon_stools <- plot_shannon_overtime(diversity_data_subset) +
+  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/1_days_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Statistical annotation labels:
+x_annotation <- sig_richness_days
+y_position <- max(diversity_data_subset$sobs)+5
+label <- kw_label(kw_richness)
+#Plot
+richness_tissues <- plot_richness_overtime(diversity_data_subset) +
+  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/1_days_PEG_richness_tissues.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#PCoa Analysis----
+#Pull 1_Day_PEG subset of PCoA data
+pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames 
+  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
+  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(day > -3)#limit to experimental time frameampling cutoff
+
+#Pull axes from loadings file
+pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
+save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
+
+pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+  labs(title = 'Day: {frame_time}') + #Adds time variable to title
+  transition_time(day)+  #Day variable used to cycle through time on animation
+  shadow_mark() #Shows previous timepoints
+
+# Implement better frames per second for animation
+pcoa_gif <- animate(pcoa_animated, duration = 7, fps = 10,
+                    res = 150, width = 20, height = 20, unit = "cm")
+
+# Save as gif file
+anim_save(animation = pcoa_gif, filename = 'results/1_Day_PEG_pcoa_over_time.gif')
+
+
+#Kruskal-Wallis Function to test for differences in OTUs across groups on a particular day----
 kruskal_wallis_otu <- function(timepoint){
   otu_stats <- agg_otu_data_subset %>%
     filter(day == timepoint) %>%
@@ -47,7 +153,7 @@ kruskal_wallis_otu <- function(timepoint){
     write_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", timepoint, ".tsv"))
 }
 
-# Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
+# Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced
 for (d in exp_days_seq){
   kruskal_wallis_otu(d)
   #Make a list of significant otus across sources of mice for a specific day
@@ -73,7 +179,6 @@ for (d in exp_days_seq){
 }
 
 #Plot top 10 taxa for each day (no significant differences in the relative abundances between groups:
-
 #Function to plot a list of OTUs across sources of mice at a specific timepoint:
 #Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
 plot_otus_dx <- function(otus, timepoint){
@@ -129,72 +234,3 @@ D7_otus <- plot_otus_dx(top10_otu_day7, 7)+ #Pick top 20 significant OTUs
   geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/1_Day_PEG_D7_ns_otus.png", D7_otus, base_height = 9, base_width = 7)
-
-#Plot sobs overtime for 1_day_PEG subset----
-sobs_1_Day_PEG <- diversity_data_subset %>%
-  group_by(group, day) %>%
-  mutate(median_sobs = median(sobs)) %>%
-  ggplot(x = day, y = sobs, group = group, colour =  group) +
-  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  theme_classic()+
-  theme(legend.position = c(1,.25),
-        text = element_text(size = 14), # Change font size for entire plot
-        axis.ticks.x = element_blank()) 
-
-save_plot("results/figures/1_Day_PEG_sobs_overtime.png", sobs_1_Day_PEG)
-
-#Plot Shannon Diversity overtime
-Shannon_1_Day_PEG_Overtime <- diversity_data_subset %>%
-  group_by(group, day) %>%
-  mutate(median_shannon = median(shannon)) %>%
-  ggplot(x = day, y = shannon, colour = group)+
-  geom_point(mapping = aes(x = day, y = shannon, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  theme_classic()+
-  theme(legend.position = c(1,.25),
-        text = element_text(size = 14), # Change font size for entire plot
-        axis.ticks.x = element_blank()) 
-  
-save_plot("results/figures/1_Day_PEG_shannon_overtime.png", Shannon_1_Day_PEG_Overtime)
-
- #Pull 1_Day_PEG subset of PCoA data
-pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
-  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
-  rename("unique_label" = group) %>%
-  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames 
-  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3)#limit to experimental time frame
-
-#Pull axes from loadings file
-pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
-axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-
-pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
-  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 5)
-
-pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
-  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
-  labs(title = 'Day: {frame_time}') + #Adds time variable to title
-  transition_time(day)+  #Day variable used to cycle through time on animation
-  shadow_mark() #Shows previous timepoints
-
-# Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = 7, fps = 10,
-                    res = 150, width = 20, height = 20, unit = "cm")
-
-# Save as gif file
-anim_save(animation = pcoa_gif, filename = 'results/1_Day_PEG_pcoa_over_time.gif')
