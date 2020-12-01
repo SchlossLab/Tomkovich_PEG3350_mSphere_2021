@@ -137,7 +137,8 @@ pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycu
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(day > -3)#limit to experimental time frame
 
 #Pull axes from loadings file
 pcoa_axes_post_cdi_PEG <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
@@ -179,7 +180,8 @@ pcoa_post_cdi_peg_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.op
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(day > -3)#limit to experimental time frame
 
 #Pull axes from loadings file
 pcoa_axes_post_cdi_PEG_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
@@ -213,12 +215,12 @@ pcoa_post_cdi_peg_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/peg3350
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  filter(day > -3)#limit to experimental time frame
 #Pull axes from loadings file
 pcoa_axes_post_cdi_PEG_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
 axis1_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-
 
 pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>% 
   mutate(`Mouse Number` = as.factor(mouse_id)) %>%
@@ -231,7 +233,6 @@ pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>%
        alpha = "Day",
        shape = "Tissue Type")
 save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pcoa_subset_plot_tissues, base_height = 5, base_width = 5)
-
 
 #OTU Analysis------
 #Function to test at the otu level:
