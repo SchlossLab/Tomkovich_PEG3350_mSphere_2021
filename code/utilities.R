@@ -395,17 +395,14 @@ plot_pcoa <- function(df){
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
-                        labels=color_labels)+
-    #    scale_alpha_continuous(range = c(.3, 1),
-    #                           breaks= c(2, 4, 6, 8, 10),
-    #                           labels=c(2, 4, 6, 8, 10))+
+                        labels=color_labels, 
+                        guide = "none")+ #Suppress legend for group colors
     coord_fixed() +
-    #    xlim(-0.4, 0.65)+
-    #    ylim(-0.45, 0.6)+
     labs(x="PCoA 1",
          y="PCoA 2",
          alpha= "Day") +
-    theme_classic()
+    theme_classic()+
+    theme(legend.position = "bottom")
 }
 
 #Function to format Kruskal-Wallis data frame with adjusted p values to use as a label on plots of cfu, weight, diversity, and other variables over time:

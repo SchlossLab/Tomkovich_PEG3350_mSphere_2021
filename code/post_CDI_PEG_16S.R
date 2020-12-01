@@ -148,7 +148,7 @@ axis2 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 2) %>% pull(loading) %>% roun
 pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 7, base_width = 14)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 5, base_width = 5)
 
 #PCoA plot over time as a still and a as an animation
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
@@ -189,7 +189,7 @@ axis2_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 2) %>% pull(loadi
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_post_cdi_peg_stool)+
   labs(x = paste("PCoA 1 (", axis1_stool, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 7, base_width = 14)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
 
 #Animate stool only PCoA over time
 pcoa_animated_stool <- pcoa_post_cdi_peg_stool %>%
@@ -230,7 +230,7 @@ pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>%
        y = paste("PCoA 2 (", axis2_tissues,"%)", sep = ""),
        alpha = "Day",
        shape = "Tissue Type")
-save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pcoa_subset_plot_tissues, base_height = 7, base_width = 14)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pcoa_subset_plot_tissues, base_height = 5, base_width = 5)
 
 
 #OTU Analysis------
