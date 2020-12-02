@@ -9,7 +9,17 @@ color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
+#Create functions to further subset our data by sample type and or add mock challenged mice (CN and WMN groups)----
+#Function to filter dataframe (df) to examine stool samples
+subset_stool <- function(df){
+  df %>% filter(sample_type == "stool")
+}
+#Function to filter dataframe (df) to examine tissue samples
+subset_tissue <- function(df){
+  df %>% filter(!sample_type == "stool")
+}
 
+#Alpha Diversity Analysis-------
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
 #Diversity data for all days
 diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>%
@@ -20,52 +30,45 @@ diversity_data_subset_10d <- diversity_data_subset %>%
   filter(group != "FMT", #Drop FMTs
          day %in% c(-1:10))
 
-#Alpha Diversity Sobs Overtime ----
-#Plot Sobs overtime 
-sobs_post_CDI_PEG <- diversity_data_subset %>%
-  filter(group != "FMT") %>% #Remove FMTs
-  group_by(group, day) %>%
-  mutate(median_sobs = median(sobs)) %>%
-  ggplot(x = day, y = sobs, colour =  group) +
-  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  scale_x_continuous(breaks = c(-15, -1:10, 15, 20, 25, 30),
-                     limits = c(-15,35)) +
-  theme_classic()+
-  theme(legend.position = "none") + #Remove legend
-  labs(x = "Day",
-       y = "Number of Observed Species")
+#Create subset of the post CDI PEG diversity data for just stool samples and tissues
+diversity_stools <- subset_stool(diversity_data_subset)
+diversity_tissues <- subset_tissue(diversity_data_subset)
 
-save_plot("results/figures/post_CDI_PEG_sobs_overtime.png", sobs_post_CDI_PEG)
-
-#Sobs oVertime 10 Day Version
-sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
-  filter(group != "FMT") %>% #Remove FMTs
-  group_by(group, day) %>%
-  mutate(median_sobs = median(sobs)) %>%
-  ggplot(x = day, y = sobs, colour =  group) +
-  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  scale_x_continuous(breaks = c(-1:10),
-                     limits = c(-1.5,11)) +
-  theme_classic()+
-  theme(legend.position = "none") + #Remove legend
-  labs(x = "Day",
-       y = "Number of Observed Species")
-
-save_plot("results/figures/post_CDI_PEG_sobs_overtime_10d.png", sobs_post_CDI_PEG_10d)
-
+#Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
+#Compare days with stool data for all groups
+diversity_stools %>% group_by(group, day) %>% count() %>% arrange(day) %>% View()
+stool_test_days <- c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15) #Days with stools in for all four groups
 
 #Alpha Diversity Shannon Analysis----
-#
+#Function to perform Kruskal-Wallis test for differences in Shannon diversity index across groups on a particular day with Benjamini Hochberg correction
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+#subset_name = label to append to results filename to indicate subset analyzed. Ex. stool, tissues, stool_mock, tissues_mock
+kruskal_wallis_shannon <- function(diversity_subset, timepoints, subset_name){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, shannon, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$shannon, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_shannon_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(day, statistic, p.value, parameter, method, C, CWM, FRM, RM) %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) %>% 
+    write_tsv(path = paste0("data/process/post_CDI_PEG_shannon_stats_", subset_name, "_subset.tsv"))
+}
+
+#Test with shannon for stool subset
+kw_shannon_stools <- kruskal_wallis_shannon(diversity_stools, stool_test_days, "stools")
+sig_shannon_days_stools <- pull_sig_days(kw_shannon_stools)
+
+
+
+#Plot Shannon
 shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
   group_by(group, day) %>%
@@ -126,6 +129,75 @@ shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   theme(legend.position = "none")
 save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
 
+#Alpha Diversity Richness (Sobs)----
+#Function to perform Kruskal-Wallis test for differences in richness (sobs) across groups on a particular day with Benjamini Hochberg correction
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+#subset_name = label to append to results filename to indicate subset analyzed. Ex. stool, tissues, stool_mock, tissues_mock
+kruskal_wallis_richness <- function(diversity_subset, timepoints, subset_name){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, sobs, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$sobs, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_sobs_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(day, statistic, p.value, parameter, method, C, CWM, FRM, RM) %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) %>% 
+    write_tsv(path = paste0("data/process/post_CDI_PEG_richness_stats_", subset_name, "_subset.tsv"))
+}
+
+#Test with richness for stool subset
+kw_richness_stools <- kruskal_wallis_richness(diversity_stools, stool_test_days, "stools")
+sig_richness_days_stools <- pull_sig_days(kw_richness_stools)
+
+
+#Plot Sobs overtime 
+sobs_post_CDI_PEG <- diversity_data_subset %>%
+  filter(group != "FMT") %>% #Remove FMTs
+  group_by(group, day) %>%
+  mutate(median_sobs = median(sobs)) %>%
+  ggplot(x = day, y = sobs, colour =  group) +
+  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  scale_x_continuous(breaks = c(-15, -1:10, 15, 20, 25, 30),
+                     limits = c(-15,35)) +
+  theme_classic()+
+  theme(legend.position = "none") + #Remove legend
+  labs(x = "Day",
+       y = "Number of Observed Species")
+
+save_plot("results/figures/post_CDI_PEG_sobs_overtime.png", sobs_post_CDI_PEG)
+
+#Sobs oVertime 10 Day Version
+sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
+  filter(group != "FMT") %>% #Remove FMTs
+  group_by(group, day) %>%
+  mutate(median_sobs = median(sobs)) %>%
+  ggplot(x = day, y = sobs, colour =  group) +
+  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  scale_x_continuous(breaks = c(-1:10),
+                     limits = c(-1.5,11)) +
+  theme_classic()+
+  theme(legend.position = "none") + #Remove legend
+  labs(x = "Day",
+       y = "Number of Observed Species")
+
+save_plot("results/figures/post_CDI_PEG_sobs_overtime_10d.png", sobs_post_CDI_PEG_10d)
 #Plot Stool + Tissue PCoA data----
 #Pull post_CDI_PEG subset of PCoA data
 pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
@@ -251,9 +323,7 @@ kruskal_wallis_otu <- function(timepoint){
     write_tsv(path = paste0("data/process/post_CDI_PEG_otu_stats_day_", timepoint, ".tsv"))
 }
 
-#Compare Days with data for all groups
-diversity_data_subset %>% group_by(group, day) %>% count() %>% arrange(day) %>% View()
-#-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15 have all four groups
+
 
 ## Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
 for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
