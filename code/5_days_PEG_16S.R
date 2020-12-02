@@ -219,6 +219,21 @@ pcoa_subset_plot_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
 
 save_plot(filename = paste0("results/figures/5_Day_PEG_stool_PCoA.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
 
+##Animation of PCoA plot: Stool Subset--
+pcoa_animated_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+  labs(title = 'Day: {frame_time}') + #Adds time variable to title
+  transition_time(day)+  #Day variable used to cycle through time on animation
+  shadow_mark() #Shows previous timepoints
+
+# Implement better frames per second for animation
+pcoa_gif_stool <- animate(pcoa_animated_stool, duration = 6, fps = 10,
+                          res = 150, width = 20, height = 20, unit = "cm")
+
+# Save as gif file
+anim_save(animation = pcoa_gif_stool, filename = 'results/5_days_PEG_pcoa_over_time_stools.gif')
+
 #Tissue subset
 pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
@@ -241,37 +256,17 @@ pcoa_subset_plot_tissue <- plot_pcoa(pcoa_5_day_PEG_tissues)+
 
 save_plot(filename = paste0("results/figures/5_Day_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 5)
 
-#Remove legend
+#PCoA faceted over time
 pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
   theme(legend.position = "none")+ #remove legend
   facet_wrap(~ day)
 
-#PCoAs of select timepoints of interest
-
-#Animation of PCoA plot over time for all sequenced samples ----
-#Source: Will Close's Code Club from 4/12/2020 on plot animation
-
-##Stool Subset--
-pcoa_animated_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
-  labs(title = 'Day: {frame_time}') + #Adds time variable to title
-  transition_time(day)+  #Day variable used to cycle through time on animation
-  shadow_mark() #Shows previous timepoints
-
-# Implement better frames per second for animation
-pcoa_gif_stool <- animate(pcoa_animated_stool, duration = 6, fps = 10,
-                          res = 150, width = 20, height = 20, unit = "cm")
-
-# Save as gif file
-anim_save(animation = pcoa_gif_stool, filename = 'results/5_days_PEG_pcoa_over_time_stools.gif')
-
-##Tissue Subset --
+##Animation of PCoA plot: Tissue Subset--
 pcoa_animated_tissues <- plot_pcoa(pcoa_5_day_PEG_tissues)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
   transition_time(day)+  #Day variable used to cycle through time on animation
   shadow_mark() #Shows previous timepoints
