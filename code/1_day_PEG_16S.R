@@ -86,8 +86,9 @@ label <- kw_label(kw_shannon)
 #Plot
 shannon_stools <- plot_shannon_overtime(diversity_data_subset) +
   scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/1_days_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/1_Day_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Statistical annotation labels:
 x_annotation <- sig_richness_days
@@ -96,8 +97,9 @@ label <- kw_label(kw_richness)
 #Plot
 richness_tissues <- plot_richness_overtime(diversity_data_subset) +
   scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/1_days_PEG_richness_tissues.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/1_Day_PEG_richness.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #PCoa Analysis----
 #Pull 1_Day_PEG subset of PCoA data
