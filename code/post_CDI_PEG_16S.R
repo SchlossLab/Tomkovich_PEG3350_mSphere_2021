@@ -126,10 +126,6 @@ shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   theme(legend.position = "none")
 save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
 
-
-
-
-
 #Plot Stool + Tissue PCoA data----
 #Pull post_CDI_PEG subset of PCoA data
 pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
@@ -138,7 +134,7 @@ pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycu
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3)#limit to experimental time frame
+  filter(day > -3| is.na(day))#limit to experimental time frame & FMT samples
 
 #Pull axes from loadings file
 pcoa_axes_post_cdi_PEG <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
@@ -157,7 +153,6 @@ pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   theme( legend.position = "none")+ #remove legend
   facet_wrap(~ day)
-
 
 pcoa_animated <- pcoa_post_cdi_peg %>%
   filter(group != "FMT") %>%
@@ -181,7 +176,7 @@ pcoa_post_cdi_peg_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.op
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
   mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3)#limit to experimental time frame
+  filter(day > -3 | is.na(day))#limit to experimental time frame & FMT samples
 
 #Pull axes from loadings file
 pcoa_axes_post_cdi_PEG_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
