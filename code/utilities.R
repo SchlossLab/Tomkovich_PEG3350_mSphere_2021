@@ -141,6 +141,30 @@ post_cdi_PEG_subset <- function(df){
              group == "FRM" & exp_num %in% c("M9"))
 } 
 
+#Functions to split up the different sample type subsets within the 5-day PEG and Post-CDI PEG subsets----
+#Function to filter dataframe (df) to examine stool samples
+subset_stool <- function(df){
+  df %>% filter(sample_type == "stool")
+}
+#Function to filter dataframe (df) to examine tissue samples
+subset_tissue <- function(df){
+  df %>% filter(!sample_type == "stool")
+}
+
+#Function to add the mock challenged mice (CN and WMN groups) to a dataframe (diversity_data or agg_otu_data)----
+add_mocks <- function(subset_df, original_df){
+  subset_df %>% 
+    add_row(original_df %>% filter(group %in% c("CN", "WMN"))) #Add the groups of mock challenged mice
+}
+
+#Function to figure out how many samples we have per group per day for each subset (subset = dataframe of a subset of samples)----
+count_subset <- function(subset){
+  subset %>% 
+    group_by(group) %>%
+    count(day) %>% 
+    arrange(day)
+}
+
 #Function to have y-axis in scientific notation----
 fancy_scientific <- function(l) {
   # turn in to character string in scientific notation
@@ -414,6 +438,69 @@ kw_label <- function(dataframe){
       p.value.adj <= 0.05 ~ "*"
     )) %>%
     pull(p.signif)
+}
+
+#Function to plot a list of OTUs across groups of mice at a specific timepoint:
+#Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
+plot_otus_dx <- function(sample_df, otus, timepoint){
+  sample_df %>%
+    filter(otu %in% otus) %>%
+    filter(day == timepoint) %>%
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
+    ggplot(aes(x= otu_name, y=agg_rel_abund, color=group))+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/1000, color="gray")+
+    stat_summary(fun = 'median',
+                 fun.max = function(x) quantile(x, 0.75),
+                 fun.min = function(x) quantile(x, 0.25),
+                 position = position_dodge(width = 1)) +
+    labs(title=NULL,
+         x=NULL,
+         y="Relative abundance (%)")+
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
+    coord_flip()+
+    theme_classic()+
+    theme(plot.title=element_text(hjust=0.5),
+          legend.position = "none",
+          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
+          text = element_text(size = 16)) # Change font size for entire plot
+}
+
+#Function to plot an otu_over_time
+#otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"
+#sample_df = subset dataframe of just stool or tissue samples
+otu_over_time <- function(otu_plot, sample_df){
+  specify_otu_name <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    pull(otu_name)
+  otu_median <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    group_by(group, day) %>% 
+    summarize(median=(median(agg_rel_abund + 1/2000))) %>% 
+    ungroup
+  otu_mice <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>%
+    select(day, agg_rel_abund, otu, group)
+  otu_time <- ggplot(NULL)+
+    geom_point(otu_mice, mapping = aes(x=day, y=agg_rel_abund, color=group), size  = 1.5, position = position_dodge(width = 0.6))+
+    geom_line(otu_median, mapping = aes(x=day, y=median, color=group), size = 1, show.legend = FALSE)+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/1000, color="gray")+
+    labs(title=specify_otu_name,
+         x="Day",
+         y="Relative abundance (%)") +
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    theme_classic()+
+    theme(plot.title=element_markdown(hjust = 0.5),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"),  # Add gray lines to clearly separate symbols by days)
+          text = element_text(size = 18)) # Change font size for entire plot
 }
 
 
