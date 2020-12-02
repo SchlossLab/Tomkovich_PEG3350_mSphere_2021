@@ -199,7 +199,7 @@ pcoa_animated_stool <- pcoa_post_cdi_peg_stool %>%
   shadow_mark() #Shows previous timepoints
 
 # Implement better frames per second for animation
-pcoa_gif_stool <- animate(pcoa_animated, duration = , fps = 10,
+pcoa_gif_stool <- animate(pcoa_animated_stool, duration = , fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 # Save as gif file
 anim_save(animation = pcoa_gif_stool, filename = 'results/post_CDI_PEG_stool_pcoa_over_time.gif')
