@@ -9,16 +9,6 @@ color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
-#Create functions to further subset our data by sample type and or add mock challenged mice (CN and WMN groups)----
-#Function to filter dataframe (df) to examine stool samples
-subset_stool <- function(df){
-  df %>% filter(sample_type == "stool")
-}
-#Function to filter dataframe (df) to examine tissue samples
-subset_tissue <- function(df){
-  df %>% filter(!sample_type == "stool")
-}
-
 #Alpha Diversity Analysis-------
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
 #Diversity data for all days
@@ -36,7 +26,7 @@ diversity_tissues <- subset_tissue(diversity_data_subset)
 
 #Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
 #Compare days with stool data for all groups
-diversity_stools %>% group_by(group, day) %>% count() %>% arrange(day) %>% View()
+count_subset(diversity_stools) %>% View()
 stool_test_days <- c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15) #Days with stools in for all four groups
 
 #Alpha Diversity Shannon Analysis----
@@ -343,34 +333,6 @@ print(shared_sig_otus_D3toD10)
 #[4] "Lachnospiraceae (OTU 24)"    "Lachnospiraceae (OTU 31)"    "Lachnospiraceae (OTU 30)"   
 #[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 44)"
 
-#Function to plot a list of OTUs across sources of mice at a specific timepoint:
-#Arguments: otus = list of otus to plot; timepoint = day of the experiment to plot
-plot_otus_dx <- function(otus, timepoint){
-  post_cdi_PEG_subset(agg_otu_data) %>%
-    filter(otu %in% otus) %>%
-    filter(day == timepoint) %>%
-    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2000 is 2 times the subsampling parameter of 1000
-    ggplot(aes(x= otu_name, y=agg_rel_abund, color=group))+
-    scale_colour_manual(name=NULL,
-                        values=color_scheme,
-                        breaks=color_groups,
-                        labels=color_labels)+
-    geom_hline(yintercept=1/1000, color="gray")+ #Limit of detection 
-    stat_summary(fun = 'median',
-                 fun.max = function(x) quantile(x, 0.75),
-                 fun.min = function(x) quantile(x, 0.25),
-                 position = position_dodge(width = 1)) +
-    labs(title=NULL,
-         x=NULL,
-         y="Relative abundance (%)")+
-    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/2000, 1))+
-    coord_flip()+
-    theme_classic()+
-    theme(plot.title=element_text(hjust=0.5),
-          legend.position = "bottom",
-          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
-          text = element_text(size = 16)) # Change font size for entire plot
-}
 
 #Plots of the top 20 OTUs that varied across sources at each timepoint----
 #Day 1: top 20 OTUs that vary across sources
