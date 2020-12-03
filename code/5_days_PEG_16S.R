@@ -398,9 +398,11 @@ hm_sig_otus_p_adj <- kw_otu_stools %>%
   pull(otu)
 
 hm_stool_days <- diversity_stools %>% distinct(day) %>% pull(day)
+facet_labels <- color_labels #Create descriptive labels for facets
+names(facet_labels) <- c("C", "WM", "WMC", "WMR") #values that correspond to group, which is the variable we're faceting by
 hm_stool <- hm_plot_otus(otu_stools, hm_sig_otus_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
-
+save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
 
 #Examine C. difficile otu over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+

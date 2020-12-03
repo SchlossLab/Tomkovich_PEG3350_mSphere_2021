@@ -491,7 +491,7 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
     labs(title=NULL,
          x=NULL,
          y=NULL)+
-    facet_wrap(~group)+
+    facet_wrap(~group, labeller = labeller(group = facet_labels)) + #Make sure you specify facet_labels before running function
 #    scale_fill_gradient2(low="white", mid=color_scheme, high = 'black',
 #                         limits = c(1/10000, 1), na.value = NA, midpoint = .3,
 #                         breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100)) + 
@@ -499,6 +499,7 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
+          strip.background = element_blank(), #get rid of box around facet_wrap labels
           axis.text.y = element_markdown(), #Have only the OTU names show up as italics
           text = element_text(size = 16)) # Change font size for entire plot
 }
