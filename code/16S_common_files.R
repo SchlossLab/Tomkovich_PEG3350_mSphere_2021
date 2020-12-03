@@ -118,3 +118,6 @@ agg_otu_data <- inner_join(agg_otu, taxa_info, by="key") %>%
   separate(otu, into = c("bactname", "OTUnumber"), sep = "\\ [(]", remove = FALSE) %>% #Add columns to separate bacteria name from OTU number to utilize ggtext so that only bacteria name is italicized
   mutate(otu_name = glue("*{bactname}* ({OTUnumber}")) #Markdown notation so that only bacteria name is italicized
 
+#Remove environmental variables that are no longer needed
+rm(agg_otu, agg_taxa_data, duplicated_seq_samples, duplicates_to_drop, otu_data, peg3350.files,
+     contaminated_notes, contaminated_samples, seq_files_missing_from_metadata, prep_notes)
