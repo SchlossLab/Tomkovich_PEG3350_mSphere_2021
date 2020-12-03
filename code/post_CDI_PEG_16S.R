@@ -119,6 +119,21 @@ shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   theme(legend.position = "none")
 save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
 
+#Plot Shannon over time for stools only
+x_annotation <- sig_shannon_days_stools
+y_position <- max(diversity_stools$shannon)+ 0.05
+label <- kw_label(kw_shannon_stools)
+shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
+  filter(group != "FMT") %>% #drop FMTs
+  plot_shannon_overtime() +
+  scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
+                     limits = c(-2,31), #removes day -15 here
+                     minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
+  labs(x = "Days Post-Infection",
+       y = "Shannon Diversity Index") +
+  theme(legend.position = "none") #Removing legend to save separately
+save_plot("results/figures/post_CDI_PEG_shannon_stool.png", shannon_post_cdi_peg_overtime_stool) #Save full Shannon over time plot without legend
+
 #Alpha Diversity Richness (Sobs)----
 #Function to perform Kruskal-Wallis test for differences in richness (sobs) across groups on a particular day with Benjamini Hochberg correction
 #Arguments: 
@@ -141,11 +156,9 @@ kruskal_wallis_richness <- function(diversity_subset, timepoints, subset_name){
     arrange(p.value.adj) %>% 
     write_tsv(path = paste0("data/process/post_CDI_PEG_richness_stats_", subset_name, "_subset.tsv"))
 }
-
 #Test with richness for stool subset
 kw_richness_stools <- kruskal_wallis_richness(diversity_stools, stool_test_days, "stools")
 sig_richness_days_stools <- pull_sig_days(kw_richness_stools)
-
 
 #Plot Sobs overtime 
 sobs_post_CDI_PEG <- diversity_data_subset %>%
@@ -165,7 +178,6 @@ sobs_post_CDI_PEG <- diversity_data_subset %>%
   theme(legend.position = "none") + #Remove legend
   labs(x = "Day",
        y = "Number of Observed Species")
-
 save_plot("results/figures/post_CDI_PEG_sobs_overtime.png", sobs_post_CDI_PEG)
 
 #Sobs oVertime 10 Day Version
@@ -186,8 +198,24 @@ sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
   theme(legend.position = "none") + #Remove legend
   labs(x = "Day",
        y = "Number of Observed Species")
-
 save_plot("results/figures/post_CDI_PEG_sobs_overtime_10d.png", sobs_post_CDI_PEG_10d)
+
+#Sobs over time for stools
+x_annotation <- sig_richness_days_stools
+y_position <- max(diversity_stools$sobs)+5
+label <- kw_label(kw_richness_stools)
+sobs_post_CDI_PEG_stool <- diversity_stools %>%
+  filter(group != "FMT") %>% #Remove FMTs
+  plot_richness_overtime()+
+  scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
+                     limits = c(-2, 31),
+                     minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
+  scale_y_continuous(limits = c(0,122))+
+  theme_classic()+
+  theme(legend.position = "none") #Remove legend
+save_plot("results/figures/post_CDI_PEG_sobs_overtime_stool.png", sobs_post_CDI_PEG_stool)
+
+
 #Plot Stool + Tissue PCoA data----
 #Pull post_CDI_PEG subset of PCoA data
 pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
