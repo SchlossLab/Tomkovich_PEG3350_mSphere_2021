@@ -289,22 +289,31 @@ kruskal_wallis_otu <- function(timepoint, sample_df, sample_type){
     write_tsv(path = paste0("data/process/5_days_PEG_otu_stats_day_", timepoint, "_", sample_type, ".tsv"))
 }
 
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_otu_stools <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                                     WM =double(),C =double(),WMR =double(),WMC=double(),
+                            p.value.adj=double(),day=double())
+
 # Perform kruskal wallis tests at the otu level for the stool samples----
 for (d in stool_test_days){
   kruskal_wallis_otu(d, otu_stools, "stools")
   #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_stools.tsv"))
-  name <- paste("sig_otu_stools_day", d, sep = "")
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_stools.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_otu_stools_day", d, sep = "") 
   assign(name, pull_significant_taxa(stats, otu))
+  kw_otu_stools <- add_row(kw_otu_stools, stats)  #combine all the dataframes together
 }
 
 # Perform kruskal wallis tests at the otu level for the tissue samples----
 for (d in tissue_test_days){
   kruskal_wallis_otu(d, otu_tissues, "tissues")
   #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_tissues.tsv"))
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_tissues.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
   name <- paste("sig_otu_tissues_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
+  kw_otu_tissues <- add_row(kw_otu_tissues, stats)  #combine all the dataframes together
 }
 
 #OTUs that varied across treatment groups and were shared across days 
@@ -362,6 +371,35 @@ otus_tissues_d30 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day30[1:20], 30)+
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_tissues_d30.png", otus_tissues_d30, base_height = 7, base_width = 8)
+
+#Heatmaps of significant OTUs over time facet by group
+#Create list of otus to plot
+all_sig_otus <- c(`sig_otu_stools_day-5`, `sig_otu_stools_day-1`, sig_otu_stools_day0, sig_otu_stools_day1, 
+                  `sig_otu_stools_day2`, `sig_otu_stools_day3`, sig_otu_stools_day4, sig_otu_stools_day5,
+                  `sig_otu_stools_day6`, `sig_otu_stools_day10`, sig_otu_stools_day30)
+#370 total OTUs
+unique_sig_otus <-unique(all_sig_otus)
+#130 unique significant OTUs
+#Rank the 130 signifiant OTUs in order of agg_rel_abund, select the top 20
+hm_sig_otus_abund <-  otu_stools %>% 
+  filter(otu %in% unique_sig_otus) %>%
+  group_by(otu) %>% 
+  summarize(median=(median(agg_rel_abund + 1/2000))) %>% #Median relative abundance for all samples for a particular OTU
+  arrange(desc(median)) %>% #Arrange largest to smallest
+  slice_head(n = 20) %>% 
+  pull(otu)
+
+#Rank OTUs by adjusted p-value
+hm_sig_otus_p_adj <- kw_otu_stools %>% 
+  filter(p.value.adj < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(otu) %>% 
+  slice_head(n = 25) %>% 
+  pull(otu)
+
+hm_stool_days <- diversity_stools %>% distinct(day) %>% pull(day)
+hm_stool <- hm_plot_otus(otu_stools, hm_sig_otus_p_adj, hm_stool_days)+
+  scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 
 
 #Examine C. difficile otu over time----
