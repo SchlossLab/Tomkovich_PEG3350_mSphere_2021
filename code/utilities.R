@@ -98,19 +98,32 @@ duplicates_to_drop <- seq_prep_metadata %>%
 
 #Drop the 5 duplicates from seq_prep_metadata (these were already removed from data/raw, see code/copy_fastqs_to_data)
 seq_prep_metadata <- seq_prep_metadata %>% 
-  anti_join(duplicates_to_drop)
+  anti_join(duplicates_to_drop) %>% 
+  select(unique_label, ext_plate, miseq_run) #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
 
 #Join metadata to 16S seq prep metadata----
 metadata <- seq_prep_metadata %>% 
-  select(unique_label, ext_plate, miseq_run) %>% #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
-  full_join(metadata, seq_prep_metadata, by = "unique_label") %>% 
+  full_join(metadata, by = "unique_label") %>% 
   mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
                                  str_detect(unique_label, "FMT") ~ "FMT",
                                  TRUE ~ sample_type),
          group = case_when(str_detect(unique_label, "water") ~ "water",
                            str_detect(unique_label, "FMT") ~ "FMT",
                            TRUE ~ group)) %>% 
-  mutate(group = factor(group, levels = unique(as.factor(group)))) #Transform group variable into factor variable
+  #Replace NAs for any of the relevant variables (primarily just for the water and FMT samples)
+  mutate(unique_mouse_id = replace_na(unique_mouse_id, "not_applicable")) %>% 
+  mutate(unique_cage_no = replace_na(unique_cage_no, "not_applicable")) %>% 
+  mutate(group = replace_na(group, "not_applicable")) %>% 
+  mutate(exp_num = replace_na(exp_num, "not_applicable")) %>% 
+  mutate(day = replace_na(day, "not_applicable")) %>% 
+  mutate(group = factor(group, levels = unique(as.factor(group))), #Transform group variable into factor variable
+         unique_cage_no = factor(unique_cage_no, levels = unique(as.factor(unique_cage_no))), #Transform unique_cage_no variable into factor variable
+         exp_num = factor(exp_num, levels = unique(as.factor(exp_num))), #Transform exp_num variable into factor variable
+         day = factor(day, levels = unique(as.factor(day))), #Transform day variable into factor variable
+         sample_type = factor(sample_type, levels = unique(as.factor(sample_type))), #Transform sample_type variable into factor variable
+         ext_plate = factor(ext_plate, levels = unique(as.factor(ext_plate))), #Transform ext_plate variable into factor variable
+         miseq_run = factor(miseq_run, levels = unique(as.factor(miseq_run))), #Transform miseq_run variable into factor variable
+         unique_mouse_id = factor(unique_mouse_id, levels = unique(as.factor(unique_mouse_id)))) #Transform unique_mouse_id into factor variable
 
 #Functions----
 
