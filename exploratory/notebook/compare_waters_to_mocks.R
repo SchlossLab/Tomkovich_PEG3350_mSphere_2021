@@ -1,6 +1,86 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
-#Read in shared and taxonomy files for water & mock samples (+FMT & PBS gavage)----
+#Define color scheme for waters, mocks & FMTs----
+color_scheme <- c("#67a9cf", "#ef8a62", "7f5f1e") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("water", "mock", "FMT")
+color_labels <- c( "Water", "Mock", "FMT")
+
+#Read in diversity data for water & mock samples (+FMT)----
+diversity_data <- read_tsv("data/water_test/peg3350.opti_mcc.groups.ave-std.summary") %>%
+  filter(method == "ave") %>%
+  select(group, sobs, shannon, invsimpson, coverage) %>%
+  rename(unique_label = group) %>% #group is the same as unique_label in the metadata data frame
+  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
+                                 str_detect(unique_label, "FMT") ~ "FMT",
+                                 str_detect(unique_label, "mock") ~ "mock",
+                                 TRUE ~ unique_label)) %>% 
+  mutate(day = NA, #add columns needed for plot_pcoa function
+         group = sample_type) #add columns needed for plot_pcoa function
+
+#Function to plot different alpha diversity metrics with the following arguments
+#alpha_metric: how alpha metric of choice is listed in dataframe. Ex. sobs, shannon, etc.
+#y_axis_label: how you want to label the alpha metric on the plot. Ex. "Shannon Diversity Index"
+plot_alpha_metric <- function(alpha_metric, y_axis_label){
+  diversity_data %>% 
+    group_by(group) %>% 
+    mutate(median = median({{ alpha_metric }})) %>% #Create column of median values for each group
+    ungroup() %>% 
+    ggplot(aes(x=group, y = {{ alpha_metric }}, color = group))+
+    geom_errorbar(aes(ymax= median, ymin= median, color = group), size = 1)+#Add line to show median of each point
+    geom_jitter(size=2, show.legend = FALSE) +
+    labs(title=NULL, 
+         x=NULL,
+         y=y_axis_label)+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels, 
+                        guide = "none")+
+    scale_x_discrete(label = c("Water", "Mock", "FMT"))+
+    theme_classic()+
+    theme(legend.position = "bottom",
+          text = element_text(size = 19),# Change font size for entire plot
+          axis.title.y = element_text(size = 17)) 
+}
+
+#Shannon, inverse simpson and richness plots 
+shannon_plot <- plot_alpha_metric(shannon, "Shannon Diversity Index")
+save_plot("exploratory/notebook/waters_mock_fmts_shannon.png", shannon_plot)
+richness_plot <- plot_alpha_metric(sobs, "Number of Observed OTUs")
+save_plot("exploratory/notebook/waters_mock_fmts_richness.png", richness_plot)
+  
+#Read in PCoA data for water & mock samples (+FMT)----
+pcoa_data <- read_tsv("data/water_test/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename(unique_label = group) %>% #group is the same as id in the metadata data frame
+  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
+                                 str_detect(unique_label, "FMT") ~ "FMT",
+                                 str_detect(unique_label, "mock") ~ "mock",
+                                 TRUE ~ unique_label)) %>% 
+  mutate(day = NA, #add columns needed for plot_pcoa function
+         group = sample_type) #add columns needed for plot_pcoa function
+#Read in .loadings file to add percent variation represented by PCoA axis
+axis_labels <- read_tsv("data/water_test/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- axis_labels %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- axis_labels %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+pcoa <- plot_pcoa(pcoa_data)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
+save_plot("exploratory/notebook/waters_mock_fmts_pcoa.png", pcoa, base_height = 5, base_width = 5)
+
+#Create stand alone legend
+group_legend <- pcoa_data %>% 
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_point()+ theme_classic()
+group_legend <- get_legend(group_legend)
+save_plot("exploratory/notebook/waters_mock_fmts_legend.png", group_legend, base_height = .8, base_width = .8)
+
+#Read in shared and taxonomy files for water & mock samples (+FMT)----
 # Import taxonomy into data frame and clean up taxonomy names
 taxonomy <- read_tsv(file="data/water_test/peg3350.taxonomy") %>%
   rename_all(tolower) %>% #remove uppercase from column names
