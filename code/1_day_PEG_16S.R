@@ -27,7 +27,9 @@ set.seed(19760620) #Same seed used for mothur analysis
 #Function to test at the otu level:
 agg_otu_data_subset <- one_day_PEG_subset(agg_otu_data) %>%
   mutate(day = replace(day, day == -1, "PT"),
-         day = replace(day, day == -2, "PT")) #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+         day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+  mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
+
 #Kruskal-Wallis Function to test for differences in Shannon Diveristy Index across groups with Benjamini Hochberg correction----
 #Adapted from 5_days_PEG_16S.R script, removed subset_name argument as only one sample type in 1 Day subset
 #Arguments: 
@@ -152,16 +154,23 @@ kruskal_wallis_otu <- function(timepoint){
     select(otu, statistic, p.value, parameter, method, "C", "1RM1", "M1") %>%
     mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
     arrange(p.value.adj) %>%
-    write_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", timepoint, ".tsv"))
+    write_tsv(path = paste0("data/process/1_Day_PEG_otu_stats_day_", timepoint, ".tsv"))
 }
 
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_otu <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                            C =double(), `1RM1` =double(), M1=double(),
+                            p.value.adj=double(),day=character()) %>% 
+  rename(`1RM1` = X1RM1) #Rename 1RM1 to get rid of X
 # Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced
 for (d in exp_days_seq){
   kruskal_wallis_otu(d)
   #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", d, ".tsv"))
-  name <- paste("sig_otu_day", d, sep = "")
+  stats <- read_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", d, ".tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_otu_day", d, sep = "") 
   assign(name, pull_significant_taxa(stats, otu))
+  kw_otu <- add_row(kw_otu, stats)  #combine all the dataframes together
 }
 
 #Shared significant genera across from Days 1, 2 and 7----
@@ -170,7 +179,7 @@ view(shared_sig_otus_D1toD7) #0
 print(shared_sig_otus_D1toD7)
 #0 OTUs overlap
 
-#No taxa significant
+#No taxa significant 
 for (d in exp_days_seq){
   #Make a list of top 10 otus across sources of mice for a specific day
   top10 <- read_tsv(file = paste0("data/process/1_Day_PEG_otu_stats_day_", d, ".tsv")) %>% 
@@ -236,3 +245,19 @@ D7_otus <- plot_otus_dx(top10_otu_day7, 7)+ #Pick top 20 significant OTUs
   geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/1_Day_PEG_D7_ns_otus.png", D7_otus, base_height = 9, base_width = 7)
+
+#Heatmaps of OTUs (lowest P value since none were significant) over time, facet by group
+#Rank OTUs by adjusted p-value
+hm_sig_otus_p <- kw_otu %>% 
+  filter(p.value < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(otu) %>% 
+  slice_head(n = 20) %>% 
+  pull(otu)
+
+hm_days <- c("PT", "0", "1", "2", "4", "5", "7")
+facet_labels <- color_labels #Create descriptive labels for facets
+names(facet_labels) <- c("1RM1", "C", "M1") #values that correspond to group, which is the variable we're faceting by
+hm_otu <- hm_plot_otus(agg_otu_data_subset, hm_sig_otus_p, hm_days)+
+  scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
+save_plot(filename = "results/figures/1_day_PEG_otus_heatmap.png", hm_otu, base_height = 10, base_width = 15)
