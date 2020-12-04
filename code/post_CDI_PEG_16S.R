@@ -325,7 +325,9 @@ save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pco
 #OTU Analysis------
 #Function to test at the otu level:
 agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data) %>% 
-  filter(sample_type =="stool") #Exclude the other sample types and just perform test on the stools
+  filter(sample_type =="stool") %>% #Exclude the other sample types and just perform test on the stools
+  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
+                           "8", "9", "10", "15", "20", "25", "30"))
 
 agg_otu_data_tissues <- post_cdi_PEG_subset(agg_otu_data) %>% 
   filter(!sample_type =="stool") %>% 
@@ -442,6 +444,17 @@ pairwise_day_otu <- function(timepoint, sig_otu_dayX){
 otu_dayn15_stats <- pairwise_day_otu(-15, `sig_otu`)
 otu_dayn1_stats <- pairwise_day_otu(-1, sig_otu_day1)
 
+#Examine C. difficile OTU over time----
+peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
+  scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/post_CDI_PEG_otu_peptostreptococcaceae.png", peptostrep_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+peptostrep_stools_v2 <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
+  scale_x_discrete(breaks = c(-15, -1:10, 15, 20, 25, 30), labels = c(-15, -1:10, 15, 20, 25, 30)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/post_CDI_PEG_otu_peptostreptococcaceae_dn15.png", peptostrep_stools_v2, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+
 #Heatmap of significan OTUs ranked by
 #Rank OTUs by adjusted p-value
 hm_sig_otus_p_adj <- kw_otu_stools %>% 
@@ -483,4 +496,5 @@ save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues.png", hm
 hm_tissues_5_day_otus <- hm_plot_tissues(agg_otu_data_tissues, hm_5_day_otus, hm_tissues_days)+
   scale_x_discrete(breaks = c(30), labels = c(30))
 save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_otus.png", hm_tissues_5_day_otus, base_height = 10, base_width = 8)
+
 
