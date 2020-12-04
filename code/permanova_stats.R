@@ -11,15 +11,21 @@ rm(agg_otu_data, diversity_data)
 five_d_stools <- read_dist("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 five_d_stools_variables <- tibble(unique_label = attr(five_d_stools, "Labels")) %>%
   left_join(metadata, by = "unique_label")
-five_d_stools_adonis <- adonis(five_d_stools~(group/(sample_type*exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = five_d_stools_variables$unique_mouse_id, data = five_d_stools_variables, permutations = 10)
+five_d_stools_adonis <- adonis(five_d_stools~(group/(sample_type*exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = five_d_stools_variables$unique_mouse_id, data = five_d_stools_variables, permutations = 1)
 five_d_stools_adonis 
 #Tissues
 five_d_tissues <- read_dist("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 five_d_tissues_variables <- tibble(unique_label = attr(five_d_tissues, "Labels")) %>%
   left_join(metadata, by = "unique_label")
 #PERMANOVA of all relevant variables (exclude Miseq run since they were the same for all samples in this subset)
-five_d_tissues_adonis <- adonis(five_d_tissues~(group/(sample_type*exp_num*unique_cage_no*ext_plate))*day, strata = five_d_tissues_variables$unique_mouse_id, data = five_d_tissues_variables, permutations = 10)
+five_d_tissues_adonis <- adonis(five_d_tissues~(group/(sample_type*exp_num*unique_cage_no*ext_plate))*day, strata = five_d_tissues_variables$unique_mouse_id, data = five_d_tissues_variables, permutations = 1)
 five_d_tissues_adonis
+#Write PERMANOVA results to tsv
+five_d_tissues_adonis$aov
+tibble(effects = c("sample_type", "miseq_run", "miseq_run:ext_plate", "sample_type:miseq_run:ext_plate", "Residuals"),
+       r_sq = sample_miseq_ext_plate_adonis$aov.tab$R2[1:5],
+       p = sample_miseq_ext_plate_adonis$aov.tab$Pr[1:5]) %>%
+  write_tsv("exploratory/notebook/adonis_sample_miseq_plate.tsv")
 
 #PERMANOVA of 1-day PEG subset----
 

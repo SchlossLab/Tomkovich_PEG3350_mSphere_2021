@@ -117,9 +117,9 @@ metadata <- seq_prep_metadata %>%
   mutate(exp_num = replace_na(exp_num, "not_applicable")) %>% 
   mutate(day = replace_na(day, "not_applicable")) %>% 
   mutate(group = factor(group, levels = unique(as.factor(group))), #Transform group variable into factor variable
-         unique_cage_no = factor(unique_cage_no, levels = unique(as.factor(unique_cage_no))), #Transform unique_cage_no variable into factor variable
+         unique_cage_no = factor(unique_cage_no, levels = unique(as.factor(unique_cage_no))), #Transform unique_cage_no variable into factor variable, add PT level to indicate pre-treatment samples
          exp_num = factor(exp_num, levels = unique(as.factor(exp_num))), #Transform exp_num variable into factor variable
-         day = factor(day, levels = unique(as.factor(day))), #Transform day variable into factor variable
+         day = factor(day, levels = c(unique(as.factor(day)), "PT")), #Transform day variable into factor variable
          sample_type = factor(sample_type, levels = unique(as.factor(sample_type))), #Transform sample_type variable into factor variable
          ext_plate = factor(ext_plate, levels = unique(as.factor(ext_plate))), #Transform ext_plate variable into factor variable
          miseq_run = factor(miseq_run, levels = unique(as.factor(miseq_run))), #Transform miseq_run variable into factor variable
