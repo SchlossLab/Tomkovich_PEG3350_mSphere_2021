@@ -305,6 +305,10 @@ for (d in stool_test_days){
   kw_otu_stools <- add_row(kw_otu_stools, stats)  #combine all the dataframes together
 }
 
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_otu_tissues <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                            WM =double(),C =double(),WMR =double(),WMC=double(),
+                            p.value.adj=double(),day=double())
 # Perform kruskal wallis tests at the otu level for the tissue samples----
 for (d in tissue_test_days){
   kruskal_wallis_otu(d, otu_tissues, "tissues")
@@ -403,6 +407,32 @@ names(facet_labels) <- c("C", "WM", "WMC", "WMR") #values that correspond to gro
 hm_stool <- hm_plot_otus(otu_stools, hm_sig_otus_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
+
+#Create heatmap of significant OTUs for tissue samples
+#Rank OTUs by adjusted p-value
+hm_sig_otus_p_adj_tissues <- kw_otu_tissues %>% 
+  filter(p.value.adj < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(otu) %>% 
+  slice_head(n = 25) %>% 
+  pull(otu)
+hm_tissue_days <- diversity_tissues %>% distinct(day) %>% pull(day)
+hm_tissues <- hm_plot_otus(otu_tissues, hm_sig_otus_p_adj_tissues, hm_tissue_days)+
+  scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues.png", hm_tissues, base_height = 14, base_width = 15)
+#Examine OTUs that were significant in stool samples
+hm_tissues_stool_otus <- hm_plot_otus(otu_tissues, hm_sig_otus_p_adj, hm_tissue_days)+
+  scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues_stool_otus.png", hm_tissues_stool_otus, base_height = 14, base_width = 15)
+#Pull list of otus that overlap between stool & tissue heatmaps
+hm_overlap <- intersect_all(hm_sig_otus_p_adj, hm_sig_otus_p_adj_tissues)
+#11 OTUs overlap:  
+#"Lachnospiraceae (OTU 33)"       "Blautia (OTU 19)"              
+#"Ruminococcaceae (OTU 50)"       "Ruminococcaceae (OTU 54)"      
+#"Ruminococcaceae (OTU 92)"       "Oscillibacter (OTU 45)"        
+# "Lachnospiraceae (OTU 30)"       "Lachnospiraceae (OTU 31)"      
+# "Lachnospiraceae (OTU 4)"        "Peptostreptococcaceae (OTU 12)"
+# "Enterobacteriaceae (OTU 2)" 
 
 #Examine C. difficile otu over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+
