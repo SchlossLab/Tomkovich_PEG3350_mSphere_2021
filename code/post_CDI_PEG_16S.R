@@ -453,7 +453,9 @@ peptostrep_stools_v2 <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_
   scale_x_discrete(breaks = c(-15, -1:10, 15, 20, 25, 30), labels = c(-15, -1:10, 15, 20, 25, 30)) +
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/post_CDI_PEG_otu_peptostreptococcaceae_dn15.png", peptostrep_stools_v2, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
+#C. diff OTU across sample types on day 30
+peptostrep_tissues <- otu_gi_distrib("Peptostreptococcaceae (OTU 12)", agg_otu_data_tissues, "30", "CWM")
+save_plot(filename = "results/figures/post_CDI_PEG_otu_peptostreptococcaceae_CWM_tissues.png", peptostrep_tissues, base_height = 4, base_width = 4)
 
 #Heatmap of significan OTUs ranked by
 #Rank OTUs by adjusted p-value
