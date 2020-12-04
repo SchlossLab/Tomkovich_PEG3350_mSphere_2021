@@ -6,6 +6,9 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8", "7f5f1e") #Adapted
 color_groups <- c("C", "CWM", "FRM", "RM", "FMT")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350", "FMT")
 
+metadata <- metadata %>%
+  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
@@ -321,7 +324,13 @@ save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pco
 
 #OTU Analysis------
 #Function to test at the otu level:
-agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data)
+agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data) %>% 
+  filter(sample_type =="stool") #Exclude the other sample types and just perform test on the stools
+
+agg_otu_data_tissues <- post_cdi_PEG_subset(agg_otu_data) %>% 
+  filter(!sample_type =="stool") %>% 
+  mutate(sample_type = fct_relevel(sample_type, "cecum", "proximal_colon", "distal_colon")) #Specify order of sample types
+
 
 kruskal_wallis_otu <- function(timepoint){
   otu_stats <- agg_otu_data_subset %>%
@@ -341,15 +350,21 @@ kruskal_wallis_otu <- function(timepoint){
     write_tsv(path = paste0("data/process/post_CDI_PEG_otu_stats_day_", timepoint, ".tsv"))
 }
 
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_otu_stools <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                            C =double(),CWM =double(),FRM =double(),RM=double(),
+                            p.value.adj=double(),day=double())
 
 
 ## Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
 for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kruskal_wallis_otu(d)
   #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/post_CDI_PEG_otu_stats_day_", d, ".tsv"))
+  stats <- read_tsv(file = paste0("data/process/post_CDI_PEG_otu_stats_day_", d, ".tsv"))%>% 
+    mutate(day = d)#Add a day column to specify day tested
   name <- paste("sig_otu_day", d, sep = "")
   assign(name, pull_significant_taxa(stats, otu))
+  kw_otu_stools <- add_row(kw_otu_stools, stats)  #combine all the dataframes together
 }
 
 #Shared significant genera across from Day 3, 5, 6, 8, 10
@@ -426,4 +441,46 @@ pairwise_day_otu <- function(timepoint, sig_otu_dayX){
 
 otu_dayn15_stats <- pairwise_day_otu(-15, `sig_otu`)
 otu_dayn1_stats <- pairwise_day_otu(-1, sig_otu_day1)
+
+#Heatmap of significan OTUs ranked by
+#Rank OTUs by adjusted p-value
+hm_sig_otus_p_adj <- kw_otu_stools %>% 
+  filter(p.value.adj < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(otu) %>% 
+  slice_head(n = 25) %>% 
+  pull(otu)
+
+hm_stool_days <- diversity_stools %>% distinct(day) %>% 
+  filter(!day == "-15") %>% pull(day)
+facet_labels <- c("Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350") #Create descriptive labels for facets
+names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to group, which is the variable we're faceting by
+hm_stool <- hm_plot_otus(agg_otu_data_subset, hm_sig_otus_p_adj, hm_stool_days)+
+  scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
+save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
+
+#Plot heat map of OTUs that were significant in the 5 day subset
+hm_5_day_otus <- c("Phenylobacterium (OTU 332)", "Lachnospiraceae (OTU 33)", "Ruminococcaceae (OTU 37)",
+                   "Ruminococcaceae (OTU 98)", "Ruminococcaceae (OTU 65)", "Clostridium (OTU 51)",
+                   "Bacteroides (OTU 1)", "Lactobacillus (OTU 13)", "Blautia (OTU 19)", 
+                   "Ruminococcaceae (OTU 50)", "Ruminococcaceae (OTU 54)", "Ruminococcaceae (OTU 92)",
+                   "Bifidobacterium (OTU 28)", "Oscillibacter (OTU 45)", "Lachnospiraceae (OTU 30)", 
+                   "Lachnospiraceae (OTU 29)", "Lachnospiraceae (OTU 31)", "Lactobacillus (OTU 23)", 
+                   "Lachnospiraceae (OTU 4)", "Peptostreptococcaceae (OTU 12)", "Lachnospiraceae (OTU 32)", 
+                   "Enterobacteriaceae (OTU 2)", "Clostridium (OTU 22)", "Lactobacillus (OTU 9)", "Lachnospiraceae (OTU 16)")
+hm_stool_5_day_otus <- hm_plot_otus(agg_otu_data_subset, hm_5_day_otus, hm_stool_days)+
+  scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
+save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_stools_5_day_otus.png", hm_stool_5_day_otus, base_height = 14, base_width = 15)
+
+#Plot heatmaps of the tissue samples (only collected on day 30)
+#Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
+hm_tissues_days <- 30
+facet_labels <- c("Cecum", "Proximal colon", "Distal colon") #Create descriptive labels for facets
+names(facet_labels) <- c("cecum", "proximal_colon", "distal_colon") #values that correspond to group, which is the variable we're faceting by
+hm_tissues <- hm_plot_tissues(agg_otu_data_tissues, hm_sig_otus_p_adj, hm_tissues_days)+
+  scale_x_discrete(breaks = c(30), labels = c(30)) 
+save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues.png", hm_tissues, base_height = 10, base_width = 8)
+hm_tissues_5_day_otus <- hm_plot_tissues(agg_otu_data_tissues, hm_5_day_otus, hm_tissues_days)+
+  scale_x_discrete(breaks = c(30), labels = c(30))
+save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_otus.png", hm_tissues_5_day_otus, base_height = 10, base_width = 8)
 
