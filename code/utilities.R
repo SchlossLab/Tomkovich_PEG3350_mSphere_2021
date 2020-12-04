@@ -581,6 +581,36 @@ otu_over_time <- function(otu_plot, sample_df){
           text = element_text(size = 18)) # Change font size for entire plot
 }
 
-
+#Examine a specific OTU at a single timepoint across different sample types in one group of mice
+#otu_plot = name of otu to plot
+#sample_df = dataframe of samples to test
+#timepoint = experiment day to examine "30"
+#group_name = group to examine, "WMR"
+otu_gi_distrib <- function(otu_plot, sample_df, timepoint, group_name){
+  specify_otu_name <- sample_df %>% 
+    filter(otu == otu_plot) %>% 
+    pull(otu_name)
+  otu_median <- sample_df %>% 
+    mutate(mouse_id = factor(mouse_id, levels = unique(as.factor(mouse_id)))) %>% 
+    filter(otu == otu_plot & day == timepoint, group == group_name) %>% 
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>%
+    group_by(sample_type) %>% 
+    mutate(median=(median(agg_rel_abund + 1/2000))) %>% 
+    ungroup() %>% 
+    ggplot(aes(x=sample_type, y = agg_rel_abund, color = mouse_id))+    
+    geom_jitter(shape = 19, size=2, alpha = 0.5) +    
+    geom_errorbar(aes(ymax= median, ymin= median), color = "gray50", size = 1)+#Add line to show median of each sample type
+    geom_hline(yintercept=1/1000, color="gray")+
+    labs(title=specify_otu_name,
+         color = "Mouse ID",
+         x=NULL,
+         y="Relative abundance (%)") +
+    scale_x_discrete(label = c("Cecum", "Proximal colon", "Distal colon"))+
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    theme_classic()+
+    theme(plot.title=element_markdown(hjust = 0.5),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"),  # Add gray lines to clearly separate symbols by days)
+          text = element_text(size = 18)) # Change font size for entire plot
+}
 
 
