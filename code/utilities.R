@@ -535,7 +535,7 @@ otu_over_time <- function(otu_plot, sample_df){
     select(day, agg_rel_abund, otu, group)
   otu_time <- ggplot(NULL)+
     geom_point(otu_mice, mapping = aes(x=day, y=agg_rel_abund, color=group), size  = 1.5, position = position_dodge(width = 0.6))+
-    geom_line(otu_median, mapping = aes(x=day, y=median, color=group), size = 1, show.legend = FALSE)+
+    geom_line(otu_median, mapping = aes(x=day, y=median, group = group, color=group), size = 1, show.legend = FALSE)+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
