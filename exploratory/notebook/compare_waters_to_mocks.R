@@ -13,7 +13,7 @@ diversity_data <- read_tsv("data/water_test/peg3350.opti_mcc.groups.ave-std.summ
   mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
                                  str_detect(unique_label, "FMT") ~ "FMT",
                                  str_detect(unique_label, "mock") ~ "mock",
-                                 TRUE ~ unique_label)) %>% 
+                                 TRUE ~ unique_label)) %>%
   mutate(day = NA, #add columns needed for plot_pcoa function
          group = sample_type) #add columns needed for plot_pcoa function
 
@@ -21,34 +21,34 @@ diversity_data <- read_tsv("data/water_test/peg3350.opti_mcc.groups.ave-std.summ
 #alpha_metric: how alpha metric of choice is listed in dataframe. Ex. sobs, shannon, etc.
 #y_axis_label: how you want to label the alpha metric on the plot. Ex. "Shannon Diversity Index"
 plot_alpha_metric <- function(alpha_metric, y_axis_label){
-  diversity_data %>% 
-    group_by(group) %>% 
+  diversity_data %>%
+    group_by(group) %>%
     mutate(median = median({{ alpha_metric }})) %>% #Create column of median values for each group
-    ungroup() %>% 
+    ungroup() %>%
     ggplot(aes(x=group, y = {{ alpha_metric }}, color = group))+
     geom_errorbar(aes(ymax= median, ymin= median, color = group), size = 1)+#Add line to show median of each point
     geom_jitter(size=2, show.legend = FALSE) +
-    labs(title=NULL, 
+    labs(title=NULL,
          x=NULL,
          y=y_axis_label)+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
-                        labels=color_labels, 
+                        labels=color_labels,
                         guide = "none")+
     scale_x_discrete(label = c("Water", "Mock", "FMT"))+
     theme_classic()+
     theme(legend.position = "bottom",
           text = element_text(size = 19),# Change font size for entire plot
-          axis.title.y = element_text(size = 17)) 
+          axis.title.y = element_text(size = 17))
 }
 
-#Shannon, inverse simpson and richness plots 
+#Shannon, inverse simpson and richness plots
 shannon_plot <- plot_alpha_metric(shannon, "Shannon Diversity Index")
 save_plot("exploratory/notebook/waters_mock_fmts_shannon.png", shannon_plot)
 richness_plot <- plot_alpha_metric(sobs, "Number of Observed OTUs")
 save_plot("exploratory/notebook/waters_mock_fmts_richness.png", richness_plot)
-  
+
 #Read in PCoA data for water & mock samples (+FMT)----
 pcoa_data <- read_tsv("data/water_test/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
@@ -56,7 +56,7 @@ pcoa_data <- read_tsv("data/water_test/peg3350.opti_mcc.braycurtis.0.03.lt.ave.p
   mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
                                  str_detect(unique_label, "FMT") ~ "FMT",
                                  str_detect(unique_label, "mock") ~ "mock",
-                                 TRUE ~ unique_label)) %>% 
+                                 TRUE ~ unique_label)) %>%
   mutate(day = NA, #add columns needed for plot_pcoa function
          group = sample_type) #add columns needed for plot_pcoa function
 #Read in .loadings file to add percent variation represented by PCoA axis
@@ -70,7 +70,7 @@ pcoa <- plot_pcoa(pcoa_data)+
 save_plot("exploratory/notebook/waters_mock_fmts_pcoa.png", pcoa, base_height = 5, base_width = 5)
 
 #Create stand alone legend
-group_legend <- pcoa_data %>% 
+group_legend <- pcoa_data %>%
   ggplot(aes(x = axis1, y = axis2, color = group))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
@@ -116,7 +116,7 @@ agg_taxonomic_data <- function(taxonomic_level) {
 }
 
 # Relative abundance data at the otu level:
-agg_otu_data <- agg_taxonomic_data(otu) 
+agg_otu_data <- agg_taxonomic_data(otu)
 
 #Rename otus to match naming convention used previously and add a column that will work with ggtext package:
 agg_otu <- agg_otu_data %>%
@@ -147,51 +147,51 @@ agg_otu_data <- inner_join(agg_otu, taxa_info, by="key") %>%
 
 # Examination of the OTUs in the water controls with > 1000 sequences----
 #Figure out the top 10 OTUs across the water controls:
-top_10_water_otus <- agg_otu_data %>% 
-  filter(str_detect(unique_label, "water")) %>% 
-  mutate(sample_type = "water") %>% 
-  group_by(sample_type, otu) %>% 
-  summarise(mean_rel_abund = mean(agg_rel_abund)) %>% 
-  top_n(10, mean_rel_abund) %>% 
+top_10_water_otus <- agg_otu_data %>%
+  filter(str_detect(unique_label, "water")) %>%
+  mutate(sample_type = "water") %>%
+  group_by(sample_type, otu) %>%
+  summarise(mean_rel_abund = mean(agg_rel_abund)) %>%
+  top_n(10, mean_rel_abund) %>%
   pull(otu)
 #Plot the top 10 OTUs across the 3 water controls:
-water_otus <- agg_otu_data %>% 
+water_otus <- agg_otu_data %>%
   filter(str_detect(unique_label, "water")) %>% #select only the water controls
   filter(otu %in% top_10_water_otus) %>% #Select the top 10 water OTUs
   ggplot(aes(fill = otu, y = agg_rel_abund, x = unique_label))+
   geom_bar(position = "fill", stat="identity")+
-  labs(title=NULL, 
+  labs(title=NULL,
        x=NULL,
        y="Relative abundance")+
   coord_flip()+
   theme_classic()
 
 #Figure out the top 10 OTUs across the mock controls:
-top_10_mock_otus <- agg_otu_data %>% 
-  filter(str_detect(unique_label, "mock")) %>% 
-  mutate(sample_type = "mock") %>% 
-  group_by(sample_type, otu) %>% 
-  summarise(mean_rel_abund = mean(agg_rel_abund)) %>% 
-  top_n(10, mean_rel_abund) %>% 
+top_10_mock_otus <- agg_otu_data %>%
+  filter(str_detect(unique_label, "mock")) %>%
+  mutate(sample_type = "mock") %>%
+  group_by(sample_type, otu) %>%
+  summarise(mean_rel_abund = mean(agg_rel_abund)) %>%
+  top_n(10, mean_rel_abund) %>%
   pull(otu)
 #Plot the top 10 OTUs across the mock controls:
-mock_otus <- agg_otu_data %>% 
+mock_otus <- agg_otu_data %>%
   filter(str_detect(unique_label, "mock")) %>% #select only the mock controls
   filter(otu %in% top_10_mock_otus) %>% #Select the top 10 mock OTUs
   ggplot(aes(fill = otu, y = agg_rel_abund, x = unique_label))+
   geom_bar(position = "fill", stat="identity")+
-  labs(title=NULL, 
+  labs(title=NULL,
        x=NULL,
        y="Relative abundance")+
   coord_flip()+
   theme_classic()
 
 #All samples with top 10 mock otus:
-all_samples_mock_otus <- agg_otu_data %>% 
+all_samples_mock_otus <- agg_otu_data %>%
   filter(otu %in% top_10_mock_otus) %>% #Select the top 10 water OTUs
   ggplot(aes(fill = otu, y = agg_rel_abund, x = unique_label))+
   geom_bar(position = "fill", stat="identity")+
-  labs(title=NULL, 
+  labs(title=NULL,
        x=NULL,
        y="Relative abundance")+
   coord_flip()+
@@ -204,21 +204,20 @@ all_samples_mock_otus <- agg_otu_data %>%
 #Plate 17: Mock 41207 Water 1683
 
 #All samples top 30 otus
-top_30_otus <- agg_otu_data %>% 
-  group_by(otu) %>% 
-  summarise(mean_rel_abund = mean(agg_rel_abund)) %>% 
-  top_n(30, mean_rel_abund) %>% 
+top_30_otus <- agg_otu_data %>%
+  group_by(otu) %>%
+  summarise(mean_rel_abund = mean(agg_rel_abund)) %>%
+  top_n(30, mean_rel_abund) %>%
   pull(otu)
 
 #All samples with top 30 mock otus:
-all_samples_otus <- agg_otu_data %>% 
-  filter(otu %in% top_30_otus) %>% 
+all_samples_otus <- agg_otu_data %>%
+  filter(otu %in% top_30_otus) %>%
   ggplot(aes(fill = otu, y = agg_rel_abund, x = unique_label))+
   geom_bar(position = "fill", stat="identity")+
-  labs(title=NULL, 
+  labs(title=NULL,
        x=NULL,
        y="Relative abundance")+
   coord_flip()+
   theme_classic()
 save_plot(filename = "exploratory/notebook/waters_mock_fmts_top_30_otus.png", all_samples_otus, base_height = 4.5, base_width = 8.5, base_aspect_ratio = 2)
-
