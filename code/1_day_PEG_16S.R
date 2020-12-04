@@ -248,7 +248,7 @@ save_plot("results/figures/1_Day_PEG_D7_ns_otus.png", D7_otus, base_height = 9, 
 
 #Heatmaps of OTUs (lowest P value since none were significant) over time, facet by group
 #Rank OTUs by adjusted p-value
-hm_sig_otus_p <- kw_otu %>% 
+hm_otus_p <- kw_otu %>% 
   filter(p.value < 0.05) %>% 
   arrange(p.value.adj) %>% 
   distinct(otu) %>% 
@@ -258,6 +258,20 @@ hm_sig_otus_p <- kw_otu %>%
 hm_days <- c("PT", "0", "1", "2", "4", "5", "7")
 facet_labels <- color_labels #Create descriptive labels for facets
 names(facet_labels) <- c("1RM1", "C", "M1") #values that correspond to group, which is the variable we're faceting by
-hm_otu <- hm_plot_otus(agg_otu_data_subset, hm_sig_otus_p, hm_days)+
+hm_otu <- hm_plot_otus(agg_otu_data_subset, hm_otus_p, hm_days)+
   scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
 save_plot(filename = "results/figures/1_day_PEG_otus_heatmap.png", hm_otu, base_height = 10, base_width = 15)
+
+#Plot heat map of OTUs that were significant in the 5 day subset
+hm_5_day_otus <- c("Phenylobacterium (OTU 332)", "Lachnospiraceae (OTU 33)", "Ruminococcaceae (OTU 37)",
+                   "Ruminococcaceae (OTU 98)", "Ruminococcaceae (OTU 65)", "Clostridium (OTU 51)",
+                   "Bacteroides (OTU 1)", "Lactobacillus (OTU 13)", "Blautia (OTU 19)", 
+                   "Ruminococcaceae (OTU 50)", "Ruminococcaceae (OTU 54)", "Ruminococcaceae (OTU 92)",
+                   "Bifidobacterium (OTU 28)", "Oscillibacter (OTU 45)", "Lachnospiraceae (OTU 30)", 
+                   "Lachnospiraceae (OTU 29)", "Lachnospiraceae (OTU 31)", "Lactobacillus (OTU 23)", 
+                   "Lachnospiraceae (OTU 4)", "Peptostreptococcaceae (OTU 12)", "Lachnospiraceae (OTU 32)", 
+                   "Enterobacteriaceae (OTU 2)", "Clostridium (OTU 22)", "Lactobacillus (OTU 9)", "Lachnospiraceae (OTU 16)")
+hm_5_day_otus_plot <- hm_plot_otus(agg_otu_data_subset, hm_5_day_otus, hm_days)+
+  scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
+save_plot(filename = "results/figures/1_day_PEG_otus_heatmap_5_day_otus.png", hm_5_day_otus_plot, base_height = 10, base_width = 15)
+
