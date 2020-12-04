@@ -246,7 +246,14 @@ D7_otus <- plot_otus_dx(top10_otu_day7, 7)+ #Pick top 20 significant OTUs
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/1_Day_PEG_D7_ns_otus.png", D7_otus, base_height = 9, base_width = 7)
 
-#Heatmaps of OTUs (lowest P value since none were significant) over time, facet by group
+#Examine C. difficile otu over time----
+peptostrep <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
+  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/1_day_PEG_otu_peptostreptococcaceae.png", peptostrep, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Heatmaps of OTUs (lowest P value since none were significant) over time, facet by group----
 #Rank OTUs by adjusted p-value
 hm_otus_p <- kw_otu %>% 
   filter(p.value < 0.05) %>% 
