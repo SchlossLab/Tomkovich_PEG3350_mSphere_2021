@@ -434,6 +434,27 @@ hm_overlap <- intersect_all(hm_sig_otus_p_adj, hm_sig_otus_p_adj_tissues)
 # "Lachnospiraceae (OTU 4)"        "Peptostreptococcaceae (OTU 12)"
 # "Enterobacteriaceae (OTU 2)" 
 
+#Create heatmaps of mock challenged mice:
+#Mock stool samples
+otu_mock_only_stools  <-  otu_mock_stools %>% 
+  filter(group %in% c("WMN", "CN"))
+hm_mock_stool_days <- otu_mock_only_stools %>% distinct(day) %>% pull(day)
+facet_labels <- c("5-day PEG 3350 without infection", "Clind. without infection") #Create descriptive labels for facets
+names(facet_labels) <- c("WMN", "CN") #values that correspond to group, which is the variable we're faceting by
+hm_mock_stool <- hm_plot_otus(otu_mock_only_stools, hm_sig_otus_p_adj, hm_mock_stool_days)+
+  scale_x_discrete(breaks = c(-5, -1, 0, 4, 6, 30), labels = c(-5, -1, 0, 4, 6, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools_mock.png", hm_mock_stool, base_height = 14, base_width = 15)
+
+#Mock tissue samples
+otu_mock_only_tissues <- otu_mock_tissues %>% 
+  filter(group %in% c("WMN", "CN")) 
+hm_mock_tissue_days <- otu_mock_only_tissues %>% distinct(day) %>% pull(day)
+hm_mock_tissues <- hm_plot_otus(otu_mock_only_tissues, hm_sig_otus_p_adj_tissues, hm_mock_tissue_days)+
+  scale_x_discrete(breaks = c(0, 4, 6, 30), labels = c(0, 4, 6, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues_mock.png", hm_mock_tissues, base_height = 14, base_width = 15)
+
+
+
 #Examine C. difficile otu over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+
   scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
