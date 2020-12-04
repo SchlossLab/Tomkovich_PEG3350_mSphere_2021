@@ -10,10 +10,8 @@ stool_corresponding_to_tissues <- metadata %>%
 all_pcoa_data <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename(unique_label = group) %>% #group is the same as id in the metadata data frame
-  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
-  mutate(sample_type = case_when(str_detect(unique_label, "water") ~ "water",
-                                 str_detect(unique_label, "FMT") ~ "FMT",
-                                 TRUE ~ sample_type))
+  left_join(metadata, by= "unique_label")  #merge metadata and PCoA data frames
+
 
 #Read in .loadings file to add percent variation represented by PCoA axis
 all_axis_labels <- read_tsv("data/process/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
