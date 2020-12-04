@@ -144,7 +144,9 @@ plot_histology <- function(df, pairwise_stats){
   scale_x_discrete(guide = guide_axis(n.dodge = 2))+  #So X axis labels don't overlap
   scale_y_continuous(limits = c(-0.5, 12), breaks = c(0, 4, 8, 12))+
   stat_pvalue_manual(data = pairwise_stats, label = "p.adj", y.position = "y.position", size = 6, bracket.size = .6) +
-  theme_classic()
+  theme_classic()+
+  theme(strip.background = element_blank()) #get rid of box around facet_wrap labels
+  
 }
 
 #Define color scheme for d6_histology----
@@ -165,9 +167,9 @@ save_plot("results/figures/histo_scores_d6.png", d6_plot) #Use save_plot instead
 
 #Plot of day 4 (plus day 0 for 1 group) histology scores----
 #Define color scheme for d4_histology----
-color_scheme <- c("#238b45", "#88419d", "#88419d", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
-color_groups <- c("CN", "D0 WMN", "WMN", "C", "WM")
-color_labels <- c("After 5-day PEG 3350", "Clind. without infection", "5-day PEG 3350 without infection", "Clind.", "5-day PEG 3350")
+color_scheme <- c("#88419d", "#238b45", "#88419d", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("D0 WMN", "CN", "WMN", "C", "WM")
+color_labels <- c("After 5-day PEG 3350 (Day 0)", "Clind. without infection", "5-day PEG 3350 without infection", "Clind.", "5-day PEG 3350")
 
 #Format day 4 pairwise stats to add to plot----
 pairwise_day4_plot <- d4_plot_pairwise_stats %>%
