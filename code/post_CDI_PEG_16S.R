@@ -240,6 +240,17 @@ pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
 save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 5, base_width = 5)
 
+#Create stand alone legend
+group_legend <- pcoa_post_cdi_peg  %>%
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_point()+ theme_classic()
+group_legend <- get_legend(group_legend)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = 1.2, base_width = 3.2)
+
 #PCoA plot over time as a still and a as an animation
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file

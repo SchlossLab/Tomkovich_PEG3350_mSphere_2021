@@ -123,6 +123,17 @@ pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
 save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 4.5)
 
+#Create stand alone legend
+group_legend <- pcoa_1_day_PEG  %>%
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_point()+ theme_classic()
+group_legend <- get_legend(group_legend)
+save_plot("results/figures/1_day_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 2.2)
+
 pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
