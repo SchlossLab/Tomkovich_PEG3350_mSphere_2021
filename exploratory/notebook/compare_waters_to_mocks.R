@@ -22,6 +22,7 @@ diversity_data <- read_tsv("data/water_test/peg3350.opti_mcc.groups.ave-std.summ
 #y_axis_label: how you want to label the alpha metric on the plot. Ex. "Shannon Diversity Index"
 plot_alpha_metric <- function(alpha_metric, y_axis_label){
   diversity_data %>%
+    mutate(group = fct_relevel(group, "water", "mock", "FMT")) %>% #Make sure order is correct
     group_by(group) %>%
     mutate(median = median({{ alpha_metric }})) %>% #Create column of median values for each group
     ungroup() %>%
