@@ -6,6 +6,9 @@ set.seed(19760620) #Same seed used for mothur analysis
 #Remove variables not needed for this analysis
 rm(agg_otu_data, diversity_data)
 
+metadata <- metadata %>% 
+  mutate(day = factor(day, levels = c(unique(as.factor(day)), "PT", "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0"))) #Transform day variable into factor variable
+
 #PERMANOVA of 5-days PEG subset----
 #Stools
 five_d_stools <- read_dist("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
