@@ -363,7 +363,7 @@ otus_d4 <- plot_otus_dx(otu_stools, sig_otu_stools_day4 [1:20], 4)+
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_stools_d4_top20.png", otus_d4, base_height = 7, base_width = 8)
 
-otus_d10 <- plot_otus_dx(otu_stools, sig_otu_stools_day10 [1:20], 10)+
+otus_d10 <- plot_otus_dx(otu_stools, sig_otu_stools_day10[1:20], 10)+
   ggtitle("Day 10 post-infection Stools")+ #Title plot
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
