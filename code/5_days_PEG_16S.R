@@ -376,7 +376,7 @@ otus_tissues_d30 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day30[1:20], 30)+
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_otus_tissues_d30.png", otus_tissues_d30, base_height = 7, base_width = 8)
 
-#Heatmaps of significant OTUs over time facet by group
+#Heatmaps of significant OTUs over time facet by group----
 #Create list of otus to plot
 all_sig_otus <- c(`sig_otu_stools_day-5`, `sig_otu_stools_day-1`, sig_otu_stools_day0, sig_otu_stools_day1, 
                   `sig_otu_stools_day2`, `sig_otu_stools_day3`, sig_otu_stools_day4, sig_otu_stools_day5,
@@ -408,7 +408,7 @@ hm_stool <- hm_plot_otus(otu_stools, hm_sig_otus_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
 
-#Create heatmap of significant OTUs for tissue samples
+#Create heatmap of significant OTUs for tissue samples----
 #Rank OTUs by adjusted p-value
 hm_sig_otus_p_adj_tissues <- kw_otu_tissues %>% 
   filter(p.value.adj < 0.05) %>% 
@@ -434,7 +434,7 @@ hm_overlap <- intersect_all(hm_sig_otus_p_adj, hm_sig_otus_p_adj_tissues)
 # "Lachnospiraceae (OTU 4)"        "Peptostreptococcaceae (OTU 12)"
 # "Enterobacteriaceae (OTU 2)" 
 
-#Create heatmaps of mock challenged mice:
+#Create heatmaps of mock challenged mice----
 #Mock stool samples
 otu_mock_only_stools  <-  otu_mock_stools %>% 
   filter(group %in% c("WMN", "CN"))
@@ -562,6 +562,73 @@ lach32_tissues <- otu_over_time("Lachnospiraceae (OTU 32)" , otu_tissues)+
 save_plot(filename = "results/figures/5_days_PEG_lach32_tissues.png", lach32_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Customize days with scale_X_continuous
+
+
+
+#Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" (baseline day -5 versus day 1)----
+WMR_d0_d15_pairs <- otu_stools %>%
+  filter(group == "WMR" & otu == "Bacteroides (OTU 1)") %>% #Limit to group "C" and randomly pick an OTU just to figure out what mice have sequence data
+  filter(day == 1 | day == 15) %>%
+  filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
+  pull(unique_mouse_id) #6 mice
+
+#Wilcoxon signed rank test for all day 1, day 15 pairs at the OTU level:
+otus_WMR_pairs <- otu_stools %>%
+  filter(unique_mouse_id %in% WMR_d0_d15_pairs) %>% 
+  filter(day == 1 | day == 15) %>% #Select timepoints to test
+  group_by(otu) %>%
+  nest() %>%
+  mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
+  mutate(median = map(data, get_rel_abund_median_day)) %>%
+  unnest(c(model, median)) %>%
+  ungroup()
+
+#Adjust p-values for testing multiple OTUs
+otus_WMR_pairs_stats_adjust <- otus_WMR_pairs %>%
+  select(otu, statistic, p.value, method, alternative, `1`, `15`) %>%
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+  arrange(p.value.adj) %>%
+  write_tsv(path = "data/process/5_days_PEG_otu_WMR_d1vd15.tsv")
+
+#Create list of OTUs to plot for WMR group
+otus_WMR_pairs_stats_adjust %>% filter(p.value.adj < 0.05) #No p-values survive multiple hypothesis correction
+#Look at top 15 OTUs by unadjusted p-values
+WMR_OTUs <- otus_WMR_pairs_stats_adjust %>% 
+  arrange(p.value) %>% 
+  slice_head(n=15) %>% 
+  pull(otu)
+#Add C. diff OTU to the list of OTUs to plot
+WMR_OTUs <- c(WMR_OTUs, "Peptostreptococcaceae (OTU 12)")
+
+#Heatmap of 5-day PEG + 10 day recovery (WMR) group----
+#Create heatmaps of mock challenged mice----
+#Mock stool samples
+otu_WMR_stools  <-  otu_stools %>% 
+  filter(group == "WMR")
+hm_WMR_stool_days <- otu_WMR_stools %>% distinct(day) %>% pull(day)
+hm_WMR_stool <-   otu_WMR_stools %>%
+    mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+    mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                             "5", "6", "7", "8", "15", "9", "10", "20", "25", "30")) %>% #Specify the order of the groups  
+    filter(otu %in% WMR_OTUs) %>%
+    filter(day %in% hm_WMR_stool_days) %>% 
+    group_by(group, otu_name, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_tile(aes(x = day, y=otu_name, fill=median))+
+    labs(title=NULL,
+         x=NULL,
+         y=NULL)+
+    scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
+                         limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    theme_classic()+
+    theme(plot.title=element_text(hjust=0.5),
+          strip.background = element_blank(), #get rid of box around facet_wrap labels
+          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
+          text = element_text(size = 16))+ # Change font size for entire plot+
+  scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
+
 
 #Examine impacts of clindamycin and PEG3350 treatments on bacterial OTUs----
 #Nov. 2020: Need to update this now that we have data from all timepoints
