@@ -318,22 +318,18 @@ post_infection_plot <- group_time_fit %>%
                                        community == "14" ~ (group_community_total/143)*100,
                                        community == "15" ~ (group_community_total/94)*100,
                                        TRUE ~ 0)) %>% #No samples should fall into this category
-  mutate(group = fct_relevel(group, "CN", "C", "FRM", "RM", "CWM", "1RM1", "M1", "WMR", "WMC", "WMN", "WM")) %>% #Specify the order of the groups
+  mutate(group = fct_relevel(group, "C", "FRM", "RM", "CWM", "1RM1", "M1", "WMR", "WMC", "WM")) %>% #Specify the order of the groups
   ggplot()+
   geom_tile(aes(x=community, y=group, fill=percent_community))+
   facet_wrap(~timepoint_status, labeller = labeller(timepoint_status = facet_labels), nrow = 1)+
   scale_x_continuous(breaks = c(1:15))+
-  scale_y_discrete(label = c("Clind. without infection", "Clind.", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350",
+  scale_y_discrete(label = c("Clind.", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350",
                              "Clind. + 1-day PEG 3350", "1-day PEG 3350 + 1-day recovery", "1-day PEG 3350", "5-day PEG 3350 + 10-day recovery", "5-day PEG 3350 + Clind.", 
-                             "5-day PEG 3350 without infection", "5-day PEG 3350"))+ #Descriptive group names that match the rest of the plots
+                             "5-day PEG 3350"))+ #Descriptive group names that match the rest of the plots
   theme_classic()+
   scale_fill_distiller(palette = "YlGnBu", direction = 1, name = "% Community")+
   theme(axis.title.y = element_blank(), #Get rid of y axis title
         plot.background=element_blank(),
-        #remove plot border
-        panel.border=element_blank(),
-        #set thickness of axis ticks
-        axis.ticks=element_line(size=0.4),
         strip.background = element_blank(), #get rid of box around facet_wrap labels
         axis.title.x = element_blank(), #Get rid of x axis title, text, and ticks. Will combine with bacteria in community
         axis.text.x = element_blank(),
