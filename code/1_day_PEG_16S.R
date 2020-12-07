@@ -1,7 +1,7 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
 
-#Define color scheme to match 1 Day Peg Plots
+#Define color scheme to match 1_Day_PEG Plots----
 color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c( "1RM1", "C", "M1")
 color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
