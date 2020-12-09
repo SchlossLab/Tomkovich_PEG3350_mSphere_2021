@@ -1,9 +1,9 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
 
-#Define color scheme to match 1_Day_PEG Plots----
+#Define color scheme to match 1_Day_PEG Weight/CFU Plots----
 color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
-color_groups <- c( "1RM1", "C", "M1")
+color_groups <- c( "C", "M1", "1RM1")
 color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
 
 #Subset alpha diversity data (16S_common_files) to analyze one day PEG subset mice----
@@ -118,6 +118,7 @@ pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycur
 axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
+
 pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
@@ -142,7 +143,7 @@ pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
   shadow_mark() #Shows previous timepoints
 
 # Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = 7, fps = 10,
+pcoa_gif <- animate(pcoa_animated, duration = 8, fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 
 # Save as gif file
