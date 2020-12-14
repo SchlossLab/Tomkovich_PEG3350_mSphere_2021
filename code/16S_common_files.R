@@ -89,6 +89,7 @@ agg_taxonomic_data <- function(taxonomic_level) {
 
 # Relative abundance data at the otu level:
 agg_otu_data <- agg_taxonomic_data(otu)
+agg_genus_data <- agg_taxonomic_data(genus)
 
 #Rename otus to match naming convention used previously and add a column that will work with ggtext package:
 agg_otu <- agg_otu_data %>%
