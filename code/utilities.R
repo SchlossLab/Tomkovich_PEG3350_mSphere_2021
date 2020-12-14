@@ -220,7 +220,12 @@ tidy_pairwise <- function(spread_pairwise){
     pivot_longer(-day, names_to = "compare", values_to = "p.adj") %>%
     separate(col = compare, c("group1", "group2"), sep = "-", remove = TRUE)
 }
-
+#Function to tidy pairwise comparisons to use for adding stats to otu plots----
+tidy_pairwise_otu <- function(spread_pairwise){
+  spread_pairwise %>%
+    pivot_longer(-otu, names_to = "compare", values_to = "p.adj") %>%
+    separate(col = compare, c("group1", "group2"), sep = "-", remove = TRUE)
+}
 #Function to calculate the median shannon values from a dataframe (x) grouped by treatment
 get_shannon_median_group <- function(x){
   x %>%
