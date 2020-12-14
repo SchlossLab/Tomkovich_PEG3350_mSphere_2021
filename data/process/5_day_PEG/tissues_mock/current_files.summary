@@ -1,0 +1,3 @@
+phylip=data/process/5_day_PEG/stools_mock/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist
+shared=data/mothur/peg3350.opti_mcc.shared
+processors=10
