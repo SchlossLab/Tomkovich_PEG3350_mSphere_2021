@@ -13,6 +13,8 @@ shape_infected <- c("no", "yes")
 
 metadata <- metadata %>%
   mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+agg_otu_data <- agg_otu_data %>% 
+  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
