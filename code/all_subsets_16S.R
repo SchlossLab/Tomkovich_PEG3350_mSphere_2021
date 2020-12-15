@@ -75,6 +75,82 @@ for (d in stool_test_days){
   kw_otu_stools <- add_row(kw_otu_stools, stats)  #combine all the dataframes together
 }
 
+# Perform pairwise Wilcoxan rank sum tests for otus that were significantly different across sources of mice on a series of days----
+pairwise_day_otu <- function(sample_df, sample_type, timepoint, sig_otu_dayX){
+  otu_stats <- sample_df %>% 
+    filter(day == timepoint) %>%
+    select(group, otu, agg_rel_abund) %>% 
+    group_by(otu) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_rel_abund_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()
+  pairwise_stats <- otu_stats %>% 
+    filter(otu %in% sig_otu_dayX) %>% 
+    group_by(otu) %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$agg_rel_abund, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
+    write_tsv(path = paste0("data/process/all_otu_stats_day_", timepoint, "_", sample_type, "_sig.tsv"))
+  #Format pairwise stats to use with ggpubr package
+  plot_format_stats <- pairwise_stats %>% 
+    select(-method) %>% 
+    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+    lapply(tidy_pairwise_otu) %>% 
+    bind_rows() %>% 
+    filter(!is.na(group2)) %>% #Remove rows that don't have a 2nd comparison group
+    arrange(p.adj) %>% #Arrange by adjusted p value column 
+    mutate(day = timepoint)
+  return(plot_format_stats)  
+}
+
+#Pairwise Tests of OTUs that were significant on each day tested
+#List of significant days:
+pairwise_days_stools <- kw_otu_stools %>% filter(p.value.adj < 0.05) %>% 
+  distinct(day) %>% pull(day)
+#Pairwise test of significant days and their corresponding OTUs for stool samples 
+#Create empty placeholder data frame
+pairwise_otu_stools <- data.frame(otu=character(), group1=character(), group2=character(),
+                                  p.adj = double(), day= double())
+otu_dayn5_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", -5, `sig_otu_stools_day-5`)
+otu_dayn1_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", -1, `sig_otu_stools_day-1`)
+otu_day0_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 0, sig_otu_stools_day0)
+otu_day1_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 1, sig_otu_stools_day1)
+otu_day2_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 2, sig_otu_stools_day2)
+otu_day3_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 3, sig_otu_stools_day3)
+otu_day4_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 4, sig_otu_stools_day4)
+otu_day5_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 5, sig_otu_stools_day5)
+otu_day6_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 6, sig_otu_stools_day6)
+otu_day7_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 7, sig_otu_stools_day7)
+otu_day8_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 8, sig_otu_stools_day8)
+otu_day9_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 9, sig_otu_stools_day9)
+otu_day10_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 10, sig_otu_stools_day10)
+otu_day15_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 15, sig_otu_stools_day15)
+otu_day30_stats_stools <- pairwise_day_otu(all_otu_stools, "stools", 30, sig_otu_stools_day30)
+
+#Think about how this code could be more DRY
+#Combine pairwise dataframes for all days
+otu_pairwise_stools <- rbind(otu_dayn5_stats_stools, otu_dayn1_stats_stools, otu_day0_stats_stools,
+                             otu_day2_stats_stools, otu_day3_stats_stools, otu_day4_stats_stools,
+                             otu_day5_stats_stools, otu_day6_stats_stools, otu_day7_stats_stools,
+                             otu_day8_stats_stools, otu_day9_stats_stools, otu_day10_stats_stools,
+                             otu_day15_stats_stools, otu_day30_stats_stools)
+
+#Examine OTUs that are different between WM & M1 mice
+WM_M1_otu_stools <- otu_pairwise_stools %>% 
+  filter(group1 %in% c("WM", "M1") & group2 %in% c("WM", "M1")) %>% 
+  filter(p.adj < 0.05)
+WM_1RM1_otu_stools <- otu_pairwise_stools %>% 
+  filter(group1 %in% c("WM", "1RM1") & group2 %in% c("WM", "1RM1")) %>% 
+  filter(p.adj < 0.05)
+
 #Create empty data frame to combine stat dataframes for all days that were tested
 kw_otu_tissues <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
                              C =double(), WM =double(),WMC=double(),WMR =double(),
