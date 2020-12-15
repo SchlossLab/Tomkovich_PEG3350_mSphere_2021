@@ -620,7 +620,7 @@ hm_WMR_stool_days <- otu_WMR_stools %>% distinct(day) %>% pull(day)
 hm_WMR_stool <-   otu_WMR_stools %>%
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                             "5", "6", "7", "8", "15", "9", "10", "20", "25", "30")) %>% #Specify the order of the groups  
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(otu %in% WMR_OTUs) %>%
     filter(day %in% hm_WMR_stool_days) %>% 
     group_by(group, otu_name, day) %>% 
