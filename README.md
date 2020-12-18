@@ -58,6 +58,7 @@ YOUR PAPER'S ABSTRACT GOES HERE
     * rmarkdown v2.3
     * ggpubr v.0.4.0
     * gganimate v1.0.6
+    * readxl v1.3.1
     * writexl v1.3
     * glue v1.4.1
     * ggtext v0.1.0
