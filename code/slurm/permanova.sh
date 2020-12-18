@@ -14,9 +14,9 @@
 # For multithreading, increase cpus-per-task
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=10
-#SBATCH --mem=50GB
-#SBATCH --time=24:00:00
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=100GB
+#SBATCH --time=48:00:00
 
 # Account
 #SBATCH --account=pschloss1
@@ -39,4 +39,4 @@
 #                   #
 #####################
 
-Rscript --max-ppsize 500000 code/permanova_stats.R
+Rscript code/permanova_stats.R

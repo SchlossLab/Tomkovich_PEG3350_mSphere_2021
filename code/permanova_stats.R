@@ -7,34 +7,54 @@ set.seed(19760620) #Same seed used for mothur analysis
 rm(agg_otu_data, diversity_data)
 
 metadata <- metadata %>% 
-  mutate(day = factor(day, levels = c(unique(as.factor(day)), "PT", "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0"))) #Transform day variable into factor variable
+  mutate(day = factor(day, levels = c(unique(as.factor(day)), "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0"))) #Transform day variable into factor variable
 
 #PERMANOVA of 5-days PEG subset----
 #Stools
 five_d_stools <- read_dist("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 five_d_stools_variables <- tibble(unique_label = attr(five_d_stools, "Labels")) %>%
   left_join(metadata, by = "unique_label")
-five_d_stools_adonis <- adonis(five_d_stools~(group/(sample_type*exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = five_d_stools_variables$unique_mouse_id, data = five_d_stools_variables, permutations = 1)
-five_d_stools_adonis 
+five_d_stools_adonis <- adonis(five_d_stools~(group/(exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = five_d_stools_variables$unique_mouse_id, data = five_d_stools_variables, permutations = 1000)
+five_d_stools_adonis_table <- as_tibble(add_rownames(five_d_stools_adonis$aov.tab, var = "effects")) %>% 
+  write_tsv("data/process/5_day_PEG_permanova_stools.tsv")
 #Tissues
 five_d_tissues <- read_dist("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
 five_d_tissues_variables <- tibble(unique_label = attr(five_d_tissues, "Labels")) %>%
   left_join(metadata, by = "unique_label")
 #PERMANOVA of all relevant variables (exclude Miseq run since they were the same for all samples in this subset)
-five_d_tissues_adonis <- adonis(five_d_tissues~(group/(sample_type*exp_num*unique_cage_no*ext_plate))*day, strata = five_d_tissues_variables$unique_mouse_id, data = five_d_tissues_variables, permutations = 1)
+five_d_tissues_adonis <- adonis(five_d_tissues~(group/(sample_type*exp_num*unique_cage_no*ext_plate))*day, strata = five_d_tissues_variables$unique_mouse_id, data = five_d_tissues_variables, permutations = 1000)
 five_d_tissues_adonis
 #Write PERMANOVA results to tsv
-five_d_tissues_adonis$aov
-tibble(effects = c("sample_type", "miseq_run", "miseq_run:ext_plate", "sample_type:miseq_run:ext_plate", "Residuals"),
-       r_sq = sample_miseq_ext_plate_adonis$aov.tab$R2[1:5],
-       p = sample_miseq_ext_plate_adonis$aov.tab$Pr[1:5]) %>%
-  write_tsv("exploratory/notebook/adonis_sample_miseq_plate.tsv")
+five_d_tissues_adonis_table <- as_tibble(add_rownames(five_d_tissues_adonis$aov.tab, var = "effects")) %>% 
+  write_tsv("data/process/5_day_PEG_permanova_tissues.tsv")
 
 #PERMANOVA of 1-day PEG subset----
+one_d <- read_dist("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
+one_d_variables <- tibble(unique_label = attr(one_d, "Labels")) %>%
+  left_join(metadata, by = "unique_label")
+one_d_adonis <- adonis(one_d~(group/(exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = one_d_variables$unique_mouse_id, data = one_d_variables, permutations = 1000)
+one_d_adonis_table <- as_tibble(add_rownames(one_d_adonis$aov.tab, var = "effects")) %>% 
+  write_tsv("data/process/1_day_PEG_permanova.tsv")
 
 #PERMANOVA of post-CDI PEG subset----
 #Stools
+post_stools <- read_dist("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
+post_stools_variables <- tibble(unique_label = attr(post_stools, "Labels")) %>%
+  left_join(metadata, by = "unique_label")
+post_stools_adonis <- adonis(post_stools~(group/(exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = post_stools_variables$unique_mouse_id, data = post_stools_variables, permutations = 1000)
+post_stools_adonis_table <- as_tibble(add_rownames(post_stools_adonis$aov.tab, var = "effects")) %>% 
+  write_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
 #Tissues
+#Tissues
+post_tissues <- read_dist("data/process/post_CDI_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
+post_tissues_variables <- tibble(unique_label = attr(post_tissues, "Labels")) %>%
+  left_join(metadata, by = "unique_label")
+#PERMANOVA of all relevant variables (exclude Miseq run since they were the same for all samples in this subset)
+post_tissues_adonis <- adonis(post_tissues~sample_type*unique_cage_no, strata = post_tissues_variables$unique_mouse_id, data = post_tissues_variables, permutations = 1000)
+post_tissues_adonis
+#Write PERMANOVA results to tsv
+post_tissues_adonis_table <- as_tibble(add_rownames(post_tissues_adonis$aov.tab, var = "effects")) %>% 
+  write_tsv("data/process/post_CDI_PEG_permanova_tissues.tsv")
 
 #PERMANOVA of all samples together
 # Read in Bray-Curtis distance matrix that represents all sequenced samples
@@ -78,6 +98,6 @@ plot_pcoa_variable(miseq_run)+
 
 #PERMANOVA (adonis) of all relevant variables----
 #Comment out- takes too much memory
-#all_adonis <- adonis(all_dist~(group/(sample_type*exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = all_variables$unique_mouse_id, data = all_variables, permutations = 10)
+#all_adonis <- adonis(all_dist~(group/(sample_type*exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = all_variables$unique_mouse_id, data = all_variables, permutations = 1000)
 #How to account for sample_type?
 #Error: vector memory exhausted (limit reached?)
