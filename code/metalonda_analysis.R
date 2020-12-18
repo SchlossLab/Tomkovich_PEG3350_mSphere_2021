@@ -51,7 +51,7 @@ rm(all_axis_labels, all_pcoa_data, diversity_data, pcoa_tissues_v_stool, pcoa_wa
 #MetaLonDA can only compare 2 groups at a time
 #Create dataframe of mice from WM and C groups and only stool samples
 wm_v_c <- agg_otu_data %>% 
-  filter(group %in% c("WM", "C") & sample_type == "stool") %>%
+  filter(group %in% c("WM", "C") & sample_type == "stool" & day > 0) %>% #Only interested in modeling after perturbation
   select(unique_label, group, day, unique_mouse_id, otu, agg_rel_abund) %>% 
   mutate(otu = str_replace_all(otu, "/", "-")) #Remove / which cause issues with metalonda analysis
 
@@ -77,11 +77,19 @@ group <- wm_v_c_variables$group
 time <- wm_v_c_variables$day
 id <- wm_v_c_variables$unique_mouse_id
 
+#Figure out last timepoint in the dataset
+max_day <- max(wm_v_c_variables$day)
+
+#Group 1 color (determined alphabetically?)
+group1_color <- "#238b45"
+#Group 2 color (determined alphabetically?)
+group2_color <- "#88419d"
+
 #Define the prediction timepoints
-points <- seq(-15, 30, length= 46) 
+points <- seq(1, max_day, length= max_day-1) 
 output.metalonda.all <-  metalondaAll(Count = wm_v_c_proc, Time = time, Group = group,
                                     ID = id, n.perm = 1000, fit.method = "nbinomial", num.intervals = 46, 
                                     parall = FALSE, pvalue.threshold = 0.05, adjust.method = "BH", time.unit = "days", 
                                     norm.method = "none", prefix = "Test_metalondaALL", ylabel = "Relative abundance",
-                                    col = c("black", "green"))
-#Time needed for 905 OTUs and 396 samples with 1000 permutations = 15 minutes per OTU
+                                    col = c(group1_color, group2_color))
+#Time needed for 624 OTUs and 292 samples with 1000 permutations = 12 minutes per OTU
