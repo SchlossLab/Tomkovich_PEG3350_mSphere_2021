@@ -188,6 +188,46 @@ hm_stool <- hm_plot_otus(all_otu_stools, hm_sig_otus_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/all_otus_heatmap_stools.png", hm_stool, base_height = 15, base_width = 18)
 
+#Create heatmap of OTUs that differentiate PEG-3350 groups' stool samples-----
+peg_sig_otus_1vs5 <- otu_pairwise_stools %>%
+  filter(day >2) %>%  #Limit to when C. diff levels are starting to drop in 1-day PEG mice
+  filter(group1 %in% c("WM", "M1", "1RM1") & group2 %in% c("WM", "M1", "1RM1")) %>% 
+  filter(p.adj < 0.05) %>% 
+  arrange(p.adj) %>% 
+  distinct(otu) %>% 
+  pull(otu)
+
+peg_otus_M1_vs_FRM <- otu_pairwise_stools %>% 
+  filter(day > 2) %>% #Limit to when C. diff levels are starting to drop in 1-day PEG mice
+  filter(group1 %in% c("M1", "1RM1", "FRM") & group2 %in% c("M1", "1RM1", "FRM")) %>% 
+  filter(p.adj < 0.05) %>% 
+  arrange(p.adj) %>% 
+  distinct(otu) %>% 
+  pull(otu)
+
+#PEG OTUss of interest: differentiate 1 vs 5-day PEG mice and 1-day vs Post_CDI PEG mice
+peg_otus <- intersect_all(peg_sig_otus_1vs5, peg_otus_M1_vs_FRM)
+
+#Heatmap of PEG OTUs of interest
+peg_stools <- all_otu_stools %>% 
+  filter(day %in% c("3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Limit to when C. diff levels are starting to drop in 1-day PEG mice
+  filter(group %in% c("WM", "WMC", "WMR",
+                      "M1", "1RM1",
+                      "CWM", "FRM", "RM","WMN")) 
+peg_stool_days <- peg_stools %>% distinct(day) %>% pull(day)
+facet_labels <- c( "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery",
+                   "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery",
+                   "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350",
+                   "5-day PEG 3350 without infection") #Create descriptive labels for facets
+names(facet_labels) <- c("WM", "WMC", "WMR",
+                         "M1", "1RM1",
+                         "CWM", "FRM", "RM",
+                         "WMN") #values that correspond to group, which is the variable we're faceting by
+peg_stool <- hm_plot_otus(peg_stools, peg_otus[0:25], peg_stool_days)+
+  scale_x_discrete(breaks = c(3:10, 15, 20, 25, 30), labels = c(3:10, 15, 20, 25, 30))
+save_plot(filename = "results/figures/all_otus_heatmap_stools_peg.png", peg_stool, base_height = 15, base_width = 18)
+
+
 #Create heatmap of significant OTUs for all tissue samples----
 #Rank OTUs by adjusted p-value
 hm_sig_otus_p_adj_tissues <- kw_otu_tissues %>% 
