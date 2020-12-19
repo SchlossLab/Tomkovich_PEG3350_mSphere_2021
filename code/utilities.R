@@ -499,7 +499,7 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
   sample_df %>%
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                             "5", "6", "7", "8", "15", "9", "10", "20", "25", "30")) %>% #Specify the order of the groups  
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(otu %in% otus) %>%
     filter(day %in% timepoints) %>% 
     group_by(group, otu_name, day) %>% 
@@ -516,6 +516,7 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     theme_classic()+
+#    scale_y_discrete(limits=rev(levels(as.factor(sample_df$otu_name))))+#List OTU names alphabetically
     theme(plot.title=element_text(hjust=0.5),
           strip.background = element_blank(), #get rid of box around facet_wrap labels
           axis.text.y = element_markdown(), #Have only the OTU names show up as italics
@@ -531,7 +532,7 @@ hm_plot_tissues <- function(sample_df, otus, timepoints){
   sample_df %>%
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                             "5", "6", "7", "8", "15", "9", "10", "20", "25", "30")) %>% #Specify the order of the groups  
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(otu %in% otus) %>%
     filter(day %in% timepoints) %>% 
     group_by(group, otu_name, day, sample_type) %>% 
