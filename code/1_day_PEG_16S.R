@@ -186,9 +186,9 @@ for (d in exp_days_seq){
 }
 
 #Shared significant genera across from Days 1, 2 and 7----
-shared_sig_otus_D1toD7 <- intersect_all(`sig_otu_day1`, sig_otu_day2, sig_otu_day5, sig_otu_day7, sig_otu_dayPT)
-view(shared_sig_otus_D1toD7) #0
-print(shared_sig_otus_D1toD7)
+shared_sig_otus_PTtoD7 <- intersect_all(`sig_otu_day1`, sig_otu_day2, sig_otu_day5, sig_otu_day7, sig_otu_dayPT)
+view(shared_sig_otus_PTtoD7) #0
+print(shared_sig_otus_PTtoD7)
 #0 OTUs overlap
 
 #No taxa significant 
@@ -293,4 +293,78 @@ hm_5_day_otus <- c("Phenylobacterium (OTU 332)", "Lachnospiraceae (OTU 33)", "Ru
 hm_5_day_otus_plot <- hm_plot_otus(agg_otu_data_subset, hm_5_day_otus, hm_days)+
   scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
 save_plot(filename = "results/figures/1_day_PEG_otus_heatmap_5_day_otus.png", hm_5_day_otus_plot, base_height = 10, base_width = 15)
+
+#Subset the aggregate genus data to get the 1-Day PEG Subset only----
+agg_genus_data_subset <- one_day_PEG_subset(agg_genus_data) %>%
+  mutate(day = replace(day, day == -1, "PT"),
+         day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+  mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
+
+#Kruskal Wallis function to test for differences in genera across all groups over time----
+kruskal_wallis_genus <- function(timepoint){
+  genus_stats <- agg_genus_data_subset %>%
+    filter(day == timepoint) %>%
+    select(group, genus, agg_rel_abund) %>%
+    group_by(genus) %>%
+    nest() %>%
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>%
+    mutate(median = map(data, get_rel_abund_median_group)) %>%
+    unnest(c(model, median)) %>%
+    ungroup()
+  #Adjust p-values for testing multiple OTUs
+  genus_stats_adjust <- genus_stats %>%
+    select(genus, statistic, p.value, parameter, method, "C", "1RM1", "M1") %>%
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+    arrange(p.value.adj) %>%
+    write_tsv(path = paste0("data/process/1_Day_PEG_genus_stats_day_", timepoint, ".tsv"))
+}
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                     C =double(), `1RM1` =double(), M1=double(),
+                     p.value.adj=double(),day=character()) %>% 
+  rename(`1RM1` = X1RM1) #Rename 1RM1 to get rid of X
+
+#Perform KW test on genus level 
+for (d in exp_days_seq){
+  kruskal_wallis_genus(d)
+  #Make a list of significant genera across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/1_Day_PEG_genus_stats_day_", d, ".tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_day", d, sep = "") 
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus <- add_row(kw_genus, stats)  #combine all the dataframes together
+}
+
+shared_sig_genus_PTtoD7 <- intersect_all(`sig_genus_dayPT`, sig_genus_day1, sig_genus_day2, sig_genus_day5, sig_genus_day7)
+view(shared_sig_genus_PTtoD7) #0
+print(shared_sig_genus_PTtoD7) #0 genera shared across the days
+
+#Pull significant genera 
+pull_significant_taxa(kw_genus, genus) #Only 9 significant taxa across all timepoints 
+# [1] "Clostridiales Unclassified"      "Enterobacteriaceae Unclassified" "Porphyromonadaceae Unclassified" "Bifidobacterium"                
+# [5] "Bacteroidales Unclassified"      "Porphyromonadaceae Unclassified" "Oscillibacter"                   "Ruminococcaceae Unclassified"   
+# [9] "Akkermansia" 
+### Does not show which timepoints these genera are siginificant
+
+#Function to pull significant taxa on a specific timepoint
+pull_significant_taxa_on_day <- function(dataframe, taxonomic_level, timepoint) {
+  dataframe %>%
+    filter(day == timepoint) %>%
+    pull_significant_taxa({{taxonomic_level}})
+}
+#See which genera are siginificant on which days
+for (d in exp_days_seq) {
+    print(paste0(d, ":", pull_significant_taxa_on_day(kw_genus, genus, d)))
+}
+"1:"
+#[1] "2:Clostridiales Unclassified"      "2:Enterobacteriaceae Unclassified" "2:Porphyromonadaceae Unclassified" "2:Bifidobacterium"                
+#[1] "5:" 
+#[1] "7:Bacteroidales Unclassified"      "7:Porphyromonadaceae Unclassified" "7:Oscillibacter"                   "7:Ruminococcaceae Unclassified"   
+#[5] "7:Akkermansia"                    
+#[1] "PT:"
+
+  
+  
+  
+
 
