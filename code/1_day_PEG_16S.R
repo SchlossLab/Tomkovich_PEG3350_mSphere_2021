@@ -1,5 +1,6 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
+source("code/all_subsets_16S.R") #Read in 16S analysis functions
 
 #Define color scheme to match 1_Day_PEG Weight/CFU Plots----
 color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
@@ -38,7 +39,7 @@ agg_otu_data_subset <- one_day_PEG_subset(agg_otu_data) %>%
 kruskal_wallis_shannon <- function(diversity_subset, timepoints){
   diversity_stats <- diversity_subset %>% 
     filter(day %in% timepoints) %>% 
-    select(group, shannon, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    select(group, shannon, day) %>% 
     group_by(day) %>% 
     nest() %>% 
     mutate(model=map(data, ~kruskal.test(x=.x$shannon, g=as.factor(.x$group)) %>% tidy())) %>% 
@@ -102,6 +103,43 @@ richness_tissues <- plot_richness_overtime(diversity_data_subset) +
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_Day_PEG_richness.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+
+#Pairwise-Comparison of diversity data----
+#Function for pairwise Wilcoxon rank sum test for shannon diversity
+pairwise_shannon <- function(diversity_subset, timepoints){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, shannon, day) %>% 
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$shannon, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_shannon_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()
+  pairwise_stats <- diversity_stats %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$shannon, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
+    write_tsv(path = paste0("data/process/1_Day_PEG_shannon_pairwise_stats_day_sig.tsv"))
+  #Format pairwise stats to use with ggpubr package
+  plot_format_stats <- pairwise_stats %>% 
+    select(-method) %>% 
+    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+    lapply(tidy_pairwise) %>% 
+    bind_rows() %>% 
+    filter(!is.na(group2)) %>% #Remove rows that don't have a 2nd comparison group
+    arrange(p.adj) #Arrange by adjusted p value column
+  return(plot_format_stats)  
+}
+
+shannon_pairwise <- pairwise_shannon(diversity_data_subset, sig_shannon_days$x) #Must specificy column x to make sure timepoints is a list variable
 
 #PCoa Analysis----
 #Pull 1_Day_PEG subset of PCoA data
@@ -356,12 +394,15 @@ pull_significant_taxa_on_day <- function(dataframe, taxonomic_level, timepoint) 
 for (d in exp_days_seq) {
     print(paste0(d, ":", pull_significant_taxa_on_day(kw_genus, genus, d)))
 }
-"1:"
+#"1:"
 #[1] "2:Clostridiales Unclassified"      "2:Enterobacteriaceae Unclassified" "2:Porphyromonadaceae Unclassified" "2:Bifidobacterium"                
 #[1] "5:" 
 #[1] "7:Bacteroidales Unclassified"      "7:Porphyromonadaceae Unclassified" "7:Oscillibacter"                   "7:Ruminococcaceae Unclassified"   
 #[5] "7:Akkermansia"                    
 #[1] "PT:"
+
+
+
 
   
   
