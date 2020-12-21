@@ -7,14 +7,14 @@
 ###############################
 
 # Name
-#SBATCH --job-name=metalonda
+#SBATCH --job-name=metalonda_m1_wm
 
 # Resources
 # For MPI, increase ntasks-per-node
 # For multithreading, increase cpus-per-task
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=30
 #SBATCH --mem=100GB
 #SBATCH --time=72:00:00
 
