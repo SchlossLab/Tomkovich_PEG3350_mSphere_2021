@@ -7,16 +7,16 @@
 ###############################
 
 # Name
-#SBATCH --job-name=permanova_test
+#SBATCH --job-name=permanova_1day
 
 # Resources
 # For MPI, increase ntasks-per-node
 # For multithreading, increase cpus-per-task
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=34
 #SBATCH --mem=100GB
-#SBATCH --time=48:00:00
+#SBATCH --time=72:00:00
 
 # Account
 #SBATCH --account=pschloss1
@@ -39,4 +39,4 @@
 #                   #
 #####################
 
-Rscript code/permanova_stats.R
+Rscript code/1_day_PEG_permanova.R
