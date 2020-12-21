@@ -15,7 +15,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=34
-#SBATCH --mem=100GB
+#SBATCH --mem=50GB
 #SBATCH --time=72:00:00
 
 # Account
@@ -39,4 +39,4 @@
 #                   #
 #####################
 
-Rscript code/1_day_PEG_permanova.R
+Rscript code/post_CDI_PEG_permanova.R
