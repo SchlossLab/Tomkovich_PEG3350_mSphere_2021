@@ -1,9 +1,9 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
 #Define color scheme for this figure----
-color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
-color_groups <- c( "1RM1", "C", "M1")
-color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
+color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("C", "M1", "1RM1")
+color_labels <- c("Clind.", "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery")
 
 #Subset metadata to relevant groups and experiments (C, 1RM1, M1) for this subset of mice----
 metadata <- one_day_PEG_subset(metadata)

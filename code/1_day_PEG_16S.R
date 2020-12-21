@@ -3,9 +3,9 @@ source("code/16S_common_files.R") #Reads in mothur output files
 source("code/all_subsets_16S.R") #Read in 16S analysis functions
 
 #Define color scheme to match 1_Day_PEG Weight/CFU Plots----
-color_scheme <- c("#225ea8", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c( "C", "M1", "1RM1")
-color_labels <- c( "1-day PEG 3350 + 1-day recovery", "Clind.", "1-day PEG 3350")
+color_labels <- c("Clind.", "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery")
 
 #Subset alpha diversity data (16S_common_files) to analyze one day PEG subset mice----
 diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
