@@ -61,7 +61,7 @@ rm(all_axis_labels, all_pcoa_data, diversity_data, pcoa_tissues_v_stool, pcoa_wa
 run_metalonda <- function(group1, group2, specify_sample_type, group1_color, group2_color, permutations){
   #Create dataframe of mice from the 2 groups and only sample_type specified
   sample_list <- agg_otu_data %>%
-    filter(group %in% c("C", "WM") & sample_type %in% "stool" & day > 0) %>% #Only interested in modeling after perturbation
+    filter(group %in% c(group1, group2) & sample_type %in% "stool" & day > 0) %>% #Only interested in modeling after perturbation
     select(unique_label, group, day, unique_mouse_id, otu, agg_rel_abund) %>%
     mutate(otu = str_replace_all(otu, "/", "-")) %>% #Remove / which cause issues with metalonda analysis
     pivot_wider(id_cols = unique_label, names_from = otu, values_from = agg_rel_abund)  %>%
