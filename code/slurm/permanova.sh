@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=permanova_1day
+#SBATCH --job-name=permanova_post
 
 # Resources
 # For MPI, increase ntasks-per-node
