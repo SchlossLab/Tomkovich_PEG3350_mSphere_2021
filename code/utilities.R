@@ -10,6 +10,7 @@ library(gganimate)
 library(glue)
 library(ggtext)
 library(vegan)
+library(parallel)
 
 #Read in metadata----
 metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
