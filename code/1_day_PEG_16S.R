@@ -55,6 +55,7 @@ kruskal_wallis_shannon <- function(diversity_subset, timepoints){
 #Test with shannon (Only stool samples in 1 Day Subset)
 kw_shannon <- kruskal_wallis_shannon(diversity_data_subset, exp_days_seq)
 sig_shannon_days <- pull_sig_days(kw_shannon)
+view(sig_shannon_days)
 
 #Kruskal-Wallis Function to test for differences in richness (sobs) between groups on a particular day with Benjamini Hochberg correction----
 #Adapted from 5_days_PEG_16S.R script, removed subset_name argument as only one sample type in 1 Day subset
@@ -138,8 +139,49 @@ pairwise_shannon <- function(diversity_subset, timepoints){
     arrange(p.adj) #Arrange by adjusted p value column
   return(plot_format_stats)  
 }
+#Run pairwise comparison for shanon diversity index
+shannon_pairwise <- pairwise_shannon(diversity_data_subset, sig_shannon_days) #Must specificy column x to make sure timepoints is a list variable
+#Pull only the statistically significant comparisons
+sig_shannon_pairwise <- shannon_pairwise %>%
+  filter(p.adj <= 0.05) 
 
-shannon_pairwise <- pairwise_shannon(diversity_data_subset, sig_shannon_days$x) #Must specificy column x to make sure timepoints is a list variable
+#Function for pairwise Wilcoxon rank sum test for sobs (richness)
+pairwise_richness <- function(diversity_subset, timepoints) {
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, sobs, day) %>% 
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$sobs, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_sobs_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()
+  pairwise_stats <- diversity_stats %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$sobs, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
+    write_tsv(path = paste0("data/process/1_Day_PEG_richness_pairwise_stats_day_sig.tsv"))
+  #Format pairwise stats to use with ggpubr package
+  plot_format_stats <- pairwise_stats %>% 
+    select(-method) %>% 
+    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+    lapply(tidy_pairwise) %>% 
+    bind_rows() %>% 
+    filter(!is.na(group2)) %>% #Remove rows that don't have a 2nd comparison group
+    arrange(p.adj) #Arrange by adjusted p value column
+  return(plot_format_stats) 
+}
+#Run pairwise comparison for richness
+richness_pairwise <- pairwise_richness(diversity_data_subset, sig_richness_days)
+#Pull statistically signifcant comparsions
+sig_richness_pairwise <- richness_pairwise %>%
+  filter(p.adj <= 0.05)
 
 #PCoa Analysis----
 #Pull 1_Day_PEG subset of PCoA data
