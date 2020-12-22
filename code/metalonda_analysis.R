@@ -111,6 +111,19 @@ run_metalonda <- function(group1, group2, specify_sample_type, group1_color, gro
 #Run metalonda for M1 & WM group stool samples and 1000 permutations
 #Create sequential color scheme to compare different PEG groups since we've reused colors
 #Help picking color scheme: https://hihayk.github.io/scale/#4/6/50/80/-51/67/20/14/88419d/136/65/157/white
-m1_vs_wm <- run_metalonda("M1", "WM", "stool", "#BDC3E1", "#88419d", 1000)
+#m1_vs_wm <- run_metalonda("M1", "WM", "stool", "#BDC3E1", "#88419d", 1000)
+# mkdir Test_metalondaM1vsWM 
+#mv Test_metalondaALL/* Test_metalondaM1vsWM/
 
-#978AC7 post-CDI PEG
+#Run metalonda for CWM & WM group stool samples and 1000 permutations
+#978AC7 post-CDI PEG (CWM)
+cwm_vs_wm <- run_metalonda("CWM", "WM", "stool", "978AC7", "#88419d", 1000)
+
+# 94CCDB 1RM1 or A1DFE1
+#f768a1 WMC
+#FFA0FA FRM
+#225ea8 WMR
+
+#5AB0C3 RM
+
+
