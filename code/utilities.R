@@ -14,7 +14,7 @@ library(parallel)
 
 #Read in metadata----
 metadata <- read_excel("data/process/metadata.xlsx", col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
- 
+
 #Check for duplicated unique_labels
 duplicated <- metadata %>%
   filter(duplicated(unique_label)) #0 duplicates
@@ -23,7 +23,7 @@ duplicated <- metadata %>%
 seq_prep_metadata <- read_tsv("data/process/16Sprep_PEG3350_metadata", col_types = "ifffdcfcfffDDDfDf") %>% #specify the col_types]
   mutate(unique_label = replace(unique_label, unique_label == "FMT_from_Motility_9", "FMTMotility9"), #rename FMT & PBS gavage samples by removing the underscores to match fastq file names 
          unique_label = replace(unique_label, unique_label == "PBS_Gavage_from_D4_Motility_9", "PBSD4Motility9"))
-  
+
 #Identify samples that were sequenced twice in metadata
 duplicated <- seq_prep_metadata %>%
   filter(duplicated(unique_label)) %>% #5 samples sequenced twice
@@ -85,7 +85,7 @@ peg3350.files_unique_label <- peg3350.files %>% select(unique_label) #Read only 
 
 #Check which samples in peg3350 files are not in seq_prep_metadata
 seq_files_missing_from_metadata <- anti_join(peg3350.files, seq_prep_metadata) %>% 
- pull(unique_label)
+  pull(unique_label)
 #[1] "mock10"  "mock11"  "mock12"  "mock13"  "mock14"  "mock15"  "mock16"  "mock17" 
 #[9] "mock1"   "mock2"   "mock3"   "mock4"   "mock5"   "mock6"   "mock7"   "mock8"  
 #[17] "mock9"   "water10" "water11" "water12" "water13" "water14" "water15" "water16"
@@ -132,11 +132,11 @@ metadata <- seq_prep_metadata %>%
 #Function to create 1 day PEG Subset of a given dataframe (df) :
 one_day_PEG_subset <- function(df){
   df %>% 
-  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
-           group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
-           group == "M1" & exp_num %in% c("M6"))
+    filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
+             group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
+             group == "M1" & exp_num %in% c("M6"))
 } 
-  
+
 #5 days PEG Subset
 five_day_PEG_subset <- function(df){
   df %>% 
@@ -284,26 +284,26 @@ tidy_histology_pairwise <- function(spread_pairwise){
 #Function to format distance matrix generated with mothur for use in R.
 #Source: Sze et al. mSphere 2019 https://github.com/SchlossLab/Sze_PCRSeqEffects_mSphere_2019/blob/master/code/vegan_analysis.R
 read_dist <- function(dist_file_name){
-
+  
   linear_data <- scan(dist_file_name, what="character", sep="\n", quiet=TRUE)
-
+  
   n_samples <- as.numeric(linear_data[1])
   linear_data <- linear_data[-1]
-
+  
   samples <- str_replace(linear_data, "\t.*", "")
   linear_data <- str_replace(linear_data, "[^\t]*\t", "")
   linear_data <- linear_data[-1]
-
+  
   distance_matrix <- matrix(0, nrow=n_samples, ncol=n_samples)
-
+  
   for(i in 1:(n_samples-1)){
     row <- as.numeric(unlist(str_split(linear_data[i], "\t")))
     distance_matrix[i+1,1:length(row)] <- row
   }
-
+  
   distance_matrix <- distance_matrix + t(distance_matrix)
   rownames(distance_matrix) <- samples
-
+  
   as.dist(distance_matrix)
 }
 
@@ -511,13 +511,13 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
          x=NULL,
          y=NULL)+
     facet_wrap(~group, labeller = labeller(group = facet_labels)) + #Make sure you specify facet_labels before running function
-#    scale_fill_gradient2(low="white", mid=color_scheme, high = 'black',
-#                         limits = c(1/10000, 1), na.value = NA, midpoint = .3,
-#                         breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100)) + 
+    #    scale_fill_gradient2(low="white", mid=color_scheme, high = 'black',
+    #                         limits = c(1/10000, 1), na.value = NA, midpoint = .3,
+    #                         breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100)) + 
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     theme_classic()+
-#    scale_y_discrete(limits=rev(levels(as.factor(sample_df$otu_name))))+#List OTU names alphabetically
+    #    scale_y_discrete(limits=rev(levels(as.factor(sample_df$otu_name))))+#List OTU names alphabetically
     theme(plot.title=element_text(hjust=0.5),
           strip.background = element_blank(), #get rid of box around facet_wrap labels
           axis.text.y = element_markdown(), #Have only the OTU names show up as italics
@@ -553,6 +553,37 @@ hm_plot_tissues <- function(sample_df, otus, timepoints){
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
+#Function to create a heatmap demonstrating the relative abundance of 1 OTU over time across all groups----
+#sample_df = subset dataframe of samples to be plotted
+#specify_otu = 1 OTU to plot (name should be in quotes)
+#timepoints = days of the experiment to plot
+hm_1_otu <- function(sample_df, specify_otu, timepoints){
+  otu_format_name <-sample_df %>% select(otu, otu_name) %>% distinct(otu, otu_name) %>% 
+    filter(otu == specify_otu) %>% pull(otu_name) #Get correctly formatted otu name to use with element_markdown
+  sample_df %>%
+    mutate(group = fct_relevel(group, "CN", "C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC", "WMN", "WM")) %>% #Specify the order of the groups
+    mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+    mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
+    filter(otu == specify_otu) %>%
+    filter(day %in% timepoints) %>% 
+    group_by(group, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_tile(aes(x = day, y=group, fill=median))+
+  labs(title=otu_format_name,
+       x=NULL,
+       y=NULL)+
+  scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
+                       limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  scale_y_discrete(label = c("Clind. without infection", "Clind.", "1-day PEG 3350 + 1-day recovery", "1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350",
+                             "Clind. + 1-day PEG 3350", "5-day PEG 3350 + 10-day recovery", "5-day PEG 3350 + Clind.", 
+                             "5-day PEG 3350 without infection", "5-day PEG 3350"))+ #Descriptive group names that match the rest of the plots
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        plot.title = element_markdown(hjust = 0.5), #Have only the OTU names show up as italics
+        text = element_text(size = 16)) # Change font size for entire plot
+}
 
 #Function to plot an otu_over_time
 #otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"

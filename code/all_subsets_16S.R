@@ -205,7 +205,7 @@ peg_otus_M1_vs_FRM <- otu_pairwise_stools %>%
   distinct(otu) %>% 
   pull(otu)
 
-#PEG OTUss of interest: differentiate 1 vs 5-day PEG mice and 1-day vs Post_CDI PEG mice
+#PEG OTUs of interest: differentiate 1 vs 5-day PEG mice and 1-day vs Post_CDI PEG mice
 peg_otus <- intersect_all(peg_sig_otus_1vs5, peg_otus_M1_vs_FRM)
 
 #Heatmap of PEG OTUs of interest
@@ -226,6 +226,10 @@ names(facet_labels) <- c("WM", "WMC", "WMR",
 peg_stool <- hm_plot_otus(peg_stools, peg_otus[0:25], peg_stool_days)+
   scale_x_discrete(breaks = c(3:10, 15, 20, 25, 30), labels = c(3:10, 15, 20, 25, 30))
 save_plot(filename = "results/figures/all_otus_heatmap_stools_peg.png", peg_stool, base_height = 15, base_width = 18)
+
+#Heatmap of single OTUs of interest across all groups----
+oscillibacter_57 <- hm_1_otu(all_otu_stools, "Oscillibacter (OTU 57)", hm_stool_days)
+save_plot(filename = "results/figures/all_otus_heatmap_stools_oscillibacter.png",oscillibacter_57, base_height = 15, base_width = 18)
 
 
 #Create heatmap of significant OTUs for all tissue samples----
