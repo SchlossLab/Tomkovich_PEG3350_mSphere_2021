@@ -13,8 +13,8 @@
 # For MPI, increase ntasks-per-node
 # For multithreading, increase cpus-per-task
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=34
+#SBATCH --ntasks-per-node=34
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=50GB
 #SBATCH --time=72:00:00
 
