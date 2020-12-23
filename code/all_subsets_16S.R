@@ -228,8 +228,50 @@ peg_stool <- hm_plot_otus(peg_stools, peg_otus[0:25], peg_stool_days)+
 save_plot(filename = "results/figures/all_otus_heatmap_stools_peg.png", peg_stool, base_height = 15, base_width = 18)
 
 #Heatmap of single OTUs of interest across all groups----
-oscillibacter_57 <- hm_1_otu(all_otu_stools, "Oscillibacter (OTU 57)", hm_stool_days)
-save_plot(filename = "results/figures/all_otus_heatmap_stools_oscillibacter.png",oscillibacter_57, base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Oscillibacter (OTU 45)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_oscillibacter_45.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Oscillibacter (OTU 57)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_oscillibacter_57.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Enterobacteriaceae (OTU 2)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_enterobacteriaceae_2.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Porphyromonadaceae (OTU 8)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_porphyromonadaceae_8.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lactobacillus (OTU 9)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lactobacillus_9.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Peptostreptococcaceae (OTU 12)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_peptostreptococcaceae_12.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 4)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_4.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 30)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_30.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 31)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_31.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 33)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_33.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 29)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_29.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 34)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_34.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Lachnospiraceae (OTU 41)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_lachnospiraceae_41.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Bacteria (OTU 43)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_bacteria_43.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Clostridium (OTU 51)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_clostridium_51.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 50)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_50.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 52)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_52.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 54)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_54.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 60)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_60.png", base_height = 15, base_width = 18)
+ruminococcaceae_92 <- hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 92)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_92.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Akkermansia (OTU 3)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_akkermansia_3.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Blautia (OTU 19)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_blautia_19.png", base_height = 15, base_width = 18)
 
 
 #Create heatmap of significant OTUs for all tissue samples----
