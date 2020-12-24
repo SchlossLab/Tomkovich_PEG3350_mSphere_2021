@@ -117,7 +117,12 @@ run_metalonda <- function(group1, group2, specify_sample_type, group1_color, gro
 
 #Run metalonda for CWM & WM group stool samples and 1000 permutations
 #978AC7 post-CDI PEG (CWM)
-cwm_vs_wm <- run_metalonda("CWM", "WM", "stool", "#978AC7", "#88419d", 1000)
+#cwm_vs_wm <- run_metalonda("CWM", "WM", "stool", "#978AC7", "#88419d", 1000)
+# mkdir Test_metalondaCWMvsWM 
+#mv Test_metalondaALL/* Test_metalondaCWMvsWM/
+
+#Run metalonda for WMR & WM group stool samples and 1000 permutations
+wm_vs_wmr <- run_metalonda("WM", "WMR", "stool", "#88419d", "225ea8", 1000)
 
 # 94CCDB 1RM1 or A1DFE1
 #f768a1 WMC
