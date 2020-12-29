@@ -55,7 +55,7 @@ kruskal_wallis_shannon <- function(diversity_subset, timepoints){
 #Test with shannon (Only stool samples in 1 Day Subset)
 kw_shannon <- kruskal_wallis_shannon(diversity_data_subset, exp_days_seq)
 sig_shannon_days <- pull_sig_days(kw_shannon)
-view(sig_shannon_days)
+
 
 #Kruskal-Wallis Function to test for differences in richness (sobs) between groups on a particular day with Benjamini Hochberg correction----
 #Adapted from 5_days_PEG_16S.R script, removed subset_name argument as only one sample type in 1 Day subset
@@ -344,6 +344,13 @@ peptostrep <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subse
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_day_PEG_otu_peptostreptococcaceae.png", peptostrep, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Lachnospiraceace OTUs over time
+lachnospir_47 <- otu_over_time("Lachnospiraceae (OTU 47)", agg_otu_data_subset) +
+  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/1_day_PEG_otu_lachnospiraceae_47.png", lachnospir_47, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Heatmaps of OTUs (lowest P value since none were significant) over time, facet by group----
 #Rank OTUs by adjusted p-value

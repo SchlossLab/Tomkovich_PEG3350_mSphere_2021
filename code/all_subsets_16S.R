@@ -150,6 +150,7 @@ WM_M1_otu_stools <- otu_pairwise_stools %>%
 WM_1RM1_otu_stools <- otu_pairwise_stools %>% 
   filter(group1 %in% c("WM", "1RM1") & group2 %in% c("WM", "1RM1")) %>% 
   filter(p.adj < 0.05)
+#Lachnospiraceae and Porphyromonadaceae seem to be most of the OTUs that differ
 
 #Create empty data frame to combine stat dataframes for all days that were tested
 kw_otu_tissues <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
