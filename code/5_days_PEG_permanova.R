@@ -19,7 +19,7 @@ five_d_tissues_adonis <- adonis(five_d_tissues~(group/(sample_type*exp_num*uniqu
 five_d_tissues_adonis
 #Write PERMANOVA results to tsv
 five_d_tissues_adonis_table <- as_tibble(rownames_to_column(five_d_tissues_adonis$aov.tab, var = "effects")) %>% 
-  write_tsv("data/process/5_day_PEG_permanova_tissues.tsv")
+  write_tsv("data/process/5_days_PEG_permanova_tissues.tsv")
 
 #Stools
 five_d_stools <- read_dist("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
@@ -27,5 +27,5 @@ five_d_stools_variables <- tibble(unique_label = attr(five_d_stools, "Labels")) 
   left_join(metadata, by = "unique_label")
 five_d_stools_adonis <- adonis(five_d_stools~(group/(exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = five_d_stools_variables$unique_mouse_id, data = five_d_stools_variables, permutations = 1000, parallel = 32)
 five_d_stools_adonis_table <- as_tibble(rownames_to_column(five_d_stools_adonis$aov.tab, var = "effects")) %>% 
-  write_tsv("data/process/5_day_PEG_permanova_stools.tsv")
+  write_tsv("data/process/5_days_PEG_permanova_stools.tsv")
 
