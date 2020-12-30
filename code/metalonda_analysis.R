@@ -98,8 +98,6 @@ run_metalonda <- function(group1, group2, specify_sample_type, group1_color, gro
 
 }
 #parall argument = TRUE in metalondaAll will detect max cores available and use 1 - the max cores.
-
-
 #Time needed per OTU = 14 minutes
 
 #Run metalonda for C & WM group stool samples and 1000 permutations
@@ -122,11 +120,16 @@ run_metalonda <- function(group1, group2, specify_sample_type, group1_color, gro
 #mv Test_metalondaALL/* Test_metalondaCWMvsWM/
 
 #Run metalonda for WMR & WM group stool samples and 1000 permutations
-wm_vs_wmr <- run_metalonda("WM", "WMR", "stool", "#88419d", "#225ea8", 1000)
+#wm_vs_wmr <- run_metalonda("WM", "WMR", "stool", "#88419d", "#225ea8", 1000)
+# mkdir Test_metalondaWMvsWMR 
+#mv Test_metalondaALL/* Test_metalondaWMvsWMR/
+
+#Run metalonda for FRM & WM group stool samples and 1000 permutations
+frm_vs_wm <- run_metalonda("FRM", "WMR", "stool", "#FFA0FA", "#88419d", 1000)
 
 # 94CCDB 1RM1 or A1DFE1
 #f768a1 WMC
-#FFA0FA FRM
+
 #225ea8 WMR
 
 #5AB0C3 RM
