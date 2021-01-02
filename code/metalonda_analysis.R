@@ -125,13 +125,18 @@ run_metalonda <- function(group1, group2, specify_sample_type, group1_color, gro
 #mv Test_metalondaALL/* Test_metalondaWMvsWMR/
 
 #Run metalonda for FRM & WM group stool samples and 1000 permutations
-frm_vs_wm <- run_metalonda("FRM", "WM", "stool", "#FFA0FA", "#88419d", 1000)
+#frm_vs_wm <- run_metalonda("FRM", "WM", "stool", "#FFA0FA", "#88419d", 1000)
+# mkdir Test_metalondaFRMvsWM 
+#mv Test_metalondaALL/* Test_metalondaFRMvsWM/
+
+#Run metalonda for RM & WM group stool samples and 1000 permutations
+rm_vs_wm <- run_metalonda("RM", "WM", "stool", "#5AB0C3", "#88419d", 1000)
 
 # 94CCDB 1RM1 or A1DFE1
 #f768a1 WMC
 
 #225ea8 WMR
 
-#5AB0C3 RM
+
 
 

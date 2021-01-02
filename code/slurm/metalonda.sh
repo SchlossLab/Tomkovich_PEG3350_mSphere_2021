@@ -7,7 +7,7 @@
 ###############################
 
 # Name
-#SBATCH --job-name=metalonda_frm_wm
+#SBATCH --job-name=metalonda_rm_wm
 
 # Resources
 # For MPI, increase ntasks-per-node
