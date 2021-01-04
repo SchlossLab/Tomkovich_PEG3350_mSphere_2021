@@ -1,33 +1,22 @@
-#Rename genera to match naming convention used previously and add a column that will work with ggtext package:
-agg_genus <- agg_genus_data %>%
-  mutate(key=genus) %>%
-  group_by(key)
-taxa_info <- read.delim('data/process/peg3350.taxonomy', header=T, sep='\t') %>%
-  select(-Size) %>%
-  mutate(key=genus) %>%
-  select(-genus)
-agg_genus_data <- inner_join(agg_genus, taxa_info, by="key") %>%
-  ungroup() %>%
-  mutate(key=str_to_upper(key)) %>%
-  mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
-  mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>%
-  mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
-  mutate(taxa=gsub(".*;","",taxa)) %>%
-  mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>%
-  mutate(taxa=gsub('[0-9]+', '', taxa)) %>%
-  mutate(taxa=str_remove_all(taxa, "[(100)]")) %>%
-  unite(key, taxa, key, sep=" (") %>%
-  mutate(key = paste(key,")", sep="")) %>%
-  select(-genus, -Taxonomy) %>%
-  rename(genus=key) %>%
-  mutate(genus=paste0(gsub('TU0*', 'TU ', genus))) %>%
-  separate(genus, into = c("bactname", "genusnumber"), sep = "\\ [(]", remove = FALSE) %>% #Add columns to separate bacteria name from genus number to utilize ggtext so that only bacteria name is italicized
-  mutate(genus_name = glue("*{bactname}* ({genusnumber}")) #Markdown notation so that only bacteria name is italicized
+source("code/utilities.R") #Loads libraries, reads in metadata, functions
+source("code/16S_common_files.R") #Reads in mothur output files
+
+#Define color scheme to match 5_days_PEG plots----
+color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("C", "WM", "WMC", "WMR")
+color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
+#Need to create an additional color scheme with 6 colors (or consider keeping colors and doing open/closed for mock challenged mice)
+#See 5_days_PEG_histology_scores.R for how mock challenged mice were presented
+#Define shape scheme based on Infected status----
+shape_scheme <- c(1, 19)
+shape_infected <- c("no", "yes")
+
+#Statistical Analysis----
+set.seed(19760620) #Same seed used for mothur analysis
 
 #Remove environmental variables that are no longer needed
 rm(agg_genus, agg_taxa_data, duplicated_seq_samples, duplicates_to_drop, genus_data, peg3350.files,
    contaminated_notes, contaminated_samples, seq_files_missing_from_metadata, prep_notes)
-
 
 #Genus level analysis----
 #Subset genus data to just the 5-day PEG subset and separate by sample type (stools versus tissues)
@@ -40,6 +29,12 @@ genus_tissues <- subset_tissue(genus_subset)
 #Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
 genus_mock_stools <- subset_stool(add_mocks(genus_subset, agg_genus_data))
 genus_mock_tissues <- subset_tissue(add_mocks(genus_subset, agg_genus_data))
+
+#Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
+#Baseline (before treatment) for WMR is day -15. For C, WM, and WMC baseline is day -5
+stool_test_days <- c(-5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 30)
+
+tissue_test_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
 
 #Function to test for differences across groups at the genus level for specific timepoints
 #Function to test at the genus level:
@@ -96,11 +91,10 @@ for (d in tissue_test_days){
   kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
 }
 
+
+
 #Genus at varied across treatment groups and were shared across days 
 #Stools
-view(sig_genus_stools_day1)
-view(sig_genus_stools_day10)
-view(sig_genus_stools_day4)
 shared_sig_stools_genus_D1toD6 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
                                                 sig_genus_stools_day3, sig_genus_stools_day4, 
                                                sig_genus_stools_day5, sig_genus_tissues_day6) #fill in different days to compare
@@ -119,8 +113,40 @@ print(shared_sig_tissues_genus)
 # "Clostridium XlVb"             "Bacteroides"                  "Ruminococcaceae Unclassified"
 # "Butyricicoccus"
 
+#Function to plot a list of genera across groups of mice at a specific timepoint:
+#Arguments: 
+#sample_df = subset dataframe of samples to be plotted
+#genus = list of genera to plot
+#timepoint = day of the experiment to plot
+plot_genus_dx <- function(sample_df, genus, timepoint){
+  sample_df %>%
+    filter(genus %in% genus) %>%
+    filter(day == timepoint) %>%
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
+    ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/1000, color="gray")+
+    stat_summary(fun = 'median',
+                 fun.max = function(x) quantile(x, 0.75),
+                 fun.min = function(x) quantile(x, 0.25),
+                 position = position_dodge(width = 1)) +
+    labs(title=NULL,
+         x=NULL,
+         y="Relative abundance (%)")+
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
+    coord_flip()+
+    theme_classic()+
+    theme(plot.title=element_text(hjust=0.5),
+          legend.position = "none",
+          axis.text.y = element_markdown(), #Have only the genus names show up as italics
+          text = element_text(size = 16)) # Change font size for entire plot
+}
+
 #Plots of the relative abundances of Genera that significantly varied across sources of mice from day -1 to day 1----
-genus_d1 <- plot_genus_dx(genus_stools, sig_genus_stools_day1[1:20], 1)+
+genus_d1 <- plot_genus_dx(genus_stools, sig_genus_stools_day1 [1:20], 1)+
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
   ggtitle("Day 1 post-infection Stools")+ #Title plot
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
@@ -213,3 +239,4 @@ hm_overlap <- intersect_all(hm_sig_genus_p_adj, hm_sig_genus_p_adj_tissues)
 # "Lachnospiraceae (OTU 30)"       "Lachnospiraceae (OTU 31)"      
 # "Lachnospiraceae (OTU 4)"        "Peptostreptococcaceae (OTU 12)"
 # "Enterobacteriaceae (OTU 2)" 
+
