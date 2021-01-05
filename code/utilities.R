@@ -491,6 +491,38 @@ plot_otus_dx <- function(sample_df, otus, timepoint){
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
+#Function to plot a list of genera across groups of mice at a specific timepoint:
+#Arguments: 
+#sample_df = subset dataframe of samples to be plotted
+#genus = list of genera to plot
+#timepoint = day of the experiment to plot
+plot_genus_dx <- function(sample_df, genus, timepoint){
+  sample_df %>%
+    filter(genus %in% genus) %>%
+    filter(day == timepoint) %>%
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
+    ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/1000, color="gray")+
+    stat_summary(fun = 'median',
+                 fun.max = function(x) quantile(x, 0.75),
+                 fun.min = function(x) quantile(x, 0.25),
+                 position = position_dodge(width = 1)) +
+    labs(title=NULL,
+         x=NULL,
+         y="Relative abundance (%)")+
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
+    coord_flip()+
+    theme_classic()+
+    theme(plot.title=element_text(hjust=0.5),
+          legend.position = "none",
+          axis.text.y = element_markdown(), #Have only the genus names show up as italics
+          text = element_text(size = 16)) # Change font size for entire plot
+}
+
 #Function to create a heatmap plot the relative abundances of a list of OTUs over time, faceted by group----
 #Arguments: 
 #sample_df = subset dataframe of samples to be plotted
