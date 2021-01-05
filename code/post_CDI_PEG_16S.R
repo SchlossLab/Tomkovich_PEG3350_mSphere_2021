@@ -380,7 +380,7 @@ for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kw_otu_stools <- add_row(kw_otu_stools, stats)  #combine all the dataframes together
 }
 
-#Shared significant genera across from Day 3, 5, 6, 8, 10
+#Shared significant OTUs across from Day 3, 5, 6, 8, 10
 shared_sig_otus_D3toD10 <- intersect_all(sig_otu_day3, sig_otu_day5, sig_otu_day6, sig_otu_day8, sig_otu_day10)
 view(shared_sig_otus_D3toD10)
 print(shared_sig_otus_D3toD10)
@@ -510,4 +510,68 @@ hm_tissues_5_day_otus <- hm_plot_tissues(agg_otu_data_tissues, hm_5_day_otus, hm
   scale_x_discrete(breaks = c(30), labels = c(30))
 save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_otus.png", hm_tissues_5_day_otus, base_height = 10, base_width = 8)
 
+#Genus Analysis----
+agg_genus_data_subset <- post_cdi_PEG_subset(agg_genus_data) %>%
+  filter(sample_type =="stool") %>% #Exclude the other sample types and just perform test on the stools
+  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
+                           "8", "9", "10", "15", "20", "25", "30"))
 
+agg_genus_data_tissues <- post_cdi_PEG_subset(agg_genus_data) %>%
+  filter(!sample_type =="stool") %>% #Exclude all stool samples and just perform test on tissues
+  mutate(sample_type = fct_relevel(sample_type, "cecum", "proximal_colon", "distal_colon")) #Specify order of sample types
+
+kruskal_wallis_genus <- function(timepoint){
+  genus_stats <- agg_genus_data_subset %>%
+    filter(day == timepoint) %>%
+    select(group, genus, agg_rel_abund) %>%
+    group_by(genus) %>%
+    nest() %>%
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>%
+    mutate(median = map(data, get_rel_abund_median_group)) %>%
+    unnest(c(model, median)) %>%
+    ungroup()
+  #Adjust p-values for testing multiple OTUs
+  genus_stats_adjust <- genus_stats %>%
+    select(genus, statistic, p.value, parameter, method, "C", "CWM", "FRM", "RM") %>%
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+    arrange(p.value.adj) %>%
+    write_tsv(path = paste0("data/process/post_CDI_PEG_genus_stats_day_", timepoint, ".tsv"))
+}
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_stools <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                            C =double(),CWM =double(),FRM =double(),RM=double(),
+                            p.value.adj=double(),day=double())
+
+
+## Perform kruskal wallis tests at the genus level for all days of the experiment that were sequenced----
+for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
+  kruskal_wallis_genus(d)
+  #Make a list of significant otus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/post_CDI_PEG_genus_stats_day_", d, ".tsv"))%>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_stools <- add_row(kw_genus_stools, stats)  #combine all the dataframes together
+}
+
+#Shared significant genera across from Day 2, 3, 5, 6, 7, 8, 10, 15
+shared_sig_genus_D2toD15 <- intersect_all(sig_genus_day2, sig_genus_day3, sig_genus_day5, sig_genus_day6, sig_genus_day7, sig_genus_day8, sig_genus_day9, sig_genus_day10, sig_genus_day15)
+view(shared_sig_genus_D2toD15)
+print(shared_sig_genus_D2toD15)
+#"Ruminococcaceae Unclassified" "Akkermansia" 
+
+##Shared significant genera across from Day 3, 5, 6, 8, 10 (same days as for OTU)
+shared_sig_genus_D3toD10 <- intersect_all(sig_genus_day3, sig_genus_day5, sig_genus_day6, sig_genus_day8, sig_genus_day9, sig_genus_day10)
+View(shared_sig_genus_D3toD10)
+print(shared_sig_genus_D3toD10)
+#[1] "Ruminococcaceae Unclassified"    "Lachnospiraceae Unclassified"    "Porphyromonadaceae Unclassified"
+#[4] "Oscillibacter"                   "Akkermansia"                     "Clostridiales Unclassified"  
+
+pull_significant_taxa(kw_genus_stools, genus) #134 sig taxa across all timepoints
+
+#Plots of the top genera that varied across sources at each timepoint----
+D3top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day3`[1:20], 1) +#Pick top significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D3top_genera.png", D1top20_otus, base_height = 9, base_width = 7)
