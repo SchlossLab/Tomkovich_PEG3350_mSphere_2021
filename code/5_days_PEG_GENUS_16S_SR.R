@@ -118,9 +118,9 @@ print(shared_sig_tissues_genus)
 #sample_df = subset dataframe of samples to be plotted
 #genus = list of genera to plot
 #timepoint = day of the experiment to plot
-plot_genus_dx <- function(sample_df, genus, timepoint){
+plot_genus_dx <- function(sample_df, genera, timepoint){
   sample_df %>%
-    filter(genus %in% genus) %>%
+    filter(genus %in% genera) %>%
     filter(day == timepoint) %>%
     mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
     ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
@@ -145,6 +145,7 @@ plot_genus_dx <- function(sample_df, genus, timepoint){
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
+
 #Plots of the relative abundances of Genera that significantly varied across sources of mice from day -1 to day 1----
 genus_d1 <- plot_genus_dx(genus_stools, sig_genus_stools_day1 [1:20], 1)+
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
@@ -152,11 +153,35 @@ genus_d1 <- plot_genus_dx(genus_stools, sig_genus_stools_day1 [1:20], 1)+
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_genus_stools_d1_top20.png", genus_d1, base_height = 7, base_width = 8)
 
+genus_d2 <- plot_genus_dx(genus_stools, sig_genus_stools_day2 [1:20], 2)+
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Day 2 post-infection Stools")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d2_top20.png", genus_d2, base_height = 7, base_width = 8)
+
+genus_d3 <- plot_genus_dx(genus_stools, sig_genus_stools_day3 [1:20], 3)+
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Day 3 post-infection Stools")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d3_top20.png", genus_d3, base_height = 7, base_width = 8)
+
 genus_d4 <- plot_genus_dx(genus_stools, sig_genus_stools_day4 [1:20], 4)+
   ggtitle("Day 4 post-infection Stools")+ #Title plot
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
   theme(plot.title = element_text(hjust = 0.5)) #Center plot title
 save_plot("results/figures/5_days_PEG_genus_stools_d4_top20.png", genus_d4, base_height = 7, base_width = 8)
+
+genus_d5 <- plot_genus_dx(genus_stools, sig_genus_stools_day5 [1:20], 5)+
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Day 5 post-infection Stools")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d5_top20.png", genus_d5, base_height = 7, base_width = 8)
+
+genus_d30 <- plot_genus_dx(genus_stools, sig_genus_stools_day30 [1:20], 30)+
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Day 30 post-infection Stools")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d30_top20.png", genus_d30, base_height = 7, base_width = 8)
 
 genus_d10 <- plot_genus_dx(genus_stools, sig_genus_stools_day10[1:20], 10)+
   ggtitle("Day 10 post-infection Stools")+ #Title plot
@@ -187,10 +212,12 @@ save_plot("results/figures/5_days_PEG_genus_tissues_d30.png", genus_tissues_d30,
 all_sig_genus <- c(`sig_genus_stools_day-5`, `sig_genus_stools_day-1`, sig_genus_stools_day0, sig_genus_stools_day1, 
                   `sig_genus_stools_day2`, `sig_genus_stools_day3`, sig_genus_stools_day4, sig_genus_stools_day5,
                   `sig_genus_stools_day6`, `sig_genus_stools_day10`, sig_genus_stools_day30)
-#370 total Genera
+
+#133 total Genera
 unique_sig_genus <-unique(all_sig_genus)
-#130 unique significant Genera
-#Rank the 130 signifiant Genera in order of agg_rel_abund, select the top 20
+
+#33 unique significant Genera
+#Rank the 33 signifiant Genera in order of agg_rel_abund, select the top 20
 hm_sig_genus_abund <-  genus_stools %>% 
   filter(genus %in% unique_sig_genus) %>%
   group_by(genus) %>% 
