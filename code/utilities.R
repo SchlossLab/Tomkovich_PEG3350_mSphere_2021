@@ -496,9 +496,9 @@ plot_otus_dx <- function(sample_df, otus, timepoint){
 #sample_df = subset dataframe of samples to be plotted
 #genus = list of genera to plot
 #timepoint = day of the experiment to plot
-plot_genus_dx <- function(sample_df, genus, timepoint){
+plot_genus_dx <- function(sample_df, genera, timepoint){
   sample_df %>%
-    filter(genus %in% genus) %>%
+    filter(genus %in% genera) %>%
     filter(day == timepoint) %>%
     mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
     ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
