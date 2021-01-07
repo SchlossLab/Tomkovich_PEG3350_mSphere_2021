@@ -570,8 +570,24 @@ print(shared_sig_genus_D3toD10)
 
 pull_significant_taxa(kw_genus_stools, genus) #134 sig taxa across all timepoints
 
-#Plots of the top genera that varied across sources at each timepoint----
+#Plots of the top genera that varied across sources at each timepoint----Days 1, 3, 6, 8, 10
+D1top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day1`[1:20], 1) +#Pick top significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D1top_genera.png", D1top_genera, base_height = 9, base_width = 7)
 D3top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day3`[1:20], 1) +#Pick top significant OTUs
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D3top_genera.png", D1top20_otus, base_height = 9, base_width = 7)
+save_plot("results/figures/post_CDI_PEG_D3top_genera.png", D3top_genera, base_height = 9, base_width = 7)
+D6top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day6`[1:20], 1) +#Pick top significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D6top_genera.png", D6top_genera, base_height = 9, base_width = 7)
+D8top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day8`[1:20], 1) +#Pick top significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D8top_genera.png", D8top_genera, base_height = 9, base_width = 7)
+D10top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day10`[1:20], 1) +#Pick top significant OTUs
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/post_CDI_PEG_D10top_genera.png", D10top_genera, base_height = 9, base_width = 7)
