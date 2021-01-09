@@ -468,7 +468,7 @@ save_plot(filename = "results/figures/post_CDI_PEG_otu_peptostreptococcaceae_dn1
 peptostrep_tissues <- otu_gi_distrib("Peptostreptococcaceae (OTU 12)", agg_otu_data_tissues, "30", "CWM")
 save_plot(filename = "results/figures/post_CDI_PEG_otu_peptostreptococcaceae_CWM_tissues.png", peptostrep_tissues, base_height = 4, base_width = 6)
 
-#Heatmap of significan OTUs ranked by
+#Heatmap of significant OTUs ranked by-------
 #Rank OTUs by adjusted p-value
 hm_sig_otus_p_adj <- kw_otu_stools %>% 
   filter(p.value.adj < 0.05) %>% 
@@ -591,3 +591,35 @@ D10top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day10`[1:20], 1
   geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/post_CDI_PEG_D10top_genera.png", D10top_genera, base_height = 9, base_width = 7)
+
+#Heatmap of significant genera ranked by
+#Rank genera by adjusted p-value
+hm_sig_genera_p_adj <- kw_genus_stools %>% 
+  filter(p.value.adj < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(genus) %>% 
+  slice_head(n = 25) %>% 
+  pull(genus)
+
+hm_stool_days <- diversity_stools %>% distinct(day) %>% # Redundant if whole script has already been run, but if not, requires lines 18 to 27 to have already run 
+  filter(!day == "-15") %>% pull(day)
+facet_labels <- c("Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350") #Create descriptive labels for facets
+names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to group, which is the variable we're faceting by
+hm_stool <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_stool_days)+
+  scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
+
+#Plot heat map of genera that were significant in the 5 day subset (repeat with genera?)
+
+#Plot heatmaps of the tissue samples (only collected on day 30)
+#Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
+hm_tissues_days <- 30
+facet_labels <- c("Cecum", "Proximal colon", "Distal colon") #Create descriptive labels for facets
+names(facet_labels) <- c("cecum", "proximal_colon", "distal_colon") #values that correspond to group, which is the variable we're faceting by
+hm_tissues <- hm_plot_tissues(agg_otu_data_tissues, hm_sig_otus_p_adj, hm_tissues_days)+
+  scale_x_discrete(breaks = c(30), labels = c(30)) 
+save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues.png", hm_tissues, base_height = 10, base_width = 8)
+hm_tissues_5_day_otus <- hm_plot_tissues(agg_otu_data_tissues, hm_5_day_otus, hm_tissues_days)+
+  scale_x_discrete(breaks = c(30), labels = c(30))
+save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_otus.png", hm_tissues_5_day_otus, base_height = 10, base_width = 8)
+
