@@ -556,6 +556,38 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
+#Function to create a heatmap plot the relative abundances of a list of Genera over time, faceted by group----
+#Arguments: 
+#sample_df = subset dataframe of samples to be plotted
+#Genera = list of genera to plot
+#timepoints = days of the experiment to plot
+hm_plot_genus <- function(sample_df, genera, timepoints){
+  sample_df %>%
+    mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+    mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
+    filter(genus %in% genera) %>%
+    filter(day %in% timepoints) %>% 
+    group_by(group, genus, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_tile(aes(x = day, y=genus, fill=median))+
+    labs(title=NULL,
+         x=NULL,
+         y=NULL)+
+    facet_wrap(~group, labeller = labeller(group = facet_labels)) + #Make sure you specify facet_labels before running function
+    #    scale_fill_gradient2(low="white", mid=color_scheme, high = 'black',
+    #                         limits = c(1/10000, 1), na.value = NA, midpoint = .3,
+    #                         breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100)) + 
+    scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
+                         limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    theme_classic()+
+    #    scale_y_discrete(limits=rev(levels(as.factor(sample_df$genus))))+#List genera names alphabetically
+    theme(plot.title=element_text(hjust=0.5),
+          strip.background = element_blank(), #get rid of box around facet_wrap labels
+          axis.text.y = element_markdown(), #Have only the genus names show up as italics
+          text = element_text(size = 16)) # Change font size for entire plot
+}
 #Function to create a heatmap plot the relative abundances of a list of OTUs over time, faceted by group----
 #Arguments: 
 #sample_df = subset dataframe of samples to be plotted
