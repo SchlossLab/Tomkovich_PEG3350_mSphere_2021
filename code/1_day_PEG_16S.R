@@ -1,6 +1,6 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
-source("code/all_subsets_16S.R") #Read in 16S analysis functions
+
 
 #Define color scheme to match 1_Day_PEG Weight/CFU Plots----
 color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
