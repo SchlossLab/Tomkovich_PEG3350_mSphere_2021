@@ -363,7 +363,7 @@ hm_otus_p <- kw_otu %>%
 
 hm_days <- c("PT", "0", "1", "2", "4", "5", "7")
 facet_labels <- color_labels #Create descriptive labels for facets
-names(facet_labels) <- c("1RM1", "C", "M1") #values that correspond to group, which is the variable we're faceting by
+names(facet_labels) <- c("C", "M1", "1RM1") #values that correspond to group, which is the variable we're faceting by
 hm_otu <- hm_plot_otus(agg_otu_data_subset, hm_otus_p, hm_days)+
   scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
 save_plot(filename = "results/figures/1_day_PEG_otus_heatmap.png", hm_otu, base_height = 10, base_width = 15)
@@ -421,10 +421,14 @@ for (d in exp_days_seq){
   assign(name, pull_significant_taxa(stats, genus))
   kw_genus <- add_row(kw_genus, stats)  #combine all the dataframes together
 }
+#List of all significant genera 
+sig_kw_genus <- pull_significant_taxa(kw_genus, "genus")
 
+#List of shared signifcant genera
 shared_sig_genus_PTtoD7 <- intersect_all(`sig_genus_dayPT`, sig_genus_day1, sig_genus_day2, sig_genus_day5, sig_genus_day7)
 view(shared_sig_genus_PTtoD7) #0
 print(shared_sig_genus_PTtoD7) #0 genera shared across the days
+
 
 #Pull significant genera 
 pull_significant_taxa(kw_genus, genus) #Only 9 significant taxa across all timepoints 
@@ -439,10 +443,13 @@ pull_significant_taxa_on_day <- function(dataframe, taxonomic_level, timepoint) 
     filter(day == timepoint) %>%
     pull_significant_taxa({{taxonomic_level}})
 }
+
 #See which genera are siginificant on which days
 for (d in exp_days_seq) {
-    print(paste0(d, ":", pull_significant_taxa_on_day(kw_genus, genus, d)))
+  print(paste0(d, ":", pull_significant_taxa_on_day(kw_genus, genus, d)))
+  
 }
+
 #"1:"
 #[1] "2:Clostridiales Unclassified"      "2:Enterobacteriaceae Unclassified" "2:Porphyromonadaceae Unclassified" "2:Bifidobacterium"                
 #[1] "5:" 
@@ -451,10 +458,31 @@ for (d in exp_days_seq) {
 #[1] "PT:"
 
 
+#Plots of the top genera in days that had significant genera (Only days 2 and 7) ----
+D2top_genera <- plot_genus_dx(agg_genus_data_subset, sig_genus_day2, 1) +
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/1_Day_PEG_D2top_genera.png", D2top_genera, base_height = 9, base_width = 7)
 
+D7top_genera <- plot_genus_dx(agg_genus_data_subset, sig_genus_day7, 1) +
+  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(legend.position = "none") #remove legend
+save_plot("results/figures/1_Day_PEG_D7top_genera.png", D7top_genera, base_height = 9, base_width = 7)
+  
+#Rank genera my significance (adjusted p-value)
+hm_sig_genera_p_adj <- kw_genus %>% 
+  filter(p.value.adj < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(genus) %>% 
+  slice_head(n = 25) %>% 
+  pull(genus)
 
-  
-  
+hm_days <- c("PT", "0", "1", "2", "4", "5", "7")
+facet_labels <- color_labels #Create descriptive labels for facets
+names(facet_labels) <- c("C", "M1", "1RM1") #values that correspond to group, which is the variable we're faceting by
+hm_genus <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_days)
+save_plot(filename = "results/figures/1_Day_PEG_genus_heatmap_stools.png", hm_genus, base_height = 14, base_width = 15)
+
   
 
 
