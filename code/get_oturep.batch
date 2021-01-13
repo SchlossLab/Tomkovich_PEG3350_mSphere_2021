@@ -4,4 +4,4 @@ get.otulist( list=peg3350.trim.contigs.good.unique.good.filter.unique.precluster
 
 bin.seqs(list =peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, fasta=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta)
 
-get.oturep(phylip=peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist, count =peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table,  list=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, fasta =peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.fasta)
+get.oturep(phylip=peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist, count =peg3350.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table,  list=peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, fasta =peg3350.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.0.03.fasta)
