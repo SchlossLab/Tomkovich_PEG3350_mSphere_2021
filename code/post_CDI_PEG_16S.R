@@ -598,6 +598,52 @@ D10top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day10`[1:20], 1
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/post_CDI_PEG_D10top_genera.png", D10top_genera, base_height = 9, base_width = 7)
 
+# Perform pairwise Wilcoxan rank sum tests for genera that were significantly different across sources of mice on a series of days----
+pairwise_day_genus <- function(timepoint, sig_genus_dayX){
+  genus_stats <- post_cdi_PEG_subset(agg_genus_data) %>% 
+    filter(day == timepoint) %>%
+    select(group, genus, agg_rel_abund) %>% 
+    group_by(genus) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_rel_abund_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()
+  pairwise_stats <- genus_stats %>% 
+    filter(genus %in% sig_genus_dayX) %>% 
+    group_by(genus) %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$agg_rel_abund, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
+    write_tsv(path = paste0("data/process/post_CDI_PEG_genus_stats_day_", timepoint, "_sig.tsv"))
+  #Format pairwise stats to use with ggpubr package
+  plot_format_stats <- pairwise_stats %>% 
+    select(-method, -C, -CWM, -FRM, -RM) %>% 
+    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+    lapply(tidy_pairwise_genus) %>% 
+    bind_rows()
+  return(plot_format_stats)  
+}
+
+#Day 2, 3, 5, 6, 7, 8, 10, 15
+#Day 3, 5, 6, 8, 10 (same days as for OTU)
+genus_day2_stats <- pairwise_day_genus(2, sig_genus_day2)
+genus_day3_stats <- pairwise_day_genus(3, sig_genus_day3)
+genus_day5_stats <- pairwise_day_genus(5, sig_genus_day5)
+genus_day6_stats <- pairwise_day_genus(6, sig_genus_day6)
+genus_day7_stats <- pairwise_day_genus(7, sig_genus_day7)
+genus_day8_stats <- pairwise_day_genus(8, sig_genus_day8)
+genus_day10_stats <- pairwise_day_genus(10, sig_genus_day10)
+genus_day15_stats <- pairwise_day_genus(15, sig_genus_day15)
+genus_pairwise_stools <- rbind
+
+
 #Heatmap of significant genera ranked by
 #Rank genera by adjusted p-value
 hm_sig_genera_p_adj <- kw_genus_stools %>% 
