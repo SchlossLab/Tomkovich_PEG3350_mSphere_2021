@@ -632,7 +632,6 @@ pairwise_day_genus <- function(timepoint, sig_genus_dayX){
 }
 
 #Day 2, 3, 5, 6, 7, 8, 10, 15
-#Day 3, 5, 6, 8, 10 (same days as for OTU)
 genus_day2_stats <- pairwise_day_genus(2, sig_genus_day2)
 genus_day3_stats <- pairwise_day_genus(3, sig_genus_day3)
 genus_day5_stats <- pairwise_day_genus(5, sig_genus_day5)
@@ -641,7 +640,7 @@ genus_day7_stats <- pairwise_day_genus(7, sig_genus_day7)
 genus_day8_stats <- pairwise_day_genus(8, sig_genus_day8)
 genus_day10_stats <- pairwise_day_genus(10, sig_genus_day10)
 genus_day15_stats <- pairwise_day_genus(15, sig_genus_day15)
-genus_pairwise_stools <- rbind
+genus_pairwise_stools <- rbind(genus_day2_stats, genus_day3_stats, genus_day5_stats, genus_day6_stats, genus_day7_stats, genus_day8_stats, genus_day10_stats, genus_day15_stats)
 
 
 #Heatmap of significant genera ranked by
