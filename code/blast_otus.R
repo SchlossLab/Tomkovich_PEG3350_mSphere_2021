@@ -116,3 +116,48 @@ percent_identity_dist <- blast_results %>%
         axis.text.x = element_blank())
 save_plot("results/figures/otus_peptostreptococcaceae_blast_results.png", percent_identity_dist, base_height =5, base_width = 6)
 
+
+#Important genera for FMT success as discussed in Kazemian et. al (2020) ----
+#Check if the Oscillibacter genera match the species Oscillibacter sp. PEA192 described in paper's supplementary data
+oscillibacter_otus <- taxonomy %>%
+  filter(genus == "Oscillibacter") %>%
+  pull(OTU)
+
+oscillibacter_seq_all <- map_df(oscillibacter_otus, function(oscillibacter_otus){
+  c_diff_seq <- otu_seqs %>% 
+    filter(str_detect(name, oscillibacter_otus)) 
+}) 
+
+oscillibacter_seq_all %>% pull(sequence)
+oscillibacter_seq_all <- oscillibacter_seq_all %>% 
+  mutate(ncbi_blast_result = "")
+#Compare the 41 OTU sequences to Oscillibacter sp. PEA192 (Accession # NZ_AP018532.1)
+#Follow same parameters as described in C. diff comparison above
+#Bring in BLAST results in csv format
+oscillibacter_blast_results <- read_csv("data/process/41OTUs_vs_FMT_Successful_Osciliibacter.csv",
+                                        col_names = c("query_acc.ver", "subject_acc.ver", "%identity", "alignment", "length", "mismatches",
+                                                      "gap opens", "q.start", "q.end", "subject", "evalue", "bit score")) %>%
+  mutate(otu_list_no = 1:123)
+
+#Transform vector to dataframe for plot
+oscillibacter_otu_list <- as.data.frame(oscillibacter_otus) %>%
+  mutate(otu_list_no = 1:41)
+
+#Plot percent identity of all Oscillibacter OTUs
+oscillibacter_percent_identity_dist <- oscillibacter_blast_results %>%
+  left_join(oscillibacter_otu_list, by = "otu_list_no") %>% 
+  mutate(oscillibacter_otus = str_replace_all(oscillibacter_otus, "Otu", ""),
+         oscillibacter_otus = str_remove(oscillibacter_otus, "^0+")) %>% 
+  ggplot(aes(x=query_acc.ver, y = `%identity`, color = oscillibacter_otus, shape=oscillibacter_otus, show.legend = FALSE))+
+  geom_text(aes(label = oscillibacter_otus), position = position_jitter(width = 0.5, height = 0.5))+
+  scale_shape_identity()+
+  labs(title="Blastn to Oscillibacter sp. PEA19 16S rRNA", 
+       x=NULL,
+       y="% Identity")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otus_oscillibacter_blast_results.png", oscillibacter_percent_identity_dist, base_height =5, base_width = 6)
+
+  
