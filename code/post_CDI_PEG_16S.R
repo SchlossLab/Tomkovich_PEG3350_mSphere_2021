@@ -660,17 +660,12 @@ hm_stool <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_stool_d
   scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
 
-#Plot heat map of genera that were significant in the 5 day subset (repeat with genera?)
-
-#Plot heatmaps of the tissue samples (only collected on day 30)
+#Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
 hm_tissues_days <- 30
 facet_labels <- c("Cecum", "Proximal colon", "Distal colon") #Create descriptive labels for facets
 names(facet_labels) <- c("cecum", "proximal_colon", "distal_colon") #values that correspond to group, which is the variable we're faceting by
-hm_tissues <- hm_plot_tissues(agg_otu_data_tissues, hm_sig_otus_p_adj, hm_tissues_days)+
+hm_tissues_genera <- hm_plot_tissues_genera(agg_genus_data_tissues, hm_sig_genera_p_adj, hm_tissues_days)+
   scale_x_discrete(breaks = c(30), labels = c(30)) 
-save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues.png", hm_tissues, base_height = 10, base_width = 8)
-hm_tissues_5_day_otus <- hm_plot_tissues(agg_otu_data_tissues, hm_5_day_otus, hm_tissues_days)+
-  scale_x_discrete(breaks = c(30), labels = c(30))
-save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_otus.png", hm_tissues_5_day_otus, base_height = 10, base_width = 8)
+save_plot(filename = "results/figures/post_CDI_PEG_genera_heatmap_tissues.png", hm_tissues_genera, base_height = 10, base_width = 8)
 
