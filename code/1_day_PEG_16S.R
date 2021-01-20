@@ -189,9 +189,9 @@ pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames 
-  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
   filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3)#limit to experimental time frameampling cutoff
+  filter(day > -3) %>% #limit to experimental time frameampling cutoff
+  mutate(day = as.integer(day)) #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
 #Pull axes from loadings file
 pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
