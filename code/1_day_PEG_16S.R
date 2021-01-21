@@ -480,9 +480,47 @@ hm_sig_genera_p_adj <- kw_genus %>%
 hm_days <- c("PT", "0", "1", "2", "4", "5", "7")
 facet_labels <- color_labels #Create descriptive labels for facets
 names(facet_labels) <- c("C", "M1", "1RM1") #values that correspond to group, which is the variable we're faceting by
-hm_genus <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_days)
-save_plot(filename = "results/figures/1_Day_PEG_genus_heatmap_stools.png", hm_genus, base_height = 14, base_width = 15)
+hm_genus <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_days) +
+  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7))
+save_plot(filename = "results/figures/1_Day_PEG_genus_heatmap.png", hm_genus, base_height = 14, base_width = 15)
 
-  
+#Wilcoxon Signed rank test for which bacteria changed from PT to D1 ----
+#Pull mice that have sequences in both PT and Day 1
+PT_D1_mice <- agg_genus_data_subset %>%
+  filter(day == 'PT' | day == 1) %>%
+  filter(duplicated(unique_mouse_id)) %>%
+  pull(unique_mouse_id)
 
+#Dataframe for statisticl analysis at genus level
+paired_genus <- agg_genus_data_subset %>%
+  filter(unique_mouse_id %in% PT_D1_mice) %>% #Only select pairs with data for day -1 & day 0
+  filter(day == 'PT' | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
+  mutate(day = as.factor(day)) %>% 
+  select(day, genus, agg_rel_abund)
+
+#Wilcoxon signed rank test for all PT and Day 1 pairs at the genus level:
+genus_PTtoD1_pairs <- paired_genus %>% 
+  group_by(genus) %>% 
+  nest() %>% 
+  mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>% 
+  mutate(median = map(data, get_rel_abund_median_day)) %>% 
+  unnest(c(model, median)) %>% 
+  ungroup() 
+#Adjust p-values for testing multiple genera
+genus_PTtoD1_pairs_stats_adjust <- genus_PTtoD1_pairs %>% 
+  select(genus, statistic, p.value, method, alternative, `PT`, `1`) %>% 
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+  arrange(p.value.adj) %>% 
+  write_tsv(path = "data/process/1_Day_PEG_genus_stats_PTtoD1.tsv") 
+
+#Make a list of significant genera between PT and Day 1
+sig_genus_pairs <- pull_significant_taxa(genus_PTtoD1_pairs_stats_adjust, genus)
+#18 genera
+view(sig_genus_pairs)
+sig_genus_pairs_top10 <- sig_genus_pairs[1:10]
+
+
+hm_PTtoD1_genera_top10 <- hm_plot_genus(agg_genus_data_subset, sig_genus_pairs_top10, hm_days) +
+  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7))
+save_plot(filename = "results/figures/1_Day_PEG_genus_PTtoD1_heatmap.png", hm_PTtoD1_genera_top10, base_height = 14, base_width = 15)
 
