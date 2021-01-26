@@ -15,6 +15,8 @@ set.seed(19760620) #Same seed used for mothur analysis
 #Alpha Diversity Analysis-------
 # Pull in diversity for alpha diversity analysis using post CDI PEG subset from defined in utilties.R
 #Diversity data for all days
+diversity_data <- diversity_data %>%
+  mutate(day = as.integer(day))
 diversity_data_subset <- post_cdi_PEG_subset(diversity_data) %>%
   add_row(diversity_data %>% filter(str_detect(unique_label, "FMT")) %>% #Also add the FMT gavage samples to this subset
             mutate(group = as.factor("FMT")))
@@ -29,7 +31,7 @@ diversity_tissues <- subset_tissue(diversity_data_subset)
 
 #Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
 #Compare days with stool data for all groups
-count_subset(diversity_stools) %>% View()
+count_subset(diversity_stools) 
 stool_test_days <- c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15) #Days with stools in for all four groups
 
 #Alpha Diversity Shannon Analysis----
@@ -97,13 +99,15 @@ legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg) %>% as_ggplot()
 save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
 
 #Plot Shannon over time days -1 to 30 for post CDI PEG subset
+x_annotation <- sig_shannon_days_stools
+y_position <- max(diversity_stools$shannon)+ 0.05
+label <- kw_label(kw_shannon_stools)
 shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMTs
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,35), #removes day -15 here
-                     minor_breaks = c(-2.5:7.5)) +
-  scale_y_continuous(limits = c(0,4))+
+                     minor_breaks = c(-2.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
   labs(x = "Day",
        y = "Shannon Diversity Index") +
   theme(legend.position = "none") #Removing legend to save separately
@@ -115,8 +119,7 @@ shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10),
                      limits = c(-2,11),
-                     minor_breaks = c(-2.5:7.5)) +
-  scale_y_continuous(limits = c(0,4)) +
+                     minor_breaks = c(-2.5:10.5)) +
   labs(x = "Day",
        y = "Shannon Diversity Index") +
   theme(legend.position = "none")
