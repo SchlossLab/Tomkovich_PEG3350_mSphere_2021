@@ -212,7 +212,7 @@ save_plot("results/figures/post_CDI_PEG_richness_overtime_10d.png", sobs_post_CD
 
 #Richness over time for stools
 x_annotation <- sig_richness_days_stools
-y_position <- max(diversity_stools$sobs)+5
+y_position <- max(diversity_stools$sobs)+1.5
 label <- kw_label(kw_richness_stools)
 sobs_post_CDI_PEG_stool <- diversity_stools %>%
   filter(group != "FMT") %>% #Remove FMTs
