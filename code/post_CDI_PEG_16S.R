@@ -166,7 +166,7 @@ kruskal_wallis_richness <- function(diversity_subset, timepoints, subset_name){
 kw_richness_stools <- kruskal_wallis_richness(diversity_stools, stool_test_days, "stools")
 sig_richness_days_stools <- pull_sig_days(kw_richness_stools)
 
-#Plot Sobs overtime 
+#Plot Richness overtime 
 sobs_post_CDI_PEG <- diversity_data_subset %>%
   filter(group != "FMT") %>% #Remove FMTs
   group_by(group, day) %>%
@@ -179,14 +179,16 @@ sobs_post_CDI_PEG <- diversity_data_subset %>%
                       breaks=color_groups,
                       labels=color_labels) +
   scale_x_continuous(breaks = c(-15, -1:10, 15, 20, 25, 30),
-                     limits = c(-15,35)) +
+                     limits = c(-15,35), 
+                     minor_breaks = c(-15.5, -14.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
   theme_classic()+
-  theme(legend.position = "none") + #Remove legend
-  labs(x = "Day",
-       y = "Number of Observed Species")
-save_plot("results/figures/post_CDI_PEG_sobs_overtime.png", sobs_post_CDI_PEG)
+  theme(legend.position = "none", #Remove legend
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey")) + #Add gray lines to clearly separate symbols by days
+  labs(x = "Days Post-Infection",
+       y = "Number of Observed OTUs")
+save_plot("results/figures/post_CDI_PEG_richness_overtime.png", sobs_post_CDI_PEG)
 
-#Sobs oVertime 10 Day Version
+#Richness oVertime 10 Day Version
 sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
   filter(group != "FMT") %>% #Remove FMTs
   group_by(group, day) %>%
@@ -199,14 +201,16 @@ sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
                       breaks=color_groups,
                       labels=color_labels) +
   scale_x_continuous(breaks = c(-1:10),
-                     limits = c(-1.5,11)) +
+                     limits = c(-1.5,11),
+                     minor_breaks = c(-1.5:10.5)) +
   theme_classic()+
-  theme(legend.position = "none") + #Remove legend
-  labs(x = "Day",
-       y = "Number of Observed Species")
-save_plot("results/figures/post_CDI_PEG_sobs_overtime_10d.png", sobs_post_CDI_PEG_10d)
+  theme(legend.position = "none", #Remove legend
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey")) + #Add gray lines to clearly separate symbols by days
+  labs(x = "Days Post-Infection",
+       y = "Number of Observed OTUs")
+save_plot("results/figures/post_CDI_PEG_richness_overtime_10d.png", sobs_post_CDI_PEG_10d)
 
-#Sobs over time for stools
+#Richness over time for stools
 x_annotation <- sig_richness_days_stools
 y_position <- max(diversity_stools$sobs)+5
 label <- kw_label(kw_richness_stools)
@@ -216,10 +220,11 @@ sobs_post_CDI_PEG_stool <- diversity_stools %>%
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2, 31),
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  scale_y_continuous(limits = c(0,122))+
+ scale_y_continuous(limits = c(0,110))+
   theme_classic()+
-  theme(legend.position = "none") #Remove legend
-save_plot("results/figures/post_CDI_PEG_sobs_overtime_stool.png", sobs_post_CDI_PEG_stool)
+  theme(legend.position = "none", #Remove legend
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey")) #Add gray lines to clearly separate symbols by days
+save_plot("results/figures/post_CDI_PEG_richness_overtime_stool.png", sobs_post_CDI_PEG_stool)
 
 
 #Plot Stool + Tissue PCoA data----
