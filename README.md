@@ -62,7 +62,8 @@ YOUR PAPER'S ABSTRACT GOES HERE
     * writexl v1.3
     * glue v1.4.1
     * ggtext v0.1.0
-* Analysis assumes the use of 10 processors 
+		* magick v2.6.0
+* Analysis assumes the use of 10 processors
 
 
 #### Running analysis
