@@ -105,6 +105,7 @@ agg_otu_data <- inner_join(agg_otu, taxa_info, by="key") %>%
   mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
   mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>%
   mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
+  mutate(taxa=str_replace_all(taxa, c("Clostridium_" = "Clostridium "))) %>% 
   mutate(taxa=gsub(".*;","",taxa)) %>%
   mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>%
   mutate(taxa=gsub('[0-9]+', '', taxa)) %>%
