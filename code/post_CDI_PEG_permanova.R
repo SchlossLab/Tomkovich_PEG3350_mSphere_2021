@@ -27,7 +27,7 @@ post_stools <- read_dist("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.bray
 post_stools_variables <- tibble(unique_label = attr(post_stools, "Labels")) %>%
   left_join(metadata, by = "unique_label")
 
-#Look at variables of interest individually
+#Look at variables of interest individually----
 #group
 group_adonis <- adonis(post_stools~group, strata = post_stools_variables$unique_mouse_id, data = post_stools_variables, permutations = 1000, parallel = 10)
 group_adonis_table <- as_tibble(rownames_to_column(group_adonis$aov.tab, var = "effects")) %>% 
@@ -72,6 +72,11 @@ g_ex_adonis_table <- as_tibble(rownames_to_column(g_ex_adonis$aov.tab, var = "ef
 g_m_adonis <- adonis(post_stools~group * miseq_run, strata = post_stools_variables$unique_mouse_id, data = post_stools_variables, permutations = 1000, parallel = 10)
 g_m_adonis_table <- as_tibble(rownames_to_column(g_m_adonis$aov.tab, var = "effects")) %>% 
   write_tsv("data/process/post_CDI_PEG_permanova_stools_group_miseq_run.tsv")
+#Look at majority of variables without nesting---
+post_stools_adonis <- adonis(post_stools~day*group*sample_type*unique_cage_no*ext_plate*miseq_run*exp_num, strata = post_stools_variables$unique_mouse_id, data = post_stools_variables, permutations = 10, parallel = 10)
+post_stools_adonis_table <- as_tibble(rownames_to_column(post_stools_adonis$aov.tab, var = "effects")) %>% 
+  write_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
+
 
 #Initial PERMANOVA design with all variables of interest was taking too long to run
 #~7 days for 10 iterations did not finish running. So changed the design (see above) to examine variables of interest individually
