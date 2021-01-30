@@ -72,4 +72,4 @@ g_ex_stools_adonis_table <- as_tibble(rownames_to_column(g_ex_stools_adonis$aov.
 #~7 days for 10 iterations did not finish running. So changed the design (see above) to examine variables of interest individually
 #five_d_stools_adonis <- adonis(five_d_stools~(group/(exp_num*unique_cage_no*ext_plate*miseq_run))*day, strata = five_d_stools_variables$unique_mouse_id, data = five_d_stools_variables, permutations = 10, parallel = 10)
 #five_d_stools_adonis_table <- as_tibble(rownames_to_column(five_d_stools_adonis$aov.tab, var = "effects")) %>%
-  write_tsv("data/process/5_days_PEG_permanova_stools.tsv")
+#  write_tsv("data/process/5_days_PEG_permanova_stools.tsv")
