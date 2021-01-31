@@ -92,7 +92,7 @@ c_diff_seq_all <- c_diff_seq_all %>%
 #Saved results in "data/process/59OTus_vs_C.diff_ATCC9689-Alignment-HitTable.csv"
 blast_results <- read_csv("data/process/59OTus_vs_C.diff_ATCC9689-Alignment-HitTable.csv", 
                           col_names = c("query_acc.ver", "subject_acc.ver", "%identity", "alignment", "length", "mismatches",
-                                        "gap opens", "q.start", "q.end", "subject", "evalue", "bit score")) %>% 
+                                        "gap opens", "q.start", "q.end", "subject", "evalue", "bit score")) %>%
   mutate(otu_list_no = 1:30)
 #e value = Expect value parameter. Number of hits one can expect to see by chance
 #bit score: sequence similarity independent of query sequence length and database size. Normalized based on the rawpairwise alignment score
@@ -124,7 +124,7 @@ oscillibacter_otus <- taxonomy %>%
   pull(OTU)
 
 oscillibacter_seq_all <- map_df(oscillibacter_otus, function(oscillibacter_otus){
-  c_diff_seq <- otu_seqs %>% 
+  oscillibacter_seq <- otu_seqs %>% 
     filter(str_detect(name, oscillibacter_otus)) 
 }) 
 
@@ -180,3 +180,52 @@ otu_12_blast_results <- read_csv("data/process/OTU_12_Alignmnet_HitTable.csv",
                                                "gap opens", "q.start", "q.end", "subject", "evalue", "bit score"))
 
 
+
+
+#BLAST all porphyromonadaceae OTUs against S24-7 bacteria (Muriibaculaceae) Accession Number: CP015402----
+porphyromonadaceae_otus <- taxonomy %>% 
+  filter(genus == "Porphyromonadaceae_unclassified") %>%
+  pull(OTU)
+
+porphyromonadaceae_seq_all <- map_df(porphyromonadaceae_otus, function(porphyromonadaceae_otus) {
+  porphyromonadaceae_seq <- otu_seqs %>%
+    filter(str_detect(name, porphyromonadaceae_otus))
+})
+#Copy sequences to clipboard for pasting into BLAST
+zz <- pipe('pbcopy', 'w')
+porphyromonadaceae_seq_all$sequence %>%
+  write.table(file = zz, sep='\t', row.names = FALSE)
+close(zz)
+
+#Select align two or mmore sequences
+#Paste sequences in top box and CP015402 in bottom box 
+#Bring in BLAST hit table csv
+porphy_blast_results <- read_csv("data/process/porphyromonadaceae_OTUs_hitTable.csv", 
+                                 col_names = c("query_acc.ver", "subject_acc.ver", "%identity", "alignment", "length", "mismatches",
+                                               "gap opens", "q.start", "q.end", "subject", "evalue", "bit score")) %>%
+  mutate(otu_list_no = 1:5300)
+#e value = Expect value parameter. Number of hits one can expect to see by chance
+#bit score: sequence similarity independent of query sequence length and database size. Normalized based on the rawpairwise alignment score
+#Porphyromonadaceae OTU list
+porphyr_otu_list <- as.data.frame(porphyromonadaceae_otus) %>%
+  mutate(otu_list_no = 1:1329)
+
+porphyr_percent_identity_dist <- porphy_blast_results %>% 
+  filter(`%identity` > 97.0) %>%
+  left_join(porphyr_otu_list, by = "otu_list_no") %>% 
+  mutate(porphyromonadaceae_otus = str_replace_all(porphyromonadaceae_otus, "Otu", ""),
+         porphyromonadaceae_otus = str_remove(porphyromonadaceae_otus, "^0+")) %>% 
+  ggplot(aes(x=query_acc.ver, y = `%identity`, color = porphyromonadaceae_otus, shape=porphyromonadaceae_otus, show.legend = FALSE))+
+  geom_text(aes(label = porphyromonadaceae_otus), position = position_jitter(width = 0.5, height = 0.5))+
+  scale_shape_identity()+
+  labs(title="Blastn to C. difficile 16S rRNA", 
+       x=NULL,
+       y="% Identity")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otus_porphyromonadaceae_blast_results.png", porphyr_percent_identity_dist, base_height =5, base_width = 6)
+
+
+  
