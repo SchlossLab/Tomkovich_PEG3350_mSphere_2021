@@ -78,7 +78,7 @@ c_diff_seq_all <- map_df(c_diff_otus, function(c_diff_otus){
     filter(str_detect(name, c_diff_otus)) 
 })
 
-c_diff_seq_all %>% pull(sequence)
+c_diff_seq_all %>% pull(sequence)ot
 c_diff_seq_all <- c_diff_seq_all %>% 
   mutate(ncbi_blast_result = "")
 
@@ -160,4 +160,23 @@ oscillibacter_percent_identity_dist <- oscillibacter_blast_results %>%
         axis.text.x = element_blank())
 save_plot("results/figures/otus_oscillibacter_blast_results.png", oscillibacter_percent_identity_dist, base_height =5, base_width = 6)
 
-  
+
+#BLAST OTU 12 to check top matches----
+#Pull OTU 12 from taxonomic data file
+otu_12 <- taxonomy %>%
+  filter(OTU == "Otu0012") %>%
+  pull(OTU)
+#Pull corresponding sequence of OTU 12
+otu_12_seq <- map_df(otu_12, function(otu_12) {
+  otu12_seq <- otu_seqs %>% 
+    filter(str_detect(name, otu_12)) 
+})
+otu_12_seq %>% pull(sequence)
+#Use single query search on otu_12 sequence
+#Paste sequence in top box, selecting 16s rRNA/ITS database
+#Bring in BLAST hit table results in csv format  
+otu_12_blast_results <- read_csv("data/process/OTU_12_Alignmnet_HitTable.csv", 
+                                 col_names = c("query_acc.ver", "subject_acc.ver", "%identity", "alignment", "length", "mismatches",
+                                               "gap opens", "q.start", "q.end", "subject", "evalue", "bit score"))
+
+
