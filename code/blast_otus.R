@@ -78,7 +78,7 @@ c_diff_seq_all <- map_df(c_diff_otus, function(c_diff_otus){
     filter(str_detect(name, c_diff_otus)) 
 })
 
-c_diff_seq_all %>% pull(sequence)ot
+c_diff_seq_all %>% pull(sequence)
 c_diff_seq_all <- c_diff_seq_all %>% 
   mutate(ncbi_blast_result = "")
 
@@ -145,6 +145,7 @@ oscillibacter_otu_list <- as.data.frame(oscillibacter_otus) %>%
 
 #Plot percent identity of all Oscillibacter OTUs
 oscillibacter_percent_identity_dist <- oscillibacter_blast_results %>%
+  filter(otu_list_no == 1:41) %>%
   left_join(oscillibacter_otu_list, by = "otu_list_no") %>% 
   mutate(oscillibacter_otus = str_replace_all(oscillibacter_otus, "Otu", ""),
          oscillibacter_otus = str_remove(oscillibacter_otus, "^0+")) %>% 
@@ -187,10 +188,12 @@ porphyromonadaceae_otus <- taxonomy %>%
   filter(genus == "Porphyromonadaceae_unclassified") %>%
   pull(OTU)
 
+#Subset otu sequences to those that have porphyromonadaceae OTUs in them
 porphyromonadaceae_seq_all <- map_df(porphyromonadaceae_otus, function(porphyromonadaceae_otus) {
   porphyromonadaceae_seq <- otu_seqs %>%
     filter(str_detect(name, porphyromonadaceae_otus))
 })
+
 #Copy sequences to clipboard for pasting into BLAST
 zz <- pipe('pbcopy', 'w')
 porphyromonadaceae_seq_all$sequence %>%
@@ -210,6 +213,7 @@ porphy_blast_results <- read_csv("data/process/porphyromonadaceae_OTUs_hitTable.
 porphyr_otu_list <- as.data.frame(porphyromonadaceae_otus) %>%
   mutate(otu_list_no = 1:1329)
 
+#Plot percent identity of all otus over 97%, plot too cluttered with all 1329 otus
 porphyr_percent_identity_dist <- porphy_blast_results %>% 
   filter(`%identity` > 97.0) %>%
   left_join(porphyr_otu_list, by = "otu_list_no") %>% 
@@ -218,7 +222,7 @@ porphyr_percent_identity_dist <- porphy_blast_results %>%
   ggplot(aes(x=query_acc.ver, y = `%identity`, color = porphyromonadaceae_otus, shape=porphyromonadaceae_otus, show.legend = FALSE))+
   geom_text(aes(label = porphyromonadaceae_otus), position = position_jitter(width = 0.5, height = 0.5))+
   scale_shape_identity()+
-  labs(title="Blastn to C. difficile 16S rRNA", 
+  labs(title="Blastn to M. intestinale strain YL27 16S rRNA", 
        x=NULL,
        y="% Identity")+
   theme_classic()+
@@ -228,4 +232,48 @@ porphyr_percent_identity_dist <- porphy_blast_results %>%
 save_plot("results/figures/otus_porphyromonadaceae_blast_results.png", porphyr_percent_identity_dist, base_height =5, base_width = 6)
 
 
+#BLAST all bacteriodales OTUs against S24-7 bacteria (Muriibaculaceae) Accession Number: CP015402----
+#Pull bacteriodales OTUs
+bacteriodales_otus <- taxonomy %>%
+  filter(genus == "Bacteroidales_unclassified") %>%
+  pull(OTU)
   
+#Subset otu sequences with matches to the OTUs in bacteriodales otu list
+bacteriodales_seq_alll <- map_df(bacteriodales_otus, function(bacteriodales_otus) {
+  bacteriodales_seq <- otu_seqs %>%
+    filter(str_detect(name, bacteriodales_otus))
+})
+#Create pipe to copy all 126 sequences to clipboard for pasting into BLAST
+zz <- pipe('pbcopy', 'w')
+bacteriodales_seq_alll$sequence %>%
+  write.table(file = zz, sep='\t', row.names = FALSE)
+close(zz)
+
+#Select align two or mmore sequences
+#Paste sequences in top box and CP015402 in bottom box 
+#Bring in BLAST hit table csv
+bacteriodales_blast_results <- read_csv("data/process/bacteriodales_otus_HitTable.csv",
+                                        col_names = c("query_acc.ver", "subject_acc.ver", "%identity", "alignment", "length", "mismatches",
+                                                      "gap opens", "q.start", "q.end", "subject", "evalue", "bit score")) %>%
+  mutate(otu_list_no = 1:480)
+
+bacteriodales_otu_list <- as.data.frame(bacteriodales_otus) %>%
+  mutate(otu_list_no = 1:126)
+
+bacteriodales_percent_identity_dist <- bacteriodales_blast_results %>% 
+  filter(otu_list_no == 1:126) %>%
+  left_join(bacteriodales_otu_list, by = "otu_list_no") %>% 
+  mutate(bacteriodales_otus = str_replace_all(bacteriodales_otus, "Otu", ""),
+         bacteriodales_otus = str_remove(bacteriodales_otus, "^0+")) %>% 
+  ggplot(aes(x=query_acc.ver, y = `%identity`, color = bacteriodales_otus, shape=bacteriodales_otus, show.legend = FALSE))+
+  geom_text(aes(label = bacteriodales_otus), position = position_jitter(width = 0.5, height = 0.5))+
+  scale_shape_identity() +
+  labs(title="Blastn to M. intestinale strain YL27 16S rRNA", 
+       x=NULL,
+       y="% Identity")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otus_bacteriodales_blast_results.png", bacteriodales_percent_identity_dist, base_height =5, base_width = 6)
+
