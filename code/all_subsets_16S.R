@@ -348,3 +348,53 @@ hm_overlap <- intersect_all(hm_sig_otus_p_adj, hm_sig_otus_p_adj_tissues)
 # "Enterobacteriaceae (OTU 2)"     "Lachnospiraceae (OTU 33)"      
 # "Peptostreptococcaceae (OTU 12)" "Blautia (OTU 19)"              
 # "Ruminococcaceae (OTU 27)"       "Lachnospiraceae (OTU 31)"  
+
+#Examine correlation between C. difficile CFUs and Peptostreptococcaceae (OTU 12) relative abundance-----
+pepto_cfu_otu <- all_otu_stools %>% 
+  filter(otu == "Peptostreptococcaceae (OTU 12)") %>% 
+  filter(!is.na(avg_cfu)) 
+
+pepto_cfu_otu_plot <- pepto_cfu_otu%>% 
+  ggplot(aes(x = avg_cfu, y = agg_rel_abund))+
+  geom_point()+
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  scale_x_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
+  theme_classic()+
+  labs(x = "CFU/g Feces",
+       y = "Relative abundance (%")+
+  geom_smooth(method = "lm")
+ggsave("exploratory/notebook/c_diff_cfu_otu_correlation.png", pepto_cfu_otu_plot)
+
+#Examine correlation 
+cor.test(pepto_cfu_otu$avg_cfu, pepto_cfu_otu$agg_rel_abund, method = "spearman")
+#rho = 0.79, p-value 2.2e-16   
+
+#Examine peptostreptococcoaceae over time in the stools of all mice with 16S sequencing data
+pepto_cfu <- all_otu_stools %>% 
+  filter(otu == "Peptostreptococcaceae (OTU 12)") %>% 
+  mutate(day = as.integer(day)) #Fix day variable
+pepto_otu_name <- pepto_cfu %>% 
+  pull(otu_name)
+pepto_otu_median <- pepto_cfu %>% 
+  group_by(group, day) %>% 
+  summarize(median=(median(agg_rel_abund + 1/2000))) %>% 
+  ungroup
+pepto_otu_mice <- pepto_cfu %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>%
+  select(day, agg_rel_abund, otu, group)
+pepto_over_time <-  ggplot(NULL)+
+  geom_point(pepto_otu_mice, mapping = aes(x=day, y=agg_rel_abund), size  = 1.5, position = position_dodge(width = 0.6))+
+  geom_line(pepto_otu_median, mapping = aes(x=day, y=median, group = group), size = 1, show.legend = FALSE)+
+  geom_hline(yintercept=1/1000, color="gray")+
+  labs(title=pepto_otu_name,
+       x="Day",
+       y="Relative abundance (%)") +
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme_classic()+
+  theme(plot.title=element_markdown(hjust = 0.5),
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey"),  # Add gray lines to clearly separate symbols by days)
+        text = element_text(size = 18)) # Change font size for entire plot
+ggsave("exploratory/notebook/c_diff_otu_time_all_mice.png", pepto_over_time, height = 4, width = 8.5)

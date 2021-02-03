@@ -222,3 +222,39 @@ all_samples_otus <- agg_otu_data %>%
   coord_flip()+
   theme_classic()
 save_plot(filename = "exploratory/notebook/waters_mock_fmts_top_30_otus.png", all_samples_otus, base_height = 4.5, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Peptostreptococcaceae OTU 2018 in water, mocks----
+#(Different OTU number because I analyzed these samples separately with mothur, otherwise the mock samples are filtered out)
+pepto_otu <- agg_otu_data %>% 
+  mutate(group = case_when(str_detect(unique_label, "water") ~ "water", #Create groups based on sample types
+                                 str_detect(unique_label, "FMT") ~ "FMT",
+                                 str_detect(unique_label, "mock") ~ "mock",
+                                 TRUE ~ unique_label)) %>%
+  filter(otu == "Peptostreptococcaceae (OTU 2018)") %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
+  mutate(group = fct_relevel(group, "water", "mock", "FMT")) %>% #Make sure order is correct
+  group_by(group) %>%
+  mutate(median = median(agg_rel_abund)) %>% #Create column of median values for each group
+  ungroup() %>%
+  ggplot(aes(x=group, y = agg_rel_abund, color = group))+
+  geom_errorbar(aes(ymax= median, ymin= median, color = group), size = 1)+#Add line to show median of each point
+  geom_jitter(size=2, show.legend = FALSE) +
+  geom_hline(yintercept=1/1000, color="gray")+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels,
+                      guide = "none")+
+  scale_x_discrete(label = c("Water", "Mock", "FMT"))+
+  theme_classic()+
+  labs(title=NULL,
+        x=NULL,
+        y="Relative abundance (%)") +
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  theme(legend.position = "bottom",
+        text = element_text(size = 19),# Change font size for entire plot
+        axis.title.y = element_text(size = 17))
+ggsave("exploratory/notebook/pepto_otu_water_mock.png", pepto_otu)
+
+
+
