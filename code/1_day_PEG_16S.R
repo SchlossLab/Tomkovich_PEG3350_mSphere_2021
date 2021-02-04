@@ -517,23 +517,14 @@ genus_PTtoD1_pairs_stats_adjust <- genus_PTtoD1_pairs %>%
 sig_genus_pairs <- pull_significant_taxa(genus_PTtoD1_pairs_stats_adjust, genus)
 #18 genera
 view(sig_genus_pairs)
-sig_genus_pairs_top10 <- sig_genus_pairs[1:10]
 
-
-hm_PTtoD1_genera <- hm_plot_genus(agg_genus_data_subset, sig_genus_pairs, hm_days) +
+#Plot all significant genera from PT to Day 1 facted by genus
+facet_labels <- sig_genus_pairs
+names(facet_labels) <- sig_genus_pairs
+hm_PTtoD1_genera <- hm_plot_genus_facet(agg_genus_data_subset, sig_genus_pairs, hm_days) +
   scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
 save_plot(filename = "results/figures/1_Day_PEG_genus_PTtoD1_heatmap.png", hm_PTtoD1_genera, base_height = 14, base_width = 15)
+  
 
-#Remove Alistipes [7], Anaeroplasma [13] and Rumninococcus [15] genera as they all show no recovery in all 3 groups
-sig_genera <- sig_genus_pairs[-c(7, 13, 15)]
-length(sig_genera)
-sig_genera[1]
-
-#Plot significant genera from PT to Day 1 faceting by genus using for loop
-for (n in 1:length(sig_genera)) {
-  hm_sig_genus <- hm_plot_genus_facet(agg_genus_data_subset, sig_genera[n], hm_days) +
-    scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
-  ggsave(paste0("results/figures/1_Day_PEG_genus_", sig_genera[n], ".png"), hm_sig_genus, height = 14, width = 15)
-}
 
 

@@ -600,23 +600,22 @@ hm_plot_genus <- function(sample_df, genera, timepoints){
 #sample_df = subset dataframe of samples to be plotted
 #Genera = list of genera to plot
 #timepoints = days of the experiment to plot
-hm_plot_genus_facet <- function(sample_df, specify_genus, timepoints){
- genus_format_name <-sample_df %>% select(genus) %>% distinct(genus) %>% 
-    filter(genus == specify_genus) %>% pull(genus) #Get correctly formatted genus name to use with element_markdown
+hm_plot_genus_facet <- function(sample_df, genera_list, timepoints){
   sample_df %>%
     mutate(group = fct_relevel(group,"C", "M1", "1RM1")) %>% #Specify the order of the groups
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
-    filter(genus == specify_genus) %>%
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
+    filter(genus %in% genera_list) %>%
     filter(day %in% timepoints) %>% 
-    group_by(group, day) %>% 
+    group_by(group, genus, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
     geom_tile(aes(x = day, y=group, fill=median))+
-    labs(title=genus_format_name,
+    labs(title=NULL,
          x=NULL,
          y=NULL)+
+    facet_wrap(~genus, labeller = labeller(genus = facet_labels)) +
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     scale_y_discrete(label = c("Clind.", "1-day PEG 3350",  "1-day PEG 3350 + 1-day recovery"))+ #Descriptive group names that match the rest of the plots
