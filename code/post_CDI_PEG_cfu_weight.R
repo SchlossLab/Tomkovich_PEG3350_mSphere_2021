@@ -152,13 +152,8 @@ cfu <- plot_cfu_data(cfudata) +
                      minor_breaks = c(-.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+
   theme(legend.position = "none")+
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
-  annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 10^5, fill = "#225ea8", alpha = .15)+ #shade to inidcate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
-  annotate("rect", xmin = 3, xmax = 4, ymin = 10^5, ymax = Inf, fill = "#f768a1", alpha = .15)+
-  geom_rect(aes(xmin = 15.75, xmax = 31, ymin = 104, max = 2200), fill = "white")+ #blank background for legend
-  geom_rect(aes(xmin = 16, xmax = 17.5, ymin = 900, max = 1800), fill = "#88419d", alpha = .2)+ #box for Clind + 1-day PEG group legend
-  geom_rect(aes(xmin = 16, xmax = 17.5, ymin = 200, max = 400), fill = "#225ea8", color = "#f768a1", alpha = .2)+ #box for Clind + 3-day recovery + 1-day PEG + FMT/PBS group legend
-  geom_text(aes(x= 24, y = 1300, label = "PEG Treatment for Clind. + 1-day PEG 3350 Group"), size = 2.25)+
-  geom_text(aes(x= 25, y = 300, label = " PEG Treatment for Clind. + 3-day recovery + 1-day PEG 3350 (+ FMT) Groups"), size = 2.25)
+  annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 10^5, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
+  annotate("rect", xmin = 3, xmax = 4, ymin = 10^5, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot(filename = "results/figures/post_CDI_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of just a subset of data (through day 15)

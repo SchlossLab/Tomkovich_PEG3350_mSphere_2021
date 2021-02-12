@@ -12,9 +12,10 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 a <- ggdraw() + draw_image("results/pictures/post_CDI_PEG_schematic.png")
 b <- ggdraw() + draw_image("results/figures/post_CDI_PEG_cfu.png")
 c <- ggdraw() + draw_image("results/figures/post_CDI_PEG_shannon_stool.png")
+d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_richness_overtime_stool.png")
 
 
-plot_grid(a, b, c, labels = c("A", "B", "C", ""), label_size = 12, ncol=1)+
+plot_grid(a, b, c, d, labels = c("A", "B", "C", "D"), label_size = 12, ncol=1)+
   ggsave("results/figures/figure_4.pdf", width=5, height=7.5)
 
 
@@ -25,4 +26,4 @@ pcoa <- plot_grid(d, e, label_size = 12, ncol = 1, rel_heights = c(3, 1))
 heatmap <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_heatmap_stools.png")
 
 plot_grid(pcoa, heatmap, labels = c("A", "B"), ncol = 2, rel_heights = c(1, 3), rel_widths = c(.75, 1))+
-  ggsave("results/figures/figure_4_16S.pdf", width = 15, height = 10)
+  ggsave("results/figures/figure_4_16S.pdf", width = 10, height = 6.67)
