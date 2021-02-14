@@ -592,7 +592,7 @@ hm_plot_genus <- function(sample_df, genera, timepoints){
     #    scale_y_discrete(limits=rev(levels(as.factor(sample_df$genus))))+#List genera names alphabetically
     theme(plot.title=element_text(hjust=0.5),
           strip.background = element_blank(), #get rid of box around facet_wrap labels
-          axis.text.y = element_markdown(), #Have only the genus names show up as italics
+          axis.text.y = element_markdown(face = "italic"), #Have only the genus names show up as italics
           text = element_text(size = 16)) # Change font size for entire plot
 }
 #Function to create a heatmap plot the relative abundances of a list of Genera over time, faceted by genus----
