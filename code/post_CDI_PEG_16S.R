@@ -613,7 +613,7 @@ D10top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day10`[1:20], 1
   theme(legend.position = "none") #remove legend
 save_plot("results/figures/post_CDI_PEG_D10top_genera.png", D10top_genera, base_height = 9, base_width = 7)
 
-# Perform pairwise Wilcoxan rank sum tests for genera that were significantly different across sources of mice on a series of days----
+# Perform pairwise Wilcoxan rank sum tests for genera that were significantly different across groups on a series of days----
 pairwise_day_genus <- function(timepoint, sig_genus_dayX){
   genus_stats <- post_cdi_PEG_subset(agg_genus_data) %>% 
     filter(day == timepoint) %>%
@@ -671,7 +671,8 @@ hm_stool_days <- diversity_stools %>% distinct(day) %>% # Redundant if whole scr
   filter(!day == "-15") %>% pull(day)
 facet_labels <- c("Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350") #Create descriptive labels for facets
 names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to group, which is the variable we're faceting by
-hm_stool <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_stool_days)+
+agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(20, 25))) #drop day 20 and 25 (only data for one group)
+hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
 
