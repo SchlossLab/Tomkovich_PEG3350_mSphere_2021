@@ -679,6 +679,7 @@ save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm
 #Plot heatmap significant genera over time facet by genus
 facet_labels <- c("Porphyromonadaceae Unclassified", "Acetatifactor", "Akkermansia")
 names(facet_labels) <- c("Porphyromonadaceae Unclassified", "Acetatifactor", "Akkermansia")
+<<<<<<< HEAD
 exp_groups <- c("C", "RM", "CWM", "FRM")
 hm_plot_genus_facet <- function(sample_df, genera_list, timepoints){
   sample_df %>%
@@ -707,6 +708,12 @@ hm_plot_genus_facet <- function(sample_df, genera_list, timepoints){
 hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, facet_labels, hm_stool_days)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 7, base_width = 9)
+=======
+exp_groups <- c("C", "CWM", "FRM", "RM")
+hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days)+
+  scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_stool, base_height = 7, base_width = 7.5)
+>>>>>>> 74955a9ba726bf39af11d5e1cfeb607b69f47947
 
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
