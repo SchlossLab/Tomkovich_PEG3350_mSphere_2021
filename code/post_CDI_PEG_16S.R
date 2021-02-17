@@ -671,10 +671,18 @@ hm_stool_days <- diversity_stools %>% distinct(day) %>% # Redundant if whole scr
   filter(!day == "-15") %>% pull(day)
 facet_labels <- c("Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350") #Create descriptive labels for facets
 names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to group, which is the variable we're faceting by
-agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(20, 25))) #drop day 20 and 25 (only data for one group)
+agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
 hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stool_days)+
-  scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
-save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
+  scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30)) 
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
+
+#Plot heatmap significant genera over time facet by genus
+facet_labels <- c("Porphyromonadaceae Unclassified", "Acetatifactor", "Akkermansia")
+names(facet_labels) <- c("Porphyromonadaceae Unclassified", "Acetatifactor", "Akkermansia")
+exp_groups <- c("C", "CWM", "FRM", "RM")
+hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days)+
+  scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_stool, base_height = 7, base_width = 7.5)
 
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
