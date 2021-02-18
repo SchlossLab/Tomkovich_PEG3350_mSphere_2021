@@ -677,43 +677,15 @@ hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stoo
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
 
 #Plot heatmap significant genera over time facet by genus
-facet_labels <- c("Porphyromonadaceae Unclassified", "Acetatifactor", "Akkermansia")
-names(facet_labels) <- c("Porphyromonadaceae Unclassified", "Acetatifactor", "Akkermansia")
-<<<<<<< HEAD
-exp_groups <- c("C", "RM", "CWM", "FRM")
-hm_plot_genus_facet <- function(sample_df, genera_list, timepoints){
-  sample_df %>%
-    mutate(group = fct_relevel(group, "C", "CWM", "FRM", "RM")) %>% #Specify the order of the groups
-    mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
-    mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
-    filter(genus %in% genera_list) %>%
-    filter(day %in% timepoints) %>% 
-    group_by(group, genus, day) %>% 
-    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
-    ggplot()+
-    geom_tile(aes(x = day, y=group, fill=median))+
-    labs(title=NULL,
-         x=NULL,
-         y=NULL)+
-    facet_wrap(~genus, labeller = labeller(genus = facet_labels)) +
-    scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
-                         limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
-    scale_y_discrete(label = c("Clind.", "1-day PEG 3350",  "1-day PEG 3350 + 1-day recovery"))+ #Descriptive group names that match the rest of the plots
-    theme_classic()+
-    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
-          text = element_text(size = 16)) # Change font size for entire plot
-}
-hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, facet_labels, hm_stool_days)+
-  scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
-save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 7, base_width = 9)
-=======
+facet_labels <- c("Porphyromonadaceae Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
+names(facet_labels) <- c("Porphyromonadaceae Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
 exp_groups <- c("C", "CWM", "FRM", "RM")
-hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days)+
+exp_group_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
+
+hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days, exp_group_labels)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
-save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_stool, base_height = 7, base_width = 7.5)
->>>>>>> 74955a9ba726bf39af11d5e1cfeb607b69f47947
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 6, base_width = 10)
+
 
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
