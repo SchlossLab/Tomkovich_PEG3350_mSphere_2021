@@ -598,11 +598,13 @@ hm_plot_genus <- function(sample_df, genera, timepoints){
 #Function to create a heatmap plot the relative abundances of a list of Genera over time, faceted by genus----
 #Arguments: 
 #sample_df = subset dataframe of samples to be plotted
+#exp_groups = character vector of group abbr. 
 #Genera = list of genera to plot
 #timepoints = days of the experiment to plot
-hm_plot_genus_facet <- function(sample_df, genera_list, timepoints){
+#exp_group_labels = character vector of full group name 
+hm_plot_genus_facet <- function(sample_df, exp_groups, genera_list, timepoints, exp_group_labels){
   sample_df %>%
-    mutate(group = fct_relevel(group,"C", "M1", "1RM1")) %>% #Specify the order of the groups
+    mutate(group = fct_relevel(group, exp_groups)) %>% #Specify the order of the groups
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
                              "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
@@ -618,7 +620,7 @@ hm_plot_genus_facet <- function(sample_df, genera_list, timepoints){
     facet_wrap(~genus, labeller = labeller(genus = facet_labels)) +
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
-    scale_y_discrete(label = c("Clind.", "1-day PEG 3350",  "1-day PEG 3350 + 1-day recovery"))+ #Descriptive group names that match the rest of the plots
+    scale_y_discrete(label = exp_group_labels)+ #Descriptive group names that match the rest of the plots
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
