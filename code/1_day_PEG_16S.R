@@ -198,12 +198,18 @@ pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycur
 axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
+R2_label1 = paste("R^2 == .4309")
+R2_label2 = paste("R^2 == .1883")
 
 pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = "")) +
-  annotate("text", x =.09, y = .4, label = "Day \nR2 = .4309 \n P < 0.05", size = 3, fontface= "bold") +
-  annotate("text", x =.27, y = .4, label = "Group \nR2 = .1883 \n P < 0.05", size = 3, fontface= "bold")
+  annotate("text", x =.07, y = .41, label = "Day", size = 3.2) +
+  annotate("text", x =.261, y = .41, label = "Group", size = 3.2) +
+  annotate("text", x =.07, y = .375, label = ("italic(R^2 == .4309)"), parse = TRUE, size = 3.2) +
+  annotate("text", x =.261, y = .375, label = ("italic(R^2 == .4309)"), parse = TRUE, size = 3.2) +
+  annotate("text", x =.07, y = .33, label = "P < 0.05", size = 3.2) +
+  annotate("text", x =.261, y = .33, label = "P < 0.05", size = 3.2)
 save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8)
 
 #Create stand alone legend
