@@ -526,13 +526,26 @@ sig_genus_pairs <- pull_significant_taxa(genus_PTtoD1_pairs_stats_adjust, genus)
 #18 genera
 view(sig_genus_pairs)
 
+#Choose names to remove to narrow down to 10 genera
+sig_genus_top_names = c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", "Anaeroplasma","Firmicutes Unclassified")
+
+#Create list with the most relevant 10
+sig_genus_top_list = sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_top_names)]
+
 #Plot all significant genera from PT to Day 1 facted by genus
-facet_labels <- sig_genus_pairs
+xfacet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
-hm_PTtoD1_genera <- hm_plot_genus_facet(agg_genus_data_subset, sig_genus_pairs, hm_days) +
+hm_PTtoD1_all_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_pairs, hm_days, color_labels) +
   scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
-save_plot(filename = "results/figures/1_Day_PEG_genus_PTtoD1_heatmap.png", hm_PTtoD1_genera, base_height = 14, base_width = 15)
-  
+save_plot(filename = "results/figures/1_Day_PEG_genus_all_PTtoD1_heatmap.png", hm_PTtoD1_all_genera, base_height = 14, base_width = 15)
+
+#Plot most relevant genera from PT to Day 1 facted by genus
+xfacet_labels <- sig_genus_pairs
+names(facet_labels) <- sig_genus_pairs
+hm_PTtoD1_10_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_top_list, hm_days, color_labels) +
+  scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
+save_plot(filename = "results/figures/1_Day_PEG_genus_10_PTtoD1_heatmap.png", hm_PTtoD1_10_genera, base_height = 14, base_width = 15)
+
 
 
 
