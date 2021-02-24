@@ -13,12 +13,12 @@ PEG_treatment_legend <- ggplot() +
   scale_x_continuous(limits = c(-10, 10))+
   scale_y_continuous(limits = c(-1.5, 1.5))+
   annotate("rect", xmin = -10, xmax = -9, ymin = -.75, ymax = .75, fill = "#88419d", alpha = .2)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
-  annotate("rect", xmin = -1, xmax = 0, ymin = 0, ymax = .75, fill = "#225ea8", alpha = .2)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
-  annotate("rect", xmin = -1, xmax = 0, ymin = -.75, ymax = 0, fill = "#f768a1", alpha = .2)+
-  annotate("text", x = -5, y = 0, label = "PEG treatment in Clind + 1-day PEG group", size = 3.75)+
-  annotate("text", x = 5.6, y = 0, label = "PEG treatment in Clind + 3-day recovery + 1-day PEG (+ FMT)", size = 3.75)+
+  annotate("rect", xmin = -1.5, xmax = -.5, ymin = 0, ymax = .75, fill = "#f768a1", alpha = .2)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
+  annotate("rect", xmin = -1.5, xmax = -.5, ymin = -.75, ymax = 0, fill = "#225ea8", alpha = .2)+
+  annotate("text", x = -5.25, y = 0, label = "PEG treatment in Clind + 1-day PEG group", size = 3.78)+
+  annotate("text", x = 5.3, y = 0, label = "PEG treatment in Clind + 3-day recovery + 1-day PEG (+ FMT/PBS)", size = 3.78)+
   xlab(NULL) 
-save_plot("results/figures/post_CDI_PEG_treatment_legend.png", PEG_treatment_legend, base_height = 1, base_width = 8.5)
+save_plot("results/figures/post_CDI_PEG_treatment_legend.png", PEG_treatment_legend, base_height = 1, base_width = 9)
  
 #Figure with Schematic, CFU over time, and shannon over time
 a <- ggdraw() + draw_image("results/pictures/post_CDI_PEG_schematic.png")
