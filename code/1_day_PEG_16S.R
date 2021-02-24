@@ -9,12 +9,14 @@ color_labels <- c("Clind.", "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery")
 
 #Subset alpha diversity data (16S_common_files) to analyze one day PEG subset mice----
 diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
-  mutate(day = replace(day, day == -1, "PT"),
-         day = replace(day, day == -2, "PT")) #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
+  mutate(day = case_when(group == "C" & day == "-15" ~ "baseline",
+                         group == "M1" & day == "-11" ~ "baseline",
+                         group == "1RM1" & day == "-2" ~ "baseline",
+                         TRUE ~ day))#Replace day -2 and day -1 with baseline to represent the pretreatment timepoint
 
  diversity_data_subset <- diversity_data_subset %>%
-   filter(day %in% c("PT", 0, 1, 2, 4, 5, 7)) %>%
-   mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
+   filter(day %in% c("baseline", 0, 1, 2, 4, 5, 7)) %>%
+   mutate(day = fct_relevel(day, "baseline", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
  
 #Get exp days sequenced in both pretreatment and other days
 exp_days_seq <- unique(diversity_data_subset %>% pull(day)) 
@@ -27,9 +29,11 @@ set.seed(19760620) #Same seed used for mothur analysis
 
 #Function to test at the otu level:
 agg_otu_data_subset <- one_day_PEG_subset(agg_otu_data) %>%
-  mutate(day = replace(day, day == -1, "PT"),
-         day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
-  mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
+  mutate(day = case_when(group == "C" & day == "-15" ~ "baseline",
+                             group == "M1" & day == "-11" ~ "baseline",
+                             group == "1RM1" & day == "-2" ~ "baseline",
+                             TRUE ~ day)) %>% #Replace day -2 and day -1 with baseline to represent the pretreatment timepoint
+  mutate(day = fct_relevel(day, "baseline", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
 
 #Kruskal-Wallis Function to test for differences in Shannon Diveristy Index across groups with Benjamini Hochberg correction----
 #Adapted from 5_days_PEG_16S.R script, removed subset_name argument as only one sample type in 1 Day subset
@@ -89,7 +93,7 @@ y_position <- max(diversity_data_subset$shannon)+0.15
 label <- kw_label(kw_shannon)
 #Plot
 shannon_stools <- plot_shannon_overtime(diversity_data_subset) +
-  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  scale_x_discrete(breaks = c("baseline", 0, 1, 2, 4, 5, 7)) +
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_Day_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
@@ -100,7 +104,7 @@ y_position <- max(diversity_data_subset$sobs)+5
 label <- kw_label(kw_richness)
 #Plot
 richness_tissues <- plot_richness_overtime(diversity_data_subset) +
-  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  scale_x_discrete(breaks = c("baseline", 0, 1, 2, 4, 5, 7)) +
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_Day_PEG_richness.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
@@ -198,18 +202,15 @@ pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycur
 axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-R2_label1 = paste("R^2 == .4309")
-R2_label2 = paste("R^2 == .1883")
-
 pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = "")) +
   annotate("text", x =.07, y = .41, label = "Day", size = 3.2) +
   annotate("text", x =.261, y = .41, label = "Group", size = 3.2) +
   annotate("text", x =.07, y = .375, label = ("italic(R^2 == .4309)"), parse = TRUE, size = 3.2) +
-  annotate("text", x =.261, y = .375, label = ("italic(R^2 == .4309)"), parse = TRUE, size = 3.2) +
-  annotate("text", x =.07, y = .33, label = "P < 0.05", size = 3.2) +
-  annotate("text", x =.261, y = .33, label = "P < 0.05", size = 3.2)
+  annotate("text", x =.261, y = .375, label = ("italic(R^2 == .1883)"), parse = TRUE, size = 3.2) +
+  annotate("text", x =.07, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2) +
+  annotate("text", x =.261, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
 save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8)
 
 #Create stand alone legend
@@ -320,11 +321,11 @@ plot_otus_dx <- function(otus, timepoint){
 }
 
 #Plots of the top 20 OTUs that varied across sources at each timepoint----
-#Pre-treatment (PT): top 10 OTUs, no difference between groups
-PT_otus <- plot_otus_dx(top10_otu_dayPT, "PT")+ #Pick top 10 OTUs
+#Baseline: top 10 OTUs, no difference between groups
+baseline_otus <- plot_otus_dx(top10_otu_dayPT, "baseline")+ #Pick top 10 OTUs
   geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_PT_ns_otus.png", PT_otus, base_height = 9, base_width = 7)
+save_plot("results/figures/1_Day_PEG_baseline_ns_otus.png", PT_otus, base_height = 9, base_width = 7)
 #Day 1: top 10 OTUs, no difference between groups
 D1_otus <- plot_otus_dx(top10_otu_day1, 1) +#Pick top 20 significant OTUs
   geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
@@ -348,14 +349,14 @@ save_plot("results/figures/1_Day_PEG_D7_ns_otus.png", D7_otus, base_height = 9, 
 
 #Examine C. difficile otu over time----
 peptostrep <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
-  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  scale_x_discrete(breaks = c("baseline", 0, 1, 2, 4, 5, 7)) +
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_day_PEG_otu_peptostreptococcaceae.png", peptostrep, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine Lachnospiraceace OTUs over time
 lachnospir_47 <- otu_over_time("Lachnospiraceae (OTU 47)", agg_otu_data_subset) +
-  scale_x_discrete(breaks = c("PT", 0, 1, 2, 4, 5, 7)) +
+  scale_x_discrete(breaks = c("baseline", 0, 1, 2, 4, 5, 7)) +
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_day_PEG_otu_lachnospiraceae_47.png", lachnospir_47, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
@@ -369,11 +370,11 @@ hm_otus_p <- kw_otu %>%
   slice_head(n = 20) %>% 
   pull(otu)
 
-hm_days <- c("PT", "0", "1", "2", "4", "5", "7")
+hm_days <- c("baseline", "0", "1", "2", "4", "5", "7")
 facet_labels <- color_labels #Create descriptive labels for facets
 names(facet_labels) <- c("C", "M1", "1RM1") #values that correspond to group, which is the variable we're faceting by
 hm_otu <- hm_plot_otus(agg_otu_data_subset, hm_otus_p, hm_days)+
-  scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
+  scale_x_discrete(limits = c("baseline", "0", "1", "2", "4", "5", "7"), breaks = c("baseline", "0", "1", "2", "4", "5", "7"), labels = c("baseline", "0", "1", "2", "4", "5", "7")) 
 save_plot(filename = "results/figures/1_day_PEG_otus_heatmap.png", hm_otu, base_height = 10, base_width = 15)
 
 #Plot heat map of OTUs that were significant in the 5 day subset
@@ -386,14 +387,16 @@ hm_5_day_otus <- c("Phenylobacterium (OTU 332)", "Lachnospiraceae (OTU 33)", "Ru
                    "Lachnospiraceae (OTU 4)", "Peptostreptococcaceae (OTU 12)", "Lachnospiraceae (OTU 32)", 
                    "Enterobacteriaceae (OTU 2)", "Clostridium (OTU 22)", "Lactobacillus (OTU 9)", "Lachnospiraceae (OTU 16)")
 hm_5_day_otus_plot <- hm_plot_otus(agg_otu_data_subset, hm_5_day_otus, hm_days)+
-  scale_x_discrete(limits = c("PT", "0", "1", "2", "4", "5", "7"), breaks = c("PT", "0", "1", "2", "4", "5", "7"), labels = c("PT", "0", "1", "2", "4", "5", "7")) 
+  scale_x_discrete(limits = c("baseline", "0", "1", "2", "4", "5", "7"), breaks = c("baseline", "0", "1", "2", "4", "5", "7"), labels = c("baseline", "0", "1", "2", "4", "5", "7")) 
 save_plot(filename = "results/figures/1_day_PEG_otus_heatmap_5_day_otus.png", hm_5_day_otus_plot, base_height = 10, base_width = 15)
 
 #Subset the aggregate genus data to get the 1-Day PEG Subset only----
 agg_genus_data_subset <- one_day_PEG_subset(agg_genus_data) %>%
-  mutate(day = replace(day, day == -1, "PT"),
-         day = replace(day, day == -2, "PT")) %>% #Replace day -2 and day -1 with PT to represent the pretreatment timepoint
-  mutate(day = fct_relevel(day, "PT", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
+  mutate(day = case_when(group == "C" & day == "-15" ~ "baseline",
+                         group == "M1" & day == "-11" ~ "baseline",
+                         group == "1RM1" & day == "-2" ~ "baseline",
+                         TRUE ~ day)) %>% #Replace day -2 and day -1 with baseline to represent the pretreatment timepoint
+  mutate(day = fct_relevel(day, "baseline", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
 
 #Kruskal Wallis function to test for differences in genera across all groups over time----
 kruskal_wallis_genus <- function(timepoint){
@@ -433,7 +436,7 @@ for (d in exp_days_seq){
 sig_kw_genus <- pull_significant_taxa(kw_genus, "genus")
 
 #List of shared signifcant genera
-shared_sig_genus_PTtoD7 <- intersect_all(`sig_genus_dayPT`, sig_genus_day1, sig_genus_day2, sig_genus_day5, sig_genus_day7)
+shared_sig_genus_PTtoD7 <- intersect_all(`sig_genus_daybaseline`, sig_genus_day1, sig_genus_day2, sig_genus_day5, sig_genus_day7)
 view(shared_sig_genus_PTtoD7) #0
 print(shared_sig_genus_PTtoD7) #0 genera shared across the days
 
@@ -463,7 +466,7 @@ for (d in exp_days_seq) {
 #[1] "5:" 
 #[1] "7:Bacteroidales Unclassified"      "7:Porphyromonadaceae Unclassified" "7:Oscillibacter"                   "7:Ruminococcaceae Unclassified"   
 #[5] "7:Akkermansia"                    
-#[1] "PT:"
+#[1] "baseline:"
 
 
 #Plots of the top genera in days that had significant genera (Only days 2 and 7) ----
@@ -485,29 +488,29 @@ hm_sig_genera_p_adj <- kw_genus %>%
   slice_head(n = 25) %>% 
   pull(genus)
 
-hm_days <- c("PT", "1", "2", "5", "7")
+hm_days <- c("baseline", "1", "2", "5", "7")
 facet_labels <- color_labels #Create descriptive labels for facets
 names(facet_labels) <- c("C", "M1", "1RM1") #values that correspond to group, which is the variable we're faceting by
 hm_genus <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_days) +
-  scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
 save_plot(filename = "results/figures/1_Day_PEG_genus_heatmap.png", hm_genus, base_height = 14, base_width = 15)
 
-#Wilcoxon Signed rank test for which bacteria changed from PT to D1 ----
-#Pull mice that have sequences in both PT and Day 1
-PT_D1_mice <- agg_genus_data_subset %>%
-  filter(day == 'PT' | day == 1) %>%
+#Wilcoxon Signed rank test for which bacteria changed from basline to D1 ----
+#Pull mice that have sequences in both baseline and Day 1
+baseline_D1_mice <- agg_genus_data_subset %>%
+  filter(day == 'baseline' | day == 1) %>%
   filter(duplicated(unique_mouse_id)) %>%
   pull(unique_mouse_id)
 
 #Dataframe for statisticl analysis at genus level
 paired_genus <- agg_genus_data_subset %>%
   filter(unique_mouse_id %in% PT_D1_mice) %>% #Only select pairs with data for day -1 & day 0
-  filter(day == 'PT' | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
+  filter(day == 'baseline' | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
   mutate(day = as.factor(day)) %>% 
   select(day, genus, agg_rel_abund)
 
-#Wilcoxon signed rank test for all PT and Day 1 pairs at the genus level:
-genus_PTtoD1_pairs <- paired_genus %>% 
+#Wilcoxon signed rank test for all baseline and Day 1 pairs at the genus level:
+genus_baselinetoD1_pairs <- paired_genus %>% 
   group_by(genus) %>% 
   nest() %>% 
   mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>% 
@@ -515,15 +518,15 @@ genus_PTtoD1_pairs <- paired_genus %>%
   unnest(c(model, median)) %>% 
   ungroup() 
 #Adjust p-values for testing multiple genera
-genus_PTtoD1_pairs_stats_adjust <- genus_PTtoD1_pairs %>% 
-  select(genus, statistic, p.value, method, alternative, `PT`, `1`) %>% 
+genus_baselinetoD1_pairs_stats_adjust <- genus_baselinetoD1_pairs %>% 
+  select(genus, statistic, p.value, method, alternative, `baseline`, `1`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
   arrange(p.value.adj) %>% 
   write_tsv(path = "data/process/1_Day_PEG_genus_stats_PTtoD1.tsv") 
 
-#Make a list of significant genera between PT and Day 1
-sig_genus_pairs <- pull_significant_taxa(genus_PTtoD1_pairs_stats_adjust, genus)
-#18 genera
+#Make a list of significant genera between baseline and Day 1
+sig_genus_pairs <- pull_significant_taxa(genus_baselinetoD1_pairs_stats_adjust, genus)
+#16 genera
 view(sig_genus_pairs)
 
 #Choose names to remove to narrow down to 10 genera
@@ -532,19 +535,19 @@ sig_genus_top_names = c("Ruminococcus", "Unclassified", "Alistipes", "Clostridiu
 #Create list with the most relevant 10
 sig_genus_top_list = sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_top_names)]
 
-#Plot all significant genera from PT to Day 1 facted by genus
-xfacet_labels <- sig_genus_pairs
+#Plot all significant genera from baseline to Day 1 facted by genus
+facet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
-hm_PTtoD1_all_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_pairs, hm_days, color_labels) +
-  scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
-save_plot(filename = "results/figures/1_Day_PEG_genus_all_PTtoD1_heatmap.png", hm_PTtoD1_all_genera, base_height = 14, base_width = 15)
+hm_baselinetoD1_all_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_pairs, hm_days, color_labels) +
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
+save_plot(filename = "results/figures/1_Day_PEG_genus_all_baselinetoD1_heatmap.png", hm_baselinetoD1_all_genera, base_height = 14, base_width = 15)
 
-#Plot most relevant genera from PT to Day 1 facted by genus
+#Plot most relevant genera from baseline to Day 1 facted by genus
 xfacet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
-hm_PTtoD1_10_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_top_list, hm_days, color_labels) +
-  scale_x_discrete(limits = c("PT", "1", "2", "5", "7"), breaks = c("PT", "1", "2", "5", "7"), labels = c("PT", "1", "2", "5", "7"))
-save_plot(filename = "results/figures/1_Day_PEG_genus_10_PTtoD1_heatmap.png", hm_PTtoD1_10_genera, base_height = 14, base_width = 15)
+hm_baselinetoD1_10_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_top_list, hm_days, color_labels) +
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
+save_plot(filename = "results/figures/1_Day_PEG_genus_10_baselinetoD1_heatmap.png", hm_baselinetoD1_10_genera, base_height = 14, base_width = 15)
 
 
 
