@@ -1,0 +1,158 @@
+genus	statistic	p.value	parameter	method	WM	C	WMC	WMN	p.value.adj
+Oscillibacter	66.63949836645452	2.2366552756538878e-14	3	Kruskal-Wallis rank sum test	0	0.014	0	0	1.6103917984707993e-12
+Acetatifactor	62.05184394356624	2.1417449969125282e-13	3	Kruskal-Wallis rank sum test	0	0.018000000000000002	0	0	7.710281988885101e-12
+Peptostreptococcaceae Unclassified	55.861183458251595	4.497477866742855e-12	3	Kruskal-Wallis rank sum test	0.023	0	0.043	0	8.918291766009088e-11
+Ruminococcaceae Unclassified	55.664168759599676	4.954606536671716e-12	3	Kruskal-Wallis rank sum test	0	0.074	0	0	8.918291766009088e-11
+Pseudoflavonifractor	52.309995318516464	2.572394792108534e-11	3	Kruskal-Wallis rank sum test	0	0.005	0	0	3.7042485006362895e-10
+Blautia	51.92026180987889	3.114599969854524e-11	3	Kruskal-Wallis rank sum test	0.054	0	0.065	0.14200000000000002	3.7375199638254287e-10
+Clostridiales Unclassified	49.66692998510948	9.406565202005121e-11	3	Kruskal-Wallis rank sum test	0	0.007	0	0	9.675324207776696e-10
+Lachnospiraceae Unclassified	49.31083153486947	1.1200927564428298e-10	3	Kruskal-Wallis rank sum test	0.005	0.503	0.002	0.003	1.0080834807985468e-9
+Enterobacteriaceae Unclassified	48.883204273393154	1.3813172886135124e-10	3	Kruskal-Wallis rank sum test	0.256	0.002	0.246	0.357	1.10505383089081e-9
+Clostridium IV	48.14639605269849	1.9820728020160616e-10	3	Kruskal-Wallis rank sum test	0	0.001	0	0	1.4270924174515644e-9
+Bacteroides	43.11104893432573	2.330953938195072e-9	3	Kruskal-Wallis rank sum test	0.311	0.009	0.391	0.3795	1.5257153050004108e-8
+Firmicutes Unclassified	41.076019289561174	6.300882223976845e-9	3	Kruskal-Wallis rank sum test	0	0.002	0	0	3.780529334386107e-8
+Clostridium XlVa	38.781177687067725	1.9311644781055582e-8	3	Kruskal-Wallis rank sum test	0	0.022	0	0	1.0695680186430784e-7
+Butyricicoccus	33.42336906500262	2.621971671395547e-7	3	Kruskal-Wallis rank sum test	0	0.003	0	0	1.348442573860567e-6
+Clostridium XlVb	30.12645154733318	1.298064760435733e-6	3	Kruskal-Wallis rank sum test	0	0.006	0	0	6.230710850091518e-6
+Lactobacillus	26.3476323645632	8.065447526505991e-6	3	Kruskal-Wallis rank sum test	0.004	0.011	0.003	0	3.629451386927696e-5
+Faecalibacterium	25.312500000000174	1.3283356730467294e-5	3	Kruskal-Wallis rank sum test	0	0	0	0	5.62589226231556e-5
+Anaerostipes	24.96553633884562	1.5698817981546268e-5	3	Kruskal-Wallis rank sum test	0	0	0	0	6.279527192618507e-5
+Unclassified	21.764526633499607	7.301959359514994e-5	3	Kruskal-Wallis rank sum test	0	0.003	0	0	2.7670582836056816e-4
+Turicibacter	19.81406195746848	1.8548824534841998e-4	3	Kruskal-Wallis rank sum test	0	0.004	0	0.0025	6.677576832543119e-4
+Coriobacteriaceae Unclassified	12.789473684210485	0.0051147226252989085	3	Kruskal-Wallis rank sum test	0	0	0	0	0.017536191858167686
+Acetitomaculum	12.500000000000274	0.005852662593325988	3	Kruskal-Wallis rank sum test	0	0	0	0	0.01915416848724869
+Akkermansia	12.393096377192528	0.006151019716761765	3	Kruskal-Wallis rank sum test	0.007	0.185	0.187	0.0965	0.019255366069862917
+Enterorhabdus	10.810395691464429	0.012796588016292349	3	Kruskal-Wallis rank sum test	0	0	0	0	0.03838976404887705
+Staphylococcus	6.151898734177197	0.10444940368050751	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3008142825998616
+Parabacteroides	5.785714285714359	0.12251407336745017	3	Kruskal-Wallis rank sum test	0	0	0	0	0.33926974163293894
+Acetobacteraceae Unclassified	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Actinomyces	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Actinomycetales Unclassified	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Aerococcus	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Anaeroplasma	3.9587321219973806	0.26595493429648115	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Bacillus	2.343333283107865	0.5042702660668378	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Bradyrhizobium	2.8571428571434745	0.414179365967821	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Butyrivibrio	2.110029148772735	0.5498864644517781	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Clostridia Unclassified	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Clostridium sensu stricto	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Curvibacter	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Dialister	2.9900963234293783	0.39315465018096507	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Enterococcus	3.8891347061806085	0.2736871151012663	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Finegoldia	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Gemella	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Granulicatella	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Lactococcus	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Leptotrichia	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Listeria	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Marmoricola	2.8571428571434745	0.414179365967821	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Mucispirillum	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Neisseria	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Olsenella	2.308842899560099	0.5108289592830809	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Peptoniphilus	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Porphyromonadaceae Unclassified	2.440279734700252	0.4861806083316084	3	Kruskal-Wallis rank sum test	0.003	0.006	0.003	0.003	0.6756275856050384
+Porphyromonas	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Prevotella	2.3471978937523823	0.5035393897773908	3	Kruskal-Wallis rank sum test	0	0	0	5e-4	0.6756275856050384
+Proteobacteria Unclassified	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Pseudomonas	4.049999999999855	0.2561154038420436	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Rothia	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Ruminococcus	3.6581932980139764	0.3008170768627952	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Sphingomonas	2.8571428571434745	0.414179365967821	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Streptococcus	2.0012501953431183	0.5721472622955287	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Terrisporobacter	2.8571428571434745	0.414179365967821	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Verrucomicrobia Unclassified	1.9999999999997329	0.5724067044709353	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6756275856050384
+Alistipes	1.8331517572403346	0.6077474509357895	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7057712333447879
+Bacteroidetes Unclassified	1.457671957671723	0.6920735004015959	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7577847097293883
+Bifidobacterium	1.4838026891424723	0.6860136751847729	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7577847097293883
+Burkholderia	1.446654611211887	0.6946359839186059	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7577847097293883
+Roseburia	1.457671957671723	0.6920735004015959	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7577847097293883
+Corynebacterium	1.0129629629635044	0.798115343001214	3	Kruskal-Wallis rank sum test	0	0	0	0	0.8451413756239251
+Gemmata	1.0126582278479668	0.7981890769781514	3	Kruskal-Wallis rank sum test	0	0	0	0	0.8451413756239251
+Bacteroidales Unclassified	0.8671852877499244	0.8333386492416974	3	Kruskal-Wallis rank sum test	0	0	0	0	0.869570764426119
+Phenylobacterium	0.7421150278294745	0.8632561548882565	3	Kruskal-Wallis rank sum test	0	0	0	0	0.8879206164564922
+Chitinophagaceae Unclassified	0.29304029304059553	0.9613320547572679	3	Kruskal-Wallis rank sum test	0	0	0	0	0.9631583221752309
+Erysipelotrichaceae Unclassified	0.2831901502760511	0.9631583221752309	3	Kruskal-Wallis rank sum test	0	0	0	0	0.9631583221752309
+Acidaminococcaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Acidaminococcus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Actinobacillus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Aestuariispira	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Alloprevotella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Alphaproteobacteria Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Anaerofustis	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Anaerotruncus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Atopobium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Atopostipes	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Aurantimonadaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Bacillaceae 1 Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Bacillales Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Bacilli Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Barnesiella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Betaproteobacteria Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Bifidobacteriaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Bilophila	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Brachybacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Brucellaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Burkholderiales Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Butyricimonas	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Campylobacter	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Carnobacteriaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Catonella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Cloacibacillus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Cloacibacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridiaceae 1 Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridiales Incertae Sedis XIII Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XI	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XVIII	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Collinsella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Comamonadaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Cystobacter	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Desulfovibrio	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Devosia	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Dorea	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Dysgonomonas	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Escherichia/Shigella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Eubacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Flavobacteriaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Flavobacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Flavonifractor	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Fusicatenibacter	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Fusobacteriaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Fusobacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Geobacillus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Hungatella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Hyphomicrobium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Janthinobacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Jeotgalicoccus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Lactobacillaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Lactobacillales Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Lysobacter	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Mannheimia	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Megasphaera	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Methylobacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Morganella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Neisseriaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Odoribacter	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Paraprevotella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Parasutterella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Parvimonas	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Pasteurellaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Pectinatus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Peptostreptococcus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Phascolarctobacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Phocaeicola	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Phyllobacteriaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Phyllobacterium	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Proteus	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Pyramidobacter	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Ralstonia	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Romboutsia	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Ruminococcus2	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Senegalimassilia	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Stenotrophomonas	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Stomatobaculum	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Subdoligranulum	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Succiniclasticum	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Succinivibrio	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Sutterella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Veillonella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Veillonellaceae Unclassified	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Weissella	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN

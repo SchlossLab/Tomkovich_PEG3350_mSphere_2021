@@ -27,7 +27,7 @@ num_tissue <- count_subset(all_diversity_tissues)
 stool_test_days <- c(-15, -5, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 30)
 tissue_test_days <- c(4, 6, 30) #Only days with samples from at least 3 groups
 
-#Test for differences in OTU relative abundances across groups at specific timepoiints----
+#Test for differences in OTU relative abundances across groups at specific timepoints----
 #subset agg_otu_data
 all_otu <- agg_otu_data %>% 
   filter(group %in% all_groups)
@@ -333,7 +333,6 @@ hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 98)", hm_stool_days) %>%
 hm_1_otu(all_otu_stools, "Turicibacter (OTU 5)", hm_stool_days) %>% 
   save_plot(filename = "results/figures/all_otus_heatmap_stools_turicibacter_5.png", base_height = 15, base_width = 18)
 
-
 #Create heatmap of significant OTUs for all tissue samples----
 #Rank OTUs by adjusted p-value
 hm_sig_otus_p_adj_tissues <- kw_otu_tissues %>% 
@@ -351,6 +350,225 @@ hm_overlap <- intersect_all(hm_sig_otus_p_adj, hm_sig_otus_p_adj_tissues)
 # "Enterobacteriaceae (OTU 2)"     "Lachnospiraceae (OTU 33)"      
 # "Peptostreptococcaceae (OTU 12)" "Blautia (OTU 19)"              
 # "Ruminococcaceae (OTU 27)"       "Lachnospiraceae (OTU 31)"  
+
+#Test for differences in genera relative abundances across groups at specific timepoints----
+#subset agg_otu_data
+all_genus <- agg_genus_data %>% 
+  filter(group %in% all_groups)
+all_genus_stools <- subset_stool(all_genus)
+all_genus_tissues <- subset_tissue(all_genus)
+#Function to test stool or tissue samples at the genus level:
+#Arguments:
+# timepoint = day of the experiment
+#sample_df = subset dataframe of just stool or tissue samples
+#sample_type = "stool" or "tissue" to be included in filename
+kruskal_wallis_genus <- function(timepoint, sample_df, sample_type){
+  genus_stats <- sample_df %>%
+    filter(day == timepoint) %>%
+    select(group, genus, agg_rel_abund) %>%
+    group_by(genus) %>%
+    nest() %>%
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>%
+    mutate(median = map(data, get_rel_abund_median_group)) %>%
+    unnest(c(model, median)) %>%
+    ungroup()
+  #Adjust p-values for testing multiple genera
+  genus_stats_adjust <- genus_stats %>%
+    select(-data) %>% #Keep everything but the data column
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+    arrange(p.value.adj) %>%
+    write_tsv(path = paste0("data/process/all_genus_stats_day_", timepoint, "_", sample_type, ".tsv"))
+}
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_stools <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                            C =double(), WM =double(),WMC=double(),WMR =double(),M1 =double(),`1RM1` =double(),
+                            CWM =double(),FRM=double(),RM =double(),
+                            CN=double(),WMN =double(),
+                            p.value.adj=double(),day=double())%>% 
+  rename(`1RM1` = X1RM1) #Rename 1RM1 to get rid of X
+
+# Perform kruskal wallis tests at the genus level for all mice stool samples----
+for (d in stool_test_days){
+  kruskal_wallis_genus(d, all_genus_stools, "stools")
+  #Make a list of significant genera across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_stools.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_stools_day", d, sep = "") 
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_stools <- add_row(kw_genus_stools, stats)  #combine all the dataframes together
+}
+
+# Perform pairwise Wilcoxan rank sum tests for genera that were significantly different across sources of mice on a series of days----
+pairwise_day_genus <- function(sample_df, sample_type, timepoint, sig_genus_dayX){
+  genus_stats <- sample_df %>% 
+    filter(day == timepoint) %>%
+    select(group, genus, agg_rel_abund) %>% 
+    group_by(genus) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_rel_abund_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()
+  pairwise_stats <- genus_stats %>% 
+    filter(genus %in% sig_genus_dayX) %>% 
+    group_by(genus) %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$agg_rel_abund, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
+    write_tsv(path = paste0("data/process/all_genus_stats_day_", timepoint, "_", sample_type, "_sig.tsv"))
+  #Format pairwise stats to use with ggpubr package
+  plot_format_stats <- pairwise_stats %>% 
+    select(-method) %>% 
+    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
+    lapply(tidy_pairwise_genus) %>% 
+    bind_rows() %>% 
+    filter(!is.na(group2)) %>% #Remove rows that don't have a 2nd comparison group
+    arrange(p.adj) %>% #Arrange by adjusted p value column 
+    mutate(day = timepoint)
+  return(plot_format_stats)  
+}
+
+#Pairwise Tests of genera that were significant on each day tested
+#List of significant days:
+pairwise_days_stools <- kw_genus_stools %>% filter(p.value.adj < 0.05) %>% 
+  distinct(day) %>% pull(day)
+#Pairwise test of significant days and their corresponding genera for stool samples 
+#Create empty placeholder data frame
+pairwise_genus_stools <- data.frame(genus=character(), group1=character(), group2=character(),
+                                  p.adj = double(), day= double())
+genus_dayn5_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", -5, `sig_genus_stools_day-5`)
+genus_dayn1_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", -1, `sig_genus_stools_day-1`)
+genus_day0_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 0, sig_genus_stools_day0)
+genus_day1_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 1, sig_genus_stools_day1)
+genus_day2_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 2, sig_genus_stools_day2)
+genus_day3_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 3, sig_genus_stools_day3)
+genus_day4_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 4, sig_genus_stools_day4)
+genus_day5_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 5, sig_genus_stools_day5)
+genus_day6_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 6, sig_genus_stools_day6)
+genus_day7_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 7, sig_genus_stools_day7)
+genus_day8_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 8, sig_genus_stools_day8)
+genus_day9_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 9, sig_genus_stools_day9)
+genus_day10_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 10, sig_genus_stools_day10)
+genus_day15_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 15, sig_genus_stools_day15)
+genus_day30_stats_stools <- pairwise_day_genus(all_genus_stools, "stools", 30, sig_genus_stools_day30)
+
+#Think about how this code could be more DRY
+#Combine pairwise dataframes for all days
+genus_pairwise_stools <- rbind(genus_dayn5_stats_stools, genus_dayn1_stats_stools, genus_day0_stats_stools,
+                             genus_day2_stats_stools, genus_day3_stats_stools, genus_day4_stats_stools,
+                             genus_day5_stats_stools, genus_day6_stats_stools, genus_day7_stats_stools,
+                             genus_day8_stats_stools, genus_day9_stats_stools, genus_day10_stats_stools,
+                             genus_day15_stats_stools, genus_day30_stats_stools)
+
+#Examine genera that are different between WM & M1 mice
+WM_M1_genus_stools <- genus_pairwise_stools %>% 
+  filter(group1 %in% c("WM", "M1") & group2 %in% c("WM", "M1")) %>% 
+  filter(p.adj < 0.05)
+WM_1RM1_genus_stools <- genus_pairwise_stools %>% 
+  filter(group1 %in% c("WM", "1RM1") & group2 %in% c("WM", "1RM1")) %>% 
+  filter(p.adj < 0.05)
+
+
+#Examine genera that differ from either M1, 1RM1, or C groups) at day 5
+d5_genus_stools <- genus_pairwise_stools %>% 
+  filter(group1 %in% c("C", "M1", "1RM1") | group2 %in% c("C", "M1", "1RM1")) %>% 
+  filter(p.adj < 0.05 & day == 5)
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_tissues <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                             C =double(), WM =double(),WMC=double(),WMR =double(),
+                             CWM =double(),FRM=double(),RM =double(),
+                             CN=double(),WMN =double(),
+                             p.value.adj=double(),day=double())
+
+# Perform kruskal wallis tests at the genus level for the tissue samples----
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, all_genus_tissues, "tissues")
+  #Make a list of significant genera across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_tissues.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_tissues_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
+}
+
+#Create heatmap of significant genera for all stool samples----
+#Rank genera by adjusted p-value
+hm_sig_genus_p_adj <- kw_genus_stools %>% 
+  filter(p.value.adj < 0.05) %>% 
+  arrange(p.value.adj) %>% 
+  distinct(genus) %>% 
+  slice_head(n = 25) %>% 
+  pull(genus)
+
+hm_stool_days <- all_diversity_stools %>% distinct(day) %>% pull(day)
+facet_labels <- all_labels #Create descriptive labels for facets
+names(facet_labels) <- c("C", "WM", "WMC", "WMR",
+                         "M1", "1RM1",
+                         "CWM", "FRM", "RM",
+                         "CN", "WMN") #values that correspond to group, which is the variable we're faceting by
+hm_stool <- hm_plot_genus(all_genus_stools, hm_sig_genus_p_adj, hm_stool_days)+
+  scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
+save_plot(filename = "results/figures/all_genus_heatmap_stools.png", hm_stool, base_height = 15, base_width = 18)
+
+#Heatmap of single OTUs of interest across all groups----
+hm_1_genus(all_genus_stools, "Phenylobacterium", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_phenylobacterium.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Enterobacteriaceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_enterobacteriaceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Bacteroides", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_bacteroides.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Peptostreptococcaceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_peptostreptococcaceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Ruminococcaceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_ruminococcaceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Bifidobacterium", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_bifidobacterium.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Lactobacillus", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_lactobacillus.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Porphyromonadaceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_porphyromonadaceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Clostridiales Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_clostridiales.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Oscillibacter", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_oscillibacter.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Bacteroidales Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_bacteroidales.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_unclassified.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Blautia", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_blautia.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Lachnospiraceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_lachnospiraceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Acetatifactor", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_acetatifactor.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Butyricicoccus", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_butyricicoccus.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Clostridium XlVb", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_clostridium_XlVb.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Turicibacter", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_turicibacter.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Firmicutes Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_firmicutes.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Olsenella", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_olsenella.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Alistipes", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_alistipes.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Chitinophagaceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_chitinophagaceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Erysipelotrichaceae Unclassified", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_erysipelotrichaceae.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Akkermansia", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_akkermansia.png", base_height = 15, base_width = 18)
+hm_1_genus(all_genus_stools, "Clostridium IV", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_genus_heatmap_stools_clostridium_IV.png", base_height = 15, base_width = 18)
 
 #Examine correlation between C. difficile CFUs and Peptostreptococcaceae (OTU 12) relative abundance-----
 pepto_cfu_otu <- all_otu_stools %>% 
