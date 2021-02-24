@@ -717,6 +717,38 @@ hm_1_otu <- function(sample_df, specify_otu, timepoints){
         text = element_text(size = 16)) # Change font size for entire plot
 }
 
+#Function to create a heatmap demonstrating the relative abundance of 1 genus over time across all groups----
+#sample_df = subset dataframe of samples to be plotted
+#specify_genus = 1 genus to plot (name should be in quotes)
+#timepoints = days of the experiment to plot
+hm_1_genus <- function(sample_df, specify_genus, timepoints){
+  genus_format_name <-sample_df %>% select(genus) %>% distinct(genus) %>% 
+    filter(genus == specify_genus) %>% pull(genus) #Get genus name
+  sample_df %>%
+    mutate(group = fct_relevel(group, "CN", "C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC", "WMN", "WM")) %>% #Specify the order of the groups
+    mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+    mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                             "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
+    filter(genus == specify_genus) %>%
+    filter(day %in% timepoints) %>% 
+    group_by(group, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_tile(aes(x = day, y=group, fill=median))+
+    labs(title=genus_format_name,
+         x=NULL,
+         y=NULL)+
+    scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
+                         limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    scale_y_discrete(label = c("Clind. without infection", "Clind.", "1-day PEG 3350 + 1-day recovery", "1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350",
+                               "Clind. + 1-day PEG 3350", "5-day PEG 3350 + 10-day recovery", "5-day PEG 3350 + Clind.", 
+                               "5-day PEG 3350 without infection", "5-day PEG 3350"))+ #Descriptive group names that match the rest of the plots
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          plot.title = element_text(face = "italic", hjust = 0.5), #Italicize genus name
+          text = element_text(size = 16)) # Change font size for entire plot
+}
+
 #Function to plot an otu_over_time
 #otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"
 #sample_df = subset dataframe of just stool or tissue samples
