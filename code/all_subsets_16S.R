@@ -330,6 +330,9 @@ hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 59)", hm_stool_days) %>%
   save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_59.png", base_height = 15, base_width = 18)
 hm_1_otu(all_otu_stools, "Ruminococcaceae (OTU 98)", hm_stool_days) %>% 
   save_plot(filename = "results/figures/all_otus_heatmap_stools_ruminococcaceae_98.png", base_height = 15, base_width = 18)
+hm_1_otu(all_otu_stools, "Turicibacter (OTU 5)", hm_stool_days) %>% 
+  save_plot(filename = "results/figures/all_otus_heatmap_stools_turicibacter_5.png", base_height = 15, base_width = 18)
+
 
 #Create heatmap of significant OTUs for all tissue samples----
 #Rank OTUs by adjusted p-value
