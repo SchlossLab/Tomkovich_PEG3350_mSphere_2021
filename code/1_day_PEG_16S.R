@@ -202,13 +202,21 @@ pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycur
 axis1 <- pcoa_axes_1_day_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_1_day_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
+#Import current R-squared values and P values for top contributing to PCoA
+permnova_results = read_tsv("data/process/1_day_PEG_permanova.tsv")
+r_sq_ordered_perm = permnova_results %>% arrange(desc(R2))
+# Select top 2 contributors (3 to include the total header at the top where R2=1)
+top_2_contrib = top_n(r_sq_ordered_perm, 3, R2)
+top_R2 = signif(top_2_contrib[2,6], 4)
+sec_R2 = signif(top_2_contrib[3,6], 4)
+
 pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = "")) +
-  annotate("text", x =.07, y = .41, label = "Day", size = 3.2) +
-  annotate("text", x =.261, y = .41, label = "Group", size = 3.2) +
-  annotate("text", x =.07, y = .375, label = ("italic(R^2 == .4309)"), parse = TRUE, size = 3.2) +
-  annotate("text", x =.261, y = .375, label = ("italic(R^2 == .1883)"), parse = TRUE, size = 3.2) +
+  annotate("text", x =.07, y = .41, label = paste(str_to_title(top_2_contrib[2,1])), size = 3.2) +
+  annotate("text", x =.261, y = .41, label = paste(str_to_title(top_2_contrib[3,1])), size = 3.2) +
+  annotate("text", x =.07, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.2) +
+  annotate("text", x =.261, y = .375, label =  paste("italic(R)^2: ", sec_R2, sep = "" ), parse = TRUE, size = 3.2) +
   annotate("text", x =.07, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2) +
   annotate("text", x =.261, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
 save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8)
