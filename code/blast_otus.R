@@ -176,13 +176,21 @@ otu_12_seq %>% pull(sequence)
 #Use single query search on otu_12 sequence
 #Paste sequence in top box, selecting 16s rRNA/ITS database
 #Bring in BLAST hit table results in csv format  
-otu_12_blast_results <- read_csv("data/process/OTU_12_Alignmnet_HitTable.csv", 
-                                 col_names = c("query_acc.ver", "subject_acc.ver", "%identity", "alignment", "length", "mismatches",
-                                               "gap opens", "q.start", "q.end", "subject", "evalue", "bit score"))
+otu_12_blast_results <- read_csv("data/process/OTU_12_HitTable.csv")
 
-
-
-
+top_otu_12_hits <- otu_12_blast_results %>% 
+  filter(`Per. ident` > 96.0) %>%
+  ggplot(aes(x=`Scientific Name`, y = `Per. ident` , color = `Scientific Name`, shape=`Scientific Name`, show.legend = FALSE))+
+  geom_text(aes(label = `Scientific Name`), position = position_jitter(width = 0.5, height = 0.5))+
+  scale_shape_identity()+
+  labs(title="Top OTU 12 Blastn Results", 
+       x=NULL,
+       y="% Identity")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otu_12_top_blast_results.png", top_otu_12_hits, base_height =5, base_width = 6)
 #BLAST all porphyromonadaceae OTUs against S24-7 bacteria (Muriibaculaceae) Accession Number: CP015402----
 porphyromonadaceae_otus <- taxonomy %>% 
   filter(genus == "Porphyromonadaceae_unclassified") %>%
