@@ -229,7 +229,7 @@ group_legend <- pcoa_1_day_PEG  %>%
                       breaks=color_groups,
                       labels=color_labels)+
   geom_point()+ theme_classic() 
-group_legend <- get_legend(group_legend) +
+group_legend <- get_legend(group_legend)
 save_plot("results/figures/1_day_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 2.2)
 
 pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
@@ -330,10 +330,10 @@ plot_otus_dx <- function(otus, timepoint){
 
 #Plots of the top 20 OTUs that varied across sources at each timepoint----
 #Baseline: top 10 OTUs, no difference between groups
-baseline_otus <- plot_otus_dx(top10_otu_dayPT, "baseline")+ #Pick top 10 OTUs
+baseline_otus <- plot_otus_dx(top10_otu_daybaseline, "baseline")+ #Pick top 10 OTUs
   geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none") #remove legend
-save_plot("results/figures/1_Day_PEG_baseline_ns_otus.png", PT_otus, base_height = 9, base_width = 7)
+save_plot("results/figures/1_Day_PEG_baseline_ns_otus.png", baseline_otus, base_height = 9, base_width = 7)
 #Day 1: top 10 OTUs, no difference between groups
 D1_otus <- plot_otus_dx(top10_otu_day1, 1) +#Pick top 20 significant OTUs
   geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
@@ -403,7 +403,7 @@ agg_genus_data_subset <- one_day_PEG_subset(agg_genus_data) %>%
   mutate(day = case_when(group == "C" & day == "-15" ~ "baseline",
                          group == "M1" & day == "-11" ~ "baseline",
                          group == "1RM1" & day == "-2" ~ "baseline",
-                         TRUE ~ day)) %>% #Replace day -2 and day -1 with baseline to represent the pretreatment timepoint
+                         TRUE ~ day)) %>% #Replace day -2 and day -1 with baseline to represent the baseline timepoint
   mutate(day = fct_relevel(day, "baseline", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime
 
 #Kruskal Wallis function to test for differences in genera across all groups over time----
@@ -512,7 +512,7 @@ baseline_D1_mice <- agg_genus_data_subset %>%
 
 #Dataframe for statisticl analysis at genus level
 paired_genus <- agg_genus_data_subset %>%
-  filter(unique_mouse_id %in% PT_D1_mice) %>% #Only select pairs with data for day -1 & day 0
+  filter(unique_mouse_id %in% baseline_D1_mice) %>% #Only select pairs with data for day -1 & day 0
   filter(day == 'baseline' | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
   mutate(day = as.factor(day)) %>% 
   select(day, genus, agg_rel_abund)
@@ -521,13 +521,13 @@ paired_genus <- agg_genus_data_subset %>%
 genus_baselinetoD1_pairs <- paired_genus %>% 
   group_by(genus) %>% 
   nest() %>% 
-  mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>% 
+  mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$day)) %>% tidy())) %>% 
   mutate(median = map(data, get_rel_abund_median_day)) %>% 
   unnest(c(model, median)) %>% 
-  ungroup() 
+  ungroup()
 #Adjust p-values for testing multiple genera
 genus_baselinetoD1_pairs_stats_adjust <- genus_baselinetoD1_pairs %>% 
-  select(genus, statistic, p.value, method, alternative, `baseline`, `1`) %>% 
+  select(genus, statistic, p.value, method, `baseline`, `1`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
   arrange(p.value.adj) %>% 
   write_tsv(path = "data/process/1_Day_PEG_genus_stats_PTtoD1.tsv") 
@@ -538,10 +538,12 @@ sig_genus_pairs <- pull_significant_taxa(genus_baselinetoD1_pairs_stats_adjust, 
 view(sig_genus_pairs)
 
 #Choose names to remove to narrow down to 10 genera
-sig_genus_top_names = c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", "Anaeroplasma","Firmicutes Unclassified")
+sig_genus_remove_names = c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
+                           "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified","Lachnospiraceae Unclassified", "Clostridiales Unclassified")
 
 #Create list with the most relevant 10
-sig_genus_top_list = sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_top_names)]
+sig_genus_top_list = sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_remove_names)]
+view(sig_genus_top_list)
 
 #Plot all significant genera from baseline to Day 1 facted by genus
 facet_labels <- sig_genus_pairs
@@ -555,7 +557,7 @@ xfacet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
 hm_baselinetoD1_10_genera <- hm_plot_genus_facet(agg_genus_data_subset, color_groups, sig_genus_top_list, hm_days, color_labels) +
   scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
-save_plot(filename = "results/figures/1_Day_PEG_genus_10_baselinetoD1_heatmap.png", hm_baselinetoD1_10_genera, base_height = 14, base_width = 15)
+save_plot(filename = "results/figures/1_Day_PEG_genus_10_baselinetoD1_heatmap.png", hm_baselinetoD1_10_genera, base_height = 7, base_width = 15)
 
 
 

@@ -617,12 +617,13 @@ hm_plot_genus_facet <- function(sample_df, exp_groups, genera_list, timepoints, 
     labs(title=NULL,
          x=NULL,
          y=NULL)+
-    facet_wrap(~genus, labeller = labeller(genus = facet_labels)) +
+    facet_wrap(~genus, nrow = 2, ncol = 5, labeller = labeller(genus = facet_labels)) +
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     scale_y_discrete(label = exp_group_labels)+ #Descriptive group names that match the rest of the plots
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          strip.text = element_text(face = "italic"),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16)) # Change font size for entire plot
 }
