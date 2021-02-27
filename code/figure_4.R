@@ -27,8 +27,8 @@ c <- ggdraw() + draw_image("results/figures/post_CDI_PEG_shannon_stool.png")
 d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_richness_overtime_stool.png")
 e <- ggdraw() + draw_image("results/figures/post_CDI_PEG_treatment_legend.png")
 fig <- image_graph(width = 400, height = 400, res = 96)
-plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, ncol=1, rel_heights = c(1,.2, 1,1,1))+
-  ggsave("results/figures/figure_4.pdf", width=5, height=7.5)
+plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, ncol=1, rel_heights = c(.8,.2, 1,1,1))+
+  ggsave("results/figures/figure_4.pdf", width=4.6, height=7.5)
 
 #Figure showing pcoa and genera heat map over time
 d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png")
