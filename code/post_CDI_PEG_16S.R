@@ -677,14 +677,14 @@ hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stoo
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
 
 #Plot heatmap significant genera over time facet by genus
-facet_labels <- c("Porphyromonadaceae Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
-names(facet_labels) <- c("Porphyromonadaceae Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
+facet_labels <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
+names(facet_labels) <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales  Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
 exp_groups <- c("C", "CWM", "FRM", "RM")
 exp_group_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
 
 hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days, exp_group_labels)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
-save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 6, base_width = 10)
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 7, base_width = 15)
 
 
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
@@ -696,3 +696,5 @@ hm_tissues_genera <- hm_plot_tissues_genera(agg_genus_data_tissues, hm_sig_gener
   scale_x_discrete(breaks = c(30), labels = c(30)) 
 save_plot(filename = "results/figures/post_CDI_PEG_genera_heatmap_tissues.png", hm_tissues_genera, base_height = 10, base_width = 8)
 
+#Pairwise comparison between Clind. + 3-day recovery + 1-day PEG 3350 with and without FMT
+#Dataframe for statistical analysis at genus level
