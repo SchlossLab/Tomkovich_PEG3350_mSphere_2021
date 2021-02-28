@@ -302,10 +302,27 @@ pcoa_axes_post_cdi_PEG_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg33
 axis1_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
+#Import current R-squared values and P values for top contributing to PCoA
+permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
+r_sq_ordered_perm = permanova_results %>% arrange(desc(R2))
+# Select top 2 contributors (3 to include the total header at the top where R2=1)
+top_2_contrib = top_n(r_sq_ordered_perm, 3, R2) #top two R2 for this subset is group:unique_cage_no instead of group, unlike 1 day subset
+top_R2 = signif(top_2_contrib[2,6], 4)
+top_R2_title = top_2_contrib[2,1]
+sec_R2 = signif(top_2_contrib[3,6], 4)
+sec_R2_title = "Group: Cage" #Replace top_2_contrib[3,1] (originally written as group:unique_cage_no) with "Group: Cage" 
+#make titles their own variable nad have them get edited into upper case separately?
+
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_post_cdi_peg_stool)+
   labs(x = paste("PCoA 1 (", axis1_stool, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
+       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))+
+  annotate("text", x = -.6, y = .41, label = paste(str_to_title(top_R2_title)), size = 3.2) +
+  annotate("text", x = -.45, y = .41, label = paste(str_to_title(sec_R2_title)), size = 3.2) +
+  annotate("text", x = -.6, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.2) +
+  annotate("text", x = -.45, y = .375, label =  paste("italic(R)^2: ", sec_R2, sep = "" ), parse = TRUE, size = 3.2) +
+  annotate("text", x = -.6, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2) +
+  annotate("text", x = -.45, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
+save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 6, base_width = 6)
 
 #Animate stool only PCoA over time
 pcoa_animated_stool <- pcoa_post_cdi_peg_stool %>%
