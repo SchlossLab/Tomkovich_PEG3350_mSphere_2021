@@ -1,5 +1,7 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
+library(plotly)
+library(viridis)
 
 metadata <- metadata %>%
   mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
@@ -475,29 +477,213 @@ WM_1RM1_genus_stools <- genus_pairwise_stools %>%
   filter(group1 %in% c("WM", "1RM1") & group2 %in% c("WM", "1RM1")) %>% 
   filter(p.adj < 0.05)
 
+#Examine genera that are different between RM & FRM mice (These likely are unrelated to C. difficile clearance)
+RM_FRM_genus_stools <- genus_pairwise_stools %>% 
+  filter(group1 %in% c("RM", "FRM") & group2 %in% c("RM", "FRM")) %>% 
+  filter(p.adj < 0.05)
+#Porpyhromonadaceae across 6 timepoints & Bacteroidales across 5 timepoints
+
+#Examine genera that are different on day 5 between either C, M1, 1RM1 mice that clear within 10 days and WM, WMC, WMR, CWM, RM, FRM mice that remained colonized or clear on day 15
+clear_v_prolonged_genus_stools <- genus_pairwise_stools %>% 
+  filter(day == 5) %>% 
+  filter(group1 %in% c("C", "M1", "1RM1") | group1 %in% c("WM", "WMC", "WMR", "CWM", "RM", "FRM"),
+         group2 %in% c("C", "M1", "1RM1") | group2 %in% c("WM", "WMC", "WMR", "CWM", "RM", "FRM")) %>% 
+  filter(p.adj < 0.05) %>% 
+  group_by(genus) %>% 
+  count() %>% 
+  filter(n >= 15)
+
+#Examine genera that are different on day 5 between PEG-treated mice: either M1, 1RM1 mice that clear within 10 days and WM, WMC, WMR, CWM, RM, FRM mice that remained colonized or clear on day 15
+peg_clear_v_prolonged_genus_stools <- genus_pairwise_stools %>% 
+  filter(day == 5) %>% 
+  filter(group1 %in% c("M1", "1RM1") | group1 %in% c("WM", "WMC", "WMR", "CWM", "RM", "FRM"),
+         group2 %in% c("M1", "1RM1") | group2 %in% c("WM", "WMC", "WMR", "CWM", "RM", "FRM")) %>% 
+  filter(p.adj < 0.05) %>% 
+  group_by(genus) %>% 
+  count() %>% 
+  pull(genus)
+
+#Make an area plot of the genera that vary between PEG mice that clear within 10 days and PEG mice that remain colonized----
+facet_labels <- all_labels <- c( "Clind.", 
+                                 "1-day PEG 3350 + 1-day recovery", "1-day PEG 3350", 
+                                 "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", 
+                                 "Clind. + 3-day recovery + 1-day PEG 3350", "Clind. + 1-day PEG 3350",
+                                 "5-day PEG 3350 + 10-day recovery",
+                                 "5-day PEG 3350 + Clind.", 
+                                 "5-day PEG 3350"
+                                 )
+#Create descriptive labels for facets
+names(facet_labels) <- c("C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC", "WM") #values that correspond to group, which is the variable we're faceting by
+area_plot <- all_genus_stools %>%
+  #Solve different baseline timepoints across groups by specifying baseline for each group
+  mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-15" ~ "B",
+                         group == "CWM" & day == "-1" ~ "B",
+                         group == "RM" & day == "-1" ~ "B",
+                         group == "FRM" & day == "-1" ~ "B",
+                         group == "M1" & day == "-11" ~ "B",
+                         group == "1RM1" & day == "-2" ~ "B",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "10")) %>% 
+  filter(group %in% c("C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC", "WM")) %>% 
+  mutate(group = fct_relevel(group, "C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC","WM")) %>% #Specify the order of the groups
+  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+  mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4",
+                           "5", "6", "7", "10")) %>% 
+  filter(genus %in% peg_clear_v_prolonged_genus_stools) %>%
+  group_by(group, day, genus) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_area(aes(x = day, y=median, group = genus, fill = genus))+
+  scale_fill_viridis(discrete = T)+
+  labs(title=NULL,
+       x=NULL,
+       y=NULL)+
+  facet_wrap(~group, labeller = labeller(group = facet_labels))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        legend.text = element_text(face = "italic"), #Italicize genus name
+        legend.title = element_blank(),
+        text = element_text(size = 16)) # Change font size for entire plot
+save_plot(filename = "results/figures/all_genus_area_stools.png", area_plot, base_height = 15, base_width = 18)
+ggplotly(area_plot)
+
+#Examine the genera that vary between PEG mice that clear within 10 days and PEG mice that remain colonized in the tissue samples----
+facet_labels <- all_labels <- c("cecum", "proximal colon", "distal colon",
+                                "Clind.", "5-day PEG 3350",
+                                  "5-day PEG 3350 + 10-day recovery")
+#Create descriptive labels for facets
+names(facet_labels) <- c("cecum", "proximal_colon", "distal_colon", 
+                         "C", "WM", "WMR") #values that correspond to group, which is the variable we're faceting by
+area_plot_tissues <- all_genus_tissues  %>%
+  filter(day %in% c("4", "6", "20", "30")) %>% 
+  filter(group %in% c("C", "WM", "WMR")) %>% 
+  mutate(group = fct_relevel(group, "C", "WM", "WMR")) %>% #Specify the order of the groups
+  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+  mutate(day = fct_relevel(day, "4", "6", "20", "30")) %>% 
+  mutate(sample_type = fct_relevel(sample_type, "cecum", "proximal_colon", "distal_colon")) %>% 
+  filter(genus %in% peg_clear_v_prolonged_genus_stools) %>%
+  group_by(group, day, genus, sample_type) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_area(aes(x = day, y=median, group = genus, fill = genus))+
+  scale_fill_viridis(discrete = T)+
+  labs(title=NULL,
+       x=NULL,
+       y=NULL)+
+  facet_grid(group ~ sample_type, labeller = labeller(group = facet_labels, sample_type = facet_labels))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        legend.text = element_text(face = "italic"), #Italicize genus name
+        legend.title = element_blank(),
+        text = element_text(size = 16)) # Change font size for entire plot
+save_plot(filename = "results/figures/all_genus_area_tissues.png", area_plot_tissues, base_height = 15, base_width = 18)
+ggplotly(area_plot_tissues)
 
 #Examine genera that differ from either M1, 1RM1, or C groups) at day 5
 d5_genus_stools <- genus_pairwise_stools %>% 
   filter(group1 %in% c("C", "M1", "1RM1") | group2 %in% c("C", "M1", "1RM1")) %>% 
-  filter(p.adj < 0.05 & day == 5)
+  filter(p.adj < 0.05 & day == 5) %>% 
+
 
 #Create empty data frame to combine stat dataframes for all days that were tested
 kw_genus_tissues <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
                              C =double(), WM =double(),WMC=double(),WMR =double(),
-                             CWM =double(),FRM=double(),RM =double(),
+                             CWM =double(),
+                             CN=double(),WMN =double(),
+                             p.value.adj=double(),day=double())
+#Create empty data frames to combine stat dataframes for all days that were tested
+kw_genus_cecum <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                               C =double(), WM =double(),WMC=double(),WMR =double(),
+                               CWM =double(),
+                               CN=double(),WMN =double(),
+                               p.value.adj=double(),day=double())
+kw_genus_pc <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                             C =double(), WM =double(),WMC=double(),WMR =double(),
+                             CWM =double(),
+                             CN=double(),WMN =double(),
+                             p.value.adj=double(),day=double())
+kw_genus_dc <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                             C =double(), WM =double(),WMC=double(),WMR =double(),
+                             CWM =double(),
                              CN=double(),WMN =double(),
                              p.value.adj=double(),day=double())
 
 # Perform kruskal wallis tests at the genus level for the tissue samples----
-for (d in tissue_test_days){
-  kruskal_wallis_genus(d, all_genus_tissues, "tissues")
-  #Make a list of significant genera across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_tissues.tsv")) %>% 
-    mutate(day = d)#Add a day column to specify day tested
-  name <- paste("sig_genus_tissues_day", d, sep = "")
-  assign(name, pull_significant_taxa(stats, genus))
-  kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
+#do separate tests for each type of tissue
+all_genus_cecum <- all_genus_tissues %>% filter(sample_type == "cecum")
+all_genus_pc <- all_genus_tissues %>% filter(sample_type == "proximal_colon")
+all_genus_dc <- all_genus_tissues %>% filter(sample_type == "distal_colon")
+#for (d in tissue_test_days){
+#  kruskal_wallis_genus(d, all_genus_tissues, "tissues")
+#  #Make a list of significant genera across sources of mice for a specific day
+#  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_tissues.tsv")) %>% 
+#    mutate(day = d)#Add a day column to specify day tested
+#  name <- paste("sig_genus_tissues_day", d, sep = "")
+#  assign(name, pull_significant_taxa(stats, genus))
+#  kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
 }
+
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, all_genus_cecum, "cecum")
+  #Make a list of significant genera across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_cecum.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_cecum_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_cecum <- add_row(kw_genus_cecum, stats)  #combine all the dataframes together
+}
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, all_genus_pc, "pc")
+  #Make a list of significant genera across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_pc.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_pc_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_pc <- add_row(kw_genus_pc, stats)  #combine all the dataframes together
+}
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, all_genus_dc, "dc")
+  #Make a list of significant genera across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/all_genus_stats_day_", d, "_dc.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_dc_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_dc <- add_row(kw_genus_dc, stats)  #combine all the dataframes together
+}
+kw_genus_cecum <- kw_genus_cecum %>% mutate(sample_type = "cecum")
+kw_genus_pc <- kw_genus_pc %>% mutate(sample_type = "proximal_colon")
+kw_genus_dc <- kw_genus_dc %>% mutate(sample_type = "distal_colon")
+kw_genus_tissues <- kw_genus_cecum %>% add_row(kw_genus_pc) %>% add_row(kw_genus_dc)
+#Pairwise Tests of genera that were significant on each day tested
+#List of significant days:
+pairwise_days_tissues <- kw_genus_tissues %>% filter(p.value.adj < 0.05) %>% 
+  distinct(day) %>% pull(day)
+pairwise_days_cecum <- kw_genus_cecum %>% filter(p.value.adj < 0.05) %>% 
+  distinct(day) %>% pull(day)
+#Pairwise test of significant days and their corresponding genera for stool samples 
+#Create empty placeholder data frame
+pairwise_genus_tissues <- data.frame(genus=character(), group1=character(), group2=character(),
+                                    p.adj = double(), day= double())
+pairwise_genus_cecum <- data.frame(genus=character(), group1=character(), group2=character(),
+                                     p.adj = double(), day= double())
+genus_day4_stats_cecum <- pairwise_day_genus(all_genus_cecum, "cecum", 4, sig_genus_cecum_day4)
+genus_day6_stats_cecum <- pairwise_day_genus(all_genus_cecum, "cecum", 6, sig_genus_cecum_day6)
+genus_day30_stats_cecum <- pairwise_day_genus(all_genus_cecum, "cecum", 30, sig_genus_cecum_day30)
+
+#Overlapping genera over time in the cecum:
+overlap_cecum <- intersect_all(sig_genus_cecum_day4, sig_genus_cecum_day6, sig_genus_cecum_day30)
+
+#Think about how this code could be more DRY
+#Combine pairwise dataframes for all days
+genus_pairwise_stools <- rbind(genus_dayn5_stats_stools, genus_dayn1_stats_stools, genus_day0_stats_stools,
+                               genus_day2_stats_stools, genus_day3_stats_stools, genus_day4_stats_stools,
+                               genus_day5_stats_stools, genus_day6_stats_stools, genus_day7_stats_stools,
+                               genus_day8_stats_stools, genus_day9_stats_stools, genus_day10_stats_stools,
+                               genus_day15_stats_stools, genus_day30_stats_stools)
+
 
 #Create heatmap of significant genera for all stool samples----
 #Rank genera by adjusted p-value
