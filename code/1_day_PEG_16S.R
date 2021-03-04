@@ -213,13 +213,15 @@ sec_R2 = signif(top_2_contrib[3,6], 4)
 pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = "")) +
-  annotate("text", x =.07, y = .41, label = paste(str_to_title(top_2_contrib[2,1])), size = 3.2) +
-  annotate("text", x =.261, y = .41, label = paste(str_to_title(top_2_contrib[3,1])), size = 3.2) +
-  annotate("text", x =.07, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.2) +
-  annotate("text", x =.261, y = .375, label =  paste("italic(R)^2: ", sec_R2, sep = "" ), parse = TRUE, size = 3.2) +
-  annotate("text", x =.07, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2) +
-  annotate("text", x =.261, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
-save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8)
+  annotate("text", x =.066, y = .41, label = paste(str_to_title(top_2_contrib[2,1])), size = 3.75) +
+  annotate("text", x =.257, y = .41, label = paste(str_to_title(top_2_contrib[3,1])), size = 3.75) +
+  annotate("text", x =.066, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.5) +
+  annotate("text", x =.257, y = .375, label =  paste("italic(R)^2: ", sec_R2, sep = "" ), parse = TRUE, size = 3.5) +
+  annotate("text", x =.066, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.5) +
+  annotate("text", x =.257, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.5) +
+  theme(text = element_text(size = 14),
+        axis.text = element_text(size = 12))
+save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8) 
 
 #Create stand alone legend
 group_legend <- pcoa_1_day_PEG  %>%

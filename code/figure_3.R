@@ -1,12 +1,12 @@
 source("code/utilities.R")
 
-a <- ggdraw() + draw_image("results/figures/1_Day_PEG_Schematic.png", scale = 1.20, x = .07)
+a <- ggdraw() + draw_image("results/figures/1_Day_PEG_Schematic.png", scale = 1.2, x = .07)
 b <- ggdraw() + draw_image("results/figures/1_day_PEG_cfu.png")
-c <- ggdraw() + draw_image("results/figures/1_Day_PEG_PCoA.png", scale = 1.17, y = -.05)
+c <- ggdraw() + draw_image("results/figures/1_Day_PEG_PCoA.png", scale = 1.30, y = -.07)
 d <- ggdraw() + draw_image("results/figures/1_Day_PEG_shannon.png")
 e <- ggdraw() + draw_image("results/figures/1_Day_PEG_genus_10_baselinetoD1_heatmap.png")
-top_panel <- plot_grid(a, b, c, d, labels = c("A", "B", "C", "D"), label_size = 12, ncol = 2, rel_widths = c(.60, 1, 1,.60), rel_heights = c(1.5, 1.5))
+top_panel <- plot_grid(a, b, c, d, labels = c("A", "B", "C", "D"), label_size = 12, ncol = 2, rel_widths = c(.60, 1, 1,.60), rel_heights = c(1, 1.2))
 bottom_panel <- plot_grid(e, labels = c("E"), label_size = 12)
 plot_grid(top_panel, bottom_panel, nrow = 2, rel_heights = c(1, 1)) +
-  ggsave("results/figures/figure_3.pdf", width = 5.25, height = 4.73)
+  ggsave("results/figures/figure_3.pdf", width = 5.25, height = 5.00)
 
