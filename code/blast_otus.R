@@ -285,3 +285,55 @@ bacteriodales_percent_identity_dist <- bacteriodales_blast_results %>%
         axis.text.x = element_blank())
 save_plot("results/figures/otus_bacteriodales_blast_results.png", bacteriodales_percent_identity_dist, base_height =5, base_width = 6)
 
+#BLAST analysis of potential Muribaculum OTUs
+
+muribaculum_otu_nums <- c("Otu0334",  "Otu0333", "Otu0624", "Otu0038", "Otu0008", "Otu0007", "Otu0006", "Otu0021")
+
+muribaculum_otu_taxa <- taxonomy %>%
+  filter(OTU %in% muribaculum_otu_nums)
+
+muribac_seq_all <- map_df(muribaculum_otu_nums, function(muribaculum_otu_nums){
+  muribac_seq <- otu_seqs %>% 
+    filter(str_detect(name, muribaculum_otu_nums))
+})
+
+muribac_seq_all %>% pull(sequence)
+muribac_seq_all <- muribac_seq_all %>% 
+  mutate(ncbi_blast_result = "")
+
+otu_334_blast_results <- read_csv("data/process/OTU_0334_HitTable.csv") %>%
+  mutate(otu = 334) %>% head(5)
+otu_333_blast_results <- read_csv("data/process/OTU_0333_HitTable.csv" ) %>%
+  mutate(otu = 334) %>% head(5)
+otu_624_blast_results <- read_csv("data/process/OTU_0624_HitTable.csv") %>%
+  mutate(otu = 624) %>% head(5)
+otu_0038_blast_results <- read_csv("data/process/OTU_0038_HitTable.csv") %>%
+  mutate(otu = 38) %>% head(5)
+otu_8_blast_results <- read_csv("data/process/OTU_0008_HitTable.csv") %>%
+  mutate(otu = 8) %>% head(5)
+otu_7_blast_results <- read_csv("data/process/OTU_0007_HitTable.csv") %>%
+  mutate(otu = 7) %>% head(5)
+otu_6_blast_results <- read_csv("data/process/OTU_0006_HitTable.csv") %>%
+  mutate(otu = 6) %>% head(5)
+otu_21_blast_results <- read_csv("data/process/OTU_0021_HitTable.csv") %>%
+  mutate(otu = 21) %>% head(5)
+
+otus_to_plot = rbind(otu_6_blast_results, otu_7_blast_results, otu_8_blast_results,
+                otu_21_blast_results, otu_0038_blast_results, otu_333_blast_results,
+                otu_334_blast_results, otu_624_blast_results)
+facet_labels = c("OTU 6", "OTU 7", "OTU 8", "OTU 21", "OTU 38", "OTU 333", "OTU 334", "OTU 624")
+
+potential_muri_otus_plot <- otus_to_plot %>%
+  ggplot(aes(x=`Scientific Name`, y = `Per. ident` , color = `Scientific Name`, shape=`Scientific Name`, show.legend = FALSE))+
+  geom_text(aes(label = `Scientific Name`), position = position_jitter(width = 0.5, height = 0.5), size = 3)+
+  scale_shape_identity()+
+  labs(title="Pontential Muribaculum OTUs Blastn Results", 
+       x=NULL,
+       y="% Identity")+
+  facet_wrap(~ `otu`, labeller = labeller(name = facet_labels)) +
+  scale_y_continuous(name = "% Identity", breaks=c(85, 87, 89, 91, 93, 95, 97), labels=c(85, 87, 89, 91, 93, 95, 97)) +
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otus_potential_muribaculum_blast_results.png", potential_muri_otus_plot, base_height =5, base_width = 6)
