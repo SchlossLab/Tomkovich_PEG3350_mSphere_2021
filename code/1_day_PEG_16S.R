@@ -95,7 +95,7 @@ label <- kw_label(kw_shannon)
 shannon_stools <- plot_shannon_overtime(diversity_data_subset) +
   scale_x_discrete(breaks = c("baseline", 0, 1, 2, 4, 5, 7)) +
   geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "bottom")
+  theme(legend.position = "none")
 save_plot(filename = "results/figures/1_Day_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Statistical annotation labels:
