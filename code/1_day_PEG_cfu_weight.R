@@ -4,6 +4,7 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "M1", "1RM1")
 color_labels <- c("Clind.", "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery")
+levels(cfudata$group)
 
 #Subset metadata to relevant groups and experiments (C, 1RM1, M1) for this subset of mice----
 metadata <- one_day_PEG_subset(metadata)
@@ -139,10 +140,12 @@ x_annotation <- cfu_kruskal_wallis_adjust %>%
 y_position <- max(cfudata$avg_cfu) + 100000000
 label <- kw_label(cfu_kruskal_wallis_adjust)
 
+
+cfudata <- cfudata %>%
+  mutate(day = fct_relevel(day, "0", "1", "2","3", "4", "5", "6", "7", "8", "9", "10")) %>%
+  mutate(group = fct_relevel(group, "C", "M1", "1RM1"))
 cfu <- plot_cfu_data(cfudata) +
-  scale_x_continuous(breaks = c(0:10),
-                     limits = c(-1, 11),
-                     minor_breaks = c(-.5:10.5))
+  scale_x_discrete(breaks = c(1:10))
 
 save_plot(filename = "results/figures/1_day_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
