@@ -617,7 +617,7 @@ hm_plot_genus_facet <- function(sample_df, exp_groups, genera_list, timepoints, 
     labs(title=NULL,
          x=NULL,
          y=NULL)+
-    facet_wrap(~genus, nrow = 2, ncol = 5, labeller = label_wrap_gen(width = 10)) + 
+    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10)) + 
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     scale_y_discrete(label = exp_group_labels)+ #Descriptive group names that match the rest of the plots
