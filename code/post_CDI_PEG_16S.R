@@ -696,8 +696,8 @@ save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm
 #Plot heatmap significant genera over time facet by genus
 facet_labels <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
 names(facet_labels) <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales  Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
-exp_groups <- c("C", "CWM", "FRM", "RM")
-exp_group_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
+exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
+exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
 
 hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days, exp_group_labels)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
