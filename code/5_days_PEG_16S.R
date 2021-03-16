@@ -26,7 +26,8 @@ diversity_subset <- five_day_PEG_subset(diversity_data)
 #five_day_PEG_subset() will exclude mock challenged mice (group = WMN or CN)
 
 #Create subset dataframes of the 5-days PEG diversity data for just stool samples, tissues. 
-diversity_stools <- subset_stool(diversity_subset)
+diversity_stools <- subset_stool(diversity_subset) %>%
+  mutate(day = as.numeric(day))
 diversity_tissues <- subset_tissue(diversity_subset)
 #Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
 diversity_mock_stools <- subset_stool(add_mocks(diversity_subset, diversity_data))
