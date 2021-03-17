@@ -736,22 +736,40 @@ agg_genus_data_subset = five_day_PEG_subset(agg_genus_data)
 #Create baseline WMR: Day -15 vs Day -10; Rest of groups Day -5 vs D1
 # -15, -10, -5, -4 relevant timepoints for analysis of WMR 
 WMR_baseline = agg_genus_data_subset %>%
-  filter(group == "WMR", day == -15 | day == -10)
-ro_groups_baseline = agg_genus_data_subset %>%
-  filter(group != "WMR", day == -5 | day == 1)
-baseline_mice = rbind(WMR_baseline, ro_groups_baseline) %>%
+  filter(group == "WMR", day == -15 | day == -10) %>%
   filter(duplicated(unique_mouse_id)) %>%
   pull(unique_mouse_id)
+ro_groups_baseline = agg_genus_data_subset %>%
+  filter(group != "WMR", day == -5 | day == 1) %>%
+  filter(duplicated(unique_mouse_id)) %>%
+  pull(unique_mouse_id)
+#baseline_mice = rbind(WMR_baseline, ro_groups_baseline) %>%
+ # filter(duplicated(unique_mouse_id)) %>%
+ # pull(unique_mouse_id)
 
-#Dataframe for statistical analysis at genus level
-paired_genus <- agg_genus_data_subset %>%
-  filter(unique_mouse_id %in% baseline_mice) %>% 
-  filter(day == -15 | day == -10 | day == -5 | day == 1) %>% 
+#Dataframes for statistical analysis at genus level
+WMR_paired_genus <- agg_genus_data_subset %>%
+  filter(unique_mouse_id %in% WMR_baseline) %>% 
+  filter(day == -15 | day == -10) %>% 
   mutate(day = as.factor(day)) %>% 
   select(day, genus, agg_rel_abund)
 
-#Wilcoxon signed rank test for all pairs at the genus level:
-genus_peg_effect_pairs <- paired_genus %>% 
+ro_groups_paired_genus <- agg_genus_data_subset %>%
+  filter(unique_mouse_id %in% ro_groups_baseline) %>% 
+  filter(day == -5 | day == 1) %>% 
+  mutate(day = as.factor(day)) %>% 
+  select(day, genus, agg_rel_abund)
+
+#Wilcoxon signed rank test for all pairs at the genus level: Must separate WMR from rest of groups due to different time points
+WMR_genus_peg_effect_pairs <- WMR_paired_genus %>% 
+  group_by(genus) %>% 
+  nest() %>% 
+  mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$day)) %>% tidy())) %>% 
+  mutate(median = map(data, get_rel_abund_median_day)) %>% 
+  unnest(c(model, median)) %>% 
+  ungroup()
+
+ro_groups_genus_peg_effect_pairs <- ro_groups_paired_genus %>% 
   group_by(genus) %>% 
   nest() %>% 
   mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$day)) %>% tidy())) %>% 
@@ -760,13 +778,12 @@ genus_peg_effect_pairs <- paired_genus %>%
   ungroup()
 
 #Adjust p-values for testing multiple genera
-genus_peg_effect_pairs <- genus_peg_effect_pairs %>% 
-  select(genus, statistic, p.value, method, `-15`, `-10`, `-5`, `1`) %>% 
+WMR_genus_effect_adj <- WMR_genus_peg_effect_pairs %>% 
+  select(genus, statistic, p.value, method, `-15`, `-10`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
-  arrange(p.value.adj) %>% 
-  write_tsv(path = "data/process/5_Day_PEG_genus_stats.tsv")
+  arrange(p.value.adj) 
+ro_groups_effect_adj <- ro_groups_genus_peg_effect_pairs %>% 
+  select(genus, statistic, p.value, method, `-5`, `1`) %>% 
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+  arrange(p.value.adj) 
 
-#Make a list of significant genera between baseline and Day 1
-sig_genus_pairs <- pull_significant_taxa(genus_peg_effect_pairs, genus)
-
-sig_genus_pairs
