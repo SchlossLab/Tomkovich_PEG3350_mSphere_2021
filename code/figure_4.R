@@ -33,8 +33,8 @@ plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, nc
 #Figure showing pcoa and genera heat map over time
 d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png")
 e <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend.png")
-pcoa <- plot_grid(d, e, label_size = 12, ncol = 1, rel_heights = c(3, .75))
+pcoa <- plot_grid(d, e, label_size = 12, ncol = 1, rel_widths = c(1,1), rel_heights = c(5,1))
 heatmap <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_heatmap_facet.png")
 
-plot_grid(pcoa, heatmap, labels = c("A", "B"), ncol = 2, rel_heights = c(1,5), rel_widths = c(.75, 1))+
-  ggsave("results/figures/figure_4_16S.pdf", width = 10, height = 5)
+plot_grid(pcoa, heatmap, labels = c("A", "B"), label_size = 10, ncol = 2, rel_heights = c(1,10), rel_widths = c(.5, 1))+
+  ggsave("results/figures/figure_4_16S.pdf", width = 6, height = 2.04)

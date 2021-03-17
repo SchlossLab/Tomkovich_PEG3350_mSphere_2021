@@ -262,9 +262,10 @@ group_legend <- pcoa_post_cdi_peg  %>%
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-  geom_point()+ theme_classic()
+  geom_point()+ theme_classic()+
+  guides(color = guide_legend(ncol = 2))
 group_legend <- get_legend(group_legend)
-save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = 1.2, base_width = 3.2)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 6)
 
 #PCoA plot over time as a still and a as an animation
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
