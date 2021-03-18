@@ -1,0 +1,11 @@
+dataset: data/process/ml_input_d5.csv
+outcome_colname: outcome
+ml_methods:
+ - glmnet
+ - rf
+ - rpart2
+ - svmRadial
+ - xgbTree
+kfold: 2
+ncores: 36
+nseeds: 100
