@@ -9,6 +9,13 @@ cdiff_groups <- c("C", "WM", "WMC", "WMR",
 
 #Figure out the timepoints that have the largest number of samples with sequencing data
 #Select samples from only mice that were challenged with C. difficile
+#Read in alpha diversity metrics for all samples----
+diversity_data <- read_tsv("data/process/peg3350.opti_mcc.groups.ave-std.summary") %>%
+  filter(method == "ave") %>%
+  select(group, sobs, shannon, invsimpson, coverage) %>%
+  rename(unique_label = group) %>% #group is the same as unique_label in the metadata data frame
+  left_join(metadata, by = "unique_label") #Match only the samples we have sequence data for
+
 cdiff_diversity <- diversity_data %>% 
   filter(group %in% cdiff_groups)
 #Select stool samples only
@@ -32,7 +39,7 @@ otu_data <- read_tsv("data/process/peg3350.opti_mcc.0.03.subsample.shared", col_
   rename(unique_label = Group) %>% #group is the same as unique_label in the metadata data frame
   gather(-unique_label, key="otu", value="count") %>%
   mutate(rel_abund=count/1000) %>%  #Use 1000, because this is the subsampling parameter chosen.
-  filter(!otu == "Otu00012") %>% #Remove C. difficile OTU
+  filter(!otu == "Otu0012") %>% #Remove C. difficile OTU
   pivot_wider(id_cols = unique_label, names_from = otu, values_from = rel_abund)%>% #Transform dataframe so that each OTU is a different column
   left_join(select(metadata, clearance_status_d10, unique_label, day), by = "unique_label") %>% 
   rename(outcome = clearance_status_d10) %>%  #Rename group to outcome, this is what we will classify based on OTU relative abundances
