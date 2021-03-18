@@ -104,6 +104,30 @@ seq_prep_metadata <- seq_prep_metadata %>%
   anti_join(duplicates_to_drop) %>% 
   select(unique_label, ext_plate, miseq_run) #Just select unique_label and the plate # and miseq run variables to test with adonis/PERMANOVA
 
+#Unique_mice
+metadata %>% filter(!duplicated(unique_mouse_id)) %>% #Filter to just unique mouse ids
+  tally()
+#150 mice total
+
+#Make a column for cfu_d8 values
+cfu_d8 <- metadata %>% 
+  filter(day == "8") %>% 
+  filter(!is.na(avg_cfu)) %>% #Remove NA values
+  mutate(cfu_d8 = avg_cfu) %>% 
+  select(unique_mouse_id, cfu_d8) #Will join to metadata by mouse id instead of unique_label so we can know each individual mouse's day 10 colonization status
+
+#Make a column for cfu_d10 values
+cfu_d10 <- metadata %>% 
+  filter(day == "10") %>% 
+  filter(!is.na(avg_cfu)) %>% #Remove NA values
+  mutate(cfu_d10 = avg_cfu) %>% 
+  select(unique_mouse_id, cfu_d10) #Will join to metadata by mouse id instead of unique_label so we can know each individual mouse's day 10 colonization status
+
+#Join cfu_d8 & cfu_d10 columns to metadata
+metadata <- metadata %>% 
+  left_join(cfu_d8, by = "unique_mouse_id") %>% 
+  left_join(cfu_d10, by = "unique_mouse_id")
+
 #Join metadata to 16S seq prep metadata----
 metadata <- seq_prep_metadata %>% 
   full_join(metadata, by = "unique_label") %>% 
@@ -125,7 +149,21 @@ metadata <- seq_prep_metadata %>%
          sample_type = factor(sample_type, levels = unique(as.factor(sample_type))), #Transform sample_type variable into factor variable
          ext_plate = factor(ext_plate, levels = unique(as.factor(ext_plate))), #Transform ext_plate variable into factor variable
          miseq_run = factor(miseq_run, levels = unique(as.factor(miseq_run))), #Transform miseq_run variable into factor variable
-         unique_mouse_id = factor(unique_mouse_id, levels = unique(as.factor(unique_mouse_id)))) #Transform unique_mouse_id into factor variable
+         unique_mouse_id = factor(unique_mouse_id, levels = unique(as.factor(unique_mouse_id)))) %>% #Transform unique_mouse_id into factor variable
+  #Make a column for C. difficile clearance status at Day 10
+  mutate(clearance_status_d10 = case_when(cfu_d10 > 0 ~ "colonized",
+                                          cfu_d8 > 0 & cfu_d10 == 0 ~ "cleared",
+                                          cfu_d8 == 0 & cfu_d10 > 0 ~ "colonized", #Some mice from WMR group did not show up as colonized until later timepoints, 10_M6 WMR mouse only showed up as colonized on d30?
+                                          cfu_d8 == 0 ~ "cleared", #some of the mice from the 1-day PEG subset only have CFU quantified through d8
+                                          cfu_d10 == 0 ~ "cleared",
+                                          TRUE ~ "no_data"))
+
+#Check numbers of each group that have cleared or remain colonized with C. diff by d10
+clear_v_col <- metadata %>% 
+  group_by(group, clearance_status_d10) %>% 
+  tally()
+#A couple of mice from RM, FRM, CWM, and WMR groups were clear by 10.
+#Some mice from groups of interest have no_data entries because they were only followed through d4 or d6 or died early
 
 #Functions----
 
