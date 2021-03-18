@@ -7,5 +7,6 @@ ml_methods:
  - svmRadial
  - xgbTree
 kfold: 2
+training_frac: .5
 ncores: 36
 nseeds: 100
