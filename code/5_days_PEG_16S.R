@@ -740,7 +740,7 @@ WMR_baseline = agg_genus_data_subset %>%
   filter(duplicated(unique_mouse_id)) %>%
   pull(unique_mouse_id)
 ro_groups_baseline = agg_genus_data_subset %>%
-  filter(group != "WMR", day == -5 | day == 1) %>%
+  filter(group != "WMR" | group != "C", day == -5 | day == 1) %>%
   filter(duplicated(unique_mouse_id)) %>%
   pull(unique_mouse_id)
 #baseline_mice = rbind(WMR_baseline, ro_groups_baseline) %>%
@@ -786,4 +786,46 @@ ro_groups_effect_adj <- ro_groups_genus_peg_effect_pairs %>%
   select(genus, statistic, p.value, method, `-5`, `1`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
   arrange(p.value.adj) 
+
+#Pull significant genera from adjusted p-value dataframes
+WMR_sig_genus_pairs <- pull_significant_taxa(WMR_genus_effect_adj, genus)
+ro_groups_sig_genus_pairs <- pull_significant_taxa(ro_groups_effect_adj, genus)
+
+#Combine and remove duplicated genera to find all significant genera before and after PEG
+sig_genus_pairs <- c(WMR_sig_genus_pairs, ro_groups_sig_genus_pairs) %>%
+  unique()
+
+#Define Facet labels for faceting by genus in line plots
+facet_labels <- sig_genus_pairs
+names(facet_labels) <- sig_genus_pairs
+
+filter(agg_genus_data_subset, day == "1" & genus == "Acetatifactor")
+
+#Plot all significant genus pairs for all timepoints and groups
+sig_genus_pair_plot <- agg_genus_data_subset %>% 
+  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+  mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                           "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% 
+  filter(genus %in% sig_genus_pairs) %>%
+  group_by(group, genus, day) %>%
+  mutate(median_abund =median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%
+  ggplot() +
+  geom_line(mapping = aes(x = day, y = median_abund, group = group, color = group), alpha = 0.6, size = 1, show.legend = FALSE) +
+  # geom_point(mapping = aes(x = day, y = agg_rel_abund, group = group, color = group), alpha = 0.6, size = 1, show.legend = FALSE) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  theme_classic()+
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative Abundance") +
+  facet_wrap(~genus, labeller = labeller(genus = facet_labels)) +
+  theme(plot.title=element_text(hjust=0.5),
+         strip.background = element_blank(), #get rid of box around facet_wrap labels
+         axis.text.y = element_markdown(), #Have only the OTU names show up as italics
+         text = element_text(size = 16)) # Change font size for entire plot
+save_plot(filename = "results/figures/5_Day_PEG_genus_pairs_heatmap.png", sig_genus_pair_plot, base_height = 7, base_width = 20)
+
+  
 
