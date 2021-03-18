@@ -16,4 +16,6 @@
 #SBATCH --mail-user=tomkoset@umich.edu
 #SBATCH --mail-type=BEGIN,END
 
+# To run: conda activate smk-ML before submitting job.
+
 time snakemake --profile config/slurm --latency-wait 90 --configfile config/config.yml
