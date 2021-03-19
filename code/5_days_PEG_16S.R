@@ -826,6 +826,9 @@ sig_genus_pair_plot <- agg_genus_data_subset %>%
          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
          text = element_text(size = 16)) # Change font size for entire plot
 save_plot(filename = "results/figures/5_Day_PEG_genus_pairs_heatmap.png", sig_genus_pair_plot, base_height = 7, base_width = 20)
-
-  
+#Find which days have samples from all groups
+agg_genus_data_subset %>%
+  group_by(day, group) %>%
+  summarize(day = unique(day), group = color_groups) %>%
+  table() # Days -1, -5, 0, 1, 3, 5, and 6 have samples from all groups
 
