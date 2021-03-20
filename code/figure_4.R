@@ -38,3 +38,11 @@ heatmap <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_heatmap_fac
 
 plot_grid(pcoa, heatmap, labels = c("A", "B"), label_size = 10, ncol = 2, rel_heights = c(1,10), rel_widths = c(.5, 1))+
   ggsave("results/figures/figure_4_16S.pdf", width = 6, height = 2.04)
+
+#Vert version of Fig 4 16S
+f <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png")
+g <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend_vert.png")
+pcoa1 <- plot_grid(f,g, label_size = 12, nrow = 1, rel_heights = c(1,.8), rel_widths = c(1,.8))
+
+plot_grid(pcoa1, heatmap, labels = c("A", "B"), label_size = 12, nrow = 2)+
+  ggsave("results/figures/figure_4_16S.pdf", width = 6, height = 6.7)

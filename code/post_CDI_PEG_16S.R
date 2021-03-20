@@ -266,6 +266,16 @@ group_legend <- pcoa_post_cdi_peg  %>%
   guides(color = guide_legend(ncol = 2))
 group_legend <- get_legend(group_legend)
 save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 6)
+#Create Standalone legend, vertical
+group_legend_vert <- pcoa_post_cdi_peg  %>%
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels= str_wrap(color_labels, 25))+
+  geom_point()+ theme_classic()
+group_legend_vert <- get_legend(group_legend_vert)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend_vert.png", group_legend_vert, base_height = 1.5, base_width = 2)
 
 #PCoA plot over time as a still and a as an animation
 pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
@@ -695,7 +705,7 @@ hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stoo
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
 
 #Plot heatmap significant genera over time facet by genus
-facet_labels <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
+facet_labels <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia") 
 names(facet_labels) <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales  Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
 exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
 exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
