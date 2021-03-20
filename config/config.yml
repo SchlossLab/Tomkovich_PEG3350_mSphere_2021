@@ -5,7 +5,6 @@ ml_methods:
  - rf
  - rpart2
  - svmRadial
- - xgbTree
 kfold: 2
 training_frac: .5
 ncores: 36
