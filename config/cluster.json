@@ -1,0 +1,25 @@
+{
+ "__default__": {
+  "account_slurm": "pschloss1",
+  "partition": "standard",
+  "jobname": "{rule}.{wildcards}",
+  "nodes": 1,
+  "procs": 1,
+  "pmem": "8GB",
+  "walltime": "48:00:00",
+  "email": "tomkoset@umich.edu",
+  "mail_type": "FAIL",
+  "outfile": "log/hpc/jobs/{rule}.{wildcards}.out"
+ },
+ "preprocess_data": {
+  "procs": "{resources.ncores}",
+  "pmem": "2GB"
+ },
+ "run_ml": {
+  "procs": "{resources.ncores}",
+  "pmem": "4GB"
+ },
+ "combine_hp_performance": {
+  "pmem": "150GB"
+ }
+}
