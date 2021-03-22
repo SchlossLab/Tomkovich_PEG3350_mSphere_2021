@@ -15,7 +15,7 @@ FINAL_DIR=results/
 
 # Keep the first line of File1 and remove the first line of all the others and combine
 
-for model in "glmnet" "rf" "svmRadial" "rpart2" "xgbTree"
+for model in "glmnet" "rf" "svmRadial" 
 do
   	head -1 $SEARCH_DIR/"$model"_100_feature-importance.csv  > $SEARCH_DIR/combined_feature-importance_"$model".csv; tail -n +2 -q $SEARCH_DIR/"$model"_*_feature-importance.csv >> $SEARCH_DIR/combined_feature-importance_"$model".csv
     mv $SEARCH_DIR/combined_feature-importance_"$model".csv $FINAL_DIR/combined_feature-importance_"$model".csv
