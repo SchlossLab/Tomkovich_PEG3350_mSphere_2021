@@ -3,7 +3,6 @@ outcome_colname: outcome
 ml_methods:
  - glmnet
  - rf
- - rpart2
  - svmRadial
 kfold: 2
 training_frac: .5
