@@ -57,7 +57,7 @@ performance_otu <- otu_results %>%
 #file_path = path to the file name
 read_feat_imp <- function(file_path){
   feat_imp <- read_csv(file_path)
-  taxa_info <- read.delim('data/mothur/peg3350.taxonomy', header=T, sep='\t') %>%
+  taxa_info <- read.delim('data/process/peg3350.taxonomy', header=T, sep='\t') %>%
     select(-Size) %>%
     mutate(names=OTU) %>%
     select(-OTU)
@@ -107,9 +107,9 @@ color_scheme_df <-  top_20(rf_feat) %>%
   mutate(duplicate = n()) %>% #count number of features with same bacteria name
   #Create color scheme based on number of times taxa shows up in top 20
   mutate(color = case_when(duplicate == 1 ~ "#bababa",
-                           duplicate == 3 ~ "#404040",
-                           duplicate == 4 ~ "blue",
-                           duplicate == 7 ~ "#ca0020",
+                           duplicate == 2 ~ "#404040",
+                           duplicate == 3 ~ "blue",
+                           duplicate == 9 ~ "#ca0020",
                            TRUE ~ "yellow")) #Should catch all cases with above, update if any are yellow
 color_scheme <- color_scheme_df$color
 color_bact <- color_scheme_df$bactname 
