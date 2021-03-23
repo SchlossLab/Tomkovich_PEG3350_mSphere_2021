@@ -68,7 +68,7 @@ shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>%
-  ggplot(aes(x=group, y=shannon, colour=group))+
+  ggplot(aes(x=group, y=shannon, colour=group, alpha = day))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
@@ -135,8 +135,6 @@ shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,31), #removes day -15 here
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  labs(x = "Days Post-Infection",
-       y = "Shannon Diversity Index") +
   theme(legend.position = "none")+ #Removing legend to save separately
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
