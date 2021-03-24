@@ -68,7 +68,7 @@ shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>%
-  ggplot(aes(x=group, y=shannon, colour=group))+
+  ggplot(aes(x=group, y=shannon, colour=group, alpha = day))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
@@ -135,8 +135,6 @@ shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,31), #removes day -15 here
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  labs(x = "Days Post-Infection",
-       y = "Shannon Diversity Index") +
   theme(legend.position = "none")+ #Removing legend to save separately
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
@@ -314,25 +312,25 @@ axis1_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 1) %>% pull(loadi
 axis2_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
 #Import current R-squared values and P values for top contributing to PCoA
-permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
-r_sq_ordered_perm = permanova_results %>% arrange(desc(R2))
+#permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
+#r_sq_ordered_perm = permanova_results %>% arrange(desc(R2))
 # Select top 2 contributors (3 to include the total header at the top where R2=1)
-top_2_contrib = top_n(r_sq_ordered_perm, 3, R2) #top two R2 for this subset is group:unique_cage_no instead of group, unlike 1 day subset
-top_R2 = signif(top_2_contrib[2,6], 4)
-top_R2_title = top_2_contrib[2,1]
-sec_R2 = signif(top_2_contrib[3,6], 4)
-sec_R2_title = "Group: Cage" #Replace top_2_contrib[3,1] (originally written as group:unique_cage_no) with "Group: Cage" 
+#top_2_contrib = top_n(r_sq_ordered_perm, 3, R2) #top two R2 for this subset is group:unique_cage_no instead of group, unlike 1 day subset
+#top_R2 = signif(top_2_contrib[2,6], 4)
+#top_R2_title = top_2_contrib[2,1]
+#sec_R2 = signif(top_2_contrib[3,6], 4)
+#sec_R2_title = "Group: Cage" #Replace top_2_contrib[3,1] (originally written as group:unique_cage_no) with "Group: Cage" 
 #make titles their own variable nad have them get edited into upper case separately?
 
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_post_cdi_peg_stool)+
   labs(x = paste("PCoA 1 (", axis1_stool, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))+
-  annotate("text", x = -.6, y = .41, label = paste(str_to_title(top_R2_title)), size = 3.2) +
-  annotate("text", x = -.45, y = .41, label = paste(str_to_title(sec_R2_title)), size = 3.2) +
-  annotate("text", x = -.6, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.2) +
-  annotate("text", x = -.45, y = .375, label =  paste("italic(R)^2: ", sec_R2, sep = "" ), parse = TRUE, size = 3.2) +
-  annotate("text", x = -.6, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2) +
-  annotate("text", x = -.45, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
+       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))
+  #annotate("text", x = -.6, y = .41, label = paste(str_to_title(top_R2_title)), size = 3.2) +
+  #annotate("text", x = -.45, y = .41, label = paste(str_to_title(sec_R2_title)), size = 3.2) +
+  #annotate("text", x = -.6, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.2) +
+  #annotate("text", x = -.45, y = .375, label =  paste("italic(R)^2: ", sec_R2, sep = "" ), parse = TRUE, size = 3.2) +
+  #annotate("text", x = -.6, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2) +
+  #annotate("text", x = -.45, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
 save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 6, base_width = 6)
 
 #Animate stool only PCoA over time
@@ -705,8 +703,8 @@ hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stoo
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
 
 #Plot heatmap significant genera over time facet by genus
-facet_labels <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia") 
-names(facet_labels) <- c("Porphyromonadacea Unclassified", "Peptostreptococcaceae Unclassified", "Clostridiales  Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
+facet_labels <- c("Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia") 
+names(facet_labels) <- c("Peptostreptococcaceae Unclassified", "Clostridiales  Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
 exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
 exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
 
@@ -714,6 +712,11 @@ hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, fac
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 7, base_width = 15)
 
+#Plot alt heatmap sig genera over time facet by genus
+facet_labels_alt <- c("Porphyromonadaceae Unclassified", "Ruminococcaceae Unclassified", "Butyricicoccus", "Firmicutes Unclassified", "Erysipelotrichaceae Unclassified", "Blautia")
+hm_genera_facet_alt <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels_alt, hm_stool_days, exp_group_labels)+
+  scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet_alt.png", hm_genera_facet_alt, base_height = 7, base_width = 15)
 
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"

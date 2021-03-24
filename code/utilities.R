@@ -434,7 +434,7 @@ plot_shannon_overtime <- function(df) {
     group_by(group, day) %>%
     mutate(median_shannon = median(shannon)) %>%
     ggplot(x = day, y = shannon, colour = group)+
-    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -458,7 +458,7 @@ plot_richness_overtime <- function(df) {
     group_by(group, day) %>%
     mutate(median_sobs = median(sobs)) %>%
     ggplot(x = day, y = sobs, group = group, colour = group)+
-    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
