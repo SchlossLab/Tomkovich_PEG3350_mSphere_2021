@@ -12,7 +12,7 @@ diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
   mutate(day = case_when(group == "C" & day == "-15" ~ "baseline",
                          group == "M1" & day == "-11" ~ "baseline",
                          group == "1RM1" & day == "-2" ~ "baseline",
-                         TRUE ~ day))#Replace day -2 and day -1 with baseline to represent the pretreatment timepoint
+                         TRUE ~ day))#Replace day -2 and day -1 with baseline to represent the baseline timepoint
 
  diversity_data_subset <- diversity_data_subset %>%
    filter(day %in% c("baseline", 0, 1, 2, 4, 5, 7)) %>%
@@ -193,9 +193,14 @@ pcoa_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames 
-  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3) %>% #limit to experimental time frameampling cutoff
-  mutate(day = as.integer(day)) #Day variable (transformed to integer to get rid of decimals on PCoA animation
+  mutate(day = case_when(group == "C" & day == "-15" ~ "baseline",
+                         group == "M1" & day == "-11" ~ "baseline",
+                         group == "1RM1" & day == "-2" ~ "baseline",
+                         TRUE ~ day)) %>% #Replace day -2 and day -1 with baseline to represent the baseline timepoint
+  filter(!is.na(axis1)) %>%
+  filter(day %in% c("baseline", 0, 1, 2, 4, 5, 7)) %>%
+  mutate(day = fct_relevel(day, "baseline", "0", "1" , "2" , "4", "5" , "7")) #Specify the order of the days for plotting overtime#Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+  #mutate(day = as.integer(day)) #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
 #Pull axes from loadings file
 pcoa_axes_1_day_PEG <- read_tsv("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
@@ -210,7 +215,7 @@ top_2_contrib = top_n(r_sq_ordered_perm, 3, R2)
 top_R2 = signif(top_2_contrib[2,6], 4)
 sec_R2 = signif(top_2_contrib[3,6], 4)
 
-pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
+pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG) +
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = "")) +
   #annotate("text", x =.066, y = .41, label = paste(str_to_title(top_2_contrib[2,1])), size = 3.75) +
@@ -220,7 +225,8 @@ pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG)+
   #annotate("text", x =.066, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.5) +
   #annotate("text", x =.257, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.5) +
   theme(text = element_text(size = 14),
-        axis.text = element_text(size = 12))
+        axis.text = element_text(size = 12)) +
+  guides(alpha =guide_legend(nrow=1))
 save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8) 
 
 #Create stand alone legend
@@ -575,7 +581,7 @@ view(sig_genus_pairs_D7)
 
 
 #Create list of genera with the most relevant 5
-#Remove those that are significant in baseline vs. Day 7 comparisons, if still relevant at Day 7 then change is less directly caused by PEG treatment alone
+#Remove those that are significant in baseline vs. Day 7 comparisons, if still relevant at Day 7 then contributes less to C. difficile clearance
 sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
 #These genera showed changes unnoticable within the heatmaps which may not neccessarily be linked to PEG treatment + Unclassified genus is unknown
 sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
