@@ -505,14 +505,14 @@ hm_genus <- hm_plot_genus(agg_genus_data_subset, hm_sig_genera_p_adj, hm_days) +
   scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
 save_plot(filename = "results/figures/1_Day_PEG_genus_heatmap.png", hm_genus, base_height = 14, base_width = 15)
 
-#Wilcoxon Signed rank test for which bacteria changed from basline to D1 ----
+#Wilcoxon Signed rank test for which bacteria changed from baseline to D1 ----
 #Pull mice that have sequences in both baseline and Day 1
 baseline_D1_mice <- agg_genus_data_subset %>%
   filter(day == 'baseline' | day == 1) %>%
   filter(duplicated(unique_mouse_id)) %>%
   pull(unique_mouse_id)
 
-#Dataframe for statisticl analysis at genus level
+#Dataframe for statistical analysis at genus level
 paired_genus <- agg_genus_data_subset %>%
   filter(unique_mouse_id %in% baseline_D1_mice) %>% #Only select pairs with data for day -1 & day 0
   filter(day == 'baseline' | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
@@ -539,15 +539,53 @@ sig_genus_pairs <- pull_significant_taxa(genus_baselinetoD1_pairs_stats_adjust, 
 #16 genera
 view(sig_genus_pairs)
 
-#Choose names to remove to narrow down to 10 genera
-sig_genus_remove_names = c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
+
+#Wilcoxon signed rank rest for baseline vs Day 7 (genera which are significant here will should not be included in baseline vs Day 1 compairsons)
+#Pull mice that have sequences in both baseline and Day 1
+baseline_D7_mice <- agg_genus_data_subset %>%
+  filter(day == 'baseline' | day == 7) %>%
+  filter(duplicated(unique_mouse_id)) %>%
+  pull(unique_mouse_id)
+
+#Dataframe for statistical analysis at genus level
+paired_genus_D7 <- agg_genus_data_subset %>%
+  filter(unique_mouse_id %in% baseline_D7_mice) %>% #Only select pairs with data for day -1 & day 0
+  filter(day == 'baseline' | day == 7) %>% #Experiment days that represent initial community and community post clindamycin treatment
+  mutate(day = as.factor(day)) %>% 
+  select(day, genus, agg_rel_abund)
+
+#Wilcoxon signed rank test for all baseline and Day 1 pairs at the genus level:
+genus_baselinetoD7_pairs <- paired_genus_D7 %>% 
+  group_by(genus) %>% 
+  nest() %>% 
+  mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$day)) %>% tidy())) %>% 
+  mutate(median = map(data, get_rel_abund_median_day)) %>% 
+  unnest(c(model, median)) %>% 
+  ungroup()
+#Adjust p-values for testing multiple genera
+genus_baselinetoD7_pairs_stats_adjust <- genus_baselinetoD7_pairs %>% 
+  select(genus, statistic, p.value, method, `baseline`, `7`) %>% 
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+  arrange(p.value.adj) %>% 
+  write_tsv(path = "data/process/1_Day_PEG_genus_stats_PTtoD7.tsv")
+#Pull significant genera changed between baseline and Day 7
+sig_genus_pairs_D7 <- pull_significant_taxa(genus_baselinetoD7_pairs_stats_adjust, genus)
+#8 genera
+view(sig_genus_pairs_D7)
+
+
+#Create list of genera with the most relevant 5
+#Remove those that are significant in baseline vs. Day 7 comparisons, if still relevant at Day 7 then change is less directly caused by PEG treatment alone
+sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
+#These genera showed changes unnoticable within the heatmaps which may not neccessarily be linked to PEG treatment + Unclassified genus is unknown
+sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
                            "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified","Lachnospiraceae Unclassified", "Clostridiales Unclassified")
+sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_remove_names)]
 
-#Create list with the most relevant 10
-sig_genus_top_list = sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_remove_names)]
-view(sig_genus_top_list)
-
+#Plot Genus pairwise results----
 #Plot all significant genera from baseline to Day 1 facted by genus
+
+
 facet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
 hm_baselinetoD1_all_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_pairs, hm_days, rev(color_labels)) +
@@ -556,12 +594,12 @@ save_plot(filename = "results/figures/1_Day_PEG_genus_all_baselinetoD1_heatmap.p
 
 
 #Plot most relevant genera from baseline to Day 1 facted by genus
-xfacet_labels <- sig_genus_pairs
+facet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
-
 hm_baselinetoD1_10_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_top_list, hm_days, rev(color_labels)) +
   scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
 save_plot(filename = "results/figures/1_Day_PEG_genus_10_baselinetoD1_heatmap.png", hm_baselinetoD1_10_genera, base_height = 7, base_width = 15)
+
 
 
 
