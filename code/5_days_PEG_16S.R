@@ -799,10 +799,19 @@ sig_genus_pairs <- c(WMR_sig_genus_pairs, ro_groups_sig_genus_pairs) %>%
 facet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
 
-filter(agg_genus_data_subset, day == "1" & genus == "Acetatifactor")
+#Find which days have samples from all groups
+day_freq <- agg_genus_data_subset %>%
+  group_by(day, group) %>%
+  summarize(day = unique(day), group = color_groups) %>%
+  table() %>%
+  as.data.frame() %>%
+  filter(Freq == 4)
+  
+genus_pair_days = unique(day_freq$day) #Days -1, -5, 0, 1, 3, 5, and 6 have samples from all groups
 
 #Plot all significant genus pairs for all timepoints and groups
 sig_genus_pair_plot <- agg_genus_data_subset %>% 
+  filter(day %in% genus_pair_days) %>%
   mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
   mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
                            "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% 
@@ -826,9 +835,5 @@ sig_genus_pair_plot <- agg_genus_data_subset %>%
          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
          text = element_text(size = 16)) # Change font size for entire plot
 save_plot(filename = "results/figures/5_Day_PEG_genus_pairs_heatmap.png", sig_genus_pair_plot, base_height = 7, base_width = 20)
-#Find which days have samples from all groups
-agg_genus_data_subset %>%
-  group_by(day, group) %>%
-  summarize(day = unique(day), group = color_groups) %>%
-  table() # Days -1, -5, 0, 1, 3, 5, and 6 have samples from all groups
+
 
