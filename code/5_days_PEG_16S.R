@@ -781,11 +781,14 @@ ro_groups_genus_peg_effect_pairs <- ro_groups_paired_genus %>%
 WMR_genus_effect_adj <- WMR_genus_peg_effect_pairs %>% 
   select(genus, statistic, p.value, method, `-15`, `-10`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
-  arrange(p.value.adj) 
+  arrange(p.value.adj) %>%
+  rename("baseline" = `-15`, "Post-PEG" = `-10`) #Rename to established baseline and post-PEG timepoints
 ro_groups_effect_adj <- ro_groups_genus_peg_effect_pairs %>% 
   select(genus, statistic, p.value, method, `-5`, `1`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
-  arrange(p.value.adj) 
+  arrange(p.value.adj) %>%
+  rename("baseline" = `-5`, "Post-PEG" = `1`) #Rename to established baseline and post-PEG timepoints
+  
 
 #Pull significant genera from adjusted p-value dataframes
 WMR_sig_genus_pairs <- pull_significant_taxa(WMR_genus_effect_adj, genus)
@@ -809,7 +812,7 @@ day_freq <- agg_genus_data_subset %>%
   
 genus_pair_days = unique(day_freq$day) #Days -1, -5, 0, 1, 3, 5, and 6 have samples from all groups
 
-#Plot all significant genus pairs for all timepoints and groups
+#Plot all significant genus pairs for all timepoints and groups----
 sig_genus_pair_plot <- agg_genus_data_subset %>% 
   filter(day %in% genus_pair_days) %>%
   mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
@@ -834,6 +837,47 @@ sig_genus_pair_plot <- agg_genus_data_subset %>%
          strip.background = element_blank(), #get rid of box around facet_wrap labels
          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
          text = element_text(size = 16)) # Change font size for entire plot
-save_plot(filename = "results/figures/5_Day_PEG_genus_pairs_heatmap.png", sig_genus_pair_plot, base_height = 7, base_width = 20)
+save_plot(filename = "results/figures/5_days_PEG_genus_pairs.png", sig_genus_pair_plot, base_height = 7, base_width = 20)
+
+
+
+
+
+#Plot of significant genera post-PEG treatment----
+facet_labels <- c("Baseline", "PEG Treatment")
+names(facet_labels) <- c(-5, 1)
+
+peg_impacted_genera_no_WMR_plot <- agg_genus_data_subset %>% 
+  filter(genus %in% ro_groups_sig_genus_pairs) %>% 
+  filter(day %in% c(-5, 1)) %>% #Select baseline and post-peg timepoints
+  filter(group != "WMR") %>%
+  mutate(genus=factor(genus, levels=ro_groups_sig_genus_pairs)) %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/5437) %>% 
+  ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_hline(yintercept=1/5437, color="gray")+
+  stat_summary(fun = 'median', 
+               fun.max = function(x) quantile(x, 0.75), 
+               fun.min = function(x) quantile(x, 0.25),
+               position = position_dodge(width = 1)) +  
+  labs(title=NULL, 
+       x=NULL,
+       y="Relative abundance (%)")+
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
+  coord_flip()+
+  theme_classic()+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed")+
+  theme(plot.title=element_text(hjust=0.5),
+        text = element_text(size = 16),# Change font size for entire plot
+        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        strip.background = element_blank(),
+        legend.position = "none") 
+save_plot(filename = paste0("results/figures/5_days_peg_impacted_genera_no_WMR_plot.png"), peg_impacted_genera_no_WMR_plot, base_height = 9, base_width = 9)
+
+
 
 
