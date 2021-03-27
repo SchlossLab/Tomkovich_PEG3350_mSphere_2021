@@ -3,9 +3,10 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 #Goal: use Machine learning models to predict mice that clear within 10 days or remain colonized for longer than 10 days
 
 #For this analysis, we will only examine the groups of mice that were challenged with C. diff
-cdiff_groups <- c("C", "WM", "WMC", "WMR",
+cdiff_groups <- c("C", "WM", "WMC",
                 "M1", "1RM1",
                 "CWM", "FRM", "RM")
+#Remove WMR group because appearance in C. diff was delayed relative to the other PEG-treated mice
 
 #Figure out the timepoints that have the largest number of samples with sequencing data
 #Select samples from only mice that were challenged with C. difficile
@@ -31,7 +32,8 @@ num_days <- cdiff_diversity_stools %>%
 
 #Select metadata rows where we no d10 C. difficile colonization status
 metadata <- metadata %>% 
-  filter(!clearance_status_d10 == "no_data")
+  filter(!clearance_status_d10 == "no_data") %>% 
+  filter(!group == "WMR") #Remove WMR group
 
 #Read in OTU data----
 otu_data <- read_tsv("data/process/peg3350.opti_mcc.0.03.subsample.shared", col_types=cols(Group=col_character())) %>%
@@ -55,15 +57,15 @@ subset_ml_input <- function(timepoint){
 
 #Create 5dpi ml input data to predict d10 clearance status based on bacterial communities-----
 d5_input <- subset_ml_input(5)
-#77 mice
+#69 mice
 #Examine the balance of cleared vs colonized mice
 d5_input %>% count(outcome)
-#37 cleared, 40 mice colonized
+#36 cleared, 33 mice colonized
 #Create 1dpi ml input data to predict d10 clearance status based on bacterial communities-----
 d1_input <- subset_ml_input(1)
-#70 mice
+#61 mice
 d1_input %>% count(outcome)
-#38 mice cleared, 32 mice colonized
+#36 mice cleared, 25 mice colonized
 
-#Consider making additional input data with WMR group, seems more unique in terms of being able to detect
+#Excluded WMR group because these mice seemed more unique in terms of being able to detect C. diff
 #C. difficile relative abundance in the 16S data compared to the other PEG groups

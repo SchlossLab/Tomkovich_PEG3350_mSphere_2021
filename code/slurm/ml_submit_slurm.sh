@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=mikropml_d10_status_w_d5_otu_data
+#SBATCH --job-name=mikropml_d5_otu_data_minus_WMR
 
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
