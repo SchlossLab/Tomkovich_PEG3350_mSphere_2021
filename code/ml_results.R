@@ -109,7 +109,7 @@ color_scheme_df <-  top_20(rf_feat) %>%
   mutate(color = case_when(duplicate == 1 ~ "#bababa",
                            duplicate == 2 ~ "#404040",
                            duplicate == 3 ~ "blue",
-                           duplicate == 9 ~ "#ca0020",
+                           duplicate == 11 ~ "#ca0020",
                            TRUE ~ "yellow")) #Should catch all cases with above, update if any are yellow
 color_scheme <- color_scheme_df$color
 color_bact <- color_scheme_df$bactname 
