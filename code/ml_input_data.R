@@ -34,12 +34,12 @@ metadata <- metadata %>%
   filter(!clearance_status_d10 == "no_data")
 
 #Read in OTU data----
-otu_data <- read_tsv("data/process/peg3350.opti_mcc.0.03.subsample.shared", col_types=cols(Group=col_character())) %>%
+otu_data <- read_tsv("data/process/peg3350.subsample.genus.shared", col_types=cols(Group=col_character())) %>%
   select(-label, -numOtus) %>%
   rename(unique_label = Group) %>% #group is the same as unique_label in the metadata data frame
   gather(-unique_label, key="otu", value="count") %>%
   mutate(rel_abund=count/1000) %>%  #Use 1000, because this is the subsampling parameter chosen.
-  filter(!otu == "Otu0012") %>% #Remove C. difficile OTU
+  filter(!otu == "Otu008") %>% #Remove C. difficile OTU (Genus = Peptostreptococcacea_unclassified)
   pivot_wider(id_cols = unique_label, names_from = otu, values_from = rel_abund)%>% #Transform dataframe so that each OTU is a different column
   left_join(select(metadata, clearance_status_d10, unique_label, day), by = "unique_label") %>% 
   rename(outcome = clearance_status_d10) %>%  #Rename group to outcome, this is what we will classify based on OTU relative abundances
