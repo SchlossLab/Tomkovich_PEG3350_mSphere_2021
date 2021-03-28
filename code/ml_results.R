@@ -144,5 +144,9 @@ plot_feat_imp <- function(df, top_otus){
 }
 
 #Plot feature importances for the top OTUs for each comparison----
-plot_feat_imp(rf_feat, rf_top_feat)+
+rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_otu.png", height = 5, width = 8)
+
+#Make composite figure of ML results for 5dpi----
+plot_grid(performance_otu, rf_feat_5dpi, labels = c("A", "B"), label_size = 12, ncol=1)+
+  ggsave("results/figures/ml_summary_5dpi_otu.pdf", width=5, height=8)
