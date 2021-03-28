@@ -143,6 +143,12 @@ metadata <- seq_prep_metadata %>%
   mutate(group = replace_na(group, "not_applicable")) %>% 
   mutate(exp_num = replace_na(exp_num, "not_applicable")) %>% 
   mutate(day = replace_na(day, "not_applicable")) %>% 
+  #Make a column for subset designation (5-day, 1-day, post-CDI, or C for clindamycin mice)
+  mutate(subset = case_when(group %in% c("WM", "WMR", "WMC", "WMN") ~ "5-day",
+                            group %in% c("M1", "1RM1") ~ "1-day",
+                            group %in% c("CWM", "FRM", "RM") ~ "post-CDI",
+                            group %in% c("C", "CN") ~ "clind.",
+                            TRUE ~ "not_applicable")) %>% 
   mutate(group = factor(group, levels = unique(as.factor(group))), #Transform group variable into factor variable
          unique_cage_no = factor(unique_cage_no, levels = unique(as.factor(unique_cage_no))), #Transform unique_cage_no variable into factor variable, add PT level to indicate pre-treatment samples
          exp_num = factor(exp_num, levels = unique(as.factor(exp_num))), #Transform exp_num variable into factor variable
@@ -156,7 +162,7 @@ metadata <- seq_prep_metadata %>%
                                           cfu_d8 == 0 & cfu_d10 > 0 ~ "colonized", #Some mice from WMR group did not show up as colonized until later timepoints, 10_M6 WMR mouse only showed up as colonized on d30?
                                           cfu_d8 == 0 ~ "cleared", #some of the mice from the 1-day PEG subset only have CFU quantified through d8
                                           cfu_d10 == 0 ~ "cleared",
-                                          TRUE ~ "no_data"))
+                                          TRUE ~ "no_data")) 
 
 #Check numbers of each group that have cleared or remain colonized with C. diff by d10
 clear_v_col <- metadata %>% 
