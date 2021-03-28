@@ -116,7 +116,7 @@ plot_feat_imp <- function(df, top_feat){
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
           text = element_text(size = 15),# Change font size for entire plot
-          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
+          axis.text.y = element_text(face = "italic"), #Genus in italics
           strip.background = element_blank(),
           legend.position = "none")   
 }
@@ -125,7 +125,54 @@ plot_feat_imp <- function(df, top_feat){
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_genus.png", height = 5, width = 8)
 
+#Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
+source("code/16S_common_files.R") #Reads in mothur output files
+
+#Create shape scale based on each subset group
+shape_scheme <- c(1, 4, 19, 8)
+shape_groups <- c("clind.", "1-day", "5-day", "post-CDI")
+shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
+
+interp_genera_d5_top_10 <- rf_top_feat[1:10]
+#Plot the top 10 features that were important to Day 5 model and 
+#using facet_wrap, highlight the OTUs that correlate with colonization
+top10_d5_model_taxa <- agg_genus_data %>% 
+  filter(day == 5) %>% #Used d5 timepoint for ml input data
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(genus %in% interp_genera_d5_top_10) %>%
+  #Reorder genera to match contribution to model
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
+  group_by(clearance_status_d10, genus) %>% 
+  mutate(median=(median(agg_rel_abund))) %>% #create a column of median values for each group
+  ungroup() %>% 
+  ggplot(aes(x=clearance_status_d10, y =agg_rel_abund, colour= clearance_status_d10))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  geom_errorbar(aes(ymax = median, ymin = median), color = "gray50", size = 1)+ #Add lines to indicate the median for each group to the plot
+  geom_jitter(aes(shape = subset), size=2, show.legend = TRUE, alpha = .4) +
+  scale_colour_manual(name=NULL,
+                      values=c("seagreen3", "mediumpurple"),
+                      breaks=c("cleared", "colonized"),
+                      labels=c("cleared", "colonized"))+
+  scale_shape_manual(name=NULL,
+                     values=shape_scheme,
+                     breaks=shape_groups,
+                     labels=shape_labels)+
+  geom_hline(yintercept=1/1000, color="gray")+
+  facet_wrap(~ genus, nrow=2, labeller = label_wrap_gen(width = 10))+
+  labs(title=NULL,
+       x=NULL,
+       y="Relative abundance (%)") +
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  theme_classic()+
+  theme(text = element_text(size = 14),
+        strip.text = element_text(hjust = 0.5, size = 6.8, face = "italic"),
+        axis.text.x = element_blank(),
+        legend.position = "bottom")
+save_plot(filename = paste0("results/figures/ml_d5_top10_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
+
 #Make composite figure of ML results for 5dpi----
-plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, ncol=1)+
-  ggsave("results/figures/ml_summary_5dpi_genus.pdf", width=5, height=8)
-  
+top_panel <- plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, nrow=1, rel_widths = c(1,2))
+plot_grid(top_panel, top10_d5_model_taxa, labels = NULL, label_size = 12, ncol=1)+
+  ggsave("results/figures/ml_summary_5dpi_genus.pdf", width=8, height=8)
+
