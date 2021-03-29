@@ -149,6 +149,10 @@ plot_feat_imp <- function(df, top_otus){
           legend.position = "none")   
 }
 
+#Plot feature importances for the top OTUs for each comparison----
+rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
+  ggsave("results/figures/ml_top_features_otu.png", height = 5, width = 8)
+
 #Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
 source("code/16S_common_files.R") #Reads in mothur output files
 
