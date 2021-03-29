@@ -100,6 +100,12 @@ top_20 <- function(df){
 
 #Top 20 OTUs for each input dataset with the random forest model
 rf_top_feat <- top_20(rf_feat) %>% pull(otu)
+rf_top_feat_otu_name <-  rf_feat %>%    #Otu names of top 20 features 
+  group_by(otu_name, bactname) %>% 
+  summarize(median = median(perf_metric_diff)) %>% #Get the median performance metric diff. for each feature
+  arrange(desc(median)) %>% #Arrange from largest median to smallest
+  head(20) %>% 
+  pull(otu_name)
 
 #Create color schemes based on OTUs with the same taxa name----
 color_scheme_df <-  top_20(rf_feat) %>% 
@@ -147,25 +153,23 @@ plot_feat_imp <- function(df, top_otus){
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_otu.png", height = 5, width = 8)
 
-#Make composite figure of ML results for 5dpi----
-plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, ncol=1)+
-  ggsave("results/figures/ml_summary_5dpi_otu.pdf", width=5, height=8)
-  
 #Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
 source("code/16S_common_files.R") #Reads in mothur output files
 
 #Create shape scale based on each subset group
-shape_scheme <- c(4, 19, 1, 8)
-shape_groups <- c("1-day", "5-day", "clind.", "post-CDI")
-shape_labels <- c("1-day", "5-day", "Clind.", "Post-CDI")
- 
+shape_scheme <- c(1, 4, 19, 8)
+shape_groups <- c("clind.", "1-day", "5-day", "post-CDI")
+shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
+
 interp_otus_d5_top_10 <- rf_top_feat[1:10]
+interp_otus_d5_top_10_names <- rf_top_feat_otu_name[1:10]
 #Plot the top 10 features that were important to Day 5 model and 
 #using facet_wrap, highlight the OTUs that correlate with colonization
 top10_d5_model_taxa <- agg_otu_data %>% 
   filter(day == 5) %>% #Used d5 timepoint for ml input data
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
   filter(otu %in% interp_otus_d5_top_10) %>%
+  mutate(otu_name = fct_relevel(otu_name, interp_otus_d5_top_10_names)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
   group_by(clearance_status_d10, otu) %>% 
   mutate(median=(median(agg_rel_abund))) %>% #create a column of median values for each group
@@ -195,6 +199,7 @@ top10_d5_model_taxa <- agg_otu_data %>%
         legend.position = "bottom")
 save_plot(filename = paste0("results/figures/ml_d5_top10_otus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)
 
-
-
-
+#Make composite figure of ML results for 5dpi----
+top_panel <- plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, nrow=1, rel_widths = c(1,2))
+plot_grid(top_panel, top10_d5_model_taxa, labels = NULL, label_size = 12, ncol=1)+
+  ggsave("results/figures/ml_summary_5dpi_otu.pdf", width=8, height=8)
