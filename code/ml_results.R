@@ -168,6 +168,7 @@ interp_otus_d5_top_10_names <- rf_top_feat_otu_name[1:10]
 top10_d5_model_taxa <- agg_otu_data %>% 
   filter(day == 5) %>% #Used d5 timepoint for ml input data
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(group != "WMR") %>% #remove WMR mice
   filter(otu %in% interp_otus_d5_top_10) %>%
   mutate(otu_name = fct_relevel(otu_name, interp_otus_d5_top_10_names)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
