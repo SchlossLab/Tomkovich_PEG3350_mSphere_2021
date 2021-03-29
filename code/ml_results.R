@@ -100,6 +100,12 @@ top_20 <- function(df){
 
 #Top 20 OTUs for each input dataset with the random forest model
 rf_top_feat <- top_20(rf_feat) %>% pull(otu)
+rf_top_feat_otu_name <-  rf_feat %>%    #Otu names of top 20 features 
+  group_by(otu_name, bactname) %>% 
+  summarize(median = median(perf_metric_diff)) %>% #Get the median performance metric diff. for each feature
+  arrange(desc(median)) %>% #Arrange from largest median to smallest
+  head(20) %>% 
+  pull(otu_name)
 
 #Create color schemes based on OTUs with the same taxa name----
 color_scheme_df <-  top_20(rf_feat) %>% 
@@ -147,6 +153,54 @@ plot_feat_imp <- function(df, top_otus){
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_otu.png", height = 5, width = 8)
 
+#Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
+source("code/16S_common_files.R") #Reads in mothur output files
+
+#Create shape scale based on each subset group
+shape_scheme <- c(1, 4, 19, 8)
+shape_groups <- c("clind.", "1-day", "5-day", "post-CDI")
+shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
+
+interp_otus_d5_top_10 <- rf_top_feat[1:10]
+interp_otus_d5_top_10_names <- rf_top_feat_otu_name[1:10]
+#Plot the top 10 features that were important to Day 5 model and 
+#using facet_wrap, highlight the OTUs that correlate with colonization
+top10_d5_model_taxa <- agg_otu_data %>% 
+  filter(day == 5) %>% #Used d5 timepoint for ml input data
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(otu %in% interp_otus_d5_top_10) %>%
+  mutate(otu_name = fct_relevel(otu_name, interp_otus_d5_top_10_names)) %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
+  group_by(clearance_status_d10, otu) %>% 
+  mutate(median=(median(agg_rel_abund))) %>% #create a column of median values for each group
+  ungroup() %>% 
+  ggplot(aes(x=clearance_status_d10, y =agg_rel_abund, colour= clearance_status_d10))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  geom_errorbar(aes(ymax = median, ymin = median), color = "gray50", size = 1)+ #Add lines to indicate the median for each group to the plot
+  geom_jitter(aes(shape = subset), size=2, show.legend = TRUE, alpha = .4) +
+  scale_colour_manual(name=NULL,
+                      values=c("seagreen3", "mediumpurple"),
+                      breaks=c("cleared", "colonized"),
+                      labels=c("cleared", "colonized"))+
+  scale_shape_manual(name=NULL,
+                     values=shape_scheme,
+                     breaks=shape_groups,
+                     labels=shape_labels)+
+  geom_hline(yintercept=1/1000, color="gray")+
+  facet_wrap(~ otu_name, nrow=2)+
+  labs(title=NULL,
+       x=NULL,
+       y="Relative abundance (%)") +
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  theme_classic()+
+  theme(text = element_text(size = 14),
+        strip.text = element_markdown(hjust = 0.5, size = 6.8),
+        axis.text.x = element_blank(),
+        legend.position = "bottom")
+save_plot(filename = paste0("results/figures/ml_d5_top10_otus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)
+
 #Make composite figure of ML results for 5dpi----
-plot_grid(performance_otu, rf_feat_5dpi, labels = c("A", "B"), label_size = 12, ncol=1)+
-  ggsave("results/figures/ml_summary_5dpi_otu.pdf", width=5, height=8)
+top_panel <- plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, nrow=1, rel_widths = c(1,2))
+plot_grid(top_panel, top10_d5_model_taxa, labels = NULL, label_size = 12, ncol=1)+
+  ggsave("results/figures/ml_summary_5dpi_otu_no_WMR.pdf", width=8, height=8)
+
