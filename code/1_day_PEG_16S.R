@@ -225,7 +225,8 @@ pcoa_subset_plot <- plot_pcoa(pcoa_1_day_PEG) +
   #annotate("text", x =.066, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.5) +
   #annotate("text", x =.257, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.5) +
   theme(text = element_text(size = 14),
-        axis.text = element_text(size = 12)) +
+        axis.text = element_text(size = 12),
+        legend.position = "none") +
   guides(alpha =guide_legend(nrow=1))
 save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 8) 
 
@@ -634,7 +635,7 @@ line_plot_baselinetoD1_5_genera <- agg_genus_data_subset %>%
        y="Relative Abundance") +
   theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
         strip.text = element_text(face = "italic"),
-        legend.position = "none",
+        legend.position = "bottom",
         plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
         text = element_text(size = 16)) # Change font size for entire plot
 save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
