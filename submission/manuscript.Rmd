@@ -92,9 +92,15 @@ We thank members of the Schloss lab for feedback on planning the experiments and
 
 
 \newpage
+```{r sample_size for figure legends}
+
+test <- 4
+
+
+```
 
 \includegraphics{figure_1.pdf}
-**Figure 1. Chronic PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for subset of experiments with 5-day PEG treated mice. B. *C. difficile* CFU/gram stool measured over time (N = `(insert variable name)`-`(insert variable name)` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mcie came off of the PEG treatment) or early deaths. Lines represent the median for each source and circles represent individual mouse samples.
+**Figure 1. Chronic PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for subset of experiments with 5-day PEG treated mice. B. *C. difficile* CFU/gram stool measured over time (N = `r test`-`(insert variable name)` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mcie came off of the PEG treatment) or early deaths. Lines represent the median for each source and circles represent individual mouse samples.
 
 
 \newpage
