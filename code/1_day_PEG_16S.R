@@ -584,29 +584,60 @@ view(sig_genus_pairs_D7)
 #Remove those that are significant in baseline vs. Day 7 comparisons, if still relevant at Day 7 then contributes less to C. difficile clearance
 sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
 #These genera showed changes unnoticable within the heatmaps which may not neccessarily be linked to PEG treatment + Unclassified genus is unknown
+#Narrow down to bacteriodes, eneterobacteriaceae, porphyromonadaceae,ruminococcaceae and peptostreptococcaeae
+#These above genera show the most noticeable % abundance change differences in PEG treated mice when compared to clindamycin treated mice
+#This then shows the effect PEG has when compared to our control of clind.
 sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
-                           "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified","Lachnospiraceae Unclassified", "Clostridiales Unclassified")
+                           "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified","Lachnospiraceae Unclassified", "Clostridiales Unclassified",
+                           "Acetatifactor", "Akkermansia", "Butyricicoccus")
 sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_remove_names)]
 
 #Plot Genus pairwise results----
-#Plot all significant genera from baseline to Day 1 facted by genus
-
-
-facet_labels <- sig_genus_pairs
-names(facet_labels) <- sig_genus_pairs
-hm_baselinetoD1_all_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_pairs, hm_days, rev(color_labels)) +
-  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
-save_plot(filename = "results/figures/1_Day_PEG_genus_all_baselinetoD1_heatmap.png", hm_baselinetoD1_all_genera, base_height = 14, base_width = 15)
 
 
 #Plot most relevant genera from baseline to Day 1 facted by genus
 facet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
-hm_baselinetoD1_10_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_top_list, hm_days, rev(color_labels)) +
-  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
-save_plot(filename = "results/figures/1_Day_PEG_genus_10_baselinetoD1_heatmap.png", hm_baselinetoD1_10_genera, base_height = 7, base_width = 15)
+hm_baselinetoD1_5_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_top_list, hm_days, rev(color_labels)) +
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7")) +
+  facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 10)) 
+save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_heatmap.png", hm_baselinetoD1_5_genera, base_height = 4, base_width = 15)
 
 
+#Plot genus pairwise results in a line plot faceted by genus
+facet_labels <- sig_genus_pairs
+names(facet_labels) <- sig_genus_pairs
+
+line_plot_baselinetoD1_5_genera <- agg_genus_data_subset %>%
+  mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
+  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+  mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                           "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
+  filter(genus %in% sig_genus_top_list) %>%
+  filter(day %in% hm_days) %>% 
+  group_by(group, genus, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(mapping = aes(x=day, y=median, group=group, color=group))+
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7")) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  labs(title=NULL,
+       x=NULL,
+       y=NULL)+
+  facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 10)) + 
+  theme_classic()+
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative Abundance") +
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        strip.text = element_text(face = "italic"),
+        legend.position = "none",
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16)) # Change font size for entire plot
+save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
 
 
