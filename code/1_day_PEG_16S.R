@@ -244,7 +244,7 @@ pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title
-  transition_time(day)+  #Day variable used to cycle through time on animation
+  transition_time(as.integer(day))+  #Day variable used to cycle through time on animation
   shadow_mark() #Shows previous timepoints
 
 # Implement better frames per second for animation
