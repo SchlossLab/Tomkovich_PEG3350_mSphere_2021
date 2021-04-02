@@ -618,7 +618,6 @@ genus_day15_stats <- pairwise_day_genus(15, sig_genus_day15)
 genus_pairwise_stools <- rbind(genus_day2_stats, genus_day3_stats, genus_day5_stats, genus_day6_stats, genus_day7_stats, genus_day8_stats, genus_day10_stats, genus_day15_stats)
 genus_pairwise_stools_5plusdpi <- rbind(genus_day5_stats, genus_day6_stats, genus_day7_stats, genus_day8_stats, genus_day10_stats, genus_day15_stats)
 
-
 #Heatmap of significant genera ranked by
 #Rank genera by adjusted p-value
 hm_sig_genera_p_adj <- kw_genus_stools %>% 
@@ -635,7 +634,7 @@ names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to gro
 agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
 hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30)) 
-save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 10)
 
 #Plot heatmap significant genera over time facet by genus
 facet_labels <- c("Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia") 
