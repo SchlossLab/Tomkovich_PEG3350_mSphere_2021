@@ -161,8 +161,7 @@ dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.av
 
 #Read in pcoa loadings and axes for 5_day_PEG PCoA subsets (stools and tissues). Excludes mock samples
 
-#Pull 5_Day_PEG subset of PCoA 
-#Stool Subset
+#Pull 5_Day_PEG subset PCoA of stool samples
 pcoa_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
@@ -177,7 +176,7 @@ axis2 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% r
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/5_Day_PEG_stool_PCoA.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
+save_plot(filename = paste0("results/figures/5_days_PEG_stool_PCoA.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
 
 ##Animation of PCoA plot: Stool Subset--
 pcoa_animated_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
@@ -210,8 +209,8 @@ pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and use left_join to keep all samples in pcoa data frame
-  filter(!is.na(axis1)) %>%  #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(!group %in% c("WMN", "CN")) #Remove the mock challenged mice
+  mutate(day = as.numeric(day)) %>% #Transform day into continuous
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
 
 #Pull axes from loadings file
 pcoa_axes_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
@@ -224,8 +223,7 @@ pcoa_subset_plot_tissue <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   scale_alpha_continuous(range = c(.3, 1),
                          breaks= c(4, 6, 20, 30),
                          labels=c(4, 6, 20, 30))
-
-save_plot(filename = paste0("results/figures/5_Day_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 5)
+save_plot(filename = paste0("results/figures/5_days_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 5)
 
 #PCoA faceted over time
 pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG_tissues)+
