@@ -6,8 +6,10 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8", "7f5f1e") #Adapted
 color_groups <- c("C", "CWM", "FRM", "RM", "FMT")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350", "FMT")
 
-metadata <- metadata %>%
-  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+#Try only transforming day to integer on plots plotting 
+#metadata <- metadata %>%
+#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+#Without transformation day column is a character variable
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
@@ -61,8 +63,6 @@ kruskal_wallis_shannon <- function(diversity_subset, timepoints, subset_name){
 kw_shannon_stools <- kruskal_wallis_shannon(diversity_stools, stool_test_days, "stools")
 sig_shannon_days_stools <- pull_sig_days(kw_shannon_stools)
 
-
-
 #Plot Shannon
 shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
@@ -98,12 +98,13 @@ save_plot("results/figures/post_CDI_PEG_shannon.png", shannon_post_cdi_peg_no_le
 legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg) %>% as_ggplot()
 save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
 
-#Plot Shannon over time days -1 to 30 for post CDI PEG subset
+#Plot Shannon over time days -1 to 30 for post CDI PEG subset: all samples except FMTs
 x_annotation <- sig_shannon_days_stools
 y_position <- max(diversity_stools$shannon)+ 0.05
 label <- kw_label(kw_shannon_stools)
 shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMTs
+  filter(day != "-15") %>% #Remove -15 timepoint
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,35), #removes day -15 here
@@ -114,7 +115,7 @@ shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
 save_plot("results/figures/post_CDI_PEG_shannon_overtime.png", shannon_post_cdi_peg_overtime_full) #Save full Shannon over time plot without legend
 
 
-#Plot Shannon over time for first 10 days for post CDI PEG subset
+#Plot Shannon over time for first 10 days for post CDI PEG subset (all samples)
 shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10),
