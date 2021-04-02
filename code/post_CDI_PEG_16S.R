@@ -119,12 +119,13 @@ save_plot("results/figures/post_CDI_PEG_shannon_overtime.png", shannon_post_cdi_
 shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10),
-                     limits = c(-2,11),
-                     minor_breaks = c(-2.5:10.5)) +
+                     limits = c(-1.5,10.5),
+                     minor_breaks = c(-1.5:10.5)) +
   labs(x = "Day",
        y = "Shannon Diversity Index") +
   theme(legend.position = "none")
 save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
+#Warning because stat for day 15 annotation is removed when we limit x axis to day 1:10
 
 #Plot Shannon over time for stools only
 x_annotation <- sig_shannon_days_stools
@@ -219,6 +220,7 @@ y_position <- max(diversity_stools$sobs)+1.5
 label <- kw_label(kw_richness_stools)
 sobs_post_CDI_PEG_stool <- diversity_stools %>%
   filter(group != "FMT") %>% #Remove FMTs
+  filter(day != "-15") %>% #Remove -15 timepoint
   plot_richness_overtime()+
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2, 31),
@@ -231,7 +233,6 @@ sobs_post_CDI_PEG_stool <- diversity_stools %>%
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 50, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = 50, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot("results/figures/post_CDI_PEG_richness_overtime_stool.png", sobs_post_CDI_PEG_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
 
 #Plot Stool + Tissue PCoA data----
 #Pull post_CDI_PEG subset of PCoA data
