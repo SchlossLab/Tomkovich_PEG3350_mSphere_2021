@@ -165,6 +165,7 @@ pcoa_5_day_PEG <- read_tsv("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and use left_join to keep all samples in pcoa data frame
+  mutate(day = as.numeric(day)) %>% #Transform day into continuous variable
   filter(!is.na(axis1)) %>%  #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
   filter(!group %in% c("WMN", "CN")) #Remove the mock challenged mice
   
@@ -196,9 +197,8 @@ pcoa_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
   left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
+  mutate(day = as.numeric(day)) %>% #Transform day into continuous
   filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-
-pcoa_5_day_PEG_stool<- subset(pcoa_5_day_PEG_stool, !group %in% c("WMN", "CN"))
 
 pcoa_axes_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
 axis1 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
@@ -207,7 +207,6 @@ axis2 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% r
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-
 save_plot(filename = paste0("results/figures/5_Day_PEG_stool_PCoA.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
 
 ##Animation of PCoA plot: Stool Subset--
