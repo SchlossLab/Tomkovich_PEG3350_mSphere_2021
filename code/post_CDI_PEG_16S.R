@@ -379,9 +379,7 @@ save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pco
 #OTU Analysis------
 #Function to test at the otu level:
 agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data) %>% 
-  filter(sample_type =="stool") #%>% #Exclude the other sample types and just perform test on the stools
-#  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
-                           "8", "9", "10", "15", "20", "25", "30"))
+  filter(sample_type =="stool") #Exclude the other sample types and just perform test on the stools
 
 agg_otu_data_tissues <- post_cdi_PEG_subset(agg_otu_data) %>% 
   filter(!sample_type =="stool") %>% 
