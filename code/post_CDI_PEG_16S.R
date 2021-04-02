@@ -432,6 +432,11 @@ print(shared_sig_otus_D3toD10)
 #[4] "Lachnospiraceae (OTU 24)"    "Lachnospiraceae (OTU 31)"    "Lachnospiraceae (OTU 30)"   
 #[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 44)"
 
+#Transform day into a factor label to plot bacteria over time
+agg_otu_data_subset <- agg_otu_data_subset %>% 
+  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
+                           "8", "9", "10", "15", "20", "25", "30"))
+
 #Examine C. difficile OTU over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
   scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) +
