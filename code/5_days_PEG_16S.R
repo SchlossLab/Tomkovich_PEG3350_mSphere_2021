@@ -11,10 +11,10 @@ color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day
 shape_scheme <- c(1, 19)
 shape_infected <- c("no", "yes")
 
-metadata <- metadata %>%
-  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
-agg_otu_data <- agg_otu_data %>% 
-  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+#metadata <- metadata %>%
+#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+#agg_otu_data <- agg_otu_data %>% 
+#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
@@ -28,7 +28,8 @@ diversity_subset <- five_day_PEG_subset(diversity_data)
 #Create subset dataframes of the 5-days PEG diversity data for just stool samples, tissues. 
 diversity_stools <- subset_stool(diversity_subset) %>%
   mutate(day = as.numeric(day))
-diversity_tissues <- subset_tissue(diversity_subset)
+diversity_tissues <- subset_tissue(diversity_subset) %>%
+  mutate(day = as.numeric(day))
 #Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
 diversity_mock_stools <- subset_stool(add_mocks(diversity_subset, diversity_data))
 diversity_mock_tissues <- subset_tissue(add_mocks(diversity_subset, diversity_data))
@@ -42,9 +43,9 @@ num_mock_tissue <- count_subset(diversity_mock_tissues) #Number of stool samples
 #Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
 #Baseline (before treatment) for WMR is day -15. For C, WM, and WMC baseline is day -5
 stool_test_days <- c(-5, -1, 0, 1, 2, 3, 4, 5, 6, 10, 30)
-stool_mock_test_days
+#stool_mock_test_days #Don't test, included in code/all_subsets_16S.R
 tissue_test_days <- c(6, 30) #Only 2 days with samples from at least 3 groups
-tissue_mock_test_days
+#tissue_mock_test_days #Don't test, included in code/all_subsets_16S.R
 
 #Function to perform Kruskal-Wallis test for differences in Shannon diversity index across groups on a particular day with Benjamini Hochberg correction
 #Arguments: 
