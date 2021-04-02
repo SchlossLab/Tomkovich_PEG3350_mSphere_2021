@@ -525,6 +525,7 @@ kw_genus_stools <- data.frame(genus=character(), statistic=double(), p.value = d
 
 
 ## Perform kruskal wallis tests at the genus level for all days of the experiment that were sequenced----
+#Stool samples
 for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kruskal_wallis_genus(d)
   #Make a list of significant otus across sources of mice for a specific day
