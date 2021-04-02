@@ -647,12 +647,29 @@ hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, fac
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 7, base_width = 15)
 
 #Plot alt heatmap sig genera over time facet by genus
-facet_labels_alt <- c("Porphyromonadaceae Unclassified", "Ruminococcaceae Unclassified", "Butyricicoccus", "Firmicutes Unclassified", "Erysipelotrichaceae Unclassified", "Blautia")
+#pull sig genera from:
+#Pairwise comparison between Clind. + 3-day recovery + 1-day PEG 3350 with and without FMT 
+
+sig_genera_pw_5dpi <- genus_pairwise_stools_5plusdpi %>% filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
+  filter(p.adj < .05) %>%
+  arrange(p.adj)  %>%
+  filter(duplicated(genus)) %>%#pull sig genera over mulitiple days
+  pull(genus)
+sig_genera_pw_5dpi #Probably do not make much difference with cdi clearance
+
+#Sig genera between groups for a day
+sig_genera_kw_multi_day <- kw_genus_stools %>% filter(day >= 5, p.value.adj  < .05) %>% 
+  filter(duplicated(genus),
+        !(genus %in% sig_genera_pw_5dpi)) %>% #drop genera that were sig diff between PBS/FMT
+ count(genus)%>% arrange(desc(n)) %>% #put genera sig over most days at top
+ filter(genus != "Unclassified") %>%
+  top_n(6) %>%  #select top 6 for heatmap
+ pull(genus)
+#Create heat map
 facet_labels_alt <- sig_genera_kw_multi_day #top 6 from exploratory below
 hm_genera_facet_alt <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels_alt, hm_stool_days, exp_group_labels)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet_alt.png", hm_genera_facet_alt, base_height = 7, base_width = 15)
-
 
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
@@ -664,15 +681,7 @@ hm_tissues_genera <- hm_plot_tissues_genera(agg_genus_data_tissues, hm_sig_gener
 save_plot(filename = "results/figures/post_CDI_PEG_genera_heatmap_tissues.png", hm_tissues_genera, base_height = 10, base_width = 8)
 
 #Exploratory--------
-#pull sig genera from:
-#Pairwise comparison between Clind. + 3-day recovery + 1-day PEG 3350 with and without FMT 
 
-#sig_genera_pw_5dpi <- genus_pairwise_stools_5plusdpi %>% filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
-#  filter(p.adj < .05) %>%
-#  arrange(p.adj)  %>%
-#  filter(duplicated(genus)) %>%#pull sig genera over mulitiple days
-#  pull(genus)
-#sig_genera_pw_5dpi #Probably do not make much differentce with cdi clearance
 genus_day3_stats %>% 
   filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>%
   filter(p.adj < .05) %>% 
@@ -683,14 +692,6 @@ genus_day5_stats %>%
   filter(p.adj < .05) %>% 
   pull(genus) #[1] "Porphyromonadaceae Unclassified"
 
-#Sig genera between groups for a day
-#sig_genera_kw_multi_day <- kw_genus_stools %>% filter(day >= 5, p.value.adj  < .05) %>% 
-#  filter(duplicated(genus),
- #        !(genus %in% sig_genera_pw_5dpi)) %>% #drop genera that were sig diff between PBS/FMT
- # count(genus)%>% arrange(desc(n)) %>% #put genera sig over most days at top
- # filter(genus != "Unclassified") %>%
-#  top_n(6) %>%  #select top 6 for heatmap
- # pull(genus)
 #Select Genera to show what's different across all groups
 pairwise_genus_rank <- genus_day5_stats %>% filter(p.adj < .05) %>% 
   count(genus) %>% arrange(desc(n)) %>% #Rank genera according to # of groups with sig diff
