@@ -379,14 +379,13 @@ save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pco
 #OTU Analysis------
 #Function to test at the otu level:
 agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data) %>% 
-  filter(sample_type =="stool") %>% #Exclude the other sample types and just perform test on the stools
-  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
+  filter(sample_type =="stool") #%>% #Exclude the other sample types and just perform test on the stools
+#  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
                            "8", "9", "10", "15", "20", "25", "30"))
 
 agg_otu_data_tissues <- post_cdi_PEG_subset(agg_otu_data) %>% 
   filter(!sample_type =="stool") %>% 
   mutate(sample_type = fct_relevel(sample_type, "cecum", "proximal_colon", "distal_colon")) #Specify order of sample types
-
 
 kruskal_wallis_otu <- function(timepoint){
   otu_stats <- agg_otu_data_subset %>%
@@ -413,6 +412,7 @@ kw_otu_stools <- data.frame(otu=character(), statistic=double(), p.value = doubl
 
 
 ## Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
+#Stool samples
 for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kruskal_wallis_otu(d)
   #Make a list of significant otus across sources of mice for a specific day
