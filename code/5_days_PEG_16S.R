@@ -180,17 +180,6 @@ pcoa_subset_plot <- plot_pcoa(pcoa_5_day_PEG)+
 
 save_plot(filename = paste0("results/figures/5_Day_PEG_PCoA.png"), pcoa_subset_plot, base_height = 5, base_width = 5)
 
-#Create stand alone legend
-group_legend <- pcoa_5_day_PEG  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
-  geom_point()+ theme_classic()
-group_legend <- get_legend(group_legend)
-save_plot("results/figures/5_days_PEG_pcoa_legend.png", group_legend, base_height = 1, base_width = 2.3)
-
 #Pull 5_Day_PEG subset of PCoA 
 #Stool Subset
 pcoa_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
@@ -223,6 +212,17 @@ pcoa_gif_stool <- animate(pcoa_animated_stool, duration = 6, fps = 10,
 
 # Save as gif file
 anim_save(animation = pcoa_gif_stool, filename = 'results/5_days_PEG_pcoa_over_time_stools.gif')
+
+#Create stand alone legend
+group_legend <- pcoa_5_day_PEG_stool  %>%
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_point()+ theme_classic()
+group_legend <- get_legend(group_legend)
+save_plot("results/figures/5_days_PEG_pcoa_legend.png", group_legend, base_height = 1, base_width = 2.3)
 
 #Tissue subset
 pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
