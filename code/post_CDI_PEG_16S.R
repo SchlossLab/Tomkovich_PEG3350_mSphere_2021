@@ -432,49 +432,6 @@ print(shared_sig_otus_D3toD10)
 #[4] "Lachnospiraceae (OTU 24)"    "Lachnospiraceae (OTU 31)"    "Lachnospiraceae (OTU 30)"   
 #[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 44)"
 
-#Perform pairwise comparisons for day -15 and -1
-# Perform pairwise Wilcoxan rank sum tests for otus that were significantly different across sources of mice on a series of days----
-pairwise_day_otu <- function(timepoint, sig_otu_dayX){
-  otu_stats <- post_cdi_PEG_subset(agg_otu_data) %>% 
-    filter(day == timepoint) %>%
-    select(group, otu, agg_rel_abund) %>% 
-    group_by(otu) %>% 
-    nest() %>% 
-    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>% 
-    mutate(median = map(data, get_rel_abund_median_group)) %>% 
-    unnest(c(model, median)) %>% 
-    ungroup()
-  pairwise_stats <- otu_stats %>% 
-    filter(otu %in% sig_otu_dayX) %>% 
-    group_by(otu) %>% 
-    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$agg_rel_abund, g=as.factor(.x$group), p.adjust.method="BH") %>% 
-                       tidy() %>% 
-                       mutate(compare=paste(group1, group2, sep="-")) %>% 
-                       select(-group1, -group2) %>% 
-                       pivot_wider(names_from=compare, values_from=p.value)
-    )
-    ) %>% 
-    unnest(model) %>% 
-    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
-    write_tsv(path = paste0("data/process/post_CDI_PEG_otu_stats_day_", timepoint, "_sig.tsv"))
-  #Format pairwise stats to use with ggpubr package
-  plot_format_stats <- pairwise_stats %>% 
-    select(-method, -C, -CWM, -FRM, -RM) %>% 
-    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
-    lapply(tidy_pairwise_otu) %>% 
-    bind_rows()
-  return(plot_format_stats)  
-}
-##Pairwise test of significant days (1,3,6,8,10) and their corresponding OTUs for stool samples 
-
-otu_day1_stats <- pairwise_day_otu(1, `sig_otu_day1`)
-otu_day3_stats <- pairwise_day_otu(3, `sig_otu_day3`)
-otu_day6_stats <- pairwise_day_otu(6, `sig_otu_day6`)
-otu_day8_stats <- pairwise_day_otu(8, `sig_otu_day8`)
-otu_day10_stats <- pairwise_day_otu(10, `sig_otu_day10`)
-#Combine pairwise dataframes for all days
-otu_pairwise_stools <- rbind(otu_day1_stats, otu_day3_stats, otu_day6_stats, otu_day8_stats, otu_day10_stats)
-
 #Examine C. difficile OTU over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
   scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) +
