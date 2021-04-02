@@ -432,35 +432,6 @@ print(shared_sig_otus_D3toD10)
 #[4] "Lachnospiraceae (OTU 24)"    "Lachnospiraceae (OTU 31)"    "Lachnospiraceae (OTU 30)"   
 #[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 44)"
 
-
-#Plots of the top 20 OTUs that varied across sources at each timepoint----
-#Day 1: top 20 OTUs that vary across sources
-D1top20_otus <- plot_otus_dx(`sig_otu_day1`[1:20], 1) +#Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D1top20_otus.png", D1top20_otus, base_height = 9, base_width = 7)
-#Day 3: top 20 OTUs that vary across sources
-D3top20_otus <- plot_otus_dx(`sig_otu_day3`[1:20], 3) + #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D3top20_otus.png", D3top20_otus, base_height = 9, base_width = 7)
-#Day 6: top 20 OTUs that vary across sources
-D6top20_otus <- plot_otus_dx(`sig_otu_day6`[1:20], 6)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D6top20_otus.png", D6top20_otus, base_height = 9, base_width = 7)
-#Day 8: top 20 OTUs that vary across sources
-D8top20_otus <- plot_otus_dx(`sig_otu_day8`[1:20], 8)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D8top20_otus.png", D8top20_otus, base_height = 9, base_width = 7)
-#Day 10: top 20 OTUs that vary across sources
-D10top20_otus <- plot_otus_dx(`sig_otu_day10`[1:20], 10)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D10top20_otus.png", D10top20_otus, base_height = 9, base_width = 7)
-
-
 #Perform pairwise comparisons for day -15 and -1
 # Perform pairwise Wilcoxan rank sum tests for otus that were significantly different across sources of mice on a series of days----
 pairwise_day_otu <- function(timepoint, sig_otu_dayX){
