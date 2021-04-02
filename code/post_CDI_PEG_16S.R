@@ -492,9 +492,7 @@ save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_ot
 
 #Genus Analysis----
 agg_genus_data_subset <- post_cdi_PEG_subset(agg_genus_data) %>%
-  filter(sample_type =="stool") %>% #Exclude the other sample types and just perform test on the stools
-  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
-                           "8", "9", "10", "15", "20", "25", "30"))
+  filter(sample_type =="stool") #Exclude the other sample types and just perform test on the stools
 
 agg_genus_data_tissues <- post_cdi_PEG_subset(agg_genus_data) %>%
   filter(!sample_type =="stool") %>% #Exclude all stool samples and just perform test on tissues
