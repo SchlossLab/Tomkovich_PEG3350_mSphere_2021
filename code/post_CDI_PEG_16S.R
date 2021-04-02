@@ -684,6 +684,7 @@ genus_day15_stats <- pairwise_day_genus(15, sig_genus_day15)
 genus_pairwise_stools <- rbind(genus_day2_stats, genus_day3_stats, genus_day5_stats, genus_day6_stats, genus_day7_stats, genus_day8_stats, genus_day10_stats, genus_day15_stats)
 genus_pairwise_stools_5plusdpi <- rbind(genus_day5_stats, genus_day6_stats, genus_day7_stats, genus_day8_stats, genus_day10_stats, genus_day15_stats)
 
+
 #Heatmap of significant genera ranked by
 #Rank genera by adjusted p-value
 hm_sig_genera_p_adj <- kw_genus_stools %>% 
@@ -719,6 +720,7 @@ hm_genera_facet_alt <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups,
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet_alt.png", hm_genera_facet_alt, base_height = 7, base_width = 15)
 
+
 #Plot genera heatmaps of the tissue samples (only collected on day 30)
 #Only collected tissues from CWM group: "Clind + 1-day PEG 3350"
 hm_tissues_days <- 30
@@ -731,20 +733,61 @@ save_plot(filename = "results/figures/post_CDI_PEG_genera_heatmap_tissues.png", 
 #Exploratory--------
 #pull sig genera from:
 #Pairwise comparison between Clind. + 3-day recovery + 1-day PEG 3350 with and without FMT 
-sig_genera_pw_5dpi <- genus_pairwise_stools_5plusdpi %>% filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
-  filter(p.adj < .05) %>%
-  arrange(p.adj)  %>%
-  filter(duplicated(genus)) %>%#pull sig genera over mulitiple days
-  pull(genus)
-sig_genera_pw_5dpi #Probably do not make much differentce with cdi clearance
+
+#sig_genera_pw_5dpi <- genus_pairwise_stools_5plusdpi %>% filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
+#  filter(p.adj < .05) %>%
+#  arrange(p.adj)  %>%
+#  filter(duplicated(genus)) %>%#pull sig genera over mulitiple days
+#  pull(genus)
+#sig_genera_pw_5dpi #Probably do not make much differentce with cdi clearance
+genus_day3_stats %>% 
+  filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>%
+  filter(p.adj < .05) %>% 
+  pull(genus) #[1] "Clostridium XlVb"             "Lachnospiraceae Unclassified"
+
+genus_day5_stats %>% 
+  filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>%
+  filter(p.adj < .05) %>% 
+  pull(genus) #[1] "Porphyromonadaceae Unclassified"
 
 #Sig genera between groups for a day
-sig_genera_kw_multi_day <- kw_genus_stools %>% filter(day >= 5, p.value.adj  < .05) %>% 
-  filter(duplicated(genus),
-         !(genus %in% sig_genera_pw_5dpi)) %>% #drop genera that were sig diff between PBS/FMT
-  count(genus)%>% arrange(desc(n)) %>% #put genera sig over most days at top
-  filter(genus != "Unclassified") %>%
-  top_n(6) %>%  #select top 6 for heatmap
-  pull(genus) 
-#should I drop all the genera that were sig between the PBS/FMT bc they don't matter?
-
+#sig_genera_kw_multi_day <- kw_genus_stools %>% filter(day >= 5, p.value.adj  < .05) %>% 
+#  filter(duplicated(genus),
+ #        !(genus %in% sig_genera_pw_5dpi)) %>% #drop genera that were sig diff between PBS/FMT
+ # count(genus)%>% arrange(desc(n)) %>% #put genera sig over most days at top
+ # filter(genus != "Unclassified") %>%
+#  top_n(6) %>%  #select top 6 for heatmap
+ # pull(genus)
+#Select Genera to show what's different across all groups
+pairwise_genus_rank <- genus_day5_stats %>% filter(p.adj < .05) %>% 
+  count(genus) %>% arrange(desc(n)) %>% #Rank genera according to # of groups with sig diff
+  top_n(6) %>% #select top 6 for over time plots
+  pull(genus)
+kw_genus_stools %>% #Check to see if there were any genera that were sig in the kw test that were not sig in the pairwise comparisons
+  filter(day == 5,p.value.adj < .05,
+         !(genus %in% pairwise_genus_rank)) %>% pull(genus) #Only [1] "Turicibacter"
+#Plot alt line plots faceted by genus
+agg_genus_data_subset_hm %>% 
+  mutate(group = fct_relevel(group, exp_groups)) %>% #Specify the order of the groups
+  filter(genus %in% pairwise_genus_rank) %>%
+  filter(day %in% hm_stool_days) %>% 
+  mutate(day = as.numeric(day)) %>% 
+  group_by(group, genus, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(aes(x = day, y=median, color=group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  scale_x_continuous(limits = c(-1,30), breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))+
+  scale_y_continuous(trans = "log10", limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y=NULL)+
+  facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        strip.text = element_text(face = "italic"),
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16))
