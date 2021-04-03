@@ -324,119 +324,11 @@ otu_tissues <- subset_tissue(otu_subset)
 otu_mock_stools <- subset_stool(add_mocks(otu_subset, agg_otu_data))
 otu_mock_tissues <- subset_tissue(add_mocks(otu_subset, agg_otu_data))
 
-#Plots of the relative abundances of OTUs that significantly varied across sources of mice from day -1 to day 1----
-otus_d1 <- plot_otus_dx(otu_stools, sig_otu_stools_day1[1:20], 1)+
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  ggtitle("Day 1 post-infection Stools")+ #Title plot
-  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_stools_d1_top20.png", otus_d1, base_height = 7, base_width = 8)
-
-otus_d4 <- plot_otus_dx(otu_stools, sig_otu_stools_day4 [1:20], 4)+
-  ggtitle("Day 4 post-infection Stools")+ #Title plot
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_stools_d4_top20.png", otus_d4, base_height = 7, base_width = 8)
-
-otus_d10 <- plot_otus_dx(otu_stools, sig_otu_stools_day10[1:20], 10)+
-  ggtitle("Day 10 post-infection Stools")+ #Title plot
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_stools_d10.png", otus_d10, base_height = 7, base_width = 8)
-
-otus_d6 <- plot_otus_dx(otu_stools, `sig_otu_stools_day6` [1:20], 6)+
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  ggtitle("Day 6 post-infection Stools")+ #Title plot
-  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_stools_d6_top20.png", otus_d6, base_height = 7, base_width = 8)
-
-otus_tissues_d6 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day6[1:20], 6)+
-  ggtitle("Day 6 post-infection Tissue")+ #Title plot
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_tissues_d6.png", otus_tissues_d6, base_height = 7, base_width = 8)
-
-otus_tissues_d30 <- plot_otus_dx(otu_tissues, sig_otu_tissues_day30[1:20], 30)+
-  ggtitle("Day 30 post-infection Tissue")+ #Title plot
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
-save_plot("results/figures/5_days_PEG_otus_tissues_d30.png", otus_tissues_d30, base_height = 7, base_width = 8)
-
-#Heatmaps of significant OTUs over time facet by group----
-#Create list of otus to plot
-all_sig_otus <- c(`sig_otu_stools_day-5`, `sig_otu_stools_day-1`, sig_otu_stools_day0, sig_otu_stools_day1, 
-                  `sig_otu_stools_day2`, `sig_otu_stools_day3`, sig_otu_stools_day4, sig_otu_stools_day5,
-                  `sig_otu_stools_day6`, `sig_otu_stools_day10`, sig_otu_stools_day30)
-#370 total OTUs
-unique_sig_otus <-unique(all_sig_otus)
-#130 unique significant OTUs
-#Rank the 130 signifiant OTUs in order of agg_rel_abund, select the top 20
-hm_sig_otus_abund <-  otu_stools %>% 
-  filter(otu %in% unique_sig_otus) %>%
-  group_by(otu) %>% 
-  summarize(median=(median(agg_rel_abund + 1/2000))) %>% #Median relative abundance for all samples for a particular OTU
-  arrange(desc(median)) %>% #Arrange largest to smallest
-  slice_head(n = 20) %>% 
-  pull(otu)
-
-#Rank OTUs by adjusted p-value
-hm_sig_otus_p_adj <- kw_otu_stools %>% 
-  filter(p.value.adj < 0.05) %>% 
-  arrange(p.value.adj) %>% 
-  distinct(otu) %>% 
-  slice_head(n = 25) %>% 
-  pull(otu)
-
-hm_stool_days <- diversity_stools %>% distinct(day) %>% pull(day)
-facet_labels <- color_labels #Create descriptive labels for facets
-names(facet_labels) <- c("C", "WM", "WMC", "WMR") #values that correspond to group, which is the variable we're faceting by
-hm_stool <- hm_plot_otus(otu_stools, hm_sig_otus_p_adj, hm_stool_days)+
-  scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
-save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
-
-#Create heatmap of significant OTUs for tissue samples----
-#Rank OTUs by adjusted p-value
-hm_sig_otus_p_adj_tissues <- kw_otu_tissues %>% 
-  filter(p.value.adj < 0.05) %>% 
-  arrange(p.value.adj) %>% 
-  distinct(otu) %>% 
-  slice_head(n = 25) %>% 
-  pull(otu)
-hm_tissue_days <- diversity_tissues %>% distinct(day) %>% pull(day)
-hm_tissues <- hm_plot_otus(otu_tissues, hm_sig_otus_p_adj_tissues, hm_tissue_days)+
-  scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
-save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues.png", hm_tissues, base_height = 14, base_width = 15)
-#Examine OTUs that were significant in stool samples
-hm_tissues_stool_otus <- hm_plot_otus(otu_tissues, hm_sig_otus_p_adj, hm_tissue_days)+
-  scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
-save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues_stool_otus.png", hm_tissues_stool_otus, base_height = 14, base_width = 15)
-#Pull list of otus that overlap between stool & tissue heatmaps
-hm_overlap <- intersect_all(hm_sig_otus_p_adj, hm_sig_otus_p_adj_tissues)
-#11 OTUs overlap:  
-#"Lachnospiraceae (OTU 33)"       "Blautia (OTU 19)"              
-#"Ruminococcaceae (OTU 50)"       "Ruminococcaceae (OTU 54)"      
-#"Ruminococcaceae (OTU 92)"       "Oscillibacter (OTU 45)"        
-# "Lachnospiraceae (OTU 30)"       "Lachnospiraceae (OTU 31)"      
-# "Lachnospiraceae (OTU 4)"        "Peptostreptococcaceae (OTU 12)"
-# "Enterobacteriaceae (OTU 2)" 
-
-#Create heatmaps of mock challenged mice----
-#Mock stool samples
-otu_mock_only_stools  <-  otu_mock_stools %>% 
-  filter(group %in% c("WMN", "CN"))
-hm_mock_stool_days <- otu_mock_only_stools %>% distinct(day) %>% pull(day)
-facet_labels <- c("5-day PEG 3350 without infection", "Clind. without infection") #Create descriptive labels for facets
-names(facet_labels) <- c("WMN", "CN") #values that correspond to group, which is the variable we're faceting by
-hm_mock_stool <- hm_plot_otus(otu_mock_only_stools, hm_sig_otus_p_adj, hm_mock_stool_days)+
-  scale_x_discrete(breaks = c(-5, -1, 0, 4, 6, 30), labels = c(-5, -1, 0, 4, 6, 30)) 
-save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_stools_mock.png", hm_mock_stool, base_height = 14, base_width = 15)
-
-#Mock tissue samples
-otu_mock_only_tissues <- otu_mock_tissues %>% 
-  filter(group %in% c("WMN", "CN")) 
-hm_mock_tissue_days <- otu_mock_only_tissues %>% distinct(day) %>% pull(day)
-hm_mock_tissues <- hm_plot_otus(otu_mock_only_tissues, hm_sig_otus_p_adj_tissues, hm_mock_tissue_days)+
-  scale_x_discrete(breaks = c(0, 4, 6, 30), labels = c(0, 4, 6, 30)) 
-save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues_mock.png", hm_mock_tissues, base_height = 14, base_width = 15)
+#Transform day variable into interger to use continous scale on plots of OTUs over time
+otu_stools <- otu_stools %>% 
+  mutate(day = as.integer(day)) 
+otu_tissues <- otu_tissues %>% 
+  mutate(day = as.integer(day))
 
 #Examine C. difficile otu over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+
@@ -444,14 +336,13 @@ peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)
                      limits = c(-16,31),
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_peptostreptococcaceae_stools.png", peptostrep_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_peptostreptococcaceae_stools.png", peptostrep_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 peptostrep_tissues <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_tissues)+
   scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
                      limits = c(0,31),
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_peptostreptococcaceae_tissues.png", peptostrep_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_peptostreptococcaceae_tissues.png", peptostrep_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine Bacteroides otu over time----
 bacteroides_stools <- otu_over_time("Bacteroides (OTU 1)", otu_stools)+
@@ -459,14 +350,14 @@ bacteroides_stools <- otu_over_time("Bacteroides (OTU 1)", otu_stools)+
                      limits = c(-16,31),
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_bacteroides_stools.png", bacteroides_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_bacteroides_stools.png", bacteroides_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 bacteroides_tissues <- otu_over_time("Bacteroides (OTU 1)", otu_tissues)+
   scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
                      limits = c(0,31),
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 
-save_plot(filename = "results/figures/5_days_PEG_bacteroides_tissues.png", bacteroides_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_bacteroides_tissues.png", bacteroides_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine Enterobacteriaceae (OTU 2) over time----
 entero2_stools <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_stools)+
@@ -474,14 +365,14 @@ entero2_stools <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_stools)+
                      limits = c(-16,31),
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_entero2_stools.png", entero2_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_enterobacteriaceae_stools.png", entero2_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 entero2_tissues <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_tissues)+
   scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
                      limits = c(0,31),
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 
-save_plot(filename = "results/figures/5_days_PEG_entero2_tissues.png", entero2_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_enterobacteriaceae_tissues.png", entero2_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine Porphyromonadaceae otu over time----
 porph_stools <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_stools)+
@@ -489,64 +380,14 @@ porph_stools <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_stools)+
                      limits = c(-16,31),
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_porph_stools.png", porph_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_porphyromonadaceae8_stools.png", porph_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
   scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
                      limits = c(0,31),
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 
-save_plot(filename = "results/figures/5_days_PEG_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-#Examine "Lachnospiraceae (OTU 20)"  over time----
-lach20_stools <- otu_over_time("Lachnospiraceae (OTU 20)" , otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_lach20_stools.png", lach20_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-lach20_tissues <- otu_over_time("Lachnospiraceae (OTU 20)" , otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_lach20_tissues.png", lach20_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-#Examine "Lachnospiraceae (OTU 4)"  over time----
-lach4_stools <- otu_over_time("Lachnospiraceae (OTU 4)" , otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_lach4_stools.png", lach4_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-lach4_tissues <- otu_over_time("Lachnospiraceae (OTU 4)" , otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_lach4_tissues.png", lach4_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-
-#Examine "Lachnospiraceae (OTU 32)"  over time----
-lach32_stools <- otu_over_time("Lachnospiraceae (OTU 32)" , otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_lach32_stools.png", lach32_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-lach32_tissues <- otu_over_time("Lachnospiraceae (OTU 32)" , otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_lach32_tissues.png", lach32_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-#Customize days with scale_X_continuous
-
-
+save_plot(filename = "results/figures/5_days_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" (baseline day -5 versus day 1)----
 WMR_d0_d15_pairs <- otu_stools %>%
