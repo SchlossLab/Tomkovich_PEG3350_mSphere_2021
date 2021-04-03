@@ -247,6 +247,72 @@ pcoa_gif_tissue <- animate(pcoa_animated_tissues, duration = 6, fps = 10,
 # Save as gif file
 anim_save(animation = pcoa_gif_tissue, filename = 'results/5_days_PEG_pcoa_over_time_tissues.gif')
 
+#Genus level analysis----
+#Subset genus data to just the 5-day PEG subset and separate by sample type (stools versus tissues)
+genus_subset <- five_day_PEG_subset(agg_genus_data)
+#Create subset dataframes of the 5-days PEG diversity data for just stool samples, tissues. 
+genus_stools <- subset_stool(genus_subset)
+genus_tissues <- subset_tissue(genus_subset)
+#The above subsets exclude mock challenged mice (group = WMN or CN)
+#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
+genus_mock_stools <- subset_stool(add_mocks(genus_subset, agg_genus_data))
+genus_mock_tissues <- subset_tissue(add_mocks(genus_subset, agg_genus_data))
+
+#Function to test for differences across groups at the genus level for specific timepoints
+#Function to test at the genus level:
+#Arguments:
+# timepoint = day of the experiment
+#sample_df = subset dataframe of just stool or tissue samples
+#sample_type = "stool" or "tissue" to be included in filename
+kruskal_wallis_genus <- function(timepoint, sample_df, sample_type){
+  genus_stats <- sample_df %>%
+    filter(day == timepoint) %>%
+    select(group, genus, agg_rel_abund) %>%
+    group_by(genus) %>%
+    nest() %>%
+    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>%
+    mutate(median = map(data, get_rel_abund_median_group)) %>%
+    unnest(c(model, median)) %>%
+    ungroup()
+  #Adjust p-values for testing multiple Genera
+  genus_stats_adjust <- genus_stats %>%
+    select(-data) %>% #Keep everything but the data column
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+    arrange(p.value.adj) %>%
+    write_tsv(path = paste0("data/process/5_days_PEG_genus_stats_day_", timepoint, "_", sample_type, ".tsv"))
+}
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_stools <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                              WM =double(),C =double(),WMR =double(),WMC=double(),
+                              p.value.adj=double(),day=double())
+
+# Perform kruskal wallis tests at the genus level for the stool samples----
+for (d in stool_test_days){
+  kruskal_wallis_genus(d, genus_stools, "stools")
+  #Make a list of significant genus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_genus_stats_day_", d, "_stools.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_stools_day", d, sep = "") 
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_stools <- add_row(kw_genus_stools, stats)  #combine all the dataframes together
+}
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_tissues <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                               WM =double(),C =double(),WMR =double(),WMC=double(),
+                               p.value.adj=double(),day=double())
+# Perform kruskal wallis tests at the genus level for the tissue samples----
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, genus_tissues, "tissues")
+  #Make a list of significant genus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_genus_stats_day_", d, "_tissues.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_tissues_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
+}
+
 #OTU analysis----
 #Subset otu data to just the 5-day PEG subset and separate by sample type (stools versus tissues)
 otu_subset <- five_day_PEG_subset(agg_otu_data)
@@ -257,80 +323,6 @@ otu_tissues <- subset_tissue(otu_subset)
 #Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
 otu_mock_stools <- subset_stool(add_mocks(otu_subset, agg_otu_data))
 otu_mock_tissues <- subset_tissue(add_mocks(otu_subset, agg_otu_data))
-
-#Function to test for differences across groups at the OTU level for specific timepoints
-#Function to test at the otu level:
-#Arguments:
-# timepoint = day of the experiment
-#sample_df = subset dataframe of just stool or tissue samples
-#sample_type = "stool" or "tissue" to be included in filename
-kruskal_wallis_otu <- function(timepoint, sample_df, sample_type){
-  otu_stats <- sample_df %>%
-    filter(day == timepoint) %>%
-    select(group, otu, agg_rel_abund) %>%
-    group_by(otu) %>%
-    nest() %>%
-    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>%
-    mutate(median = map(data, get_rel_abund_median_group)) %>%
-    unnest(c(model, median)) %>%
-    ungroup()
-  #Adjust p-values for testing multiple OTUs
-  otu_stats_adjust <- otu_stats %>%
-    select(-data) %>% #Keep everything but the data column
-    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
-    arrange(p.value.adj) %>%
-    write_tsv(path = paste0("data/process/5_days_PEG_otu_stats_day_", timepoint, "_", sample_type, ".tsv"))
-}
-
-#Create empty data frame to combine stat dataframes for all days that were tested
-kw_otu_stools <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
-                                     WM =double(),C =double(),WMR =double(),WMC=double(),
-                            p.value.adj=double(),day=double())
-
-# Perform kruskal wallis tests at the otu level for the stool samples----
-for (d in stool_test_days){
-  kruskal_wallis_otu(d, otu_stools, "stools")
-  #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_stools.tsv")) %>% 
-    mutate(day = d)#Add a day column to specify day tested
-  name <- paste("sig_otu_stools_day", d, sep = "") 
-  assign(name, pull_significant_taxa(stats, otu))
-  kw_otu_stools <- add_row(kw_otu_stools, stats)  #combine all the dataframes together
-}
-
-#Create empty data frame to combine stat dataframes for all days that were tested
-kw_otu_tissues <- data.frame(otu=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
-                            WM =double(),C =double(),WMR =double(),WMC=double(),
-                            p.value.adj=double(),day=double())
-# Perform kruskal wallis tests at the otu level for the tissue samples----
-for (d in tissue_test_days){
-  kruskal_wallis_otu(d, otu_tissues, "tissues")
-  #Make a list of significant otus across sources of mice for a specific day
-  stats <- read_tsv(file = paste0("data/process/5_days_PEG_otu_stats_day_", d, "_tissues.tsv")) %>% 
-    mutate(day = d)#Add a day column to specify day tested
-  name <- paste("sig_otu_tissues_day", d, sep = "")
-  assign(name, pull_significant_taxa(stats, otu))
-  kw_otu_tissues <- add_row(kw_otu_tissues, stats)  #combine all the dataframes together
-}
-
-#OTUs that varied across treatment groups and were shared across days 
-#Stools
-view(sig_otu_stools_day1)
-view(sig_otu_stools_day10)
-view(sig_otu_stools_day4)
-shared_sig_stools_otus_D1toD6 <- intersect_all(sig_otu_stools_day1, sig_otu_stools_day2,                                              sig_otu_stools_day3, sig_otu_stools_day4, 
-                                             sig_otu_stools_day5, sig_otu_tissues_day6) #fill in different days to compare
-view(shared_sig_stools_otus_D1toD6)
-print(shared_sig_stools_otus_D1toD6)
-
-# "Bacteroides (OTU 1)"            "Peptostreptococcaceae (OTU 12)"
-# "Enterobacteriaceae (OTU 2)"     "Lachnospiraceae (OTU 20)"      
-# "Lachnospiraceae (OTU 4)"        "Lachnospiraceae (OTU 32)"
-
-
-#Tissues
-shared_sig_tissues_otus <- intersect_all(sig_otu_tissues_day30, sig_otu_tissues_day6) #fill in different days to compare
-view(shared_sig_tissues_otus)
 
 #Plots of the relative abundances of OTUs that significantly varied across sources of mice from day -1 to day 1----
 otus_d1 <- plot_otus_dx(otu_stools, sig_otu_stools_day1[1:20], 1)+
@@ -445,8 +437,6 @@ hm_mock_tissue_days <- otu_mock_only_tissues %>% distinct(day) %>% pull(day)
 hm_mock_tissues <- hm_plot_otus(otu_mock_only_tissues, hm_sig_otus_p_adj_tissues, hm_mock_tissue_days)+
   scale_x_discrete(breaks = c(0, 4, 6, 30), labels = c(0, 4, 6, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_otus_heatmap_tissues_mock.png", hm_mock_tissues, base_height = 14, base_width = 15)
-
-
 
 #Examine C. difficile otu over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+
