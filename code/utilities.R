@@ -570,7 +570,7 @@ plot_genus_dx <- function(sample_df, genera, timepoint){
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
           legend.position = "none",
-          axis.text.y = element_markdown(), #Have only the genus names show up as italics
+          axis.text.y = element_text(face = "italic"), #Have only the genus names show up as italics
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
