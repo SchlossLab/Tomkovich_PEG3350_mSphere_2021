@@ -313,6 +313,148 @@ for (d in tissue_test_days){
   kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
 }
 
+#Examine genera that varied between treatment groups across multiple days
+#Stool samples genera
+stool_test_days #Check days tested. Look at all timepoints post challenge
+shared_sig_stools_genus_d1tod30 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
+                                                sig_genus_stools_day3, sig_genus_stools_day4, 
+                                                sig_genus_stools_day5, sig_genus_tissues_day6,
+                                                sig_genus_stools_day10, sig_genus_stools_day30) #fill in different days to compare
+shared_sig_stools_genus_d1tod30 #only "Peptostreptococcaceae Unclassified"
+#D1 to 10 post challenge
+shared_sig_stools_genus_d1tod10 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
+                                                 sig_genus_stools_day3, sig_genus_stools_day4, 
+                                                 sig_genus_stools_day5, sig_genus_tissues_day6,
+                                                 sig_genus_stools_day10)
+shared_sig_stools_genus_d1tod10 #only "Peptostreptococcaceae Unclassified"
+#D1 to 6 post challenge
+shared_sig_stools_genus_d1tod6 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
+                                                 sig_genus_stools_day3, sig_genus_stools_day4, 
+                                                 sig_genus_stools_day5, sig_genus_tissues_day6)
+shared_sig_stools_genus_d1tod6 #4 genera
+
+#Tissue samples genera
+tissue_test_days #Check days tested. d6 and 30
+shared_sig_tissues_genus <- intersect_all(sig_genus_tissues_day6, sig_genus_tissues_day30) 
+shared_sig_tissues_genus #7 genera including unclassified 
+#Drop unclassified bacteria, not informative
+shared_sig_tissues_genus <- shared_sig_tissues_genus[1:6]
+
+#Plots of the relative abundances for no more than the top 10 significant genera that varied over the tested timepoints
+#Stools
+#day1
+genus_d1 <- plot_genus_dx(genus_stools, sig_genus_stools_day1[1:10], 1)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 1 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d1.png", genus_d1, base_height = 7, base_width = 8)
+#day2
+genus_d2 <- plot_genus_dx(genus_stools, sig_genus_stools_day2[1:10], 2)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 2 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d2.png", genus_d2, base_height = 7, base_width = 8)
+#day3
+genus_d3 <- plot_genus_dx(genus_stools, sig_genus_stools_day3[1:10], 3)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 3 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d3.png", genus_d3, base_height = 7, base_width = 8)
+#day4
+genus_d4 <- plot_genus_dx(genus_stools, sig_genus_stools_day4[1:10], 4)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 4 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d4.png", genus_d4, base_height = 7, base_width = 8)
+#day5
+genus_d5 <- plot_genus_dx(genus_stools, sig_genus_stools_day5[1:10], 5)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 5 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d5.png", genus_d5, base_height = 7, base_width = 8)
+#day6
+genus_d6 <- plot_genus_dx(genus_stools, sig_genus_stools_day6[1:10], 6)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 6 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d6.png", genus_d6, base_height = 7, base_width = 8)
+#day10
+genus_d10 <- plot_genus_dx(genus_stools, sig_genus_stools_day10[1:10], 10)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 10 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d10.png", genus_d10, base_height = 7, base_width = 8)
+#day30
+genus_d30 <- plot_genus_dx(genus_stools, sig_genus_stools_day30[1:10], 30)+
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  ggtitle("Stool 30 dpi")+ #Title plot
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_stools_d30.png", genus_d30, base_height = 7, base_width = 8)
+
+#Plots of the relative abundances for no more than the top 10 significant genera that varied over the tested timepoints
+#Tissues
+#day6
+genus_tissues_d6 <- plot_genus_dx(genus_tissues, sig_genus_tissues_day6[1:10], 6)+
+  ggtitle("Tissue 6 dpi")+ #Title plot
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_tissues_d6.png", genus_tissues_d6, base_height = 7, base_width = 8)
+#day30 
+genus_tissues_d30 <- plot_genus_dx(genus_tissues, sig_genus_tissues_day6[1:10], 30)+
+  ggtitle("Tissue 30 dpi")+ #Title plot
+  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate Genera
+  theme(plot.title = element_text(hjust = 0.5)) #Center plot title
+save_plot("results/figures/5_days_PEG_genus_tissues_d30.png", genus_tissues_d30, base_height = 7, base_width = 8)
+
+#List of the 10 significant genera in stool samples that are significant over the most timepoints
+top_10_sig_genus <- kw_genus_stools %>% 
+  filter(p.value.adj < 0.05) %>% #Select only significant p-values
+  group_by(genus) %>% 
+  tally() %>% 
+  filter(n > 1) %>% #select genera that vary over multiple timepoints = n > 1
+  arrange(desc(n)) %>% #Rank by how many time each genera shows up (
+  filter(!genus == "Unclassified") %>% #Remove this genus since it's not informative and could contain multiple unclassified genera
+  head(10) %>% 
+  pull(genus)
+#Heatmap of the 10 significant genera in stool samples that are significant over the most timepoints----
+hm_stool_days <- diversity_stools %>% distinct(day) %>% pull(day) #Have more timepoints than we tested (some days we only have sequenced samples for 1 group)
+facet_labels <- color_labels #Create descriptive labels for facets
+names(facet_labels) <- c("C", "WM", "WMC", "WMR") #values that correspond to group, which is the variable we're faceting by
+hm_stool <- hm_plot_genus(genus_stools, top_10_sig_genus, hm_stool_days)+
+  scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
+
+#List of the 10 significant genera in tissue samples that are significant over the most timepoints
+sig_genus_tissues<- kw_genus_tissues %>% 
+  filter(p.value.adj < 0.05) %>% #Select only significant p-values
+  filter(!genus == "Unclassified")  #Remove this genus since it's not informative and could contain multiple unclassified genera
+#Find genera that are different between groups on day 6 and 30
+sig_genus_tissues_multi_day <- sig_genus_tissues %>%  
+  group_by(genus) %>% 
+  tally() %>% #Count how many times each genus appears
+  filter(n > 1) %>% #select genera that vary over day 6 & day 30
+  arrange(desc(n)) %>% #Rank by how many time each genera shows up (multiple timepoints = n > 1)
+  head(10) %>% 
+  pull(genus) #6 genera
+#Find 4 more genera based on lowest adjusted p-values (excluding 6 genera already pulled)
+sig_genus_tissue_top_p <- sig_genus_tissues %>% 
+  arrange(p.value.adj) %>% 
+  filter(!genus %in% sig_genus_tissues_multi_day) %>% 
+  head(4) %>% 
+  pull(genus)
+#Combine 2 lists of significant genera to create final list of 10
+top_sig_genus_tissues <- c(sig_genus_tissues_multi_day, sig_genus_tissue_top_p)
+#Create heatmap of significant genera for tissue samples----
+hm_tissue_days <- diversity_tissues %>% distinct(day) %>% pull(day)
+hm_tissues <- hm_plot_genus(genus_tissues, top_sig_genus_tissues, hm_tissue_days)+
+  scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_tissues.png", hm_tissues, base_height = 14, base_width = 15)
+
+#List of genera that overlap between top genera for stool and tissue samples----
+top_genera <- intersect_all(top_10_sig_genus, top_sig_genus_tissues)
+#5 genera: Bacteroides, Clostridales Unclassified, Ruminococcaceae Unclassified, 
+#Peptostreptococcaceae Unclassified, Acetatifactor
+
 #OTU analysis----
 #Subset otu data to just the 5-day PEG subset and separate by sample type (stools versus tissues)
 otu_subset <- five_day_PEG_subset(agg_otu_data)
@@ -324,7 +466,7 @@ otu_tissues <- subset_tissue(otu_subset)
 otu_mock_stools <- subset_stool(add_mocks(otu_subset, agg_otu_data))
 otu_mock_tissues <- subset_tissue(add_mocks(otu_subset, agg_otu_data))
 
-#Transform day variable into interger to use continous scale on plots of OTUs over time
+#Transform day variable into integer to use continuous scale on plots of OTUs over time
 otu_stools <- otu_stools %>% 
   mutate(day = as.integer(day)) 
 otu_tissues <- otu_tissues %>% 
@@ -389,12 +531,12 @@ porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
 
 save_plot(filename = "results/figures/5_days_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-#Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" (baseline day -5 versus day 1)----
+#Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" (baseline day -5 versus day 15)----
 WMR_d0_d15_pairs <- otu_stools %>%
   filter(group == "WMR" & otu == "Bacteroides (OTU 1)") %>% #Limit to group "C" and randomly pick an OTU just to figure out what mice have sequence data
   filter(day == 1 | day == 15) %>%
   filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
-  pull(unique_mouse_id) #6 mice
+  pull(unique_mouse_id) #8 mice
 
 #Wilcoxon signed rank test for all day 1, day 15 pairs at the OTU level:
 otus_WMR_pairs <- otu_stools %>%
