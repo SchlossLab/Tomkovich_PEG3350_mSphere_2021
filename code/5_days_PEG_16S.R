@@ -415,7 +415,10 @@ top_10_sig_genus <- kw_genus_stools %>%
 hm_stool_days <- diversity_stools %>% distinct(day) %>% pull(day) #Have more timepoints than we tested (some days we only have sequenced samples for 1 group)
 facet_labels <- color_labels #Create descriptive labels for facets
 names(facet_labels) <- c("C", "WM", "WMC", "WMR") #values that correspond to group, which is the variable we're faceting by
-hm_stool <- hm_plot_genus(genus_stools, top_10_sig_genus, hm_stool_days)+
+hm_stool <- hm_plot_genus(genus_stools %>% 
+                            #Reorder list of genera to match number of days they were significantly different, Bacteroides was the top
+                            mutate(genus = fct_relevel(genus, rev(top_10_sig_genus))),
+                          top_10_sig_genus, hm_stool_days)+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
 
@@ -441,7 +444,10 @@ sig_genus_tissue_top_p <- sig_genus_tissues %>%
 top_sig_genus_tissues <- c(sig_genus_tissues_multi_day, sig_genus_tissue_top_p)
 #Create heatmap of significant genera for tissue samples----
 hm_tissue_days <- diversity_tissues %>% distinct(day) %>% pull(day)
-hm_tissues <- hm_plot_genus(genus_tissues, top_sig_genus_tissues, hm_tissue_days)+
+hm_tissues <- hm_plot_genus(genus_tissues%>% 
+                              #Reorder list of genera to match number of days they were significantly different, Bacteroides was the top
+                              mutate(genus = fct_relevel(genus, rev(top_sig_genus_tissues))), 
+                            top_sig_genus_tissues, hm_tissue_days)+
   scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_tissues.png", hm_tissues, base_height = 14, base_width = 15)
 
