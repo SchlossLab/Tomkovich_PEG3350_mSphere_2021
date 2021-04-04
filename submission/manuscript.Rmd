@@ -100,23 +100,23 @@ test <- 4
 ```
 
 \includegraphics{figure_1.pdf}
-**Figure 1. Chronic PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for subset of experiments with 5-day PEG treated mice. B. *C. difficile* CFU/gram stool measured over time (N = `r test`-`(insert variable name)` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mcie came off of the PEG treatment) or early deaths. Lines represent the median for each source and circles represent individual mouse samples.
+**Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for subset of experiments with 5-day PEG treated mice. B. *C. difficile* CFU/gram stool measured over time (N = `r test`-`(insert variable name)` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mcie came off of the PEG treatment) or early deaths. Lines represent the median for each source and circles represent individual mouse samples.
 \newpage
 
 \includegraphics{figure_2.pdf}
-**Figure 2. Chronic PEG treatment disrupts the stool microbiota for a longer amount of time compared to clindamycin-treated mice.** A. 
+**Figure 2. 5-day PEG treatment disrupts the stool microbiota for a longer amount of time compared to clindamycin-treated mice.** A. 
 \newpage
 
 \includegraphics{figure_3.pdf}
-**Figure 3. Chronic PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered.** A. 
+**Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered.** A. 
 \newpage
 
 \includegraphics{figure_4.pdf}
-**Figure 4. Acute PEG 3350 treatment renders mice susceptible to transient *C. difficile* colonization.** A. 
+**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. 
 \newpage
 
 \includegraphics{figure_5.pdf}
-**Figure 5. Acute PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. 
+**Figure 5. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. 
 \newpage
 
 \includegraphics{figure_6.pdf}
@@ -128,7 +128,7 @@ test <- 4
 \newpage
 
 \includegraphics{figure_S1.pdf}
-**Figure S1. Chronic PEG treatment plus 10-day recovery mice microbiota dynamics post-infection.** A. 
+**Figure S1. 5-day PEG treatment plus 10-day recovery mice microbiota dynamics post-infection.** A. 
 \newpage
 
 \includegraphics{figure_S2.pdf}
