@@ -578,6 +578,7 @@ hm_WMR_stool <- genus_WMR_stools %>%
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
                              "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(genus %in% WMR_genus) %>%
+    mutate(genus = fct_relevel(genus, rev(WMR_genus))) %>% #Rearrange order of genera to match significance + Peptostreptococcaceae
     filter(day %in% hm_WMR_stool_days) %>% 
     group_by(group, genus, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
