@@ -557,7 +557,7 @@ plot_genus_dx <- function(sample_df, genera, timepoint){
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    geom_hline(yintercept=1/1000, color="gray")+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     stat_summary(fun = 'median',
                  fun.max = function(x) quantile(x, 0.75),
                  fun.min = function(x) quantile(x, 0.25),
@@ -610,7 +610,7 @@ hm_plot_otus <- function(sample_df, otus, timepoints){
 #Function to create a heatmap plot the relative abundances of a list of Genera over time, faceted by group----
 #Arguments: 
 #sample_df = subset dataframe of samples to be plotted
-#Genera = list of genera to plot
+#genera = list of genera to plot
 #timepoints = days of the experiment to plot
 hm_plot_genus <- function(sample_df, genera, timepoints){
   sample_df %>%
@@ -894,4 +894,36 @@ otu_gi_distrib <- function(otu_plot, sample_df, timepoint, group_name){
           text = element_text(size = 18)) # Change font size for entire plot
 }
 
-
+#Function to create faceted line plots of relative abundances of genera of interest over time
+#sample_df = subset dataframe of samples to be plotted
+#genera = list of genera to plot
+#timepoints = days of the experiment to plot
+line_plot_genus <- function(sample_df, genera, timepoints){
+  sample_df %>% 
+    filter(genus %in% genera) %>% #Select only genera of interest
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
+    filter(day %in% timepoints) %>% #Select only timepoints of interest
+    mutate(day = as.integer(day)) %>% 
+    group_by(group, genus, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_line(aes(x = day, y=median, color=group))+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    scale_x_continuous(limits = c(-1.5,11), breaks = c(-1:10), labels = c(-1:10))+
+    scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Relative abundance (%)")+
+    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          strip.text = element_text(face = "italic"),
+          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+          text = element_text(size = 16),
+          legend.position = "None")
+}
