@@ -532,17 +532,17 @@ porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
 save_plot(filename = "results/figures/5_days_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" 
-#post C. difficile challenge (day -15 versus day 15)----
+#post C. difficile challenge (day 1 versus day 15)----
 WMR_pairs <- genus_stools %>%
   filter(group == "WMR" & genus == "Bacteroides") %>% #Limit to group and randomly pick a genus just to figure out what mice have sequence data
-  filter(day == -15 | day == 15) %>%
+  filter(day == 1 | day == 15) %>%
   filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
   pull(unique_mouse_id) #8 mice
 
 #Wilcoxon signed rank test for all day 1, day 15 pairs at the genus level:
 genus_WMR_pairs <- genus_stools %>%
   filter(unique_mouse_id %in% WMR_pairs) %>% 
-  filter(day == -15 | day == 15) %>% #Select timepoints to test
+  filter(day == 1 | day == 15) %>% #Select timepoints to test
   group_by(genus) %>%
   nest() %>%
   mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
@@ -552,7 +552,7 @@ genus_WMR_pairs <- genus_stools %>%
 
 #Adjust p-values for testing multiple genera
 genus_WMR_pairs_stats_adjust <- genus_WMR_pairs %>%
-  select(genus, statistic, p.value, method, alternative, `-15`, `15`) %>%
+  select(genus, statistic, p.value, method, alternative, `1`, `15`) %>%
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
   arrange(p.value.adj) %>%
   write_tsv(path = "data/process/5_days_PEG_genus_WMR_paired.tsv")
@@ -571,7 +571,8 @@ WMR_genus <- c(WMR_genus, "Peptostreptococcaceae Unclassified")
 #Heatmap of 5-day PEG + 10 day recovery (WMR) group----
 genus_WMR_stools  <-  genus_stools %>% 
   filter(group == "WMR")
-hm_WMR_stool_days <- genus_WMR_stools %>% distinct(day) %>% pull(day)
+hm_WMR_stool_days <- c("1", "2", "3", "4",
+                       "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")
 hm_WMR_stool <- genus_WMR_stools %>%
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
@@ -596,6 +597,61 @@ hm_WMR_stool <- genus_WMR_stools %>%
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
 
 #Repeat WMR analysis at the OTU level----
+#Wilcoxon signed rank test for all day 1, day 15 pairs at the OTU level:
+otu_WMR_pairs <- otu_stools %>%
+  filter(unique_mouse_id %in% WMR_pairs) %>% 
+  filter(day == 1 | day == 15) %>% #Select timepoints to test
+  group_by(otu) %>%
+  nest() %>%
+  mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
+  mutate(median = map(data, get_rel_abund_median_day)) %>%
+  unnest(c(model, median)) %>%
+  ungroup()
+
+#Adjust p-values for testing multiple genera
+otu_WMR_pairs_stats_adjust <- otu_WMR_pairs %>%
+  select(otu, statistic, p.value, method, alternative, `1`, `15`) %>%
+  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
+  arrange(p.value.adj) %>%
+  write_tsv(path = "data/process/5_days_PEG_otu_WMR_paired.tsv")
+
+#Create list of genera to plot for WMR group
+otu_WMR_pairs_stats_adjust %>% filter(p.value.adj < 0.05) #No p-values survive multiple hypothesis correction
+#Look at top 10 genera by unadjusted p-values
+WMR_otu <- otu_WMR_pairs_stats_adjust %>% 
+  arrange(p.value) %>% 
+  slice_head(n=10) %>% 
+  pull(otu)
+#Add C. diff to the list of genera to plot
+WMR_otu <- c(WMR_otu, "Peptostreptococcaceae (OTU 12)")
+
+#Heatmap of 5-day PEG + 10 day recovery (WMR) group----
+otu_WMR_stools  <-  otu_stools %>% 
+  filter(group == "WMR")
+hm_WMR_stool_days <- c("1", "2", "3", "4",
+                       "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")
+hm_WMR_stool <- otu_WMR_stools %>%
+  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
+  mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
+                           "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
+  filter(otu %in% WMR_otu) %>%
+  filter(day %in% hm_WMR_stool_days) %>% 
+  group_by(group, otu_name, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_tile(aes(x = day, y=otu_name, fill=median))+
+  labs(title=NULL,
+       x=NULL,
+       y=NULL)+
+  scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
+                       limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  theme_classic()+
+  theme(plot.title=element_text(hjust=0.5),
+        strip.background = element_blank(), #get rid of box around facet_wrap labels
+        axis.text.y = element_markdown(), #Have bacteria name in italics
+        text = element_text(size = 16))+ # Change font size for entire plot+
+  scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
+save_plot(filename = "results/figures/5_days_PEG_otu_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
 
 #Begin going through rest of code here----
 
