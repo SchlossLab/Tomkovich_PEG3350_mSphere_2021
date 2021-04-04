@@ -11,11 +11,6 @@ color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day
 shape_scheme <- c(1, 19)
 shape_infected <- c("no", "yes")
 
-#metadata <- metadata %>%
-#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
-#agg_otu_data <- agg_otu_data %>% 
-#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
-
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
 
@@ -452,7 +447,7 @@ save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_tissues.png", hm_
 
 #List of genera that overlap between top genera for stool and tissue samples----
 top_genera <- intersect_all(top_10_sig_genus, top_sig_genus_tissues)
-#5 genera: Bacteroides, Clostridales Unclassified, Ruminococcaceae Unclassified, 
+#5 genera: Bacteroides, Clostridiales Unclassified, Ruminococcaceae Unclassified, 
 #Peptostreptococcaceae Unclassified, Acetatifactor
 
 #OTU analysis----
@@ -747,3 +742,93 @@ peg_impacted_genera_plot <- pairwise_genus_stools %>%
         strip.background = element_blank(),
         legend.position = "none") 
 save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 8)
+
+#Examine genera of interest over time----
+genus_stools_t <- genus_stools %>% 
+  mutate(day = as.integer(day))  #Day variable transformed to integer for over time plots
+genus_tissues_t <- genus_tissues %>% 
+  mutate(day = as.integer(day))  #Day variable transformed to integer for over time plots  
+
+#Examine Bacteroides over time
+bacteroides_stools <- genus_over_time("Bacteroides", genus_stools_t)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_bacteroides_stools.png", bacteroides_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+bacteroides_tissues <- genus_over_time("Bacteroides", genus_tissues_t)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_bacteroides_tissues.png", bacteroides_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Clostridiales over time
+clostridiales_stools <- genus_over_time("Clostridiales Unclassified", genus_stools_t)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_clostridiales_stools.png", clostridiales_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+clostridiales_tissues <- genus_over_time("Clostridiales Unclassified", genus_tissues_t)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_clostridiales_tissues.png", clostridiales_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Ruminococcaceae over time
+ruminococcaceae_stools <- genus_over_time("Ruminococcaceae Unclassified", genus_stools_t)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_ruminococcaceae_stools.png", ruminococcaceae_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+ruminococcaceae_tissues <- genus_over_time("Ruminococcaceae Unclassified", genus_tissues_t)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_ruminococcaceae_tissues.png", ruminococcaceae_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Peptostreptococcaceae over time
+peptostreptococcaceae_stools <- genus_over_time("Peptostreptococcaceae Unclassified", genus_stools_t)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_peptostreptococcaceae_stools.png", peptostreptococcaceae_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+peptostreptococcaceae_tissues <- genus_over_time("Peptostreptococcaceae Unclassified", genus_tissues_t)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_peptostreptococcaceae_tissues.png", peptostreptococcaceae_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Acetatifactor over time
+acetatifactor_stools <- genus_over_time("Acetatifactor", genus_stools_t)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_acetatifactor_stools.png", acetatifactor_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+acetatifactor_tissues <- genus_over_time("Acetatifactor", genus_tissues_t)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_acetatifactor_tissues.png", acetatifactor_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Examine Akkermansia over time
+akkermansia_stools <- genus_over_time("Akkermansia", genus_stools_t)+
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_akkermansia_stools.png", akkermansia_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+akkermansia_tissues <- genus_over_time("Akkermansia", genus_tissues_t)+
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_genus_akkermansia_tissues.png", akkermansia_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
