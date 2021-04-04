@@ -898,7 +898,8 @@ otu_gi_distrib <- function(otu_plot, sample_df, timepoint, group_name){
 #sample_df = subset dataframe of samples to be plotted
 #genera = list of genera to plot
 #timepoints = days of the experiment to plot
-line_plot_genus <- function(sample_df, genera, timepoints){
+#specify_linetype = "solid" for C. diff challenged. "dashed" for mice that were mock challenged
+line_plot_genus <- function(sample_df, genera, timepoints, specify_linetype){
   sample_df %>% 
     filter(genus %in% genera) %>% #Select only genera of interest
     mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
@@ -908,7 +909,7 @@ line_plot_genus <- function(sample_df, genera, timepoints){
     group_by(group, genus, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
-    geom_line(aes(x = day, y=median, color=group))+
+    geom_line(aes(x = day, y=median, color=group), linetype = specify_linetype)+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
