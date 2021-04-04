@@ -428,7 +428,7 @@ lp_stool_days <- diversity_stools %>% distinct(day) %>%
   pull(day)
 facet_labels <- top_10_sig_genus[1:6] #Pick just the top 6
 names(facet_labels) <- top_10_sig_genus[1:6] #Pick just the top 6
-lp_stool <- line_plot_genus(genus_stools, top_10_sig_genus[1:6], lp_stool_days)
+lp_stool <- line_plot_genus(genus_stools, top_10_sig_genus[1:6], lp_stool_days, "solid")
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools.png", lp_stool, base_height = 5, base_width = 8)
 
 #List of the 10 significant genera in tissue samples that are significant over the most timepoints
@@ -466,7 +466,7 @@ lp_tissue_days <- diversity_tissues %>% distinct(day) %>%
   pull(day)
 facet_labels <- top_sig_genus_tissues[1:6] #Pick just the top 6
 names(facet_labels) <- top_sig_genus_tissues[1:6] #Pick just the top 6
-lp_tissue <- line_plot_genus(genus_tissues, top_sig_genus_tissues[1:6], lp_tissue_days)+
+lp_tissue <- line_plot_genus(genus_tissues, top_sig_genus_tissues[1:6], lp_tissue_days, "solid")+
   scale_x_continuous(limits = c(3.5,30.5), breaks = c(4, 6, 20, 30), labels = c(4, 6,20, 30))#Change scale since we have less timepoints for tissues
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_tissues.png", lp_tissue, base_height = 5, base_width = 8)
 
@@ -857,3 +857,33 @@ akkermansia_tissues <- genus_over_time("Akkermansia", genus_tissues_t)+
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/5_days_PEG_genus_akkermansia_tissues.png", akkermansia_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Plots of mock-infected mice----
+#Use same color scheme but change symbols to open circles and lines to dashes
+#Define color scheme to match 5_days_PEG plots----
+color_scheme <- c("#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
+color_groups <- c("CN", "WMN")
+color_labels <- c( "Clind.", "5-day PEG 3350")
+
+#Lineplots of the top 6 significant genera in mock stool samples----
+lp_stool_days <- c("-5","-1", "0", "4", "6")
+facet_labels <- top_10_sig_genus[1:6] #Pick just the top 6
+names(facet_labels) <- top_10_sig_genus[1:6] #Pick just the top 6
+lp_stool_mock <- line_plot_genus(genus_mock_stools %>% 
+                              filter(group %in% c("CN","WMN")), #Select only mock challenged groups
+                            top_10_sig_genus[1:6], lp_stool_days, "longdash")+
+  scale_x_continuous(limits = c(-5.5,6.5), breaks = c(-5, -1, 0, 4, 6), labels = c(-5, -1, 0, 4, 6))#Change scale
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_stools.png", lp_stool_mock, base_height = 5, base_width = 8)
+
+#Lineplots of the top 6 significant genera in mock tissue samples----
+lp_tissue_days <- diversity_tissues %>% distinct(day) %>% 
+  filter(day %in% c("4", "6", "30")) %>% #Focus on day -1 through 10 timepoints
+  pull(day)
+facet_labels <- top_sig_genus_tissues[1:6] #Pick just the top 6
+names(facet_labels) <- top_sig_genus_tissues[1:6] #Pick just the top 6
+lp_tissue_mock <- line_plot_genus(genus_mock_tissues %>% 
+                                    filter(group %in% c("CN","WMN")), #Select only mock challenged groups 
+                                  top_sig_genus_tissues[1:6], lp_tissue_days, "longdash")+
+  scale_x_continuous(limits = c(3.5, 30.5), breaks = c(4, 6, 30), labels = c(4, 6, 30))#Change scale since we have less timepoints for tissues
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_tissues.png", lp_tissue_mock, base_height = 5, base_width = 8)
+
