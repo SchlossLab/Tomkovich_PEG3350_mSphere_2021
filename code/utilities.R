@@ -794,6 +794,40 @@ hm_1_genus <- function(sample_df, specify_genus, timepoints){
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
+#Function to plot a genus over time
+#genus_plot = genus to plot in quotes. Ex: "Bacteroides"
+#sample_df = subset dataframe of just stool or tissue samples
+genus_over_time <- function(genus_plot, sample_df){
+  specify_genus_name <- sample_df %>% 
+    filter(genus == genus_plot) %>% 
+    pull(genus)
+  genus_median <- sample_df %>% 
+    filter(genus == genus_plot) %>% 
+    group_by(group, day) %>% 
+    summarize(median=(median(agg_rel_abund + 1/2000))) %>% 
+    ungroup
+  genus_mice <- sample_df %>% 
+    filter(genus == genus_plot) %>% 
+    mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>%
+    select(day, agg_rel_abund, genus, group)
+  genus_time <- ggplot(NULL)+
+    geom_point(genus_mice, mapping = aes(x=day, y=agg_rel_abund, color=group), size  = 1.5, position = position_dodge(width = 0.6))+
+    geom_line(genus_median, mapping = aes(x=day, y=median, group = group, color=group), size = 1, show.legend = FALSE)+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    geom_hline(yintercept=1/1000, color="gray")+
+    labs(title=specify_genus_name,
+         x="Day",
+         y="Relative abundance (%)") +
+    scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    theme_classic()+
+    theme(plot.title=element_text(hjust = 0.5, face = "italic"),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"),  # Add gray lines to clearly separate symbols by days)
+          text = element_text(size = 18)) # Change font size for entire plot
+}
+
 #Function to plot an otu_over_time
 #otu_plot = otu to plot in quotes. Ex: "Peptostreptococcaceae (OTU 12)"
 #sample_df = subset dataframe of just stool or tissue samples
