@@ -549,7 +549,7 @@ porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
   theme(legend.position = "bottom")
 
-save_plot(filename = "results/figures/5_days_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+save_plot(filename = "results/figures/5_days_PEG_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" 
 #post C. difficile challenge (day 1 versus day 15)----
