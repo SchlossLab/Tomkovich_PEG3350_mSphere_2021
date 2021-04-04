@@ -164,8 +164,7 @@ pairwise_day6_plot <-d6_plot_pairwise_stats %>%
 
 #Plot of day 6 histology scores----
 d6_plot <- plot_histology(d6_histology, pairwise_day6_plot)
-save_plot("results/figures/histo_scores_d6.png", d6_plot) #Use save_plot instead of ggsave because it works better with cowplot
-
+save_plot("results/figures/5_days_PEG_histo_scores_d6.png", d6_plot) #Use save_plot instead of ggsave because it works better with cowplot
 
 #Plot of day 4 (plus day 0 for 1 group) histology scores----
 #Define color scheme for d4_histology----
@@ -181,5 +180,5 @@ pairwise_day4_plot <- d4_plot_pairwise_stats %>%
 
 #Plot of day 4 histology scores----
 d4_plot <- plot_histology(d4_histology, pairwise_day4_plot)
-ggsave("results/figures/histo_scores_d4.png", d4_plot)
+save_plot("results/figures/5_days_PEG_histo_scores_d4.png", d4_plot) #Use save_plot instead of ggsave because it works better with cowplot
 
