@@ -539,7 +539,7 @@ WMR_pairs <- genus_stools %>%
   filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
   pull(unique_mouse_id) #8 mice
 
-#Wilcoxon signed rank test for all day 1, day 15 pairs at the OTU level:
+#Wilcoxon signed rank test for all day 1, day 15 pairs at the genus level:
 genus_WMR_pairs <- genus_stools %>%
   filter(unique_mouse_id %in% WMR_pairs) %>% 
   filter(day == -15 | day == 15) %>% #Select timepoints to test
@@ -550,22 +550,22 @@ genus_WMR_pairs <- genus_stools %>%
   unnest(c(model, median)) %>%
   ungroup()
 
-#Adjust p-values for testing multiple OTUs
+#Adjust p-values for testing multiple genera
 genus_WMR_pairs_stats_adjust <- genus_WMR_pairs %>%
   select(genus, statistic, p.value, method, alternative, `-15`, `15`) %>%
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
   arrange(p.value.adj) %>%
   write_tsv(path = "data/process/5_days_PEG_genus_WMR_paired.tsv")
 
-#Create list of OTUs to plot for WMR group
+#Create list of genera to plot for WMR group
 genus_WMR_pairs_stats_adjust %>% filter(p.value.adj < 0.05) #No p-values survive multiple hypothesis correction
-#Look at top 15 OTUs by unadjusted p-values
+#Look at top 10 genera by unadjusted p-values
 WMR_genus <- genus_WMR_pairs_stats_adjust %>% 
   arrange(p.value) %>% 
   filter(!genus == "Unclassified") %>% #Remove this genera since it is uninformative
   slice_head(n=10) %>% 
   pull(genus)
-#Add C. diff OTU to the list of OTUs to plot
+#Add C. diff to the list of genera to plot
 WMR_genus <- c(WMR_genus, "Peptostreptococcaceae Unclassified")
 
 #Heatmap of 5-day PEG + 10 day recovery (WMR) group----
@@ -594,6 +594,8 @@ hm_WMR_stool <- genus_WMR_stools %>%
           text = element_text(size = 16))+ # Change font size for entire plot+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
+
+#Repeat WMR analysis at the OTU level----
 
 #Begin going through rest of code here----
 
