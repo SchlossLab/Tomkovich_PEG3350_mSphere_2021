@@ -422,6 +422,15 @@ hm_stool <- hm_plot_genus(genus_stools %>%
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools.png", hm_stool, base_height = 14, base_width = 15)
 
+#Lineplots of the top 6 significant genera in stool samples----
+lp_stool_days <- diversity_stools %>% distinct(day) %>% 
+  filter(!day %in% c("-15", "-10", "-5", "-4", "-2", "15", "20", "30")) %>% #Focus on day -1 through 10 timepoints
+  pull(day)
+facet_labels <- top_10_sig_genus[1:6] #Pick just the top 6
+names(facet_labels) <- top_10_sig_genus[1:6] #Pick just the top 6
+lp_stool <- line_plot_genus(genus_stools, top_10_sig_genus[1:6], lp_stool_days)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools.png", lp_stool, base_height = 5, base_width = 8)
+
 #List of the 10 significant genera in tissue samples that are significant over the most timepoints
 sig_genus_tissues<- kw_genus_tissues %>% 
   filter(p.value.adj < 0.05) %>% #Select only significant p-values
@@ -450,6 +459,16 @@ hm_tissues <- hm_plot_genus(genus_tissues%>%
                             top_sig_genus_tissues, hm_tissue_days)+
   scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_tissues.png", hm_tissues, base_height = 14, base_width = 15)
+
+#Lineplots of the top 6 significant genera in tissue samples----
+lp_tissue_days <- diversity_tissues %>% distinct(day) %>% 
+  filter(day %in% c("4", "6", "20", "30")) %>% #Focus on day -1 through 10 timepoints
+  pull(day)
+facet_labels <- top_sig_genus_tissues[1:6] #Pick just the top 6
+names(facet_labels) <- top_sig_genus_tissues[1:6] #Pick just the top 6
+lp_tissue <- line_plot_genus(genus_tissues, top_sig_genus_tissues[1:6], lp_tissue_days)+
+  scale_x_continuous(limits = c(3.5,30.5), breaks = c(4, 6, 20, 30), labels = c(4, 6,20, 30))#Change scale since we have less timepoints for tissues
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_tissues.png", lp_tissue, base_height = 5, base_width = 8)
 
 #List of genera that overlap between top genera for stool and tissue samples----
 top_genera <- intersect_all(top_10_sig_genus, top_sig_genus_tissues)
