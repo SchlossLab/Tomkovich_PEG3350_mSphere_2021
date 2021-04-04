@@ -653,226 +653,81 @@ hm_WMR_stool <- otu_WMR_stools %>%
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_otu_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
 
-#Begin going through rest of code here----
+#Examine impacts of PEG3350 treatments on bacterial genera----
+#Use genus level stool sample data from baseline and day of/after PEG treatment stopped 
+#day of PEG treatment stopping was usually harder to get a sample because the mice still had diarrhea
 
-#Examine impacts of clindamycin and PEG3350 treatments on bacterial OTUs----
-#Nov. 2020: Need to update this now that we have data from all timepoints
+#For WMR group: Baseline (B) is day -15, post-treatment (P) is -4 (1 day after coming off treatment)
+#For WM and WMC: Baseline is day -5, post-treatment is 1 (1 day after coming off treatment)
+#For C group: Also use Baseline as day -5 and post-treatment is 1 (don't include in statistical test but include as comparison for plot
+#Create dataframe with corresponding days renamed as B for baseline or P for post-treatment, select those timepoints
+pairwise_genus_stools <- genus_stools %>% 
+  mutate(day = case_when(group == "WMR" & day == "-15" ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "C" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-4" ~ "P",
+                         group == "WM" & day == "1" ~ "P",
+                         group == "WMC" & day == "1" ~ "P",
+                         group == "C" & day == "1" ~ "P",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "P"))
 
-#Examine changes that happen after clindamycin treatment (baseline day -5 versus day 1)
-C_dn5_d1_pairs <- agg_otu_data %>%
-  filter(group == "C" & otu == "Bacteroides (OTU 1)") %>% #Limit to group "C" and randomly pick an OTU just to figure out what mice have sequence data
-  filter(day == -5 | day == 1) %>%
-  filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
-  pull(unique_mouse_id) #6 mice
-
-#Dataframe for statistical test at the OTU level
-C_paired_otu <- agg_otu_data %>%
-  filter(unique_mouse_id %in% C_dn5_d1_pairs) %>% #Only select pairs with data for day -1 & day 0
-  filter(day == -5 | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
-  mutate(day = as.factor(day)) %>%
-  select(day, otu, agg_rel_abund)
-
-#Wilcoxon signed rank test for all day -1, day 0 pairs at the OTU level:
-otus_C_pairs <- C_paired_otu %>%
-  group_by(otu) %>%
+#Create list of unique mouse IDs of WMR and WM groups to include in statistical test, figure out impact of 5-day PEG
+#Exclude C, want to see the impact of 5-day PEG treatment
+#Exclude WMC, since these mice also had clindamycin treatment
+peg_pairwise_mice <- pairwise_genus_stools %>% 
+  filter(genus == "Bacteroides") %>% #Pick one genus just to get list of mice
+  filter(group %in% c("WMR", "WM")) %>% 
+  filter(duplicated(unique_mouse_id)) %>%
+  pull(unique_mouse_id) #25 mice total
+  
+#Wilcoxon signed rank test for all baseline, post-treatment WM & WMR pairs at the genus level:
+peg_wilcoxon <- pairwise_genus_stools %>% 
+  filter(unique_mouse_id %in% peg_pairwise_mice) %>% #Select WM & WMR with baseline & post-treatment samples
+  group_by(genus) %>% 
   nest() %>%
   mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
   mutate(median = map(data, get_rel_abund_median_day)) %>%
   unnest(c(model, median)) %>%
   ungroup()
-
-#Adjust p-values for testing multiple OTUs
-otus_C_pairs_stats_adjust <- otus_C_pairs %>%
-  select(otu, statistic, p.value, method, alternative, `-5`, `1`) %>%
-  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
-  arrange(p.value.adj) %>%
-  write_tsv(path = "data/process/5_days_PEG_otu_Cgroup_dn5to0.tsv")
-
-#Make a list of significant OTUs impacted by clindamycin treatment----
-C_sig_otu_pairs <- pull_significant_taxa(otus_C_pairs_stats_adjust, otu)
-# 0 OTUs
-C_sig_otu_pairs_top10 <- C_sig_otu_pairs[1:10]
-
-C_top_OTUs <- otus_C_pairs_stats_adjust %>%
-  arrange(p.value)
-C_top10_OTUs <- head(C_top_OTUs, 10) %>% pull(otu)
-
-#Examine OTUs that change after 5-day PEG3350 treatment (baseline day -5 versus day 1)
-WM_dn5_d1_pairs <- agg_otu_data %>%
-  filter(group == "WM" & otu == "Bacteroides (OTU 1)") %>% #Limit to group "C" and randomly pick an OTU just to figure out what mice have sequence data
-  filter(day == -5 | day == 1) %>%
-  filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
-  pull(unique_mouse_id) #9 mice
-
-#Dataframe for statistical test at the OTU level
-WM_paired_otu <- agg_otu_data %>%
-  filter(unique_mouse_id %in% WM_dn5_d1_pairs) %>% #Only select pairs with data for day -1 & day 0
-  filter(day == -5 | day == 1) %>% #Experiment days that represent initial community and community post clindamycin treatment
-  mutate(day = as.factor(day)) %>%
-  select(day, otu, agg_rel_abund)
-
-#Wilcoxon signed rank test for all day -1, day 0 pairs at the OTU level:
-otus_WM_pairs <- WM_paired_otu %>%
-  group_by(otu) %>%
-  nest() %>%
-  mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
-  mutate(median = map(data, get_rel_abund_median_day)) %>%
-  unnest(c(model, median)) %>%
-  ungroup()
-
-#Adjust p-values for testing multiple OTUs
-otus_WM_pairs_stats_adjust <- otus_WM_pairs %>%
-  select(otu, statistic, p.value, method, alternative, `-5`, `1`) %>%
-  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
-  arrange(p.value.adj) %>%
-  write_tsv(path = "data/process/5_days_PEG_otu_WMgroup_dn5to0.tsv")
-
-#Make a list of significant OTUs impacted by PEG3350 treatment----
-WM_sig_otu_pairs <- pull_significant_taxa(otus_WM_pairs_stats_adjust, otu)
-# 0 OTUs
-WM_sig_otu_pairs_top10 <- WM_sig_otu_pairs[1:10]
-
-WM_top_OTUs <- otus_WM_pairs_stats_adjust %>%
-  arrange(p.value)
-WM_top10_OTUs <- head(WM_top_OTUs, 10) %>% pull(otu)
-
-#Compare OTUs impacted by clindamycin and PEG3350
-WM_C_otus <- intersect_all(C_top10_OTUs, WM_top10_OTUs)
-#4 OTUs overlap: Enterobacteriaceae (OTU 3) and Porphyromonadaceae (OTUs 8, 11, 16)
-
-#Genus Level Analysis----
-agg_genus_data_subset = five_day_PEG_subset(agg_genus_data) %>% 
-  mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                           "5", "6", "7", "8", "9", "10", "15", "20", "25", "30"))
-
-#Pairwise comparisons
-#Create baseline WMR: Day -15 vs Day -10; Rest of groups Day -5 vs D1
-# -15, -10, -5, -4 relevant timepoints for analysis of WMR 
-WMR_baseline = agg_genus_data_subset %>%
-  filter(group == "WMR", day == -15 | day == -10) %>%
-  filter(duplicated(unique_mouse_id)) %>%
-  pull(unique_mouse_id)
-ro_groups_baseline = agg_genus_data_subset %>%
-  filter(group != "WMR" | group != "C", day == -5 | day == 1) %>%
-  filter(duplicated(unique_mouse_id)) %>%
-  pull(unique_mouse_id)
-#baseline_mice = rbind(WMR_baseline, ro_groups_baseline) %>%
- # filter(duplicated(unique_mouse_id)) %>%
- # pull(unique_mouse_id)
-
-#Dataframes for statistical analysis at genus level
-WMR_paired_genus <- agg_genus_data_subset %>%
-  filter(unique_mouse_id %in% WMR_baseline) %>% 
-  filter(day == -15 | day == -10) %>% 
-  mutate(day = as.factor(day)) %>% 
-  select(day, genus, agg_rel_abund)
-
-ro_groups_paired_genus <- agg_genus_data_subset %>%
-  filter(unique_mouse_id %in% ro_groups_baseline) %>% 
-  filter(day == -5 | day == 1) %>% 
-  mutate(day = as.factor(day)) %>% 
-  select(day, genus, agg_rel_abund)
-
-#Wilcoxon signed rank test for all pairs at the genus level: Must separate WMR from rest of groups due to different time points
-WMR_genus_peg_effect_pairs <- WMR_paired_genus %>% 
-  group_by(genus) %>% 
-  nest() %>% 
-  mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$day)) %>% tidy())) %>% 
-  mutate(median = map(data, get_rel_abund_median_day)) %>% 
-  unnest(c(model, median)) %>% 
-  ungroup()
-
-ro_groups_genus_peg_effect_pairs <- ro_groups_paired_genus %>% 
-  group_by(genus) %>% 
-  nest() %>% 
-  mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$day)) %>% tidy())) %>% 
-  mutate(median = map(data, get_rel_abund_median_day)) %>% 
-  unnest(c(model, median)) %>% 
-  ungroup()
-
 #Adjust p-values for testing multiple genera
-WMR_genus_effect_adj <- WMR_genus_peg_effect_pairs %>% 
-  select(genus, statistic, p.value, method, `-15`, `-10`) %>% 
+peg_wilcoxon_adjust <- peg_wilcoxon %>% 
+  select(genus, statistic, p.value, method, `B`, `P`) %>% 
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
   arrange(p.value.adj) %>%
-  rename("baseline" = `-15`, "Post-PEG" = `-10`) #Rename to established baseline and post-PEG timepoints
-ro_groups_effect_adj <- ro_groups_genus_peg_effect_pairs %>% 
-  select(genus, statistic, p.value, method, `-5`, `1`) %>% 
-  mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
-  arrange(p.value.adj) %>%
-  rename("baseline" = `-5`, "Post-PEG" = `1`) #Rename to established baseline and post-PEG timepoints
-  
-
+  write_tsv(path = "data/process/5_days_PEG_genus_PEG_paired.tsv")
+ 
 #Pull significant genera from adjusted p-value dataframes
-WMR_sig_genus_pairs <- pull_significant_taxa(WMR_genus_effect_adj, genus)
-ro_groups_sig_genus_pairs <- pull_significant_taxa(ro_groups_effect_adj, genus)
+peg_wilcoxon_adjust_sig <- pull_significant_taxa(peg_wilcoxon_adjust, genus)
+#18 genera significant
 
-#Combine and remove duplicated genera to find all significant genera before and after PEG
-sig_genus_pairs <- c(WMR_sig_genus_pairs, ro_groups_sig_genus_pairs) %>%
-  unique()
+#Create list of genera to plot
+peg_wilcoxon_adjust_sig_plot <- peg_wilcoxon_adjust %>% 
+  filter(p.value < 0.05) %>% 
+  #Exclude Unclassified because it's not informative
+  #Exclude Peptostreptococcaceae since we challenged mice with that on day 0 and so will also show up on day 1 (post-treatment for WM, WMC, and WMR mice)
+  filter(!genus %in% c("Unclassified", "Peptostreptococcaceae Unclassified")) %>% 
+  #Select top 14
+  head(14) %>% 
+  pull(genus)
 
-#Define Facet labels for faceting by genus in line plots
-facet_labels <- sig_genus_pairs
-names(facet_labels) <- sig_genus_pairs
-
-#Find which days have samples from all groups
-day_freq <- agg_genus_data_subset %>%
-  group_by(day, group) %>%
-  summarize(day = unique(day), group = color_groups) %>%
-  table() %>%
-  as.data.frame() %>%
-  filter(Freq == 4)
-  
-genus_pair_days = unique(day_freq$day) #Days -1, -5, 0, 1, 3, 5, and 6 have samples from all groups
-
- #Plot all significant genus pairs for all timepoints and groups----
-sig_genus_pair_plot <- agg_genus_data_subset %>% 
-  filter(day %in% genus_pair_days) %>%
-  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
-  mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                           "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% 
-  filter(genus %in% sig_genus_pairs) %>%
-  group_by(group, genus, day) %>%
-  mutate(median_abund =median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%
-  ggplot() +
-  geom_line(mapping = aes(x = day, y = median_abund, group = group, color = group), alpha = 0.6, size = 1, show.legend = FALSE) +
-  # geom_point(mapping = aes(x = day, y = agg_rel_abund, group = group, color = group), alpha = 0.6, size = 1, show.legend = FALSE) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  theme_classic()+
-  labs(title=NULL,
-       x="Days Post-Infection",
-       y="Relative Abundance") +
-  facet_wrap(~genus, labeller = labeller(genus = facet_labels)) +
-  theme(plot.title=element_text(hjust=0.5),
-         strip.background = element_blank(), #get rid of box around facet_wrap labels
-         axis.text.y = element_markdown(), #Have only the OTU names show up as italics
-         text = element_text(size = 16)) # Change font size for entire plot
-save_plot(filename = "results/figures/5_days_PEG_genus_pairs.png", sig_genus_pair_plot, base_height = 7, base_width = 20)
-
-
-
-
-
-#Plot of significant genera post-PEG treatment----
-facet_labels <- c("Baseline", "PEG Treatment")
-names(facet_labels) <- c(-5, 1)
-
+#Plot of significant genera  that change between baseline and PEG treatment----
+#Include C and WMC group for comparison
+facet_labels <- c("Baseline", "Post-treatment")
+names(facet_labels) <- c("B", "P")
 #Plot all groups but WMR group (has different baseline and post-treatment timepoints)
-peg_impacted_genera_no_WMR_plot <- agg_genus_data_subset %>% 
-  filter(genus %in% ro_groups_sig_genus_pairs) %>% 
-  filter(day %in% c(-5, 1)) %>% #Select baseline and post-peg timepoints
-  filter(group != "WMR") %>% # Remove WMR as these timepoints do not represent its baseline and post-treatment timepoints
-  mutate(genus=factor(genus, levels=ro_groups_sig_genus_pairs)) %>% 
-  mutate(agg_rel_abund = agg_rel_abund + 1/5437) %>% 
+peg_impacted_genera_plot <- pairwise_genus_stools %>% 
+  filter(genus %in% peg_wilcoxon_adjust_sig_plot) %>% 
+  filter(day %in% c("B", "P")) %>% #Select baseline and post-treatment timepoints
+  mutate(genus=fct_relevel(genus, levels=rev(peg_wilcoxon_adjust_sig_plot))) %>% #Reorder list of genera in order of significance
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
   ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-  geom_hline(yintercept=1/5437, color="gray")+
+  geom_hline(yintercept=1/1000, color="gray")+
   stat_summary(fun = 'median', 
                fun.max = function(x) quantile(x, 0.75), 
                fun.min = function(x) quantile(x, 0.25),
@@ -880,53 +735,14 @@ peg_impacted_genera_no_WMR_plot <- agg_genus_data_subset %>%
   labs(title=NULL, 
        x=NULL,
        y="Relative abundance (%)")+
-  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/1/10000, 1))+
   coord_flip()+
   theme_classic()+
-  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed")+
   theme(plot.title=element_text(hjust=0.5),
         text = element_text(size = 16),# Change font size for entire plot
         axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
         strip.background = element_blank(),
         legend.position = "none") 
-save_plot(filename = paste0("results/figures/5_days_peg_impacted_genera_no_WMR_plot.png"), peg_impacted_genera_no_WMR_plot, base_height = 9, base_width = 9)
-
-facet_labels <- c("Baseline", "PEG Treatment")
-names(facet_labels) <- c(-15, -10)
-
-#Plot PEG's effect on the WMR group alone
-peg_impacted_genera_WMR_plot <- agg_genus_data_subset %>%
-  filter(genus %in% WMR_sig_genus_pairs) %>% 
-  filter(day %in% c(-15, -10)) %>% #Select baseline and post-peg timepoints
-  mutate(genus=factor(genus, levels=WMR_sig_genus_pairs)) %>% 
-  mutate(agg_rel_abund = agg_rel_abund + 1/5437) %>% 
-  ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
-  geom_hline(yintercept=1/5437, color="gray")+
-  stat_summary(fun = 'median', 
-               fun.max = function(x) quantile(x, 0.75), 
-               fun.min = function(x) quantile(x, 0.25),
-               position = position_dodge(width = 1)) +  
-  labs(title=NULL, 
-       x=NULL,
-       y="Relative abundance (%)")+
-  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
-  coord_flip()+
-  theme_classic()+
-  geom_vline(xintercept = c((1:10) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed")+
-  theme(plot.title=element_text(hjust=0.5),
-        text = element_text(size = 16),# Change font size for entire plot
-        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
-        strip.background = element_blank(),
-        legend.position = "none") 
-save_plot(filename = paste0("results/figures/5_days_peg_impacted_genera_WMR_plot.png"), peg_impacted_genera_WMR_plot, base_height = 9, base_width = 9)
-
-  
-
-
-
+save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 8)
