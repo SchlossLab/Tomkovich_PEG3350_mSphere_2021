@@ -73,15 +73,58 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 
 ## Abstract
-(Modify depending on target journal) Antibiotics are a major risk factor for *Clostridioides difficile* infections (CDIs) because of their impact on the intestinal microbiome. However, non-antibiotic medications such as the ubiquitous osmotic laxative polyethylene glycol (PEG) 3350, also alter the microbiota, but whether PEG impacts CDI susceptibility and clearance is unclear. To examine how PEG impacts susceptibility, we treated C57Bl/6 mice with 5-day and 1-day doses of 15% PEG in the drinking water and then challenged the mice with *C. difficile* 630 spores. We used clindamycin-treated mice as a control because they consistently clear *C. difficile* within 10 days post-infection (dpi). To examine how PEG treatment impacts clearance, we administered PEG for 1 day to clindamycin-treated, *C. difficile*-challenged mice either immediately following challenge or 3 dpi. We collected longitudinal stool samples to examine *C. difficile* levels in the stool via anaerobic culture and profiled the microbiota by 16S rRNA sequencing. PEG treatment alone was sufficient to render mice susceptible to CDI and 5-day PEG-treated mice remain colonized for up to 30 dpi. Additionally, 5-day PEG treated mice remained susceptible to CDI 10-days post treatment. In contrast, 1-day PEG treated mice were transiently colonized, clearing *C. difficile* within 7 dpi. Although 5-day PEG-treated mice exhibited prolonged *C. difficile* colonization, we saw no difference in histological inflammation between PEG- and clindamycin-treated mice. Additionally, administering PEG to mice after *C. difficile* challenge prolonged colonization up to 30 dpi in mice that received PEG immediately after challenge and 15 dpi in mice that received PEG 3 dpi. When we examined microbiota composition across our different treatment groups, we found decreased richness in the PEG-treated mice that exhibited prolonged *C. difficile* colonization. Importantly, there were increased Bacteroides and Enterobacteriaceae and decreased Lachnospiraceae and Oscillibacter in most of the PEG-treated mice with prolonged *C. difficile* colonization. Our findings suggest the osmotic laxative PEG 3350 alters the mouse microbiota and disrupts colonization resistance to *C. difficile*, as well as clearance in mice with a CDI. Considering that most hospitals recommend not performing *C. difficile* testing on patients taking laxatives and laxatives are used when administering fecal microbiota transplants via colonoscopy to patients with recurrent CDIs, further studies are needed to evaluate if laxatives impact human microbiota colonization resistance.
+(Modify depending on target journal, currently abstract submitted to World Microbe Forum) Antibiotics are a major risk factor for *Clostridioides difficile* infections (CDIs) because of their impact on the intestinal microbiome. However, non-antibiotic medications such as the ubiquitous osmotic laxative polyethylene glycol (PEG) 3350, also alter the microbiota, but whether PEG impacts CDI susceptibility and clearance is unclear. To examine how PEG impacts susceptibility, we treated C57Bl/6 mice with 5-day and 1-day doses of 15% PEG in the drinking water and then challenged the mice with *C. difficile* 630 spores. We used clindamycin-treated mice as a control because they consistently clear *C. difficile* within 10 days post-infection (dpi). To examine how PEG treatment impacts clearance, we administered PEG for 1 day to clindamycin-treated, *C. difficile*-challenged mice either immediately following challenge or 3 dpi. We collected longitudinal stool samples to examine *C. difficile* levels in the stool via anaerobic culture and profiled the microbiota by 16S rRNA sequencing. PEG treatment alone was sufficient to render mice susceptible to CDI and 5-day PEG-treated mice remain colonized for up to 30 dpi. Additionally, 5-day PEG treated mice remained susceptible to CDI 10-days post treatment. In contrast, 1-day PEG treated mice were transiently colonized, clearing *C. difficile* within 7 dpi. Although 5-day PEG-treated mice exhibited prolonged *C. difficile* colonization, we saw no difference in histological inflammation between PEG- and clindamycin-treated mice. Additionally, administering PEG to mice after *C. difficile* challenge prolonged colonization up to 30 dpi in mice that received PEG immediately after challenge and 15 dpi in mice that received PEG 3 dpi. When we examined microbiota composition across our different treatment groups, we found decreased richness in the PEG-treated mice that exhibited prolonged *C. difficile* colonization. Importantly, there were increased Bacteroides and Enterobacteriaceae and decreased Lachnospiraceae and Oscillibacter in most of the PEG-treated mice with prolonged *C. difficile* colonization. Our findings suggest the osmotic laxative PEG 3350 alters the mouse microbiota and disrupts colonization resistance to *C. difficile*, as well as clearance in mice with a CDI. Considering that most hospitals recommend not performing *C. difficile* testing on patients taking laxatives and laxatives are used when administering fecal microbiota transplants via colonoscopy to patients with recurrent CDIs, further studies are needed to evaluate if laxatives impact human microbiota colonization resistance.
 
 \newpage
 
 ## Introduction
 
+* Medications have been shown to alter the intestinal microbiota, but how this may influence susceptibility to enteric infections is less clear.
 
-## Results and Discussion
+*  The ubiquitous osmotic laxative, polyethylene glycol (PEG) 3350 (Miralax/Nulytely/Golytely)  that is also commonly used as bowel preparation for colonoscopies (also one of the possible administration routes used for fecal microbiota transplantation, a therapy for recurrent C. difficile infection) has been shown to influence the intestinal microbiota and mucosal barrier.
 
+* Review of previous mouse studies with PEG 
+
+* 2 main questions:
+  + Does PEG 3350 prolong colonization and result in more severe C. difficile infections?
+  + How does PEG 3350 influence C. difficile clearance and fecal microbiota transplant (FMT) in mice?
+
+## Results
+
+* Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.
+
+* Figure 2. 5-day PEG treatment disrupts the stool microbiota for a longer amount of time compared to clindamycin-treated mice.
+
+* Figure S1. 5-day PEG treatment plus 10-day recovery mice microbiota dynamics post-infection.
+
+* Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered. 
+
+* Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.
+
+* Figure 5. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.
+
+* Figure 6. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.
+
+* Figure S2. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization.
+  + Ex. *Muribaculum intestinale*. 
+
+* Figure 7. Schematic summarizing findings.
+
+##Discussion
+
+* Summary of major findings
+
+* Discussion of prolonged persistence. C. difficile sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent [a[ers]]
+
+* Discuss why we might not have observed more severe histology in PEG mice relative to clindamycin-treated mice
+  + Antibiotics may also impact mucus layer
+  + Strain of bacteria used
+
+* Protective bacteria missing in PEG-treated mice
+
+* Discuss what these findings might mean for human patients
+  + What's known regarding laxatives and susceptibility to CDIs
+  + Relevance to human FMTs? Unclear what the best administration route is because there have been no studies designed to evaluate the best administration route for FMTs.
 
 ## Conclusions
 
@@ -100,6 +143,7 @@ test <- 4
 ```
 
 \includegraphics{figure_1.pdf}
+
 **Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for subset of experiments with 5-day PEG treated mice. B. Weight change from baseline weight in groups after treatment with PEG and/or clindamycin, followed by *C. difficile* challenge. C. *C. difficile* CFU/gram stool measured over time (N = `r test`-`(insert variable name)` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. Lines represent the median for each source and circles represent individual mouse samples. Asterisks indicate timepoints where the weight change or CFU/g was significantly different between groups by the Kruskal-Wallis test with Benjamini-Hochberg correction for testing multiple timepoints.
 \newpage
 
@@ -116,6 +160,7 @@ test <- 4
 \newpage
 
 \includegraphics{figure_5.pdf}
+\includegraphics{figure_5_16S.pdf}
 **Figure 5. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. 
 \newpage
 
