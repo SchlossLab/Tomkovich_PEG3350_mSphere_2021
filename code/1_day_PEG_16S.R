@@ -108,7 +108,6 @@ richness_tissues <- plot_richness_overtime(diversity_data_subset) +
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/1_Day_PEG_richness.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-
 #Pairwise-Comparison of diversity data----
 #Function for pairwise Wilcoxon rank sum test for shannon diversity
 pairwise_shannon <- function(diversity_subset, timepoints){
@@ -650,6 +649,7 @@ sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_rem
 
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
-line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, hm_days, "solid")
+line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, hm_days, "solid")+
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7")) +
 save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
