@@ -204,7 +204,7 @@ topabund_5_model_taxa_area_plot <- agg_genus_data %>%
   scale_fill_viridis(discrete = T)+
   labs(title=NULL,
        x=NULL,
-       y="Relative abundance") +
+       y="Relative abundance (%)") +
 #To do: Figure out how to get scale to match other plots  
 #  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
   facet_wrap(~clearance_status_d10, labeller = labeller(clearance_status_d10 = facet_labels), nrow = 1)+
