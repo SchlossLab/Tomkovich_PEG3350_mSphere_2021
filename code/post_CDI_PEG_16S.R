@@ -699,10 +699,15 @@ kw_genus_stools %>% #Check to see if there were any genera that were sig in the 
   filter(day == 5,p.value.adj < .05,
          !(genus %in% pairwise_genus_rank)) %>% pull(genus) #Only [1] "Turicibacter"
 #Plot alt line plots faceted by genus
-agg_genus_data_subset_hm %>% 
+agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
+exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
+exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
+line_plot_stool_days <- diversity_stools %>% distinct(day) %>% 
+  filter(!(day %in% c(-15, 30))) %>% pull(day)
+genus_line_plot_facet <- agg_genus_data_subset_hm %>% 
   mutate(group = fct_relevel(group, exp_groups)) %>% #Specify the order of the groups
   filter(genus %in% pairwise_genus_rank) %>%
-  filter(day %in% hm_stool_days) %>% 
+  filter(day %in% line_plot_stool_days) %>% 
   mutate(day = as.numeric(day)) %>% 
   group_by(group, genus, day) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
@@ -712,14 +717,17 @@ agg_genus_data_subset_hm %>%
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-  scale_x_continuous(limits = c(-1,30), breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))+
-  scale_y_continuous(trans = "log10", limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))+
+  scale_y_continuous(trans = "log10", limits = c(1/5000, 1), breaks=c(1e-3, 1e-2, 1e-1, 1), labels=c(1e-1, 1, 10, 100))+
+  #geom_hline(yintercept=1/5437, color="gray")+
   labs(title=NULL,
        x="Days Post-Infection",
-       y=NULL)+
-  facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+       y="Relative Abundance (%)")+
+  facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10), scales = "free")+
   theme_classic()+
   theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
         strip.text = element_text(face = "italic"),
         plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
-        text = element_text(size = 16))
+        text = element_text(size = 16),
+        legend.position = "bottom")
+save_plot("results/figures/post_CDI_PEG_genus_line_plot_facet.png", genus_line_plot_facet)
