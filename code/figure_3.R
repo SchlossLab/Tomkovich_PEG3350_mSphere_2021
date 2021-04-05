@@ -8,6 +8,6 @@ e <- ggdraw() + draw_image("results/figures/1_Day_PEG_genus_5_baselinetoD1_linep
 top_panel <- plot_grid(a, b, c, d, labels = c("A", "B", "C", "D"), label_size = 12, ncol = 2, rel_widths = c(.60, 1, 1,.60), rel_heights = c(1, 1))
 bottom_panel <- plot_grid(e, labels = c("E"), label_size = 12)
 plot_grid(top_panel, bottom_panel, nrow = 2, rel_heights = c(1.1, .8)) +
-  ggsave("results/figures/figure_3.pdf", width = 5.25, height = 5.0)
-  ggsave("submission/figure_3", width = 5.25, height = 5.0)
+  ggsave("results/figures/figure_3.pdf", width = 6.25, height = 5.5)+
+  ggsave("submission/figure_3.pdf", width = 6.25, height = 5.5)
 
