@@ -3,7 +3,7 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 #Define color scheme for this figure----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "CWM", "FRM", "RM")
-color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350")
+color_labels <- c( "Clind.", "Clind. + 1-day PEG", "Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 3-day recovery + 1-day PEG + PBS")
 
 #Subset metadata to relevant groups and experiments (C, CWM, RM, FRM)----
 metadata <- post_cdi_PEG_subset(metadata) %>% 
