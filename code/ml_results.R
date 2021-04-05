@@ -207,7 +207,7 @@ topabund_5_model_taxa_area_plot <- agg_genus_data %>%
        y="Relative abundance") +
 #To do: Figure out how to get scale to match other plots  
 #  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
-  facet_wrap(~clearance_status_d10, labeller = labeller(clearance_status_d10 = facet_labels), ncol = 1)+
+  facet_wrap(~clearance_status_d10, labeller = labeller(clearance_status_d10 = facet_labels), nrow = 1)+
   theme_classic()+
   theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
         legend.text = element_text(face = "italic"), #Italicize genus name
@@ -221,4 +221,4 @@ save_plot("results/figures/ml_abund_5_genus_area_legend.png", legend_area_plot, 
 #Save area plot without legend
 topabund_5_model_taxa_area_plot <- topabund_5_model_taxa_area_plot+
   theme(legend.position = "none") #Remove legend
-save_plot(filename = paste0("results/figures/ml_abund_5_genus_area.png"), topabund_5_model_taxa_area_plot, base_height = 5, base_width = 5)  
+save_plot(filename = paste0("results/figures/ml_abund_5_genus_area.png"), topabund_5_model_taxa_area_plot, base_height = 4, base_width = 7)  
