@@ -453,7 +453,7 @@ plot_shannon_overtime <- function(df) {
          y="Shannon Diversity Index")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
-          text = element_text(size = 14), # Change font size for entire plot
+          text = element_text(size = 16), # Change font size for entire plot
           axis.ticks.x = element_blank(),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
 }
@@ -477,7 +477,7 @@ plot_richness_overtime <- function(df) {
          y="Number of Observed OTUs")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
-          text = element_text(size = 14), # Change font size for entire plot
+          text = element_text(size = 16), # Change font size for entire plot
           axis.ticks.x = element_blank(),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
 }
@@ -496,7 +496,8 @@ plot_pcoa <- function(df){
          y="PCoA 2",
          alpha= "Day") +
     theme_classic()+
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom",
+          text = element_text(size = 16))
 }
 
 #Function to format Kruskal-Wallis data frame with adjusted p values to use as a label on plots of cfu, weight, diversity, and other variables over time:
