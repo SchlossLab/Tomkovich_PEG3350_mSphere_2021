@@ -144,10 +144,10 @@ cfudata <- cfudata %>%
   mutate(day = fct_relevel(day, "0", "1", "2","3", "4", "5", "6", "7", "8", "9", "10")) %>%
   mutate(group = fct_relevel(group, "C", "M1", "1RM1"))
 cfu <- plot_cfu_data(cfudata) + 
+  scale_x_discrete(breaks = c(1:10))+
+  geom_vline(xintercept = c((1:11) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none",
-        text = element_text(size = 14))
-  scale_x_discrete(breaks = c(1:10))
-
+        text = element_text(size = 16))
 save_plot(filename = "results/figures/1_day_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Plot of weight change data----
