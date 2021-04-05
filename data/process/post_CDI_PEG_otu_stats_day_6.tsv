@@ -9,7 +9,7 @@ Porphyromonadaceae (OTU 25)	28.024911032028452	3.588570271543901e-6	3	Kruskal-Wa
 Oscillibacter (OTU 57)	27.946984257733828	3.726297855955643e-6	3	Kruskal-Wallis rank sum test	0.0035	0	0	0	9.688374425484672e-5
 Acetatifactor (OTU 55)	26.765621525461412	6.59248136794195e-6	3	Kruskal-Wallis rank sum test	0.0055	0	0	0	1.5235956939243616e-4
 Porphyromonadaceae (OTU 14)	25.611877735737085	1.1499309711576072e-5	3	Kruskal-Wallis rank sum test	0	0	0.0485	0	2.391856420007823e-4
-Clostridium (OTU 51)	24.348920093000487	2.1121630832731124e-5	3	Kruskal-Wallis rank sum test	0.0015	0	0	0	3.75653419371313e-4
+Clostridium XlVb (OTU 51)	24.348920093000487	2.1121630832731124e-5	3	Kruskal-Wallis rank sum test	0.0015	0	0	0	3.75653419371313e-4
 Lachnospiraceae (OTU 63)	24.295405982905983	2.167231265603729e-5	3	Kruskal-Wallis rank sum test	0.0025	0	0	0	3.75653419371313e-4
 Lachnospiraceae (OTU 73)	23.5732716501771	3.0665606927396014e-5	3	Kruskal-Wallis rank sum test	0.0035	0	0	0	4.906497108383362e-4
 Lachnospiraceae (OTU 41)	22.73557585208286	4.58460568187175e-5	3	Kruskal-Wallis rank sum test	0.002	0	0	0	5.677882614435871e-4
@@ -47,7 +47,7 @@ Porphyromonadaceae (OTU 194)	15.882352941176459	0.0011987318409853497	3	Kruskal-
 Lachnospiraceae (OTU 33)	15.470794333735919	0.0014554802614455914	3	Kruskal-Wallis rank sum test	0.006	0	0	0	0.006441274348525171
 Lachnospiraceae (OTU 36)	15.495726495726492	0.0014384799697939208	3	Kruskal-Wallis rank sum test	0.0025	0	0	0	0.006441274348525171
 Porphyromonadaceae (OTU 15)	15.23505513639001	0.001626406897772423	3	Kruskal-Wallis rank sum test	0	0	0.007	0	0.007047763223680499
-Clostridium (OTU 126)	14.495614035087726	0.002302586252339767	3	Kruskal-Wallis rank sum test	0.001	0	0	0	0.00977424368340146
+Clostridium IV (OTU 126)	14.495614035087726	0.002302586252339767	3	Kruskal-Wallis rank sum test	0.001	0	0	0	0.00977424368340146
 Lachnospiraceae (OTU 29)	13.878645995233652	0.0030750773557581945	3	Kruskal-Wallis rank sum test	0.006500000000000001	0	0	0	0.012108342382127974
 Lachnospiraceae (OTU 71)	13.871559633027523	0.003085298780061455	3	Kruskal-Wallis rank sum test	5e-4	0	0	0	0.012108342382127974
 Ruminococcaceae (OTU 101)	13.871559633027523	0.003085298780061455	3	Kruskal-Wallis rank sum test	5e-4	0	0	0	0.012108342382127974
@@ -58,7 +58,7 @@ Ruminococcaceae (OTU 37)	12.439853132099973	0.006018720101815029	3	Kruskal-Walli
 Lachnospiraceae (OTU 62)	12.424730529216312	0.006061199191697861	3	Kruskal-Wallis rank sum test	0.001	0	0	0	0.022118060208300965
 Bifidobacterium (OTU 28)	12.269224367509983	0.006515576739596862	3	Kruskal-Wallis rank sum test	0.0015	5e-4	0.010499999999999999	0.003	0.022970168844680464
 Lachnospiraceae (OTU 32)	12.294100467289713	0.00644069185744061	3	Kruskal-Wallis rank sum test	0.003	0	5e-4	0	0.022970168844680464
-Clostridium (OTU 22)	11.955391450528344	0.007537543216061577	3	Kruskal-Wallis rank sum test	0.0035	0.0025	0	0	0.026130149815680136
+Clostridium XlVa (OTU 22)	11.955391450528344	0.007537543216061577	3	Kruskal-Wallis rank sum test	0.0035	0.0025	0	0	0.026130149815680136
 Pseudoflavonifractor (OTU 69)	11.750392464678177	0.008289006602141592	3	Kruskal-Wallis rank sum test	0.001	0	0	0	0.028264153659761492
 Lachnospiraceae (OTU 94)	11.70776715316223	0.00845430895730036	3	Kruskal-Wallis rank sum test	0.0015	0	0	0	0.028362842953523787
 Lachnospiraceae (OTU 86)	11.418750000000001	0.009664220877933396	3	Kruskal-Wallis rank sum test	5e-4	0	0	0	0.03190726893031978
@@ -98,7 +98,7 @@ Ruminococcaceae (OTU 106)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis
 Lachnospiraceae (OTU 112)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
 Dorea (OTU 134)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
 Lachnospiraceae (OTU 135)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
-Clostridium (OTU 145)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
+Clostridium IV (OTU 145)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
 Firmicutes (OTU 155)	6.363636363636332	0.09519829740078085	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
 Clostridiales (OTU 179)	6.352941176470559	0.09564609736784675	3	Kruskal-Wallis rank sum test	0	0	0	0	0.1954416010956748
 Lachnospiraceae (OTU 113)	6.174595141700407	0.10341796974571318	3	Kruskal-Wallis rank sum test	0	0	0	0	0.20775709230694425
@@ -121,7 +121,7 @@ Lachnospiraceae (OTU 72)	4.530023547880689	0.2096278386953804	3	Kruskal-Wallis r
 Lachnospiraceae (OTU 111)	4.49898063200816	0.21238123068204068	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3681274665155372
 Erysipelotrichaceae (OTU 39)	4.394889481109897	0.22185971908045507	3	Kruskal-Wallis rank sum test	0	0.001	0.001	0	0.3782526358093004
 Lachnospiraceae (OTU 82)	4.406659495403865	0.22076869111013137	3	Kruskal-Wallis rank sum test	5e-4	0	0	0	0.3782526358093004
-Clostridium_sensu (OTU 53)	4.1142857142856935	0.24938484703195388	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
+Clostridium sensu (OTU 53)	4.1142857142856935	0.24938484703195388	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Lachnospiraceae (OTU 133)	4.1142857142856935	0.24938484703195388	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Clostridiales (OTU 141)	4.117647058823509	0.24903740025766563	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Ruminococcaceae (OTU 147)	4.117647058823509	0.24903740025766563	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
@@ -132,13 +132,13 @@ Lachnospiraceae (OTU 180)	4.117647058823509	0.24903740025766563	3	Kruskal-Wallis
 Lachnospiraceae (OTU 183)	4.1142857142856935	0.24938484703195388	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Lachnospiraceae (OTU 185)	4.1142857142856935	0.24938484703195388	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Akkermansia (OTU 200)	4.117647058823509	0.24903740025766563	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
-Clostridium (OTU 201)	4.117647058823509	0.24903740025766563	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
+Clostridium XlVb (OTU 201)	4.117647058823509	0.24903740025766563	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Lachnospiraceae (OTU 220)	4.1142857142856935	0.24938484703195388	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3842373939455289
 Lachnospiraceae (OTU 85)	3.999855887015407	0.26147969196825976	3	Kruskal-Wallis rank sum test	0	0	0	0	0.3999101171279267
 Lachnospiraceae (OTU 83)	3.910353535353515	0.2713084586566632	3	Kruskal-Wallis rank sum test	0	0	0	0	0.4059867582775967
 Lachnospiraceae (OTU 120)	3.910353535353515	0.2713084586566632	3	Kruskal-Wallis rank sum test	0	0	0	0	0.4059867582775967
 Ruminococcaceae (OTU 153)	3.910353535353515	0.2713084586566632	3	Kruskal-Wallis rank sum test	0	0	0	0	0.4059867582775967
-Clostridium (OTU 172)	3.8281249999999822	0.28063162677991194	3	Kruskal-Wallis rank sum test	0	0	0	0	0.4169384169301549
+Clostridium XlVb (OTU 172)	3.8281249999999822	0.28063162677991194	3	Kruskal-Wallis rank sum test	0	0	0	0	0.4169384169301549
 Lachnospiraceae (OTU 75)	3.6865002161694886	0.2973669432680699	3	Kruskal-Wallis rank sum test	0	0	0	0	0.4386689659557343
 Lachnospiraceae (OTU 103)	3.0791666666666573	0.37957956218538796	3	Kruskal-Wallis rank sum test	0	0	0	0	0.5527328874347779
 Blautia (OTU 132)	3.0763419836473527	0.3800038601114098	3	Kruskal-Wallis rank sum test	0	0	0	0.001	0.5527328874347779
@@ -190,7 +190,7 @@ Ruminococcaceae (OTU 420)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis
 Clostridiales (OTU 436)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
 Ruminococcaceae (OTU 450)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
 Akkermansia (OTU 504)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
-Clostridium (OTU 536)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
+Clostridium XlVa (OTU 536)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
 Clostridiales (OTU 874)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
 Prevotella (OTU 996)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
 Firmicutes (OTU 1187)	1.9999999999999918	0.5724067044708816	3	Kruskal-Wallis rank sum test	0	0	0	0	0.6074520129078744
@@ -201,12 +201,12 @@ Lachnospiraceae (OTU 121)	1.7757693875471483	0.6202219300076437	3	Kruskal-Wallis
 Lactobacillus (OTU 9)	1.4545231874591715	0.6928054120596256	3	Kruskal-Wallis rank sum test	0.0085	0.003	0.005	0.0035	0.7205176285420107
 Lachnospiraceae (OTU 26)	1.2547201781564696	0.7399122456068083	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7656803337622693
 Lachnospiraceae (OTU 104)	1.207468763944662	0.7512135565798829	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7735268305377012
-Lachnospiraceae (OTU 42)	1.030952380952341	0.793762975677947	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721372
-Ruminococcus (OTU 93)	1.0294117647058771	0.7941356764721372	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721372
-Lachnospiraceae (OTU 127)	1.0606060606060554	0.786591420873994	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721372
-Lachnospiraceae (OTU 144)	1.030952380952341	0.793762975677947	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721372
-Lachnospiraceae (OTU 157)	1.0294117647058771	0.7941356764721372	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721372
-Lachnospiraceae (OTU 163)	1.0294117647058771	0.7941356764721372	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721372
+Lachnospiraceae (OTU 42)	1.030952380952341	0.793762975677947	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721375
+Ruminococcus (OTU 93)	1.0294117647058771	0.7941356764721375	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721375
+Lachnospiraceae (OTU 127)	1.0606060606060554	0.786591420873994	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721375
+Lachnospiraceae (OTU 144)	1.030952380952341	0.793762975677947	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721375
+Lachnospiraceae (OTU 157)	1.0294117647058771	0.7941356764721375	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721375
+Lachnospiraceae (OTU 163)	1.0294117647058771	0.7941356764721375	3	Kruskal-Wallis rank sum test	0	0	0	0	0.7941356764721375
 Porphyromonadaceae (OTU 67)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 70)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 99)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -231,7 +231,7 @@ Enterobacteriaceae (OTU 176)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 177)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteroides (OTU 178)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 184)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 186)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVa (OTU 186)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Firmicutes (OTU 188)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Prevotella (OTU 191)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Veillonella (OTU 192)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -292,7 +292,7 @@ Acetatifactor (OTU 263)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Akkermansia (OTU 264)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Coriobacteriaceae (OTU 265)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Acidaminococcus (OTU 267)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 268)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVa (OTU 268)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 269)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Firmicutes (OTU 270)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 271)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -359,7 +359,7 @@ Lachnospiraceae (OTU 340)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 341)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 343)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Erysipelotrichaceae (OTU 344)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium_sensu (OTU 345)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium sensu (OTU 345)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Butyrivibrio (OTU 346)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Fusobacterium (OTU 350)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Akkermansia (OTU 352)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -399,7 +399,7 @@ Lachnospiraceae (OTU 385)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Escherichia/Shigella (OTU 386)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 387)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 388)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 389)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 389)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteria (OTU 390)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 391)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Pseudomonas (OTU 392)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -407,13 +407,13 @@ Corynebacterium (OTU 393)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 394)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 395)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Barnesiella (OTU 396)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium_sensu (OTU 397)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium sensu (OTU 397)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Blautia (OTU 398)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 399)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteroides (OTU 400)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 401)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Burkholderia (OTU 403)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 405)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVa (OTU 405)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Akkermansia (OTU 406)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 407)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Enterobacteriaceae (OTU 408)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -430,7 +430,7 @@ Coriobacteriaceae (OTU 419)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 421)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Blautia (OTU 422)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lactobacillus (OTU 423)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 424)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 424)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 425)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 426)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Hungatella (OTU 427)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -453,7 +453,7 @@ Porphyromonadaceae (OTU 445)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Pasteurellaceae (OTU 446)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Streptococcus (OTU 447)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 448)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 449)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 449)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Streptococcus (OTU 451)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Acetatifactor (OTU 452)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 453)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -465,7 +465,7 @@ Akkermansia (OTU 458)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Barnesiella (OTU 459)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Peptostreptococcaceae (OTU 460)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 461)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium_sensu (OTU 462)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium sensu (OTU 462)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcus (OTU 463)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Coriobacteriaceae (OTU 464)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Odoribacter (OTU 465)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -563,8 +563,8 @@ Bacteria (OTU 567)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Erysipelotrichaceae (OTU 569)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 570)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 571)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 572)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 573)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVa (OTU 572)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 573)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Stenotrophomonas (OTU 574)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 575)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 576)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -574,11 +574,11 @@ Firmicutes (OTU 579)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Anaerotruncus (OTU 580)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 581)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteria (OTU 582)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 583)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XVIII (OTU 583)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 584)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Akkermansia (OTU 585)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 586)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 587)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XI (OTU 587)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 588)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 589)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 590)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -588,7 +588,7 @@ Porphyromonadaceae (OTU 593)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 595)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 596)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 597)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 598)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 598)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 599)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Curvibacter (OTU 600)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 601)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -601,7 +601,7 @@ Prevotella (OTU 608)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 609)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 610)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 611)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 612)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVa (OTU 612)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 613)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 614)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 615)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -610,7 +610,7 @@ Porphyromonadaceae (OTU 617)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 618)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 620)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 621)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 622)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 622)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 623)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteroidales (OTU 624)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 625)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -677,7 +677,7 @@ Bacteria (OTU 708)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteroidales (OTU 709)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 710)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lactobacillales (OTU 712)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium_sensu (OTU 713)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium sensu (OTU 713)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 714)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 715)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 716)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -734,17 +734,17 @@ Porphyromonadaceae (OTU 789)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 790)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteria (OTU 792)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Firmicutes (OTU 793)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 794)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 794)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 797)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 799)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 800)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Actinomycetales (OTU 801)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 802)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 803)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVa (OTU 803)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 804)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Oscillibacter (OTU 805)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 806)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 808)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 808)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 812)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Fusobacterium (OTU 813)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Erysipelotrichaceae (OTU 814)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -799,7 +799,7 @@ Roseburia (OTU 904)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 905)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Campylobacter (OTU 907)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 908)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium_sensu (OTU 910)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium sensu (OTU 910)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 911)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 912)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Erysipelotrichaceae (OTU 913)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -839,7 +839,7 @@ Ruminococcaceae (OTU 969)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Blautia (OTU 970)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteroides (OTU 974)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 976)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 978)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 978)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 979)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 980)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 981)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -875,7 +875,7 @@ Lachnospiraceae (OTU 1030)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lactobacillaceae (OTU 1035)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1037)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1043)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 1044)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 1044)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1048)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1049)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1053)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1100,7 +1100,7 @@ Ruminococcaceae (OTU 1700)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 1702)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1705)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1710)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 1711)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 1711)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1718)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 1720)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Akkermansia (OTU 1737)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1162,7 +1162,7 @@ Megasphaera (OTU 2010)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2011)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 2018)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Bacteroides (OTU 2020)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 2027)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 2027)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2028)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Firmicutes (OTU 2034)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Firmicutes (OTU 2035)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1210,7 +1210,7 @@ Lachnospiraceae (OTU 2352)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Neisseria (OTU 2359)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridia (OTU 2361)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2364)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 2367)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium IV (OTU 2367)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 2370)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiaceae_ (OTU 2372)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 2375)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1236,7 +1236,7 @@ Enterobacteriaceae (OTU 2503)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2504)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2505)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2533)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 2569)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 2569)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 2576)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2582)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 2583)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1326,7 +1326,7 @@ Lachnospiraceae (OTU 3309)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 3332)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3337)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Porphyromonadaceae (OTU 3352)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 3354)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 3354)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3391)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 3397)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3416)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1339,7 +1339,7 @@ Lachnospiraceae (OTU 3471)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3524)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3546)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3569)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium_sensu (OTU 3592)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium sensu (OTU 3592)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3593)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 3598)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Clostridiales (OTU 3600)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
@@ -1458,7 +1458,7 @@ Lachnospiraceae (OTU 5297)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 5299)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 5311)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Ruminococcaceae (OTU 5321)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
-Clostridium (OTU 5325)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
+Clostridium XlVb (OTU 5325)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 5338)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 5352)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN
 Lachnospiraceae (OTU 5367)	NaN	NaN	3	Kruskal-Wallis rank sum test	0	0	0	0	NaN

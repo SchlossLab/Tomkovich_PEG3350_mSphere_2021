@@ -6,8 +6,10 @@ color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8", "7f5f1e") #Adapted
 color_groups <- c("C", "CWM", "FRM", "RM", "FMT")
 color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350", "FMT")
 
-metadata <- metadata %>%
-  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+#Try only transforming day to integer on plots plotting 
+#metadata <- metadata %>%
+#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
+#Without transformation day column is a character variable
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
@@ -61,8 +63,6 @@ kruskal_wallis_shannon <- function(diversity_subset, timepoints, subset_name){
 kw_shannon_stools <- kruskal_wallis_shannon(diversity_stools, stool_test_days, "stools")
 sig_shannon_days_stools <- pull_sig_days(kw_shannon_stools)
 
-
-
 #Plot Shannon
 shannon_post_cdi_peg <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMT from shannon
@@ -98,12 +98,13 @@ save_plot("results/figures/post_CDI_PEG_shannon.png", shannon_post_cdi_peg_no_le
 legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg) %>% as_ggplot()
 save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
 
-#Plot Shannon over time days -1 to 30 for post CDI PEG subset
+#Plot Shannon over time days -1 to 30 for post CDI PEG subset: all samples except FMTs
 x_annotation <- sig_shannon_days_stools
 y_position <- max(diversity_stools$shannon)+ 0.05
 label <- kw_label(kw_shannon_stools)
 shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
   filter(group != "FMT") %>% #drop FMTs
+  filter(day != "-15") %>% #Remove -15 timepoint
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,35), #removes day -15 here
@@ -114,16 +115,17 @@ shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
 save_plot("results/figures/post_CDI_PEG_shannon_overtime.png", shannon_post_cdi_peg_overtime_full) #Save full Shannon over time plot without legend
 
 
-#Plot Shannon over time for first 10 days for post CDI PEG subset
+#Plot Shannon over time for first 10 days for post CDI PEG subset (all samples)
 shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10),
-                     limits = c(-2,11),
-                     minor_breaks = c(-2.5:10.5)) +
+                     limits = c(-1.5,10.5),
+                     minor_breaks = c(-1.5:10.5)) +
   labs(x = "Day",
        y = "Shannon Diversity Index") +
   theme(legend.position = "none")
 save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
+#Warning because stat for day 15 annotation is removed when we limit x axis to day 1:10
 
 #Plot Shannon over time for stools only
 x_annotation <- sig_shannon_days_stools
@@ -218,6 +220,7 @@ y_position <- max(diversity_stools$sobs)+1.5
 label <- kw_label(kw_richness_stools)
 sobs_post_CDI_PEG_stool <- diversity_stools %>%
   filter(group != "FMT") %>% #Remove FMTs
+  filter(day != "-15") %>% #Remove -15 timepoint
   plot_richness_overtime()+
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2, 31),
@@ -230,7 +233,6 @@ sobs_post_CDI_PEG_stool <- diversity_stools %>%
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 50, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = 50, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot("results/figures/post_CDI_PEG_richness_overtime_stool.png", sobs_post_CDI_PEG_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
 
 #Plot Stool + Tissue PCoA data----
 #Pull post_CDI_PEG subset of PCoA data
@@ -377,14 +379,11 @@ save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pco
 #OTU Analysis------
 #Function to test at the otu level:
 agg_otu_data_subset <- post_cdi_PEG_subset(agg_otu_data) %>% 
-  filter(sample_type =="stool") %>% #Exclude the other sample types and just perform test on the stools
-  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
-                           "8", "9", "10", "15", "20", "25", "30"))
+  filter(sample_type =="stool") #Exclude the other sample types and just perform test on the stools
 
 agg_otu_data_tissues <- post_cdi_PEG_subset(agg_otu_data) %>% 
   filter(!sample_type =="stool") %>% 
   mutate(sample_type = fct_relevel(sample_type, "cecum", "proximal_colon", "distal_colon")) #Specify order of sample types
-
 
 kruskal_wallis_otu <- function(timepoint){
   otu_stats <- agg_otu_data_subset %>%
@@ -411,6 +410,7 @@ kw_otu_stools <- data.frame(otu=character(), statistic=double(), p.value = doubl
 
 
 ## Perform kruskal wallis tests at the otu level for all days of the experiment that were sequenced----
+#Stool samples
 for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kruskal_wallis_otu(d)
   #Make a list of significant otus across sources of mice for a specific day
@@ -430,77 +430,10 @@ print(shared_sig_otus_D3toD10)
 #[4] "Lachnospiraceae (OTU 24)"    "Lachnospiraceae (OTU 31)"    "Lachnospiraceae (OTU 30)"   
 #[7] "Porphyromonadaceae (OTU 14)" "Porphyromonadaceae (OTU 44)"
 
-
-#Plots of the top 20 OTUs that varied across sources at each timepoint----
-#Day 1: top 20 OTUs that vary across sources
-D1top20_otus <- plot_otus_dx(`sig_otu_day1`[1:20], 1) +#Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D1top20_otus.png", D1top20_otus, base_height = 9, base_width = 7)
-#Day 3: top 20 OTUs that vary across sources
-D3top20_otus <- plot_otus_dx(`sig_otu_day3`[1:20], 3) + #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D3top20_otus.png", D3top20_otus, base_height = 9, base_width = 7)
-#Day 6: top 20 OTUs that vary across sources
-D6top20_otus <- plot_otus_dx(`sig_otu_day6`[1:20], 6)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D6top20_otus.png", D6top20_otus, base_height = 9, base_width = 7)
-#Day 8: top 20 OTUs that vary across sources
-D8top20_otus <- plot_otus_dx(`sig_otu_day8`[1:20], 8)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D8top20_otus.png", D8top20_otus, base_height = 9, base_width = 7)
-#Day 10: top 20 OTUs that vary across sources
-D10top20_otus <- plot_otus_dx(`sig_otu_day10`[1:20], 10)+ #Pick top 20 significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D10top20_otus.png", D10top20_otus, base_height = 9, base_width = 7)
-
-
-#Perform pairwise comparisons for day -15 and -1
-# Perform pairwise Wilcoxan rank sum tests for otus that were significantly different across sources of mice on a series of days----
-pairwise_day_otu <- function(timepoint, sig_otu_dayX){
-  otu_stats <- post_cdi_PEG_subset(agg_otu_data) %>% 
-    filter(day == timepoint) %>%
-    select(group, otu, agg_rel_abund) %>% 
-    group_by(otu) %>% 
-    nest() %>% 
-    mutate(model=map(data, ~kruskal.test(x=.x$agg_rel_abund, g=as.factor(.x$group)) %>% tidy())) %>% 
-    mutate(median = map(data, get_rel_abund_median_group)) %>% 
-    unnest(c(model, median)) %>% 
-    ungroup()
-  pairwise_stats <- otu_stats %>% 
-    filter(otu %in% sig_otu_dayX) %>% 
-    group_by(otu) %>% 
-    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$agg_rel_abund, g=as.factor(.x$group), p.adjust.method="BH") %>% 
-                       tidy() %>% 
-                       mutate(compare=paste(group1, group2, sep="-")) %>% 
-                       select(-group1, -group2) %>% 
-                       pivot_wider(names_from=compare, values_from=p.value)
-    )
-    ) %>% 
-    unnest(model) %>% 
-    select(-data, -parameter, -statistic, -p.value) %>% #Get rid of p.value since it's the unadjusted version
-    write_tsv(path = paste0("data/process/post_CDI_PEG_otu_stats_day_", timepoint, "_sig.tsv"))
-  #Format pairwise stats to use with ggpubr package
-  plot_format_stats <- pairwise_stats %>% 
-    select(-method, -C, -CWM, -FRM, -RM) %>% 
-    group_split() %>% #Keeps a attr(,"ptype") to track prototype of the splits
-    lapply(tidy_pairwise_otu) %>% 
-    bind_rows()
-  return(plot_format_stats)  
-}
-##Pairwise test of significant days (1,3,6,8,10) and their corresponding OTUs for stool samples 
-
-otu_day1_stats <- pairwise_day_otu(1, `sig_otu_day1`)
-otu_day3_stats <- pairwise_day_otu(3, `sig_otu_day3`)
-otu_day6_stats <- pairwise_day_otu(6, `sig_otu_day6`)
-otu_day8_stats <- pairwise_day_otu(8, `sig_otu_day8`)
-otu_day10_stats <- pairwise_day_otu(10, `sig_otu_day10`)
-#Combine pairwise dataframes for all days
-otu_pairwise_stools <- rbind(otu_day1_stats, otu_day3_stats, otu_day6_stats, otu_day8_stats, otu_day10_stats)
+#Transform day into a factor label to plot bacteria over time
+agg_otu_data_subset <- agg_otu_data_subset %>% 
+  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
+                           "8", "9", "10", "15", "20", "25", "30"))
 
 #Examine C. difficile OTU over time----
 peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", agg_otu_data_subset)+
@@ -559,9 +492,7 @@ save_plot(filename = "results/figures/post_CDI_PEG_otus_heatmap_tissues_5_day_ot
 
 #Genus Analysis----
 agg_genus_data_subset <- post_cdi_PEG_subset(agg_genus_data) %>%
-  filter(sample_type =="stool") %>% #Exclude the other sample types and just perform test on the stools
-  mutate(day = fct_relevel(day, "-15", "-1", "0", "1", "2", "3", "4", "5", "6", "7", 
-                           "8", "9", "10", "15", "20", "25", "30"))
+  filter(sample_type =="stool") #Exclude the other sample types and just perform test on the stools
 
 agg_genus_data_tissues <- post_cdi_PEG_subset(agg_genus_data) %>%
   filter(!sample_type =="stool") %>% #Exclude all stool samples and just perform test on tissues
@@ -592,6 +523,7 @@ kw_genus_stools <- data.frame(genus=character(), statistic=double(), p.value = d
 
 
 ## Perform kruskal wallis tests at the genus level for all days of the experiment that were sequenced----
+#Stool samples
 for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kruskal_wallis_genus(d)
   #Make a list of significant otus across sources of mice for a specific day
@@ -700,7 +632,7 @@ names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to gro
 agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
 hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30)) 
-save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 7.5)
+save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm_stool, base_height = 7, base_width = 10)
 
 #Plot heatmap significant genera over time facet by genus
 facet_labels <- c("Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia") 
@@ -713,7 +645,25 @@ hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, fac
 save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_facet.png", hm_genera_facet, base_height = 7, base_width = 15)
 
 #Plot alt heatmap sig genera over time facet by genus
-facet_labels_alt <- c("Porphyromonadaceae Unclassified", "Ruminococcaceae Unclassified", "Butyricicoccus", "Firmicutes Unclassified", "Erysipelotrichaceae Unclassified", "Blautia")
+#pull sig genera from:
+#Pairwise comparison between Clind. + 3-day recovery + 1-day PEG 3350 with and without FMT 
+
+sig_genera_pw_5dpi <- genus_pairwise_stools_5plusdpi %>% filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
+  filter(p.adj < .05) %>%
+  arrange(p.adj)  %>%
+  filter(duplicated(genus)) %>%#pull sig genera over mulitiple days
+  pull(genus)
+sig_genera_pw_5dpi #Probably do not make much difference with cdi clearance
+
+#Sig genera between groups for a day
+sig_genera_kw_multi_day <- kw_genus_stools %>% filter(day >= 5, p.value.adj  < .05) %>% 
+  filter(duplicated(genus),
+        !(genus %in% sig_genera_pw_5dpi)) %>% #drop genera that were sig diff between PBS/FMT
+ count(genus)%>% arrange(desc(n)) %>% #put genera sig over most days at top
+ filter(genus != "Unclassified") %>%
+  top_n(6) %>%  #select top 6 for heatmap
+ pull(genus)
+#Create heat map
 facet_labels_alt <- sig_genera_kw_multi_day #top 6 from exploratory below
 hm_genera_facet_alt <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels_alt, hm_stool_days, exp_group_labels)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
@@ -729,22 +679,55 @@ hm_tissues_genera <- hm_plot_tissues_genera(agg_genus_data_tissues, hm_sig_gener
 save_plot(filename = "results/figures/post_CDI_PEG_genera_heatmap_tissues.png", hm_tissues_genera, base_height = 10, base_width = 8)
 
 #Exploratory--------
-#pull sig genera from:
-#Pairwise comparison between Clind. + 3-day recovery + 1-day PEG 3350 with and without FMT 
-sig_genera_pw_5dpi <- genus_pairwise_stools_5plusdpi %>% filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
-  filter(p.adj < .05) %>%
-  arrange(p.adj)  %>%
-  filter(duplicated(genus)) %>%#pull sig genera over mulitiple days
+
+genus_day3_stats %>% 
+  filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>%
+  filter(p.adj < .05) %>% 
+  pull(genus) #[1] "Clostridium XlVb"             "Lachnospiraceae Unclassified"
+
+genus_day5_stats %>% 
+  filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>%
+  filter(p.adj < .05) %>% 
+  pull(genus) #[1] "Porphyromonadaceae Unclassified"
+
+#Select Genera to show what's different across all groups
+pairwise_genus_rank <- genus_day5_stats %>% filter(p.adj < .05) %>% 
+  count(genus) %>% arrange(desc(n)) %>% #Rank genera according to # of groups with sig diff
+  top_n(6) %>% #select top 6 for over time plots
   pull(genus)
-sig_genera_pw_5dpi #Probably do not make much differentce with cdi clearance
-
-#Sig genera between groups for a day
-sig_genera_kw_multi_day <- kw_genus_stools %>% filter(day >= 5, p.value.adj  < .05) %>% 
-  filter(duplicated(genus),
-         !(genus %in% sig_genera_pw_5dpi)) %>% #drop genera that were sig diff between PBS/FMT
-  count(genus)%>% arrange(desc(n)) %>% #put genera sig over most days at top
-  filter(genus != "Unclassified") %>%
-  top_n(6) %>%  #select top 6 for heatmap
-  pull(genus) 
-#should I drop all the genera that were sig between the PBS/FMT bc they don't matter?
-
+kw_genus_stools %>% #Check to see if there were any genera that were sig in the kw test that were not sig in the pairwise comparisons
+  filter(day == 5,p.value.adj < .05,
+         !(genus %in% pairwise_genus_rank)) %>% pull(genus) #Only [1] "Turicibacter"
+#Plot alt line plots faceted by genus
+agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
+exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
+exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
+line_plot_stool_days <- diversity_stools %>% distinct(day) %>% 
+  filter(!(day %in% c(-15, 30))) %>% pull(day)
+genus_line_plot_facet <- agg_genus_data_subset_hm %>% 
+  mutate(group = fct_relevel(group, exp_groups)) %>% #Specify the order of the groups
+  filter(genus %in% pairwise_genus_rank) %>%
+  filter(day %in% line_plot_stool_days) %>% 
+  mutate(day = as.numeric(day)) %>% 
+  group_by(group, genus, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(aes(x = day, y=median, color=group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))+
+  scale_y_continuous(trans = "log10", limits = c(1/5000, 1), breaks=c(1e-3, 1e-2, 1e-1, 1), labels=c(1e-1, 1, 10, 100))+
+  #geom_hline(yintercept=1/5437, color="gray")+
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative Abundance (%)")+
+  facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10), scales = "free")+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        strip.text = element_text(face = "italic"),
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16),
+        legend.position = "bottom")
+save_plot("results/figures/post_CDI_PEG_genus_line_plot_facet.png", genus_line_plot_facet)

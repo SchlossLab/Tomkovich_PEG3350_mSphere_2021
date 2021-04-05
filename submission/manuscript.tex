@@ -1,46 +1,46 @@
-\documentclass[11pt,]{article}
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-    \usepackage{xltxtra,xunicode}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1.0in]{geometry}
-\ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
-              xetex]{hyperref}
-\else
-  \usepackage[unicode=true]{hyperref}
-\fi
-\hypersetup{breaklinks=true,
-            bookmarks=true,
-            pdfauthor={},
-            pdftitle={NAME OF THIS STUDY},
-            colorlinks=true,
-            citecolor=blue,
-            urlcolor=blue,
-            linkcolor=magenta,
-            pdfborder={0 0 0}}
-\urlstyle{same}  % don't use monospace font for urls
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -50,36 +50,14 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
-
-%%% Use protect on footnotes to avoid problems with footnotes in titles
-\let\rmarkdownfootnote\footnote%
-\def\footnote{\protect\rmarkdownfootnote}
-
-%%% Change title format to be more compact
-\usepackage{titling}
-
-% Create subtitle command for use in maketitle
-\newcommand{\subtitle}[1]{
-  \posttitle{
-    \begin{center}\large#1\end{center}
-    }
-}
-
-\setlength{\droptitle}{-2em}
-  \title{\textbf{NAME OF THIS STUDY}}
-  \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-  \author{}
-  \preauthor{}\postauthor{}
-  \date{}
-  \predate{}\postdate{}
-
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{helvet} % Helvetica font
 \renewcommand*\familydefault{\sfdefault} % Use the sans serif version of the font
 \usepackage[T1]{fontenc}
@@ -94,27 +72,23 @@
 
 \usepackage{pdfpages}
 
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
+\author{}
+\date{\vspace{-2.5em}}
 
 \begin{document}
-\maketitle
 
 \vspace{35mm}
 
-Running title: INSERT RUNNING TITLE HERE
+\hypertarget{an-osmotic-laxative-renders-mice-susceptible-to-prolonged-clostridioides-difficile-colonization-and-hinders-clearance}{%
+\section{\texorpdfstring{An osmotic laxative renders mice susceptible to
+prolonged \emph{Clostridioides difficile} colonization and hinders
+clearance}{An osmotic laxative renders mice susceptible to prolonged Clostridioides difficile colonization and hinders clearance}}\label{an-osmotic-laxative-renders-mice-susceptible-to-prolonged-clostridioides-difficile-colonization-and-hinders-clearance}}
 
 \vspace{35mm}
 
-Your Name Here\^{}1, Joeseph P. Schmo\^{}2, Sally J. Rivers\^{}1,
-Patrick D. Schloss\textsuperscript{1\(\dagger\)}
+Sarah Tomkovich\^{}1, Ana Taylor, Jacob Kingg, Joanna Colovas, Lucas
+Bishop, Kathryn McBride, Sonya Royzenblat, Nicholas A. Lesniak, Ingrid
+L. Bergin\^{}2, Patrick D. Schloss\textsuperscript{1\(\dagger\)}
 
 \vspace{40mm}
 
@@ -122,41 +96,104 @@ Patrick D. Schloss\textsuperscript{1\(\dagger\)}
 \href{mailto:pschloss@umich.edu}{\nolinkurl{pschloss@umich.edu}}
 
 1. Department of Microbiology and Immunology, University of Michigan,
-Ann Arbor, MI 48109
+Ann Arbor, MI, USA
 
-2. Other department contact information
+2. The Unit for Laboratory Animal Medicine, University off Michigan, Ann
+Arbor, MI, USA
 
 \newpage
-
 \linenumbers
 
-\subsection{Abstract}\label{abstract}
+\hypertarget{abstract}{%
+\subsection{Abstract}\label{abstract}}
+
+(Modify depending on target journal) Antibiotics are a major risk factor
+for \emph{Clostridioides difficile} infections (CDIs) because of their
+impact on the intestinal microbiome. However, non-antibiotic medications
+such as the ubiquitous osmotic laxative polyethylene glycol (PEG) 3350,
+also alter the microbiota, but whether PEG impacts CDI susceptibility
+and clearance is unclear. To examine how PEG impacts susceptibility, we
+treated C57Bl/6 mice with 5-day and 1-day doses of 15\% PEG in the
+drinking water and then challenged the mice with \emph{C. difficile} 630
+spores. We used clindamycin-treated mice as a control because they
+consistently clear \emph{C. difficile} within 10 days post-infection
+(dpi). To examine how PEG treatment impacts clearance, we administered
+PEG for 1 day to clindamycin-treated, \emph{C. difficile}-challenged
+mice either immediately following challenge or 3 dpi. We collected
+longitudinal stool samples to examine \emph{C. difficile} levels in the
+stool via anaerobic culture and profiled the microbiota by 16S rRNA
+sequencing. PEG treatment alone was sufficient to render mice
+susceptible to CDI and 5-day PEG-treated mice remain colonized for up to
+30 dpi. Additionally, 5-day PEG treated mice remained susceptible to CDI
+10-days post treatment. In contrast, 1-day PEG treated mice were
+transiently colonized, clearing \emph{C. difficile} within 7 dpi.
+Although 5-day PEG-treated mice exhibited prolonged \emph{C. difficile}
+colonization, we saw no difference in histological inflammation between
+PEG- and clindamycin-treated mice. Additionally, administering PEG to
+mice after \emph{C. difficile} challenge prolonged colonization up to 30
+dpi in mice that received PEG immediately after challenge and 15 dpi in
+mice that received PEG 3 dpi. When we examined microbiota composition
+across our different treatment groups, we found decreased richness in
+the PEG-treated mice that exhibited prolonged \emph{C. difficile}
+colonization. Importantly, there were increased Bacteroides and
+Enterobacteriaceae and decreased Lachnospiraceae and Oscillibacter in
+most of the PEG-treated mice with prolonged \emph{C. difficile}
+colonization. Our findings suggest the osmotic laxative PEG 3350 alters
+the mouse microbiota and disrupts colonization resistance to \emph{C.
+difficile}, as well as clearance in mice with a CDI. Considering that
+most hospitals recommend not performing \emph{C. difficile} testing on
+patients taking laxatives and laxatives are used when administering
+fecal microbiota transplants via colonoscopy to patients with recurrent
+CDIs, further studies are needed to evaluate if laxatives impact human
+microbiota colonization resistance.
 
 \newpage
 
-\subsection{Introduction}\label{introduction}
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
 
-\subsection{Results and Discussion}\label{results-and-discussion}
+\hypertarget{results-and-discussion}{%
+\subsection{Results and Discussion}\label{results-and-discussion}}
 
-\subsection{Conclusions}\label{conclusions}
+\hypertarget{conclusions}{%
+\subsection{Conclusions}\label{conclusions}}
 
-\subsection{Materials and Methods}\label{materials-and-methods}
+\hypertarget{acknowledgements}{%
+\subsection{Acknowledgements}\label{acknowledgements}}
+
+We thank members of the Schloss lab for feedback on planning the
+experiments and data presentation. We also thank Andrew Henry for help
+with media preparation and bacterial culture. We also thank the Unit for
+Laboratory Animal Medicine at the University of Michigan for maintaining
+our mouse colony and providing the institutional support for our mouse
+experiments. Finally, we thank Kwi Kim, Austin Campbell, and Kimberly
+Vendrov for their help in maintaining the Schloss lab's anaerobic
+chamber. This work was supported by the National Institutes of Health
+(U01AI124255). ST was supported by the Michigan Institute for Clincial
+and Health Research Postdoctoral Translation Scholars Program
+(UL1TR002240 from the National Center for Advancing Translational
+Sciences).
+
+\hypertarget{materials-and-methods}{%
+\subsection{Materials and Methods}\label{materials-and-methods}}
 
 \newpage
 
-Insert figure legends with the first sentence in bold, for example:
-
-\textbf{Figure 1. Number of OTUs sampled among bacterial and archaeal
-16S rRNA gene sequences for different OTU definitions and level of
-sequencing effort.} Rarefaction curves for different OTU definitions of
-Bacteria (A) and Archaea (B). Rarefaction curves for the coarse
-environments in Table 1 for Bacteria (C) and Archaea (D).
+\includegraphics{figure_1.pdf} \textbf{Figure 1. Chronic PEG treatment
+prolongs susceptibility and mice become persistently colonized with
+\emph{C. difficile}.} A. Setup of the experimental timeline for subset
+of experiments with 5-day PEG treated mice. B. \emph{C. difficile}
+CFU/gram stool measured over time (N =
+4-\texttt{(insert\ variable\ name)} mice per timepoint) via serial
+dilutions. The black line represents the limit of detection for the
+first serial dilution. CFU quantification data was not available for
+each mouse due to stool sampling difficulties (particularly the day the
+mcie came off of the PEG treatment) or early deaths. Lines represent the
+median for each source and circles represent individual mouse samples.
 
 \newpage
 
-\subsection*{References}\label{references}
-\addcontentsline{toc}{subsection}{References}
-
-\hypertarget{refs}{}
+\hypertarget{references}{%
+\subsection{References}\label{references}}
 
 \end{document}
