@@ -514,7 +514,7 @@ facet_labels <- all_labels <- c( "Clind.",
                                  )
 #Create descriptive labels for facets
 names(facet_labels) <- c("C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC", "WM") #values that correspond to group, which is the variable we're faceting by
-area_plot <- all_genus_stools %>%
+area_plot_df <- all_genus_stools %>%
   #Solve different baseline timepoints across groups by specifying baseline for each group
   mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
                          group == "WM" & day == "-5" ~ "B",
@@ -532,7 +532,8 @@ area_plot <- all_genus_stools %>%
   mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
   mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4",
                            "5", "6", "7", "10")) %>% 
-  filter(genus %in% peg_clear_v_prolonged_genus_stools) %>%
+  filter(genus %in% peg_clear_v_prolonged_genus_stools) 
+area_plot <- area_plot_df %>% 
   group_by(group, day, genus) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
   ggplot()+
@@ -624,7 +625,7 @@ all_genus_dc <- all_genus_tissues %>% filter(sample_type == "distal_colon")
 #  name <- paste("sig_genus_tissues_day", d, sep = "")
 #  assign(name, pull_significant_taxa(stats, genus))
 #  kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
-}
+#}
 
 for (d in tissue_test_days){
   kruskal_wallis_genus(d, all_genus_cecum, "cecum")
