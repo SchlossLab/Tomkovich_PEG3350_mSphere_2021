@@ -13,19 +13,19 @@ read_perf_results <- function(file_path, taxa_level_name){
   read_csv(file_path) %>% 
     mutate(taxa_level = taxa_level_name) 
 }
-#Read in OTU level model performance:
-otu_results <- read_perf_results("results/performance_results.csv", 
-                              "otu") 
+#Read in genus level model performance:
+genus_results <- read_perf_results("results/performance_results.csv", 
+                              "genus") 
 
 #Examine AUC results for each machine learning method----
-auc_results <- otu_results %>% 
+auc_results <- genus_results %>% 
   group_by(method) %>% 
   summarize(median = median(AUC)) %>% 
   arrange(desc(median))
 
-#Plot performance for all methods with OTU input data----
-performance_otu <- otu_results %>% 
-  filter(taxa_level == "otu") %>% 
+#Plot performance for all methods with genus input data----
+performance_genus <- genus_results %>% 
+  filter(taxa_level == "genus") %>% 
   mutate(method = fct_relevel(method, c("rf", "glmnet", "svmRadial"))) %>% #Reorder methods so left to right is in order of descending AUC
   ggplot(aes(x = method, y = AUC, color = method)) +
   geom_boxplot(alpha=0.5, fatten = 4) +
@@ -43,7 +43,7 @@ performance_otu <- otu_results %>%
   theme(legend.position = "none",
         text = element_text(size = 19),# Change font size for entire plot
 #        axis.ticks.x = element_blank(), #Remove x axis ticks
-#        axis.text.x = element_blank(), #Remove x axis text (all models are at the OTU level),
+#        axis.text.x = element_blank(), #Remove x axis text (all models are at the genus level),
         axis.text.x = element_text(angle = 45, hjust = 1), #Angle axis labels
         strip.background = element_blank()) +#Make Strip backgrounds blank
   guides(color=guide_legend(nrow = 2))+   #Legend in 2 rows so it doesn't get cut off 
@@ -57,28 +57,19 @@ performance_otu <- otu_results %>%
 #file_path = path to the file name
 read_feat_imp <- function(file_path){
   feat_imp <- read_csv(file_path)
-  taxa_info <- read.delim('data/process/peg3350.taxonomy', header=T, sep='\t') %>%
+  taxa_info <- read.delim('data/process/peg3350.genus.taxonomy', header=T, sep='\t') %>%
     select(-Size) %>%
     mutate(names=OTU) %>%
     select(-OTU)
   final_feat_imp <- inner_join(feat_imp, taxa_info, by="names") %>%
-    ungroup() %>%
+    ungroup() %>%    
     mutate(names=str_to_upper(names)) %>%
-    mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
-    mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>%
-    mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
-    mutate(taxa=str_replace_all(taxa, c("Clostridium_" = "Clostridium "))) %>% 
-    mutate(taxa=gsub(".*;","",taxa)) %>%
-    mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>%
-    mutate(taxa=gsub('[0-9]+', '', taxa)) %>%
-    mutate(taxa=str_remove_all(taxa, "[(100)]")) %>%
-    unite(names, taxa, names, sep=" (") %>%
-    mutate(names = paste(names,")", sep="")) %>%
-    select(-Taxonomy) %>%
-    rename(otu=names) %>%
-    mutate(otu=paste0(gsub('TU0*', 'TU ', otu))) %>%
-    separate(otu, into = c("bactname", "OTUnumber"), sep = "\\ [(]", remove = FALSE) %>% #Add columns to separate bacteria name from OTU number to utilize ggtext so that only bacteria name is italicized
-    mutate(otu_name = glue("*{bactname}* ({OTUnumber}")) #Markdown notation so that only bacteria name is italicized
+    mutate(genus=gsub("(.*);.*","\\1",Taxonomy)) %>%
+    mutate(genus=gsub("(.*)_.*","\\1",Taxonomy)) %>%
+    mutate(genus=gsub("(.*);.*","\\1",Taxonomy)) %>% 
+    mutate(genus=str_replace_all(genus, c("_" = " ", #Removes all other underscores
+                                          "unclassified" = "Unclassified"))) %>% 
+    select(-Taxonomy)
   return(final_feat_imp)
 }
 
@@ -90,7 +81,7 @@ rf_feat <- read_feat_imp("results/combined_feature-importance_rf.csv") #%>%
 #df = dataframe of feature importances for the 100 seeds
 top_20 <- function(df){
   data_first_20 <- df %>% 
-    group_by(otu, bactname) %>% 
+    group_by(genus) %>% 
     summarize(median = median(perf_metric_diff)) %>% #Get the median performance metric diff. for each feature
     arrange(desc(median)) %>% #Arrange from largest median to smallest
     head(20)
@@ -98,37 +89,18 @@ top_20 <- function(df){
   return(data_first_20)
 }
 
-#Top 20 OTUs for each input dataset with the random forest model
-rf_top_feat <- top_20(rf_feat) %>% pull(otu)
-rf_top_feat_otu_name <-  rf_feat %>%    #Otu names of top 20 features 
-  group_by(otu_name, bactname) %>% 
-  summarize(median = median(perf_metric_diff)) %>% #Get the median performance metric diff. for each feature
-  arrange(desc(median)) %>% #Arrange from largest median to smallest
-  head(20) %>% 
-  pull(otu_name)
+#Top 20 genera for each input dataset with the random forest model
+rf_top_feat <- top_20(rf_feat) %>% pull(genus)
 
-#Create color schemes based on OTUs with the same taxa name----
-color_scheme_df <-  top_20(rf_feat) %>% 
-  group_by(bactname) %>% 
-  mutate(duplicate = n()) %>% #count number of features with same bacteria name
-  #Create color scheme based on number of times taxa shows up in top 20
-  mutate(color = case_when(duplicate == 1 ~ "#bababa",
-                           duplicate == 2 ~ "#404040",
-                           duplicate == 3 ~ "blue",
-                           duplicate == 9 ~ "#ca0020",
-                           TRUE ~ "yellow")) #Should catch all cases with above, update if any are yellow
-color_scheme <- color_scheme_df$color
-color_bact <- color_scheme_df$bactname 
-legend_bact <- color_bact
 
 #Function to filter to top OTUs for each pairwise comparison & plot results----
 #df = dataframes of feature importances for all seeds
 #top_otus = dataframes of top otus
 #comp_name = name of comparison to title the plot (in quotes)
-plot_feat_imp <- function(df, top_otus){
+plot_feat_imp <- function(df, top_feat){
   df %>% 
-    filter(otu %in% top_otus) %>% 
-    ggplot(aes(fct_reorder(otu_name, -perf_metric_diff, .desc = TRUE), perf_metric_diff, color = bactname))+
+    filter(genus %in% top_feat) %>% 
+    ggplot(aes(fct_reorder(genus, -perf_metric_diff, .desc = TRUE), perf_metric_diff))+
     stat_summary(fun = 'median', 
                  fun.max = function(x) quantile(x, 0.75), 
                  fun.min = function(x) quantile(x, 0.25),
@@ -144,14 +116,14 @@ plot_feat_imp <- function(df, top_otus){
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
           text = element_text(size = 15),# Change font size for entire plot
-          axis.text.y = element_markdown(), #Have only the OTU names show up as italics
+          axis.text.y = element_text(face = "italic"), #Genus in italics
           strip.background = element_blank(),
           legend.position = "none")   
 }
 
 #Plot feature importances for the top OTUs for each comparison----
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
-  ggsave("results/figures/ml_top_features_otu.png", height = 5, width = 8)
+  ggsave("results/figures/ml_top_features_genus.png", height = 5, width = 8)
 
 #Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
 source("code/16S_common_files.R") #Reads in mothur output files
@@ -161,17 +133,17 @@ shape_scheme <- c(1, 4, 19, 8)
 shape_groups <- c("clind.", "1-day", "5-day", "post-CDI")
 shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
 
-interp_otus_d5_top_10 <- rf_top_feat[1:10]
-interp_otus_d5_top_10_names <- rf_top_feat_otu_name[1:10]
+interp_genera_d5_top_10 <- rf_top_feat[1:10]
 #Plot the top 10 features that were important to Day 5 model and 
 #using facet_wrap, highlight the OTUs that correlate with colonization
-top10_d5_model_taxa <- agg_otu_data %>% 
+top10_d5_model_taxa <- agg_genus_data %>% 
   filter(day == 5) %>% #Used d5 timepoint for ml input data
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
-  filter(otu %in% interp_otus_d5_top_10) %>%
-  mutate(otu_name = fct_relevel(otu_name, interp_otus_d5_top_10_names)) %>% 
+  filter(genus %in% interp_genera_d5_top_10) %>%
+  #Reorder genera to match contribution to model
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
-  group_by(clearance_status_d10, otu) %>% 
+  group_by(clearance_status_d10, genus) %>% 
   mutate(median=(median(agg_rel_abund))) %>% #create a column of median values for each group
   ungroup() %>% 
   ggplot(aes(x=clearance_status_d10, y =agg_rel_abund, colour= clearance_status_d10))+
@@ -187,19 +159,20 @@ top10_d5_model_taxa <- agg_otu_data %>%
                      breaks=shape_groups,
                      labels=shape_labels)+
   geom_hline(yintercept=1/1000, color="gray")+
-  facet_wrap(~ otu_name, nrow=2)+
+  facet_wrap(~ genus, nrow=2, labeller = label_wrap_gen(width = 10))+
   labs(title=NULL,
        x=NULL,
        y="Relative abundance (%)") +
   scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   theme_classic()+
   theme(text = element_text(size = 14),
-        strip.text = element_markdown(hjust = 0.5, size = 6.8),
+        strip.text = element_text(hjust = 0.5, size = 6.8, face = "italic"),
         axis.text.x = element_blank(),
         legend.position = "bottom")
-save_plot(filename = paste0("results/figures/ml_d5_top10_otus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)
+save_plot(filename = paste0("results/figures/ml_d5_top10_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
 
 #Make composite figure of ML results for 5dpi----
 top_panel <- plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, nrow=1, rel_widths = c(1,2))
 plot_grid(top_panel, top10_d5_model_taxa, labels = NULL, label_size = 12, ncol=1)+
-  ggsave("results/figures/ml_summary_5dpi_otu.pdf", width=8, height=8)
+  ggsave("results/figures/ml_summary_5dpi_genus.pdf", width=8, height=8)
+
