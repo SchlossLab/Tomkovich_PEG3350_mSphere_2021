@@ -3,11 +3,11 @@ source("code/utilities.R") #Loads libraries, reads in metadata, functions
 #Define color scheme for this figure----
 color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "M1", "1RM1")
-color_labels <- c("Clind.", "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery")
+color_labels <- c("Clind.", "1-day PEG", "1-day PEG + 1-day recovery")
 
 #Subset metadata to relevant groups and experiments (C, 1RM1, M1) for this subset of mice----
-metadata <- one_day_PEG_subset(metadata)
-
+metadata <- one_day_PEG_subset(metadata) %>% 
+  mutate(day = as.integer(day)) #Transform day into integer variable
 
 # of mice represented in the figure
 mice <- length(unique(metadata$unique_mouse_id))
@@ -141,7 +141,6 @@ label <- kw_label(cfu_kruskal_wallis_adjust)
 
 
 cfudata <- cfudata %>%
-  mutate(day = fct_relevel(day, "0", "1", "2","3", "4", "5", "6", "7", "8", "9", "10")) %>%
   mutate(group = fct_relevel(group, "C", "M1", "1RM1"))
 cfu <- plot_cfu_data(cfudata) + 
   scale_x_discrete(breaks = c(1:10))+
