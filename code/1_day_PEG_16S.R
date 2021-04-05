@@ -4,7 +4,7 @@ source("code/16S_common_files.R") #Reads in mothur output files
 #Define color scheme to match 1_Day_PEG Weight/CFU Plots----
 color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c( "C", "M1", "1RM1")
-color_labels <- c("Clind.", "1-day PEG 3350", "1-day PEG 3350 + 1-day recovery")
+color_labels <- c("Clind.", "1-day PEG", "1-day PEG + 1-day recovery")
 
 #Subset alpha diversity data (16S_common_files) to analyze one day PEG subset mice----
 diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
@@ -578,7 +578,6 @@ sig_genus_pairs_D7 <- pull_significant_taxa(genus_baselinetoD7_pairs_stats_adjus
 #8 genera
 view(sig_genus_pairs_D7)
 
-
 #Create list of genera with the most relevant 5
 #Remove those that are significant in baseline vs. Day 7 comparisons, if still relevant at Day 7 then contributes less to C. difficile clearance
 sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
@@ -589,7 +588,7 @@ sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)
 sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
                            "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified","Lachnospiraceae Unclassified", "Clostridiales Unclassified",
                            "Acetatifactor", "Akkermansia", "Butyricicoccus")
-sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_remove_names)]
+sig_genus_top_5_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_remove_names)]
 
 #Plot Genus pairwise results----
 
@@ -597,7 +596,7 @@ sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_rem
 #Plot most relevant genera from baseline to Day 1 facted by genus
 facet_labels <- sig_genus_pairs
 names(facet_labels) <- sig_genus_pairs
-hm_baselinetoD1_5_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_top_list, hm_days, rev(color_labels)) +
+hm_baselinetoD1_5_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_top_5_list, hm_days, rev(color_labels)) +
   scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7")) +
   facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 10)) 
 save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_heatmap.png", hm_baselinetoD1_5_genera, base_height = 4, base_width = 15)
@@ -612,7 +611,7 @@ line_plot_baselinetoD1_5_genera <- agg_genus_data_subset %>%
   mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
   mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
                            "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
-  filter(genus %in% sig_genus_top_list) %>%
+  filter(genus %in% sig_genus_top_5_list) %>%
   filter(day %in% hm_days) %>% 
   group_by(group, genus, day) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
@@ -640,16 +639,16 @@ save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.pn
 
 #Lineplot v2 with function from code/utilities.R #
 #Chose 1 more genera to make it an even 6
-sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
+sig_genus_top_list_v2 <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
 sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
                             "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified",
                             "Acetatifactor", "Akkermansia", "Butyricicoccus")
-sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_remove_names)]
+sig_genus_top_list_v2 <- sig_genus_top_list_v2[!(sig_genus_top_list_v2 %in% sig_genus_remove_names)]
 
 
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
-line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, hm_days, "solid")+
+line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v2, hm_days, "solid")+
   scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7")) +
-save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
+save_plot(filename = "results/figures/1_Day_PEG_genus_6_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
