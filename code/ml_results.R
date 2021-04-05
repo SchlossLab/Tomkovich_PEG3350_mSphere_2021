@@ -1,4 +1,5 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
+library(viridis)
 
 set.seed(19760620) #Same seed used for mothur analysis
 
@@ -135,7 +136,7 @@ shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
 
 interp_genera_d5_top_10 <- rf_top_feat[1:10]
 #Plot the top 10 features that were important to Day 5 model and 
-#using facet_wrap, highlight the Ogenera that correlate with colonization
+#using facet_wrap, highlight the genera that correlate with colonization
 top10_d5_model_taxa <- agg_genus_data %>% 
   filter(day == 5) %>% #Used d5 timepoint for ml input data
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
@@ -144,7 +145,7 @@ top10_d5_model_taxa <- agg_genus_data %>%
   mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
   group_by(clearance_status_d10, genus) %>% 
-  mutate(median=(median(agg_rel_abund))) %>% #create a column of median values for each group
+  mutate(median=(median(agg_rel_abund + 1/2000))) %>% #create a column of median values for each group
   ungroup() %>% 
   ggplot(aes(x=clearance_status_d10, y =agg_rel_abund, colour= clearance_status_d10))+
   scale_x_discrete(guide = guide_axis(n.dodge = 2))+
@@ -170,3 +171,54 @@ top10_d5_model_taxa <- agg_genus_data %>%
         axis.text.x = element_blank(),
         legend.position = "bottom")
 save_plot(filename = paste0("results/figures/ml_d5_top10_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
+
+#Create area plot of genera that vary beween mice that clear within 10 dpi and mice that have prolonged colonization
+interp_genera_d5_top_10 #List of genera to include in area plot
+#Labels for facet
+facet_labels <- c("cleared", "colonized")
+names(facet_labels) <- c("cleared", "colonized")
+#Create plot
+top10_d5_model_taxa_area_plot <- agg_genus_data %>% 
+  #Solve different baseline timepoints across groups by specifying baseline for each group
+  mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-15" ~ "B",
+                         group == "CWM" & day == "-1" ~ "B",
+                         group == "RM" & day == "-1" ~ "B",
+                         group == "FRM" & day == "-1" ~ "B",
+                         group == "M1" & day == "-11" ~ "B",
+                         group == "1RM1" & day == "-2" ~ "B",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>%  #Use baseline through day 15 timepoints
+  mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>% 
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(genus %in% interp_genera_d5_top_10) %>%
+  #Reorder genera to match contribution to model
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
+  group_by(clearance_status_d10, genus, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_area(aes(x = day, y=median, group = genus, fill = genus))+
+  scale_fill_viridis(discrete = T)+
+  labs(title=NULL,
+       x=NULL,
+       y="Relative abundance") +
+#To do: Figure out how to get scale to match other plots  
+#  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/10900, 1))+
+  facet_wrap(~clearance_status_d10, labeller = labeller(clearance_status_d10 = facet_labels))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        legend.text = element_text(face = "italic"), #Italicize genus name
+        legend.title = element_blank(),
+        text = element_text(size = 16))+ # Change font size for entire plot
+  guides(color = guide_legend(ncol = 2))
+
+#Extract legend for area plot
+legend_area_plot <- get_legend(top10_d5_model_taxa_area_plot) %>% as_ggplot()
+save_plot("results/figures/ml_d5_top10_genus_area_legend.png", legend_area_plot, base_height = 2.8, base_width = 4)
+#Save area plot without legend
+top10_d5_model_taxa_area_plot <- top10_d5_model_taxa_area_plot+
+  theme(legend.position = "none") #Remove legend
+save_plot(filename = paste0("results/figures/ml_d5_top10_genus_area.png"), top10_d5_model_taxa_area_plot, base_height = 5, base_width = 8)  
+
