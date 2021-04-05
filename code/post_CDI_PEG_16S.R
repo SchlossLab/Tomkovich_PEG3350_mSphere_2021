@@ -4,12 +4,7 @@ source("code/16S_common_files.R") #Reads in mothur output files
 #Define color scheme to match post_CDI_PEG Plots----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8", "7f5f1e") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "CWM", "FRM", "RM", "FMT")
-color_labels <- c( "Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350", "FMT")
-
-#Try only transforming day to integer on plots plotting 
-#metadata <- metadata %>%
-#  mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
-#Without transformation day column is a character variable
+color_labels <- c( "Clind.", "Clind. + 1-day PEG", "Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 3-day recovery + 1-day PEG + PBS")
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
