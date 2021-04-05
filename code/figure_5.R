@@ -28,7 +28,8 @@ d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_richness_overtime_stool
 e <- ggdraw() + draw_image("results/figures/post_CDI_PEG_treatment_legend.png")
 fig <- image_graph(width = 400, height = 400, res = 96)
 plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, ncol=1, rel_heights = c(.8,.2, 1,1,1))+
-  ggsave("results/figures/figure_5.pdf", width=4.6, height=7.5)
+  ggsave("results/figures/figure_5.pdf", width=4.6, height=7.5)+
+  ggsave("submission/figure_5.pdf", width=4.6, height=7.5)
   
 #Figure showing pcoa and genera heat map over time
 d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png")
@@ -45,4 +46,5 @@ g <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend_vert.png")
 pcoa1 <- plot_grid(f,g, label_size = 12, nrow = 1, rel_heights = c(1,.8), rel_widths = c(1,.8))
 
 plot_grid(pcoa1, heatmap, labels = c("A", "B"), label_size = 12, nrow = 2)+
-  ggsave("results/figures/figure_5_16S.pdf", width = 6, height = 6.7)
+  ggsave("results/figures/figure_5_16S.pdf", width = 6, height = 6.7)+
+  ggsave("submission/figure_5_16S.pdf", width = 6, height = 6.7)
