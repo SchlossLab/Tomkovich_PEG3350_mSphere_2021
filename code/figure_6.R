@@ -1,6 +1,5 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
-#Figure with Schematic, CFU over time, and shannon over time
 a <- ggdraw() + draw_image("results/figures/ml_performance_genus.png")
 b <- ggdraw() + draw_image("results/figures/ml_top_features_genus.png")
 top_panel <- plot_grid(a, b, labels = c("A", "B"), label_size = 12, nrow=1, rel_widths = c(1,1.5), rel_heights = c(2, 1))
