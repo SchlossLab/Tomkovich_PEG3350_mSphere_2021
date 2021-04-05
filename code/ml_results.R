@@ -47,13 +47,13 @@ performance_genus <- genus_results %>%
         axis.text.x = element_text(angle = 45, hjust = 1), #Angle axis labels
         strip.background = element_blank()) +#Make Strip backgrounds blank
   guides(color=guide_legend(nrow = 2))+   #Legend in 2 rows so it doesn't get cut off 
-  ggsave("results/figures/ml_performance_otu.png", height = 5, width = 8)
+  ggsave("results/figures/ml_performance_genus.png", height = 5, width = 8)
 
 #Examine permutation importance results for random forest---- 
 # random forest  had the highest median AUC
 #Function to read in feature importance from random forest model----
-#Will also get the corresponding otu name from taxonomy file
-#And format otu name to work with glue package for italicizing labels
+#Will also get the corresponding genus name from taxonomy file
+#And format genus name to work with glue package for italicizing labels
 #file_path = path to the file name
 read_feat_imp <- function(file_path){
   feat_imp <- read_csv(file_path)
@@ -93,9 +93,9 @@ top_20 <- function(df){
 rf_top_feat <- top_20(rf_feat) %>% pull(genus)
 
 
-#Function to filter to top OTUs for each pairwise comparison & plot results----
+#Function to filter to top genera for each pairwise comparison & plot results----
 #df = dataframes of feature importances for all seeds
-#top_otus = dataframes of top otus
+#top_feat = dataframes of top features
 #comp_name = name of comparison to title the plot (in quotes)
 plot_feat_imp <- function(df, top_feat){
   df %>% 
@@ -121,7 +121,7 @@ plot_feat_imp <- function(df, top_feat){
           legend.position = "none")   
 }
 
-#Plot feature importances for the top OTUs for each comparison----
+#Plot feature importances for the top genera for each comparison----
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_genus.png", height = 5, width = 8)
 
@@ -135,7 +135,7 @@ shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
 
 interp_genera_d5_top_10 <- rf_top_feat[1:10]
 #Plot the top 10 features that were important to Day 5 model and 
-#using facet_wrap, highlight the OTUs that correlate with colonization
+#using facet_wrap, highlight the Ogenera that correlate with colonization
 top10_d5_model_taxa <- agg_genus_data %>% 
   filter(day == 5) %>% #Used d5 timepoint for ml input data
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
@@ -170,9 +170,3 @@ top10_d5_model_taxa <- agg_genus_data %>%
         axis.text.x = element_blank(),
         legend.position = "bottom")
 save_plot(filename = paste0("results/figures/ml_d5_top10_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
-
-#Make composite figure of ML results for 5dpi----
-top_panel <- plot_grid(performance_otu, rf_feat_5dpi, labels = NULL, label_size = 12, nrow=1, rel_widths = c(1,2))
-plot_grid(top_panel, top10_d5_model_taxa, labels = NULL, label_size = 12, ncol=1)+
-  ggsave("results/figures/ml_summary_5dpi_genus.pdf", width=8, height=8)
-
