@@ -93,7 +93,6 @@ top_20 <- function(df){
 #Top 20 genera for each input dataset with the random forest model
 rf_top_feat <- top_20(rf_feat) %>% pull(genus)
 
-
 #Function to filter to top genera for each pairwise comparison & plot results----
 #df = dataframes of feature importances for all seeds
 #top_feat = dataframes of top features
@@ -132,7 +131,7 @@ source("code/16S_common_files.R") #Reads in mothur output files
 #Create shape scale based on each subset group
 shape_scheme <- c(1, 4, 19, 8)
 shape_groups <- c("clind.", "1-day", "5-day", "post-CDI")
-shape_labels <- c("Clind.", "1-day", "5-day", "Post-CDI")
+shape_labels <- c("Clind.", "1-day PEG", "5-day PEG", "Post-CDI PEG")
 
 interp_genera_d5_top_10 <- rf_top_feat[1:10]
 #Plot the top 10 features that were important to Day 5 model and 
@@ -170,15 +169,17 @@ top10_d5_model_taxa <- agg_genus_data %>%
         strip.text = element_text(hjust = 0.5, size = 6.8, face = "italic"),
         axis.text.x = element_blank(),
         legend.position = "bottom")
-save_plot(filename = paste0("results/figures/ml_d5_top10_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
+save_plot(filename = paste0("results/figures/ml_top10_d5_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
 
-#Create area plot of genera that vary beween mice that clear within 10 dpi and mice that have prolonged colonization
-interp_genera_d5_top_10 #List of genera to include in area plot
+#Create area plot of genera that vary between mice that clear within 10 dpi and mice that have prolonged colonization
+#List of genera to include in area plot, select genera where the median for either cleared or colonized mice is greater than 1%
+interp_genera_d5_top_10_abundant <- c("Porphyromonadaceae Unclassified", "Akkermansia", "Enterobacteriaceae Unclassified",
+                                      "Lachnospiraceae Unclassified", "Bacteroides")
 #Labels for facet
 facet_labels <- c("cleared", "colonized")
 names(facet_labels) <- c("cleared", "colonized")
 #Create plot
-top10_d5_model_taxa_area_plot <- agg_genus_data %>% 
+topabund_5_model_taxa_area_plot <- agg_genus_data %>% 
   #Solve different baseline timepoints across groups by specifying baseline for each group
   mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
                          group == "WM" & day == "-5" ~ "B",
@@ -193,9 +194,9 @@ top10_d5_model_taxa_area_plot <- agg_genus_data %>%
   filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>%  #Use baseline through day 15 timepoints
   mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>% 
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
-  filter(genus %in% interp_genera_d5_top_10) %>%
+  filter(genus %in% interp_genera_d5_top_10_abundant) %>%
   #Reorder genera to match contribution to model
-  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10_abundant)) %>% 
   group_by(clearance_status_d10, genus, day) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
   ggplot()+
@@ -215,10 +216,9 @@ top10_d5_model_taxa_area_plot <- agg_genus_data %>%
   guides(color = guide_legend(ncol = 2))
 
 #Extract legend for area plot
-legend_area_plot <- get_legend(top10_d5_model_taxa_area_plot) %>% as_ggplot()
-save_plot("results/figures/ml_d5_top10_genus_area_legend.png", legend_area_plot, base_height = 2.8, base_width = 4)
+legend_area_plot <- get_legend(topabund_5_model_taxa_area_plot) %>% as_ggplot()
+save_plot("results/figures/ml_abund_5_genus_area_legend.png", legend_area_plot, base_height = 1.5, base_width = 4)
 #Save area plot without legend
-top10_d5_model_taxa_area_plot <- top10_d5_model_taxa_area_plot+
+topabund_5_model_taxa_area_plot <- topabund_5_model_taxa_area_plot+
   theme(legend.position = "none") #Remove legend
-save_plot(filename = paste0("results/figures/ml_d5_top10_genus_area.png"), top10_d5_model_taxa_area_plot, base_height = 5, base_width = 5)  
-
+save_plot(filename = paste0("results/figures/ml_abund_5_genus_area.png"), topabund_5_model_taxa_area_plot, base_height = 5, base_width = 5)  
