@@ -4,7 +4,7 @@ source("code/16S_common_files.R") #Reads in mothur output files
 #Define color scheme to match 5_days_PEG plots----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "WM", "WMC", "WMR")
-color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
+color_labels <- c( "Clind.", "5-day PEG", "5-day PEG + Clind.", "5-day PEG + 10-day recovery")
 #Need to create an additional color scheme with 6 colors (or consider keeping colors and doing open/closed for mock challenged mice)
 #See 5_days_PEG_histology_scores.R for how mock challenged mice were presented
 #Define shape scheme based on Infected status----

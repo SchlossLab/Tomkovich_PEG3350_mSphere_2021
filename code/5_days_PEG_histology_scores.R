@@ -115,7 +115,7 @@ d4_plot_pairwise_stats <- d4_colon_pairwise %>%
 #Plots of summary histology scores for all mice----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "WM", "WMC", "WMR")
-color_labels <- c( "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.", "5-day PEG 3350 + 10-day recovery")
+color_labels <- c( "Clind.", "5-day PEG", "5-day PEG + Clind.", "5-day PEG + 10-day recovery")
 #Define shape scheme for d4 and d6 histology based on whether mice were challenged with C. difficile:
 #Define shape scheme based on Infected status----
 shape_scheme <- c(1, 19)
@@ -154,7 +154,7 @@ plot_histology <- function(df, pairwise_stats){
 #Define color scheme for d6_histology----
 color_scheme <- c("#88419d", "#238b45", "#88419d", "#f768a1") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("WMN", "C", "WM", "WMC")
-color_labels <- c("5-day PEG 3350 without infection", "Clind.", "5-day PEG 3350", "5-day PEG 3350 + Clind.")
+color_labels <- c("5-day PEG without infection", "Clind.", "5-day PEG", "5-day PEG + Clind.")
 
 #Format day 6 pairwise stats to add to plot----
 pairwise_day6_plot <-d6_plot_pairwise_stats %>%
@@ -170,7 +170,7 @@ save_plot("results/figures/5_days_PEG_histo_scores_d6.png", d6_plot) #Use save_p
 #Define color scheme for d4_histology----
 color_scheme <- c("#238b45", "#88419d", "#88419d", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("CN", "D0 WMN", "WMN", "C", "WM")
-color_labels <- c("Clind. without infection", "After 5-day PEG 3350 (Day 0)", "5-day PEG 3350 without infection", "Clind.", "5-day PEG 3350")
+color_labels <- c("Clind. without infection", "After 5-day PEG (Day 0)", "5-day PEG without infection", "Clind.", "5-day PEG")
 
 #Format day 4 pairwise stats to add to plot----
 pairwise_day4_plot <- d4_plot_pairwise_stats %>%
