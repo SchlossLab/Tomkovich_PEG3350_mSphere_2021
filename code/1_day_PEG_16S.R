@@ -1,7 +1,6 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 source("code/16S_common_files.R") #Reads in mothur output files
 
-
 #Define color scheme to match 1_Day_PEG Weight/CFU Plots----
 color_scheme <- c("#238b45", "#88419d", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c( "C", "M1", "1RM1")
@@ -640,5 +639,17 @@ line_plot_baselinetoD1_5_genera <- agg_genus_data_subset %>%
         text = element_text(size = 16)) # Change font size for entire plot
 save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
+#Lineplot v2 with function from code/utilities.R #
+#Chose 1 more genera to make it an even 6
+sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
+sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
+                            "Anaeroplasma","Firmicutes Unclassified", "Bacteroidales Unclassified",
+                            "Acetatifactor", "Akkermansia", "Butyricicoccus")
+sig_genus_top_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_remove_names)]
 
+
+facet_labels <- sig_genus_top_list
+names(facet_labels) <- sig_genus_top_list
+line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, hm_days, "solid")
+save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
