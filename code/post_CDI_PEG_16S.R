@@ -732,16 +732,17 @@ FRMvRM_post_gavage <- genus_pairwise_stools_5plusdpi %>%
   filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
   filter(p.adj < .05) %>%
   arrange(p.adj)  %>% 
-  distinct(genus) %>% 
+  filter(duplicated(genus)) %>% #Select only genera that showed up over multiple timepoints
+  distinct(genus) %>% #Remove duplicaates
   filter(genus != "Unclassified") %>%  #Remove unclassified genus since it's not informative
   pull(genus)
 #Create dataframe of RM & FRM mice
 frm_rm_subset <-  agg_genus_data_subset_hm %>% 
-  filter(group %in% c("FRM", "RM"))
+  filter(group %in% c("FRM", "RM")) 
 #Create line plot of these genera over time for FRM & RM groups
 facet_labels <- FRMvRM_post_gavage
 names(facet_labels) <- FRMvRM_post_gavage
-line_plot_days <- c(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15)
+line_plot_days <- c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")
 lp_fmt <- line_plot_genus(frm_rm_subset, FRMvRM_post_gavage, line_plot_days, "solid")+
 #  scale_x_discrete(limits = c(3, 4, 5:10, 15), breaks = c(3, 4, 5:10, 15), labels = c(3, 4, 5:10, 15)) #Rewrite over -1:10 scale
   scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15)) #Rewrite over -1:10 scale
