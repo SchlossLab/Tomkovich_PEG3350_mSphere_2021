@@ -544,28 +544,6 @@ print(shared_sig_genus_D3toD10)
 
 pull_significant_taxa(kw_genus_stools, genus) #134 sig taxa across all timepoints
 
-#Plots of the top genera that varied across sources at each timepoint----Days 1, 3, 6, 8, 10
-D1top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day1`[1:20], 1) +#Pick top significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D1top_genera.png", D1top_genera, base_height = 9, base_width = 7)
-D3top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day3`[1:20], 1) +#Pick top significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D3top_genera.png", D3top_genera, base_height = 9, base_width = 7)
-D6top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day6`[1:20], 1) +#Pick top significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D6top_genera.png", D6top_genera, base_height = 9, base_width = 7)
-D8top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day8`[1:20], 1) +#Pick top significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D8top_genera.png", D8top_genera, base_height = 9, base_width = 7)
-D10top_genera <- plot_genus_dx(agg_genus_data_subset, `sig_genus_day10`[1:20], 1) +#Pick top significant OTUs
-  geom_vline(xintercept = c((1:20) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  theme(legend.position = "none") #remove legend
-save_plot("results/figures/post_CDI_PEG_D10top_genera.png", D10top_genera, base_height = 9, base_width = 7)
-
 # Perform pairwise Wilcoxan rank sum tests for genera that were significantly different across groups on a series of days----
 pairwise_day_genus <- function(timepoint, sig_genus_dayX){
   genus_stats <- post_cdi_PEG_subset(agg_genus_data) %>% 
@@ -726,3 +704,15 @@ genus_line_plot_facet <- agg_genus_data_subset_hm %>%
         text = element_text(size = 16),
         legend.position = "bottom")
 save_plot("results/figures/post_CDI_PEG_genus_line_plot_facet.png", genus_line_plot_facet)
+
+
+#List of top 10 significant genera in stool samples that are significant over the most timepoints
+top_10_sig_genus <- kw_genus_stools %>% 
+  filter(p.value.adj < 0.05) %>% #Select only significant p-values
+  group_by(genus) %>% 
+  tally() %>% 
+  filter(n > 1) %>% #select genera that vary over multiple timepoints = n > 1
+  arrange(desc(n)) %>% #Rank by how many time each genera shows up (
+  filter(!genus == "Unclassified") %>% #Remove this genus since it's not informative and could contain multiple unclassified genera
+  head(10) %>% 
+  pull(genus)
