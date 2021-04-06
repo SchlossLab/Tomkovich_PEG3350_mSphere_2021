@@ -143,8 +143,9 @@ label <- kw_label(cfu_kruskal_wallis_adjust)
 cfudata <- cfudata %>%
   mutate(group = fct_relevel(group, "C", "M1", "1RM1"))
 cfu <- plot_cfu_data(cfudata) + 
-  scale_x_discrete(breaks = c(1:10))+
-  geom_vline(xintercept = c((1:11) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  scale_x_continuous(breaks = c(0:10),
+                     limits = c(-0.5, 10.5),
+                     minor_breaks = c(-.5:10.5))+
   theme(legend.position = "none",
         text = element_text(size = 16))
 save_plot(filename = "results/figures/1_day_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
