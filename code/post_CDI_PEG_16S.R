@@ -4,7 +4,7 @@ source("code/16S_common_files.R") #Reads in mothur output files
 #Define color scheme to match post_CDI_PEG Plots----
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8", "7f5f1e") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "CWM", "FRM", "RM", "FMT")
-color_labels <- c( "Clind.", "Clind. + 1-day PEG", "Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 3-day recovery + 1-day PEG + PBS")
+color_labels <- c( "Clind.", "Clind. + 1-day PEG", "Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 3-day recovery + 1-day PEG + PBS", "FMT")
 
 #Statistical Analysis----
 set.seed(19760620) #Same seed used for mothur analysis
@@ -454,7 +454,7 @@ hm_sig_otus_p_adj <- kw_otu_stools %>%
 
 hm_stool_days <- diversity_stools %>% distinct(day) %>% 
   filter(!day == "-15") %>% pull(day)
-facet_labels <- c("Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350") #Create descriptive labels for facets
+facet_labels <- c("Clind.", "Clind. + 1-day PEG", "Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 3-day recovery + 1-day PEG +PBS") #Create descriptive labels for facets
 names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to group, which is the variable we're faceting by
 hm_stool <- hm_plot_otus(agg_otu_data_subset, hm_sig_otus_p_adj, hm_stool_days)+
   scale_x_discrete(breaks = c(-1:10, 15, 20, 25, 30), labels = c(-1:10, 15, 20, 25, 30)) 
@@ -600,7 +600,7 @@ hm_sig_genera_p_adj <- kw_genus_stools %>%
 
 hm_stool_days <- diversity_stools %>% distinct(day) %>% # Redundant if whole script has already been run, but if not, requires lines 18 to 27 to have already run 
   filter(!day == "-15") %>% pull(day)
-facet_labels <- c("Clind.", "Clind. + 1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350") #Create descriptive labels for facets
+facet_labels <- c("Clind.", "Clind. + 1-day PEG", "Clind. + 3-day recovery + 1-day PEG+ FMT", "Clind. + 3-day recovery + 1-day PEG + PBS") #Create descriptive labels for facets
 names(facet_labels) <- c("C", "CWM", "FRM", "RM") #values that correspond to group, which is the variable we're faceting by
 agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
 hm_stool <- hm_plot_genus(agg_genus_data_subset_hm, hm_sig_genera_p_adj, hm_stool_days)+
@@ -611,7 +611,7 @@ save_plot(filename = "results/figures/post_CDI_PEG_genus_heatmap_stools.png", hm
 facet_labels <- c("Peptostreptococcaceae Unclassified", "Clostridiales Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia") 
 names(facet_labels) <- c("Peptostreptococcaceae Unclassified", "Clostridiales  Unclassified", "Oscillibacter", "Bacteroides", "Acetatifactor", "Akkermansia")
 exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
-exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
+exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG","Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 1-day PEG + PBS", "Clind.")
 
 hm_genera_facet <- hm_plot_genus_facet(agg_genus_data_subset_hm, exp_groups, facet_labels, hm_stool_days, exp_group_labels)+
   scale_x_discrete(breaks = c(-1:10, 15, 30), labels = c(-1:10, 15, 30))
@@ -674,7 +674,7 @@ kw_genus_stools %>% #Check to see if there were any genera that were sig in the 
 #Plot alt line plots faceted by genus
 agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
 exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
-exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG 3350","Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 1-day PEG 3350", "Clind.")
+exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG + PBS","Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 1-day PEG", "Clind.")
 line_plot_stool_days <- diversity_stools %>% distinct(day) %>% 
   filter(!(day %in% c(-15, 30))) %>% pull(day)
 genus_line_plot_facet <- agg_genus_data_subset_hm %>% 
@@ -690,9 +690,9 @@ genus_line_plot_facet <- agg_genus_data_subset_hm %>%
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-  scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))+
-  scale_y_continuous(trans = "log10", limits = c(1/5000, 1), breaks=c(1e-3, 1e-2, 1e-1, 1), labels=c(1e-1, 1, 10, 100))+
-  #geom_hline(yintercept=1/5437, color="gray")+
+#  scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))+
+#  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  #geom_hline(yintercept=1/1000, color="gray")+
   labs(title=NULL,
        x="Days Post-Infection",
        y="Relative Abundance (%)")+
@@ -705,7 +705,6 @@ genus_line_plot_facet <- agg_genus_data_subset_hm %>%
         legend.position = "bottom")
 save_plot("results/figures/post_CDI_PEG_genus_line_plot_facet.png", genus_line_plot_facet)
 
-
 #List of top 10 significant genera in stool samples that are significant over the most timepoints
 top_10_sig_genus <- kw_genus_stools %>% 
   filter(p.value.adj < 0.05) %>% #Select only significant p-values
@@ -716,3 +715,12 @@ top_10_sig_genus <- kw_genus_stools %>%
   filter(!genus == "Unclassified") %>% #Remove this genus since it's not informative and could contain multiple unclassified genera
   head(10) %>% 
   pull(genus)
+
+#Line plot of top 6 significant genera in stool samples that uses function in code/utilities.R
+facet_labels <- top_10_sig_genus[1:6] #Pick just the top 6
+names(facet_labels) <- top_10_sig_genus[1:6] #Pick just the top 6
+line_plot_stool_days <- diversity_stools %>% distinct(day) %>% 
+  filter(!(day %in% c(-15, 30, 20, 25))) %>% pull(day)
+lp_stool <- line_plot_genus(agg_genus_data_subset_hm, top_10_sig_genus[1:6], line_plot_stool_days, "solid")+
+  scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))
+save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_stools.png", lp_stool, base_height = 5, base_width = 8)
