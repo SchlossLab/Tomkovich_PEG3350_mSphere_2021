@@ -581,7 +581,7 @@ view(sig_genus_pairs_D7)
 #Create list of genera with the most relevant 5
 #Remove those that are significant in baseline vs. Day 7 comparisons, if still relevant at Day 7 then contributes less to C. difficile clearance
 sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
-#These genera showed changes unnoticable within the heatmaps which may not neccessarily be linked to PEG treatment + Unclassified genus is unknown
+#These genera showed changes unnoticeable within the heatmaps which may not necessarily be linked to PEG treatment + Unclassified genus is unknown
 #Narrow down to bacteriodes, eneterobacteriaceae, porphyromonadaceae,ruminococcaceae and peptostreptococcaeae
 #These above genera show the most noticeable % abundance change differences in PEG treated mice when compared to clindamycin treated mice
 #This then shows the effect PEG has when compared to our control of clind.
@@ -645,10 +645,30 @@ sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostr
                             "Acetatifactor", "Akkermansia", "Butyricicoccus")
 sig_genus_top_list_v2 <- sig_genus_top_list_v2[!(sig_genus_top_list_v2 %in% sig_genus_remove_names)]
 
-
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
 line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v2, hm_days, "solid")+
   scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7")) +
 save_plot(filename = "results/figures/1_Day_PEG_genus_6_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
+#Plot significant genera not still siginifcant on Day 7 on lineplot using V2 above for comp
+sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)]
+
+facet_labels <- sig_genus_top_list
+names(facet_labels) <- sig_genus_top_list
+line_plot_baselinetoD1_all_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, hm_days, "solid")+
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
+  save_plot(filename = "results/figures/1_Day_PEG_genus_all_baselinetoD1_lineplot.png", line_plot_baselinetoD1_all_genera, base_height = 5, base_width = 15)
+#Comparing these with the difference in AUROC in results/figure_6.pdf:
+#We select porphyromondaceae, akkermansia, enterobacteriaceae, clostridiales, ruminoccocaeae, and acetatifactor
+#All six of these were found to contribute significantly AUROC in the ml model detailed in results/figure_6.pdf and align with other significant genera of interest in the other subsets.
+
+sig_genus_top_list_v3 <- c("Acetatifactor", "Akkermansia", "Clostridiales Unclassified", "Enterobacteriaceae Unclassified",  
+                             "Porphyromonadaceae Unclassified", "Ruminococcaceae Unclassified")
+facet_labels <- sig_genus_top_list
+names(facet_labels) <- sig_genus_top_list
+line_plot_baselinetoD1_6_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v3, hm_days, "solid")+
+  scale_x_discrete(limits = c("baseline", "1", "2", "5", "7"), breaks = c("baseline", "1", "2", "5", "7"), labels = c("baseline", "1", "2", "5", "7"))
+save_plot(filename = "results/figures/1_Day_PEG_genus_6_v2_baselinetoD1_lineplot.png", line_plot_baselinetoD1_6_genera, base_height = 5, base_width = 15)
+
+  
