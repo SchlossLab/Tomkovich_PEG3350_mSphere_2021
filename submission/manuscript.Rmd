@@ -57,7 +57,7 @@ knitr::knit_hooks$set(inline=inline_hook)
 \vspace{35mm}
 
 
-Sarah Tomkovich^1, Ana Taylor, Jacob Kingg, Joanna Colovas, Lucas Bishop, Kathryn McBride, Sonya Royzenblat, Nicholas A. Lesniak, Ingrid L. Bergin^2, Patrick D. Schloss^1$\dagger$^
+Sarah Tomkovich^1^, Ana Taylor^1^, Jacob Kingg, Joanna Colovas, Lucas Bishop, Kathryn McBride, Sonya Royzenblat, Nicholas A. Lesniak, Ingrid L. Bergin^2, Patrick D. Schloss^1$\dagger$^
 
 \vspace{40mm}
 
@@ -65,7 +65,7 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 1\. Department of Microbiology and Immunology, University of Michigan, Ann Arbor, MI, USA
 
-2\. The Unit for Laboratory Animal Medicine, University off Michigan, Ann Arbor, MI, USA
+2\. The Unit for Laboratory Animal Medicine, University of Michigan, Ann Arbor, MI, USA
 
 
 \newpage
@@ -79,17 +79,18 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 ## Introduction
 
-* Medications have been shown to alter the intestinal microbiota, but how this may influence susceptibility to enteric infections is less clear.
-
-*  The ubiquitous osmotic laxative, polyethylene glycol (PEG) 3350 (Miralax/Nulytely/Golytely)  that is also commonly used as bowel preparation for colonoscopies (also one of the possible administration routes used for fecal microbiota transplantation, a therapy for recurrent C. difficile infection) has been shown to influence the intestinal microbiota and mucosal barrier.
-
-* Review of previous mouse studies with PEG 
+Antibiotics are a major risk factor for *Clostridioides difficile* infections (CDIs) because of their impact on the microbiota. However, antibiotics are not the only types of medications that disrupt the microbiota. Although, other medications such as proton pump inhibitors have been implicated as risk factors for CDIs through epidemiological studies, whether the association is due to their impact on the microbiome is still unclear [@Tomkovich2019]. Many of the non-antibiotic medications associated with CDIs are known to modulate intestinal motility, which in turn also strongly impacts microbiota composition and function.  
+Interestingly our group has previously demonstrated that there are similar microbiota features in stool samples from CDI patients and patients with diarrhea that tested negative for *C. difficile*  with both groups having lower alpha diversity than non-diarrheal control samples [@Schubert2015]. These results led to our hypothesis that bacterial communities from patients experiencing diarrheal controls are susceptible, but have not been exposed to *C. difficile* spores.
+To examine if diarrhea alone is sufficient to disrupt microbiota colonization resistance, we turned to osmotic laxatives, which increase intestinal motility and can lead to diarrhea. The ubiquitous osmotic laxative, polyethylene glycol (PEG) 3350 is found in Miralax, Nulytely, and Golytely and is also commonly used as bowel preparation for colonoscopies. Interestingly, previous studies has shown that treating mice with PEG alone rendered the mice susceptible to *C. difficile *infection, altered microbiota composition, reduced acetate and butyrate and altered the mucus barrier [@Kashyap2013; @Ferreyra2014; @Tropini2018; @VanInsberghe2020]. The mucus barrier is thought to mediate protection from *C. difficile* infections by protecting intestinal epithelial cells from the toxins produced by *C. difficile* (Ref).
+PEG is also relevant in the context of treating recurrent CDIs via fecal microbiota transplant (FMT). For FMTs that are delivered via colonoscopy, patients typically undergo bowel preparation by taking an osmotic laxative prior to the procedure. Many of the FMT studies to date rationalize the use of laxatives (Ref) based on a case study with 2 pediatric patients where the authors suggested the laxative may help flush *C. difficile* spores and toxins from the intestine [@Liacouras1996].
 
 * 2 main questions:
   + Does PEG 3350 prolong colonization and result in more severe C. difficile infections?
   + How does PEG 3350 influence C. difficile clearance and fecal microbiota transplant (FMT) in mice?
 
 ## Results
+
+**Laxative treatment alone leads to prolonged *C. difficile* colonization in mice.** We compared PEG-treated mice to our standard 10 mg/kg clindamycin treatment, which temporarily renders the mice susceptible to *C. difficile*, with mice typically clearing C. difficile within 10 days post-infection [@Tomkovich2019; @Tomkovich2020]. All PEG-treated mice were administered a 15% PEG solution in the drinking water for 5-days, one group was also treated with clindamycin, and one group was allowed to recover for 10 days prior to challenge (Fig. 1A). After PEG and/or antibiotic treatment all mice were challenged with 10^3^ *C. difficile* 630 spores. 
 
 * Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.
 
@@ -110,11 +111,11 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 * Figure 7. Schematic summarizing findings.
 
-##Discussion
+## Discussion
 
 * Summary of major findings
 
-* Discussion of prolonged persistence. C. difficile sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent [a[ers]]
+* Discussion of prolonged persistence. C. difficile sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent papers.
 
 * Discuss why we might not have observed more severe histology in PEG mice relative to clindamycin-treated mice
   + Antibiotics may also impact mucus layer
