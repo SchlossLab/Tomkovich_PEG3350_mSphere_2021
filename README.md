@@ -63,6 +63,7 @@ YOUR PAPER'S ABSTRACT GOES HERE
     * glue v1.4.1
     * ggtext v0.1.0
 	* magick v2.6.0
+	* here 1.0.1
 * Analysis assumes the use of 10 processors
 
 

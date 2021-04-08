@@ -20,6 +20,7 @@ options(tidyverse.quiet = TRUE)
 
 library(tidyverse)
 library(knitr)
+library(here)
 
 opts_chunk$set("tidy" = TRUE)
 opts_chunk$set("echo" = FALSE)
@@ -141,8 +142,6 @@ We thank members of the Schloss lab for feedback on planning the experiments and
 
 test <- 4
 
-fig_4_pval = 1
-fig_4_rsq = 1
 
 ```
 
@@ -159,9 +158,17 @@ fig_4_rsq = 1
 **Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered.** A. 
 \newpage
 
-
+``` {r figure_4_permnova}
+one_day_permnova_results <- read_tsv(here("data/process/1_day_PEG_permanova.tsv"))
+one_day_top_2_contrib <- one_day_permnova_results %>% arrange(desc(R2)) %>%
+  top_n(3, R2)
+one_day_top_contrib_name = (one_day_top_2_contrib[2,1])
+one_day_sec_contrib_name = (one_day_top_2_contrib[3,1])
+top_R2 = one_day_top_2_contrib[2,6]
+sec_R2 = one_day_top_2_contrib[3,6]
+```
 \includegraphics{figure_4.pdf}
-**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = 6 mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was siginificantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (P = `r fig_4_pval` R^2^ = `r fig_4_rsq`). D. Shannon Diveristy Index of the groups over time. Only days with samples from all groups are shown. Samples for some mice were difficult to obtain 
+**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = 6 mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was siginificantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon Diveristy Index of the groups over time. Only days with samples from all groups are shown. Samples for some mice were difficult to obtain 
 due to the laxative treatment. The alpha scale follows accordingly with the timeline. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection. 
 
 \includegraphics{figure_5.pdf}
