@@ -57,7 +57,7 @@ knitr::knit_hooks$set(inline=inline_hook)
 \vspace{35mm}
 
 
-Sarah Tomkovich^1^, Ana Taylor^1^, Jacob Kingg, Joanna Colovas, Lucas Bishop, Kathryn McBride, Sonya Royzenblat, Nicholas A. Lesniak, Ingrid L. Bergin^2, Patrick D. Schloss^1$\dagger$^
+Sarah Tomkovich^1, Ana Taylor, Jacob King, Joanna Colovas, Lucas Bishop, Kathryn McBride, Sonya Royzenblat, Nicholas A. Lesniak, Ingrid L. Bergin^2, Patrick D. Schloss^1$\dagger$^$
 
 \vspace{40mm}
 
@@ -138,8 +138,11 @@ We thank members of the Schloss lab for feedback on planning the experiments and
 \newpage
 ```{r sample_size for figure legends}
 
+
 test <- 4
 
+fig_4_pval = 1
+fig_4_rsq = 1
 
 ```
 
@@ -156,9 +159,10 @@ test <- 4
 **Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered.** A. 
 \newpage
 
+
 \includegraphics{figure_4.pdf}
-**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. 
-\newpage
+**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = 6 mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was siginificantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (P = `r fig_4_pval` R^2^ = `r fig_4_rsq`). D. Shannon Diveristy Index of the groups over time. Only days with samples from all groups are shown. Samples for some mice were difficult to obtain 
+due to the laxative treatment. The alpha scale follows accordingly with the timeline. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection. 
 
 \includegraphics{figure_5.pdf}
 \includegraphics{figure_5_16S.pdf}
