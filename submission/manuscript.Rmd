@@ -58,7 +58,7 @@ knitr::knit_hooks$set(inline=inline_hook)
 \vspace{35mm}
 
 
-Sarah Tomkovich^1, Ana Taylor, Jacob King, Joanna Colovas, Lucas Bishop, Kathryn McBride, Sonya Royzenblat, Nicholas A. Lesniak, Ingrid L. Bergin^2, Patrick D. Schloss^1$\dagger$^$
+Sarah Tomkovich^1^, Ana Taylor^1^, Jacob King^1^, Joanna Colovas^1^, Lucas Bishop^1^, Kathryn McBride^1^, Sonya Royzenblat^1^, Nicholas A. Lesniak^1^, Ingrid L. Bergin^2^, Patrick D. Schloss^1$\dagger$^
 
 \vspace{40mm}
 
