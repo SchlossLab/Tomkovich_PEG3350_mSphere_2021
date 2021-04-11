@@ -752,3 +752,48 @@ lp_fmt <- line_plot_genus(frm_rm_subset, FRMvRM_post_gavage, line_plot_days, "so
   scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15)) #Rewrite over -1:10 scale
 
 save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_fmt.png", lp_fmt, base_height = 5, base_width = 8)
+
+#Plot of significant genera that immediately change between Pre- and Post-PEG treatment in PBS and FMT groups----
+facet_labels <- c("Pre-Treatment", "Post-treatment")
+names(facet_labels) <- c("B", "P")
+
+FMT_PBS_pairwise_genus <- genus_pairwise_stools %>%
+  filter(day %in% c(3,5), #Pre and Post treatment only 
+       group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM"),
+       genus != "Unclassified") %>%
+  arrange(p.adj) %>%
+  head(11) %>%
+  pull(genus)
+
+peg_impacted_genera_plot <- agg_genus_data_subset %>%
+  filter(genus %in% FMT_PBS_pairwise_genus,
+         day %in% c("3", "5"),
+         group %in% c("FRM", "RM")) %>%
+  mutate(day = case_when(day == "3" ~ "B", #before PEG treatment
+                       day == "5" ~ "P")) %>% #after PEG treatment
+ # mutate(genus=fct_relevel(genus, levels=(FMT_PBS_pairwise_genus)))%>% #Reorder list of genera in order of significance
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
+  ggplot(aes(x=genus, y=agg_rel_abund, color=group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_hline(yintercept=1/1000, color="gray")+
+  stat_summary(fun = 'median', 
+               fun.max = function(x) quantile(x, 0.75), 
+               fun.min = function(x) quantile(x, 0.25),
+               position = position_dodge(width = 1)) +  
+  labs(title=NULL, 
+       x=NULL,
+       y="Relative abundance (%)")+
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/1/10000, 1))+
+  coord_flip()+
+  theme_classic()+
+  geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed")+
+  theme(plot.title=element_text(hjust=0.5),
+        text = element_text(size = 16),# Change font size for entire plot
+        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        strip.background = element_blank(),
+        legend.position = "none") 
+#save_plot(filename = paste0("results/figures/post_CDI_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 8)
