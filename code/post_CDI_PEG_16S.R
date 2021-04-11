@@ -89,10 +89,6 @@ shannon_post_cdi_peg_no_legend <- shannon_post_cdi_peg +
   theme(legend.position = "none") #Remove legend
 save_plot("results/figures/post_CDI_PEG_shannon.png", shannon_post_cdi_peg_no_legend) #Save Shannon plot without legend
 
-#Extract Shannon Legend for all plots
-legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg) %>% as_ggplot()
-save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
-
 #Plot Shannon over time days -1 to 30 for post CDI PEG subset: all samples except FMTs
 x_annotation <- sig_shannon_days_stools
 y_position <- max(diversity_stools$shannon)+ 0.05
@@ -132,12 +128,20 @@ shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,31), #removes day -15 here
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  theme(legend.position = "none")+ #Removing legend to save separately
+  #theme(legend.position = "none")+ #Removing legend to save separately
+  guides(color = guide_legend(ncol = 1),
+         alpha = guide_legend(ncol = 1),
+         group = FALSE)+
+  theme(legend.title = element_blank())+
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = 2, ymax = Inf, fill = "#f768a1", alpha = .15)
  
 save_plot("results/figures/post_CDI_PEG_shannon_stool.png", shannon_post_cdi_peg_overtime_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2) #Save full Shannon over time plot without legend
+
+#Extract Shannon Legend for all plots
+legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg_overtime_stool) %>% as_ggplot()
+save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
 
 #Alpha Diversity Richness (Sobs)----
 #Function to perform Kruskal-Wallis test for differences in richness (sobs) across groups on a particular day with Benjamini Hochberg correction
