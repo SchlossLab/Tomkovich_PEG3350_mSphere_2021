@@ -31,20 +31,13 @@ plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, nc
   ggsave("results/figures/figure_5.pdf", width=4.6, height=7.5)+
   ggsave("submission/figure_5.pdf", width=4.6, height=7.5)
   
-#Figure showing pcoa and genera heat map over time
-d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png")
-e <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend.png")
-pcoa <- plot_grid(d, e, label_size = 12, ncol = 1, rel_widths = c(1,1), rel_heights = c(5,1))
-heatmap <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_heatmap_facet.png")
-
-plot_grid(pcoa, heatmap, labels = c("A", "B"), label_size = 10, ncol = 2, rel_heights = c(1,10), rel_widths = c(.5, 1))+
-  ggsave("results/figures/figure_5_16S.pdf", width = 6, height = 2.04)
-
 #Vert version of Fig 4 16S
-f <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png")
+f <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png", scale = 1.2)
 g <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend_vert.png")
-pcoa1 <- plot_grid(f,g, label_size = 12, nrow = 1, rel_heights = c(1,.8), rel_widths = c(1,.8))
+h <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_lineplot_fmt.png")
+lineplot <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_lineplot_stools.png")
+pcoa1 <- plot_grid(f,g, abels = c("A", ""), label_size = 12, nrow = 1, rel_heights = c(1,.5), rel_widths = c(1,.5))
 
-plot_grid(pcoa1, heatmap, labels = c("A", "B"), label_size = 12, nrow = 2)+
-  ggsave("results/figures/figure_5_16S.pdf", width = 6, height = 6.7)+
-  ggsave("submission/figure_5_16S.pdf", width = 6, height = 6.7)
+plot_grid(pcoa1, h, lineplot, labels = c("A", "B", "C"), label_size = 12, nrow = 3)+
+  ggsave("results/figures/figure_5_16S.pdf", width = 4, height = 6.7)+
+  ggsave("submission/figure_5_16S.pdf", width = 4, height = 6.7)
