@@ -1,5 +1,6 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 library(viridis)
+library(scales)
 
 set.seed(19760620) #Same seed used for mothur analysis
 
@@ -100,7 +101,7 @@ rf_top_feat <- top_20(rf_feat) %>% pull(genus)
 plot_feat_imp <- function(df, top_feat){
   df %>% 
     filter(genus %in% top_feat) %>% 
-    ggplot(aes(fct_reorder(genus, -perf_metric_diff, .desc = TRUE), perf_metric_diff))+
+    ggplot(aes(fct_reorder(genus, -perf_metric_diff, .desc = TRUE), perf_metric_diff, color = genus))+
     stat_summary(fun = 'median', 
                  fun.max = function(x) quantile(x, 0.75), 
                  fun.min = function(x) quantile(x, 0.25),
@@ -122,6 +123,21 @@ plot_feat_imp <- function(df, top_feat){
 }
 
 #Plot feature importances for the top genera for each comparison----
+#Figure out colors for top 5 most abundant genera based on viridis scale
+show_col(viridis_pal()(5))
+color_scheme_df <- rf_feat %>% 
+  distinct(genus) %>% #Limit to unique genera
+  filter(genus %in% rf_top_feat) %>% 
+  #Assign viridis colors to top 5 most abundant genera
+  mutate(color = case_when(genus == "Porphyromonadaceae Unclassified" ~ "#440154FF",
+                           genus == "Akkermansia" ~ "#3B528BFF",
+                           genus == "Enterobacteriaceae Unclassified" ~ "#21908CFF",
+                           genus == "Lachnospiraceae Unclassified" ~ "#5DC863FF",
+                           genus == "Bacteroides" ~ "#FDE725FF",
+                           TRUE ~ "black")) #Rest of colors should be black
+color_scheme <- color_scheme_df %>% pull(color)
+color_bact <- color_scheme_df %>% pull(genus)
+legend_bact <- color_scheme_df %>% pull(genus)
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_genus.png", height = 5, width = 8)
 
