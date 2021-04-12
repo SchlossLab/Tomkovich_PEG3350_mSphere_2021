@@ -170,7 +170,8 @@ axis2 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% r
 
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_5_day_PEG_stool)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+  theme(legend.position = "none")
 save_plot(filename = paste0("results/figures/5_days_PEG_stool_PCoA.png"), pcoa_subset_plot_stool, base_height = 5, base_width = 5)
 
 ##Animation of PCoA plot: Stool Subset--
@@ -217,7 +218,8 @@ pcoa_subset_plot_tissue <- plot_pcoa(pcoa_5_day_PEG_tissues)+
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   scale_alpha_continuous(range = c(.3, 1),
                          breaks= c(4, 6, 20, 30),
-                         labels=c(4, 6, 20, 30))
+                         labels=c(4, 6, 20, 30))+
+  theme(legend.position = NULL)
 save_plot(filename = paste0("results/figures/5_days_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 5)
 
 #PCoA faceted over time
