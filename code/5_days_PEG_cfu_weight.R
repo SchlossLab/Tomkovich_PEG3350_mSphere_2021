@@ -194,6 +194,8 @@ label <- kw_label(weight_kruskal_wallis_adjust %>%
 
 weight_subset <- weight_subset %>% 
   mutate(day = as.integer(day))
+weightdata <- weightdata %>% 
+  mutate(day = as.integer(day))
 
 #Plot of weight data for days -15 through 10 of the experiment:
 weight_subset_plot <- plot_weight(weight_subset) +
@@ -202,18 +204,26 @@ weight_subset_plot <- plot_weight(weight_subset) +
                      minor_breaks = c(-15.5:10.5)) 
 save_plot(filename = "results/figures/5_days_PEG_weight_subset.png", weight_subset_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-
-#Plot of weight data for all days of the experiment:
-#Note don't need to redo statistical annotations since there were no significant differences past 1 day post-infection
-weight_plot <- plot_weight(weightdata) +
-  scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
-                     limits = c(-16, 31),
-                     minor_breaks = c(-15.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines around days on days with points)
-
 #Plots with just the median lines for each group
 v2_weight_subset <- plot_weight_medians(weight_subset) +
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10),
                      limits = c(-16, 11),
                      minor_breaks = c(-15.5:10.5)) #only show grey lines separating days on days with statistically sig points)
 save_plot(filename = "results/figures/5_days_PEGv2_weight_subset.png", v2_weight_subset, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Plot of weight data for all days of the experiment:
+#Note don't need to redo statistical annotations since there were no significant differences past 10 day post-infection
+#Statistical annotation labels based on adjusted kruskal-wallis p-values for first 10 days of experiment:
+x_annotation <- weight_kruskal_wallis_adjust %>%
+  filter(p.value.adj <= 0.05) %>%
+  pull(day)
+x_annotation == sig_weight_days #All the days where weight change significantly varied across groups of mice occured within the first 10 days post-infection
+y_position <- max(weightdata$weight_change)
+label <- kw_label(weight_kruskal_wallis_adjust) 
+
+weight_plot <- plot_weight(weightdata) +
+  scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
+                     limits = c(-16, 31),
+                     minor_breaks = c(-15.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines around days on days with points)
+save_plot(filename = "results/figures/5_days_PEG_weight.png", weight_plot , base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
