@@ -177,7 +177,8 @@ cfu <- plot_cfu_data(cfudata %>%
                        filter(day %in% c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25", "30"))) +
   scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
                      limits = c(-1, 31),
-                     minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines separating days on days with statistically sig points
+                     minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+ #only show grey lines separating days on days with statistically sig points
+  theme(legend.position = "none")
 save_plot(filename = "results/figures/5_days_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Weight change plot----
