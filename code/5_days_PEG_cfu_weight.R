@@ -136,14 +136,17 @@ weight_plot_format_stats <- weight_stats_pairwise %>%
   bind_rows()
 
 #Plots of CFU and weight data----
+#Transform day column variable from character to integer variable
+cfudata <- cfudata %>% 
+  mutate(day = as.integer(day))
 
 #Dataframe of cfu data for just the initial 10 days of the experiment
 cfudata_10dsubset <- cfudata %>%
-  mutate(day = as.integer(day)) %>% #transform day to factor variable
+  mutate(day = as.integer(day)) %>% #transform day to integer variable
   filter(day < 12) #only include data through day 10
 
 cfu_kruskal_wallis_adjust <- cfu_kruskal_wallis_adjust %>% 
-  mutate(day = as.integer(day)) #transform day to factor variable
+  mutate(day = as.integer(day)) #transform day to integer variable
   
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for first 10 days of experiment:
 x_annotation <- cfu_kruskal_wallis_adjust %>%
@@ -155,19 +158,23 @@ label <- kw_label(cfu_kruskal_wallis_adjust %>% filter(day < 12))
  #Only include results through day 10 for this plot
 
 #Plot cfu for just the inital 10days
-cfu_10d <- plot_cfu_data(cfudata_10dsubset) +
+cfu_10d <- plot_cfu_data(cfudata_10dsubset %>% 
+                           filter(day %in% c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))) + #Filter to just include timepoints that will be plotted
       scale_x_continuous(breaks = c(0:10),
                          limits = c(-1, 11),
                          minor_breaks = c(-.5:10.5))
 save_plot(filename = "results/figures/5_days_PEG_cfu_10d.png", cfu_10d, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Statistical annotation labels based on adjusted kruskal-wallis p-values for all timepoints:
-x_annotation <- sig_cfu_days
+x_annotation <- cfu_kruskal_wallis_adjust %>%
+  filter(p.value.adj <= 0.05) %>%
+  pull(day)
 y_position <- max(cfudata$avg_cfu)
 label <- kw_label(cfu_kruskal_wallis_adjust)
 
 #Plot of cfu data for all days of the experiment
-cfu <- plot_cfu_data(cfudata) +
+cfu <- plot_cfu_data(cfudata %>% 
+                       filter(day %in% c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25", "30"))) +
   scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
                      limits = c(-1, 31),
                      minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines separating days on days with statistically sig points
