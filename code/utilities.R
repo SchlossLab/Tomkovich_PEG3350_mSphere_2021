@@ -373,7 +373,7 @@ plot_cfu_data <- function(df){
     summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
   #Plot cfu for just the inital 10days
   cfu_plot <- ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 0.6, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -399,7 +399,7 @@ plot_weight <- function(df){
     group_by(group, day) %>%
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
