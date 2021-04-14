@@ -93,10 +93,26 @@ In the past, our group has used C57BL6 mice to characterize how antibiotics incl
 ## Results
 
 **5-day laxative treatment leads to prolonged *C. difficile* colonization in mice.** We compared PEG-treated mice to our standard 10 mg/kg clindamycin treatment, which temporarily renders the mice susceptible to *C. difficile*, with mice typically clearing *C. difficile* within 10 days post-infection [@Tomkovich2019; @Tomkovich2020]. All PEG-treated mice were administered a 15% PEG solution in the drinking water for 5-days, one group was also treated with clindamycin, and one group was allowed to recover for 10 days prior to challenge (Fig. 1A). PEG treatment resulted in weight loss in all 3 groups of PEG-treated mice, with the greatest change in weight observed on the fifth day of PEG treatment (Fig. 1B). After either PEG, clindamycin, or PEG and clindamycin treatment all mice were challenged with 10^3^ *C. difficile* 630 spores. All treatments rendered mice susceptible to *C. difficile* colonization (Fig. 1C), however PEG-treated mice remained colonized at a high level through 30 days post-infection. In contrast, the clindamycin-treated mice that cleared *C. difficile* within 10 days post-infection. Surprisingly, mice were still susceptible to *C. difficile* infection after 10-days of recovery from PEG treatment although *C. difficile* was not detectable in most of the group in the initial 5 days post-infection (Fig. 1C). From 9 days post-infection onward, the median *C. difficile* stabilized for the 5-day PEG plus 10-day recovery group of mice and remained high through 30 days post-infection (Fig. 1C). Thus, osmotic laxative treatment alone was sufficient to render mice susceptible to prolonged *C. difficile* colonization and PEG-treated mice remained susceptible for up to 10 days post PEG treatment.
-**5-day laxative treatment differentially disrupts the fecal microbiota compared to clindamycin treatment.** Given 
-**5-day laxative treatment does not promote more severe CDIs despite altering the mucosal microbiota.** Given 
 
-* Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.
+``` {r 5-day PEG microbiota}
+f_d_permanova <- read_tsv(here("data/process/5_days_PEG_permanova_stools.tsv"))
+f_d_top_2_contrib <- f_d_permanova %>% arrange(desc(R2)) %>%
+  filter(!effects == "Total") %>% #Remove total since it is not one of the variables
+  top_n(2, R2) %>% #Select top 2 variables based on R2
+  select(effects, R2, `Pr(>F)`) #Select relevant column names
+  
+f_d_top_contrib= (f_d_top_2_contrib[1,1])
+f_d_sec_contrib = (f_d_top_2_contrib[2,1])
+f_d_top_R2_sum = f_d_top_2_contrib %>% 
+  select(R2) %>% sum
+f_d_top_p <- f_d_top_2_contrib %>% 
+  select(`Pr(>F)`) %>% max # Both p values are the same, will be rounded in text
+f_d_top_R2 = f_d_top_2_contrib[1,2]
+f_d_sec_R2 = f_d_top_2_contrib[2,2]
+```
+**5-day laxative treatment differentially disrupts the fecal microbiota compared to clindamycin treatment.** Since laxatives and clindamycin have previously been shown to disrupt the murine microbiota (ref), we hypothesized the different *C. difficile* colonization dynamics between mice treated with laxatives versus clindamycin were due to their differential effects on the microbiota. We profiled the stool microbiota over time by sequencing the V4 region of the 16S rRNA gene to compare changes across treatment groups. We found time and treatment group explained half of the observed variation between fecal communities (PERMANOVA combined R^2^ = `r f_d_top_R2_sum`, *P* `r format.pval(f_d_top_p, eps = 0.001)`) with the remaining variation explained by interactions between treatment group and other experimental variables including time, cage effects, and sequencing preparation (Data Set S1, Sheet X). The impact of cage effects has been well documented due to copraphagy and is expected.
+
+**5-day laxative treatment does not promote more severe CDIs despite altering the mucosal microbiota.** Given previous work has shown that PEG treatment disrupts the mucus layer, we decided to examine the impact of the laxative on the mucosal microbiota and infection severity by evaluating histopathology.
 
 * Figure 2. 5-day PEG treatment disrupts the stool microbiota for a longer amount of time compared to clindamycin-treated mice.
 
