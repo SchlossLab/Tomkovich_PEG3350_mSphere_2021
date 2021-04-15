@@ -667,49 +667,7 @@ genus_day5_stats %>%
   filter(p.adj < .05) %>% 
   pull(genus) #[1] "Porphyromonadaceae Unclassified"
 
-#Select Genera to show what's different across all groups---------
-pairwise_genus_rank <- genus_day5_stats %>% filter(p.adj < .05) %>% 
-  count(genus) %>% arrange(desc(n)) %>% #Rank genera according to # of groups with sig diff
-  top_n(6) %>% #select top 6 for over time plots
-  pull(genus)
-kw_genus_stools %>% #Check to see if there were any genera that were sig in the kw test that were not sig in the pairwise comparisons
-  filter(day == 5,p.value.adj < .05,
-         !(genus %in% pairwise_genus_rank)) %>% pull(genus) #Only [1] "Turicibacter"
-
-#Plot alt line plots faceted by genus
-agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
-exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
-exp_group_labels <- c("Clind. + 3-day recovery + 1-day PEG + PBS","Clind. + 3-day recovery + 1-day PEG + FMT", "Clind. + 1-day PEG", "Clind.")
-line_plot_stool_days <- diversity_stools %>% distinct(day) %>% 
-  filter(!(day %in% c(-15, 30))) %>% pull(day)
-genus_line_plot_facet <- agg_genus_data_subset_hm %>% 
-  mutate(group = fct_relevel(group, exp_groups)) %>% #Specify the order of the groups
-  filter(genus %in% pairwise_genus_rank) %>%
-  filter(day %in% line_plot_stool_days) %>% 
-  mutate(day = as.numeric(day)) %>% 
-  group_by(group, genus, day) %>% 
-  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
-  ggplot()+
-  geom_line(aes(x = day, y=median, color=group))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
-#  scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))+
-#  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
-  #geom_hline(yintercept=1/1000, color="gray")+
-  labs(title=NULL,
-       x="Days Post-Infection",
-       y="Relative Abundance (%)")+
-  facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10), scales = "free")+
-  theme_classic()+
-  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-        strip.text = element_text(face = "italic"),
-        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
-        text = element_text(size = 16),
-        legend.position = "bottom")
-save_plot("results/figures/post_CDI_PEG_genus_line_plot_facet.png", genus_line_plot_facet)
-
+#Sig Genera Differing OT Across All Groups---------
 #List of top 10 significant genera in stool samples that are significant over the most timepoints
 top_10_sig_genus <- kw_genus_stools %>% 
   filter(p.value.adj < 0.05) %>% #Select only significant p-values
@@ -751,48 +709,3 @@ lp_fmt <- line_plot_genus(frm_rm_subset, FRMvRM_post_gavage, line_plot_days, "so
 #  scale_x_discrete(limits = c(3, 4, 5:10, 15), breaks = c(3, 4, 5:10, 15), labels = c(3, 4, 5:10, 15)) #Rewrite over -1:10 scale
   scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15)) #Rewrite over -1:10 scale
 save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_fmt.png", lp_fmt, base_height = 5, base_width = 8)
-
-#Plot of significant genera that immediately change between Pre- and Post-PEG treatment in PBS and FMT groups----
-facet_labels <- c("Pre-Treatment", "Post-treatment")
-names(facet_labels) <- c("B", "P")
-
-FMT_PBS_pairwise_genus <- genus_pairwise_stools %>%
-  filter(day %in% c(3,5), #Pre and Post treatment only 
-       group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM"),
-       genus != "Unclassified") %>%
-  arrange(p.adj) %>%
-  head(11) %>%
-  pull(genus)
-
-peg_impacted_genera_plot <- agg_genus_data_subset %>%
-  filter(genus %in% FMT_PBS_pairwise_genus,
-         day %in% c("3", "5"),
-         group %in% c("FRM", "RM")) %>%
-  mutate(day = case_when(day == "3" ~ "B", #before PEG treatment
-                       day == "5" ~ "P")) %>% #after PEG treatment
- # mutate(genus=fct_relevel(genus, levels=(FMT_PBS_pairwise_genus)))%>% #Reorder list of genera in order of significance
-  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
-  ggplot(aes(x=genus, y=agg_rel_abund, color=group))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
-  geom_hline(yintercept=1/1000, color="gray")+
-  stat_summary(fun = 'median', 
-               fun.max = function(x) quantile(x, 0.75), 
-               fun.min = function(x) quantile(x, 0.25),
-               position = position_dodge(width = 1)) +  
-  labs(title=NULL, 
-       x=NULL,
-       y="Relative abundance (%)")+
-  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/1/10000, 1))+
-  coord_flip()+
-  theme_classic()+
-  geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed")+
-  theme(plot.title=element_text(hjust=0.5),
-        text = element_text(size = 16),# Change font size for entire plot
-        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
-        strip.background = element_blank(),
-        legend.position = "none") 
-#save_plot(filename = paste0("results/figures/post_CDI_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 8)
