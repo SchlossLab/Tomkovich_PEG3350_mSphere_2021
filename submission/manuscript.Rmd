@@ -21,6 +21,7 @@ options(tidyverse.quiet = TRUE)
 library(tidyverse)
 library(knitr)
 library(here)
+library(readxl)
 
 opts_chunk$set("tidy" = TRUE)
 opts_chunk$set("echo" = FALSE)
@@ -47,6 +48,9 @@ inline_hook <- function(x){
 	}
 }
 knitr::knit_hooks$set(inline=inline_hook)
+
+metadata <- read_excel(here("data/process/metadata.xlsx"), col_types = c("text", "numeric", "text", "text", "numeric", "text", "numeric", "text", "text", "text", "text", "numeric", "numeric")) #specify column types
+
 ```
 
 
@@ -185,10 +189,22 @@ one_day_top_contrib_name = (one_day_top_2_contrib[2,1])
 one_day_sec_contrib_name = (one_day_top_2_contrib[3,1])
 top_R2 = one_day_top_2_contrib[2,6]
 sec_R2 = one_day_top_2_contrib[3,6]
+
+
+
+one_day_samples_per_day <- metadata %>%
+  filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
+             group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
+             group == "M1" & exp_num %in% c("M6")) %>%
+  group_by(day) %>%
+  count() 
+one_day_sample_min <- min(one_day_samples_per_day$n)
+one_day_sample_max <- max(one_day_samples_per_day$n)
+
+
 ```
 \includegraphics{figure_4.pdf}
-**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = 6 mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was significantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon diversity Index of the groups over time. Only days with samples from all groups are shown. Samples for some mice were difficult to obtain 
-due to the laxative treatment. The alpha scale follows accordingly with the timeline. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection. 
+**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = `r one_day_sample_min`-`r one_day_sample_max` mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was significantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon diversity Index of the groups over time.  Only days with samples from all groups are shown. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection. 
 
 \includegraphics{figure_5.pdf}
 \newpage
