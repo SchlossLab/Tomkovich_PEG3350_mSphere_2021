@@ -129,9 +129,7 @@ shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
                      limits = c(-2,31), #removes day -15 here
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
   #theme(legend.position = "none")+ #Removing legend to save separately
-  guides(color = guide_legend(ncol = 1),
-         alpha = guide_legend(ncol = 1),
-         group = FALSE)+
+  guides(color = guide_legend(ncol = 1))+
   theme(legend.title = element_blank())+
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
@@ -669,7 +667,7 @@ genus_day5_stats %>%
   filter(p.adj < .05) %>% 
   pull(genus) #[1] "Porphyromonadaceae Unclassified"
 
-#Select Genera to show what's different across all groups
+#Select Genera to show what's different across all groups---------
 pairwise_genus_rank <- genus_day5_stats %>% filter(p.adj < .05) %>% 
   count(genus) %>% arrange(desc(n)) %>% #Rank genera according to # of groups with sig diff
   top_n(6) %>% #select top 6 for over time plots
@@ -677,6 +675,7 @@ pairwise_genus_rank <- genus_day5_stats %>% filter(p.adj < .05) %>%
 kw_genus_stools %>% #Check to see if there were any genera that were sig in the kw test that were not sig in the pairwise comparisons
   filter(day == 5,p.value.adj < .05,
          !(genus %in% pairwise_genus_rank)) %>% pull(genus) #Only [1] "Turicibacter"
+
 #Plot alt line plots faceted by genus
 agg_genus_data_subset_hm <- agg_genus_data_subset %>% filter(!(day %in% c(4, 20, 25))) #drop day 20 and 25 (only data for one group)
 exp_groups <- c("RM", "FRM", "CWM", "C") #Arrange this way to match pcoa legend
@@ -718,7 +717,8 @@ top_10_sig_genus <- kw_genus_stools %>%
   tally() %>% 
   filter(n > 1) %>% #select genera that vary over multiple timepoints = n > 1
   arrange(desc(n)) %>% #Rank by how many time each genera shows up (
-  filter(!genus == "Unclassified") %>% #Remove this genus since it's not informative and could contain multiple unclassified genera
+  filter(!genus == "Unclassified", #Remove this genus since it's not informative and could contain multiple unclassified genera
+         !genus == "Peptostreptococcaceae Unclassified") %>% #Remove this genus since BLAST results indicate this is likely C. diff, which is more accurately represented in CFU plots
   head(10) %>% 
   pull(genus)
 
@@ -731,7 +731,7 @@ lp_stool <- line_plot_genus(agg_genus_data_subset_hm, top_10_sig_genus[1:6], lin
   scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15)) #Rewrite over -1:10 scale
 save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_stools.png", lp_stool, base_height = 5, base_width = 8)
 
-#Figure out what bacteria are different between 3-day recovery + PEG + FMT or PBS groups (RM vs FRM)
+#Figure out what bacteria are different between 3-day recovery + PEG + FMT or PBS groups (RM vs FRM)---------
 FRMvRM_post_gavage <- genus_pairwise_stools_5plusdpi %>% 
   filter(group1 %in% c( "FRM", "RM") & group2 %in% c("FRM", "RM")) %>% 
   filter(p.adj < .05) %>%
@@ -750,7 +750,6 @@ line_plot_days <- c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
 lp_fmt <- line_plot_genus(frm_rm_subset, FRMvRM_post_gavage, line_plot_days, "solid")+
 #  scale_x_discrete(limits = c(3, 4, 5:10, 15), breaks = c(3, 4, 5:10, 15), labels = c(3, 4, 5:10, 15)) #Rewrite over -1:10 scale
   scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15)) #Rewrite over -1:10 scale
-
 save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_fmt.png", lp_fmt, base_height = 5, base_width = 8)
 
 #Plot of significant genera that immediately change between Pre- and Post-PEG treatment in PBS and FMT groups----
