@@ -162,15 +162,26 @@ We thank members of the Schloss lab for feedback on planning the experiments and
 \newpage
 ```{r sample_size for figure legends}
 
-
-test <- 4
-
+#Use same code from five_day_PEG_subset() in code/utilities.R to determine number of samples we had C. difficile CFU counts for per day
+five_day_mice <- metadata %>% filter(group == "C" & exp_num %in% c("M3","M4", "M5", "M8")| #Only use C mice from these experiments. Allocated groups to figures based on paper outline.
+             group == "WM" & exp_num %in% c("M3","M4", "M5", "M8")|
+             group == "WMC" & exp_num %in% c("M3","M4")|
+             group == "WMR" & exp_num %in% c("M5","M6"))
+five_d_cfu <- five_day_mice %>% 
+  filter(sample_type == "stool") %>% #Select only stool samples
+  filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 15, 20, 25, 30)) %>%  #select timepoints on plot
+  filter(!is.na(avg_cfu)) %>% #Remove rows with NA values
+  group_by(day) %>% 
+  count()
+#Figure out min & max number of samples we had cfu counts for
+five_d_cfu_n_min <- min(five_d_cfu$n)
+five_d_cfu_n_max <- max(five_d_cfu$n)
 
 ```
 
 \includegraphics{figure_1.pdf}
 
-**Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for subset of experiments with 5-day PEG treated mice. B. Weight change from baseline weight in groups after treatment with PEG and/or clindamycin, followed by *C. difficile* challenge. C. *C. difficile* CFU/gram stool measured over time (N = `r test`-`(insert variable name)` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. Lines represent the median for each source and circles represent individual mouse samples. Asterisks indicate timepoints where the weight change or CFU/g was significantly different between groups by the Kruskal-Wallis test with Benjamini-Hochberg correction for testing multiple timepoints.
+**Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for experiments with 5-day PEG treated mice. Clindamycin was administered at 10 mg/kg by intraperitoneal injection. 15% PEG 3350 was administered in the drinking water for five days. B. Weight change from baseline weight in groups after treatment with PEG and/or clindamycin, followed by *C. difficile* challenge. C. *C. difficile* CFU/gram stool measured over time (N = `r five_d_cfu_n_min`-`r five_d_cfu_n_max` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. For B-C, lines represent the median for each treatment group and circles represent samples from individual mice. Asterisks indicate timepoints where the weight change or CFU/g was significantly different between groups by the Kruskal-Wallis test with Benjamini-Hochberg correction for testing multiple timepoints.
 \newpage
 
 \includegraphics{figure_2.pdf}
@@ -191,13 +202,14 @@ top_R2 = one_day_top_2_contrib[2,6]
 sec_R2 = one_day_top_2_contrib[3,6]
 
 
-
+#Use same code from one_day_PEG_subset() in code/utilities.R to determine number of samples per day
 one_day_samples_per_day <- metadata %>%
   filter(group == "C" & exp_num %in% c("M6")| #Only use C mice from this experiments. Allocated groups to figures based on paper outline.
              group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
              group == "M1" & exp_num %in% c("M6")) %>%
   group_by(day) %>%
   count() 
+#To Do: this code is not specific for CFU values or the timepoints shown on panel B
 one_day_sample_min <- min(one_day_samples_per_day$n)
 one_day_sample_max <- max(one_day_samples_per_day$n)
 
