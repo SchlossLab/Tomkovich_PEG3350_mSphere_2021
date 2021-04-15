@@ -36,7 +36,7 @@ f <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png", scale 
 g <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend_vert.png")
 h <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_lineplot_fmt.png")
 lineplot <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_lineplot_stools.png")
-pcoa1 <- plot_grid(f,g, abels = c("A", ""), label_size = 12, nrow = 1, rel_heights = c(1,.5), rel_widths = c(1,.5))
+pcoa1 <- plot_grid(f,g, labels = c("A", ""), label_size = 12, nrow = 1, rel_heights = c(1,.5), rel_widths = c(1,.5))
 
 plot_grid(pcoa1, h, lineplot, labels = c("A", "B", "C"), label_size = 12, nrow = 3)+
   ggsave("results/figures/figure_5_16S.pdf", width = 4, height = 6.7)+
