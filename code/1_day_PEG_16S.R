@@ -91,9 +91,10 @@ x_annotation <- sig_shannon_days
 y_position <- max(diversity_data_subset$shannon)+0.15
 label <- kw_label(kw_shannon)
 #Plot
+fig_days <- c("B", 0:10)
 shannon_stools <- plot_shannon_overtime(diversity_data_subset) +
-  scale_x_discrete(breaks = c("B", 0:7)) +
-  geom_vline(xintercept = c((1:7) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  scale_x_discrete(limits = fig_days, breaks = fig_days, labels = fig_days) +
+  geom_vline(xintercept = c((1:13) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(legend.position = "none")
 save_plot(filename = "results/figures/1_Day_PEG_shannon.png", shannon_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
@@ -647,9 +648,9 @@ sig_genus_top_list_v2 <- sig_genus_top_list_v2[!(sig_genus_top_list_v2 %in% sig_
 
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
-lineplot_days <- c("B", 0:10)
-line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v2, lineplot_days, "solid") +
-  scale_x_discrete(limits = lineplot_days, breaks = lineplot_days, labels = lineplot_days)
+fig_days <- c("B", 0:10)
+line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v2, fig_days, "solid") +
+  scale_x_discrete(limits = fig_days, breaks = fig_days, labels = fig_days)
 save_plot(filename = "results/figures/1_Day_PEG_genus_6_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
 #Plot significant genera not still significant on Day 7 on lineplot using V2 above for comp
@@ -657,8 +658,8 @@ sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
 
-line_plot_baselinetoD1_all_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, lineplot_days, "solid")+
-  scale_x_discrete(limits = lineplot_days, breaks = lineplot_days, labels = lineplot_days)
+line_plot_baselinetoD1_all_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, fig_days, "solid")+
+  scale_x_discrete(limits = fig_days, breaks = fig_days, labels = fig_days)
 save_plot(filename = "results/figures/1_Day_PEG_genus_all_baselinetoD1_lineplot.png", line_plot_baselinetoD1_all_genera, base_height = 5, base_width = 15)
 #Comparing these with the difference in AUROC in results/figure_6.pdf:
 #We select porphyromondaceae, akkermansia, enterobacteriaceae, clostridiales, ruminoccocaeae, and acetatifactor
@@ -668,8 +669,8 @@ sig_genus_top_list_v3 <- c("Acetatifactor", "Akkermansia", "Clostridiales Unclas
                              "Porphyromonadaceae Unclassified", "Ruminococcaceae Unclassified")
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
-line_plot_baselinetoD1_6_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v3, lineplot_days, "solid")+
-  scale_x_discrete(limits = lineplot_days, breaks = lineplot_days, labels = lineplot_days)
+line_plot_baselinetoD1_6_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v3, fig_days, "solid")+
+  scale_x_discrete(limits = fig_days, breaks = fig_days, labels = fig_days)
 save_plot(filename = "results/figures/1_Day_PEG_genus_6_v2_baselinetoD1_lineplot.png", line_plot_baselinetoD1_6_genera, base_height = 5, base_width = 15)
 
   
