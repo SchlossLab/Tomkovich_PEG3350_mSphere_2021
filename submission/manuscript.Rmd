@@ -231,9 +231,12 @@ one_day_sample_max <- max(one_day_samples_per_day$n)
 **Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = `r one_day_sample_min`-`r one_day_sample_max` mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was significantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon diversity Index of the groups over time.  Only days with samples from all groups are shown. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection. 
 
 \includegraphics{figure_5.pdf}
+A. Experimental timeline for groups receiving PEG treatment post clindamycin gavage. B. Median and individual CFU/g of C. difficile measured over time via culture. Asterisks indicate time points with significant differences between groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction. Limit of detection is 1e2 CFU/g. Background shading indicates PEG treatment period for applicable groups. Opacity of points reflects time point. C. Median and individual Shannon Diversity measured over time. Asterisks, background shading, and opacity of points consistent with (B). D. Median and individual richness measured over time. Asterisks, background shading, and opacity of points consistent with (B).
+
 \newpage
 \includegraphics{figure_5_16S.pdf}
-**Figure 5. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. 
+**Figure 5. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. PCoA of all groups + FMT plotted over time. Opacity of points reflects time point. B. Relative abundance of genera significantly different over multiple time points post FMT or PBS treatment, plotted over time. Limit of detection is .1%. C. Relative abundances of top 6 significant genera ranked by number of days significant, plotted over time. Limit of detection is .1%. 
+
 \newpage
 
 \includegraphics{figure_6.pdf}
