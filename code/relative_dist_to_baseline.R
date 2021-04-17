@@ -55,13 +55,13 @@ plot_bc_dist <- function(input_df, timepoint){
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+ 
-    labs(title = NULL, x = NULL, y = "Bray-Curtis Distance relative \n to baseline")+
+    labs(title = NULL, x = NULL, y = "Bray-Curtis distance \n relative to baseline")+
+    annotate(geom = "text", label = paste("Day", timepoint), x = 2, y = 1)+ #Add annotation to plot to indicate timepoint
     theme(plot.title = element_text(hjust = 0.5)) +#Center plot title
     theme_classic()+
     lims(y = c(0, 1))+
     theme(legend.position = "none",
-          text = element_text(size = 19),# Change font size for entire plot
-          axis.title.y = element_text(size = 17),
+          text = element_text(size = 16),# Change font size for entire plot
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank()) #Remove x axis ticks
 }
@@ -97,6 +97,9 @@ d10_baseline <- plot_bc_dist(five_d_stools, "10")
 save_plot(filename = "results/figures/5_days_PEG_bc_d10_baseline.png", d10_baseline, base_height = 4, base_width = 4)
 d30_baseline <- plot_bc_dist(five_d_stools, "30")
 save_plot(filename = "results/figures/5_days_PEG_bc_d30_baseline.png", d30_baseline, base_height = 4, base_width = 4)
+
+plot_grid(d10_baseline, d30_baseline, nrow = 1)+
+  ggsave("results/figures/5_days_PEG_bc_combined_baseline.png", height = 3, width = 5)
 
 #Format 1-day PEG stool samples distance matrix----
 one_d_stools <- format_dist_df("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist") %>% 
