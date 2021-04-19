@@ -446,7 +446,7 @@ plot_shannon_overtime <- function(df) {
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels) +
-    scale_y_continuous(limits = c(0,4.1))+
+    scale_y_continuous(limits = c(0,4.1), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
     theme_classic()+
     labs(title=NULL,
          x="Days Post-Infection",
@@ -470,7 +470,7 @@ plot_richness_overtime <- function(df) {
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels) +
-    scale_y_continuous(limits = c(0,160))+
+    scale_y_continuous(limits = c(0,160), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
     theme_classic()+
     labs(title=NULL,
          x="Days Post-Infection",

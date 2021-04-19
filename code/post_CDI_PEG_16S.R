@@ -222,7 +222,7 @@ sobs_post_CDI_PEG_stool <- diversity_stools %>%
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2, 31),
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
- scale_y_continuous(limits = c(0,110))+
+ scale_y_continuous(limits = c(0,110), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
   theme_classic()+
   theme(legend.position = "none", #Remove legend
         panel.grid.minor.x = element_line(size = 0.4, color = "grey"))+ #Add gray lines to clearly separate symbols by days
