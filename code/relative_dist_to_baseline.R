@@ -61,7 +61,7 @@ plot_bc_dist <- function(input_df, timepoint){
     theme_classic()+
     lims(y = c(0, 1))+
     theme(legend.position = "none",
-          text = element_text(size = 16),# Change font size for entire plot
+          text = element_text(size = 14),# Change font size for entire plot
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank()) #Remove x axis ticks
 }
