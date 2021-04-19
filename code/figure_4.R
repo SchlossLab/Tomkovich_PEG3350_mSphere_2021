@@ -1,6 +1,6 @@
 source("code/utilities.R")
 
-a <- ggdraw() + draw_image("results/figures/1_Day_PEG_Schematic.png", scale = 1.2, x = .07)
+a <- ggdraw() + draw_image("results/figures/1_Day_PEG_Schematic.png", scale = 1.45, x = .09)
 b <- ggdraw() + draw_image("results/figures/1_day_PEG_cfu.png", scale = 1.00)
 c <- ggdraw() + draw_image("results/figures/1_Day_PEG_PCoA.png", scale = 1.25)
 d <- ggdraw() + draw_image("results/figures/1_Day_PEG_shannon.png")
