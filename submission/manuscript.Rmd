@@ -125,31 +125,47 @@ five_day_total_exp <- five_day_mice %>%
   filter(!duplicated(exp_num)) %>% #Remove duplicate experiment numbers
   tally() #Total number of unique experiments
 
+#PEG impacted genera
+PEG_genera <- read_tsv(here("data/process/5_days_PEG_genus_PEG_paired.tsv")) %>% 
+  filter(p.value.adj < 0.05) %>% #Limit to significant genera
+  tally()
+
 ```
-**5-day laxative treatment differentially disrupts the fecal microbiota compared to clindamycin treatment.** Since laxatives and clindamycin have previously been shown to disrupt the murine microbiota (ref), we hypothesized the different *C. difficile* colonization dynamics between mice treated with laxatives versus clindamycin were due to the two drugs having differential effects on the microbiota. We profiled the stool microbiota over time by sequencing the V4 region of the 16S rRNA gene to compare changes across treatment groups. We found time and treatment group explained half of the observed variation between fecal communities (PERMANOVA combined R^2^ = `r f_d_top_R2_sum`, *P* `r format.pval(f_d_top_p, eps = 0.001)`) with the remaining variation explained by interactions between treatment group and other experimental variables including time, cage effects, and sequencing preparation (Data Set S1, Sheet X). Cage effects refer to the well-documented phenomenon that mice housed in the same cages have similar microbial communities due to copraphagy, we tried to minimize the impact of cage effects on our experiment by breaking up cagemates when assigning mice to treatment groups and primarily housing only two mice per cage. Importantly, although we conducted a total of `r five_day_total_exp` separate experiments, the experiment number and it's interaction with treatment group was not one of the variables that significantly explained the observed variation in fecal communities (Data Set S1, Sheet X). When we examine alpha diversity by looking at Shannon diversity index over time, we see that although both clindamycin and PEG treatments decrease diversity, the diversity index is less in the groups of mice that received PEG treatment compared to those that received clindamycin through thirty days post-infection.
+**5-day laxative treatment differentially disrupts the fecal microbiota compared to clindamycin treatment.** Since laxatives and clindamycin have previously been shown to disrupt the murine microbiota (ref), we hypothesized the different *C. difficile* colonization dynamics between mice treated with laxatives versus clindamycin were due to the two drugs having differential effects on the microbiota. We profiled the stool microbiota over time by sequencing the V4 region of the 16S rRNA gene to compare changes across treatment groups. We found time and treatment group explained half of the observed variation between fecal communities (PERMANOVA combined R^2^ = `r f_d_top_R2_sum`, *P* `r format.pval(f_d_top_p, eps = 0.001)`, Fig. 2A) with the remaining variation explained by interactions between treatment group and other experimental variables including time, cage effects, and sequencing preparation (Data Set S1, Sheet X). Cage effects refer to the well-documented phenomenon that mice housed in the same cages have similar microbial communities due to copraphagy, we tried to minimize the impact of cage effects on our experiment by breaking up cagemates when assigning mice to treatment groups and primarily housing only two mice per cage. Importantly, although we conducted a total of `r five_day_total_exp` separate experiments, the experiment number and it's interaction with treatment group was not one of the variables that significantly explained the observed variation in fecal communities (Data Set S1, Sheet X). Interestingly, none of the treatment groups recovered to their baseline community structure either 10 or 30 days post-infection suggesting other community features besides recovery to baseline were responsible for the prolonged *C. difficile* colonization in PEG-treated mice (Fig. 2B). Next, we examined  alpha diversity by looking at Shannon diversity index over time, we see that although both clindamycin and PEG treatments decrease diversity, the diversity index was lower in the groups of mice that received PEG treatment compared to those that received clindamycin through thirty days post-infection (Fig. 2C). We next examined the bacterial genera that shifted after PEG treatment by analyzing what changed in mice treated with PEG alone between baseline and one day post-treatment. We found `r PEG_genera` OTUs that were altered by PEG, the majority of these OTUs decreased after PEG, but *Enterobacteriaceae* and *Bacteroides* increased and the impact on *Bacteroides* was different compared to clindamycin treated mice (Fig. 2D). Thus, PEG has detrimental impacts on the microbiome that are maintained over time.
+Surprisingly, *C. difficile* was not immediately detectable in the stools of the PEG-treated mice that were allowed to recover for 10 days prior to  challenge. We decided to examine what other bacteria were changing during the post-infection period when *C. difficile* changed from undectable to detectable. Interestingly, we found ___ bacteria were shifting during the time period when C. difficile was becoming detectable in the stools (Fig. S1)
 
-**5-day laxative treatment does not promote more severe CDIs despite altering the mucosal microbiota.** Given previous work has shown that PEG treatment disrupts the mucus layer, we decided to examine the impact of the laxative on the mucosal microbiota and infection severity by evaluating histopathology.
+**5-day laxative treatment does not promote more severe CDIs despite altering the mucosal microbiota.** Given that previous work had demonstrated that PEG treatment disrupts the mucus layer and alters the immune response in mice [@Tropini2018], we decided to examine the impact of PEG treatment on the mucosal microbiota and CDI severity. We examined CDI severity by evaluating cecum and colon histopathology [].
 
-* Figure 2. 5-day PEG treatment disrupts the stool microbiota for a longer amount of time compared to clindamycin-treated mice.
+***C. difficile* challenge does not have a synergistic disruptive effect on the microbiota of PEG-treated mice**
+Because *C. difficile* itself can have an impact on the microbiota (ref), we also sequenced the tissue and stools of mock-challenged mice. Examining the stools of the mock-infected PEG- and clindamycin-treated mice revealed similar bacterial disruptions as the *C. difficile* challenged mice (Fig. S2A). Similarly, there was no difference between the tissues of mock and *C. difficile* challenged mice (Fig. S2B). Thus, most of the microbiota alterations we observed in the PEG-treated mice were a result of the laxative and not an interaction between the laxative and *C. difficile*.
 
-* Figure S1. 5-day PEG treatment plus 10-day recovery mice microbiota dynamics post-infection.
+**1-day laxative treatment results in transient *C. difficile* colonization and minor microbiota disruption**
+  + Explain motivation for experiment, set-up of experiment (Fig. 4A). 
+  + Transient *C. difficile* colonization in 1-day PEG treated mice with all PEG mice clearing by 7dpi (Fig. 4B)
+  + PCoA results (Day has larger R2 than treatment group). PEG mice are closer to baseline communites after 7-day period (Fig. 4C)
+  + Shannon results show alpha diversity is only transiently disrupted (Fig. 4D)
+  + Highlight bacteria that are disrupted by PEG or clindamycin treatment but recover within 7 days (Fig. 4E)
 
-* Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered. 
+**Post-CDI laxative treatment disrupts clearance in clindamycin-treated mice regardless of whether an FMT is also administered**
+  + Reiterate motivation for experiment. Saw only a transient microbiota disruption with 1-day PEG treatment alone. Also, see if adding FMT helps with clearance, mention groups have been using PEG or Abx/PEG treatments as a tool to engraft mice with human bacteria communities. Set up of experiment (Fig. 5A).
+  + Prolonged *C. difficile* colonization in post-CDI PEG treated mice (Fig. 5B)
+  + FMT appears to partially restore alpha diversity (Shannon, but not richness Fig. 5C-D)
+  + PCoA (necessary?) Could comment on the clustering of Clindamycin and PEG-treated mice that received FMT (Fig. 5E)
+  + Only 2 genera significantly impacted by FMT treatment, likely not as important for clearance (Fig. 5F)
+  + Bacteria that consistently differ between groups over time, associated with prolonged colonization (Fig. G)
 
-* Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.
-
-* Figure 5. 1-day PEG treatment post *C. difficile* challenge prolongs colonization regardless of whether an FMT is also administered.
+**Five-day post-infection community data can predict mice that will have prolonged *C. difficile* colonization** After identifying 
 
 * Figure 6. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.
 
 * Figure S2. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization.
   + Ex. *Muribaculum intestinale*. 
 
-* Figure 7. Schematic summarizing findings.
+
 
 ## Discussion
 
-* Summary of major findings
+* Summary of major findings (Fig. 7A)
 
 * Discussion of prolonged persistence. C. difficile sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent papers.
 
@@ -159,7 +175,7 @@ five_day_total_exp <- five_day_mice %>%
 
 * Protective bacteria missing in PEG-treated mice
 
-* Discuss what these findings might mean for human patients
+* Discuss what these findings might mean for human patients (Fig. 7B)
   + What's known regarding laxatives and susceptibility to CDIs
   + Relevance to human FMTs? Unclear what the best administration route is because there have been no studies designed to evaluate the best administration route for FMTs.
 
