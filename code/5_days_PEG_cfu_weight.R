@@ -181,6 +181,34 @@ cfu <- plot_cfu_data(cfudata %>%
   theme(legend.position = "none")
 save_plot(filename = "results/figures/5_days_PEG_cfu.png", cfu, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
+#Plot of just the cfu data for the WMR group (5-day PEG + 10-day recovery)
+wmr_cfu <- cfudata %>% 
+  filter(group == "WMR") %>% 
+  filter(day %in% c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25", "30"))
+wmr_median_summary <- wmr_cfu %>%
+  group_by(group, day) %>%
+  summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
+wmr_cfu_plot <-  ggplot(NULL) +
+    geom_point(wmr_cfu, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_line(wmr_median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 0.6, size = 1.5) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    labs(x = "Days Post-Infection", y = "CFU/g Feces") +
+    scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
+    geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
+    geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
+    theme(text = element_text(size = 16))+  # Change font size for entire plot
+    theme_classic()+
+    scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
+                     limits = c(-1, 31),
+                     minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+ #only show grey lines separating days on days with statistically sig points
+    theme(legend.position = "bottom",
+          legend.key= element_rect(colour = "transparent", fill = "transparent"),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
+save_plot(filename = "results/figures/5_days_PEG_cfu_WMR.png", wmr_cfu_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
 #Weight change plot----
 
 #Dataframe of weight data for days -15 through 10 of the experiment:
