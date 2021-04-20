@@ -560,17 +560,18 @@ porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
 save_plot(filename = "results/figures/5_days_PEG_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" 
-#post C. difficile challenge (day 1 versus day 15)----
+#post C. difficile challenge (day 1 versus day 8)---- 
+#Day 8 because that is when the group median stabilizes
 WMR_pairs <- genus_stools %>%
   filter(group == "WMR" & genus == "Bacteroides") %>% #Limit to group and randomly pick a genus just to figure out what mice have sequence data
-  filter(day == 1 | day == 15) %>%
+  filter(day == 1 | day == 8) %>%
   filter(duplicated(unique_mouse_id)) %>% #Pull mouse ids with sequence data for both day -1 and day 0
-  pull(unique_mouse_id) #8 mice
+  pull(unique_mouse_id) #9 mice
 
-#Wilcoxon signed rank test for all day 1, day 15 pairs at the genus level:
+#Wilcoxon signed rank test for all day 1, day 8 pairs at the genus level:
 genus_WMR_pairs <- genus_stools %>%
   filter(unique_mouse_id %in% WMR_pairs) %>% 
-  filter(day == 1 | day == 15) %>% #Select timepoints to test
+  filter(day == 1 | day == 8) %>% #Select timepoints to test
   group_by(genus) %>%
   nest() %>%
   mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
@@ -580,7 +581,7 @@ genus_WMR_pairs <- genus_stools %>%
 
 #Adjust p-values for testing multiple genera
 genus_WMR_pairs_stats_adjust <- genus_WMR_pairs %>%
-  select(genus, statistic, p.value, method, alternative, `1`, `15`) %>%
+  select(genus, statistic, p.value, method, alternative, `1`, `8`) %>%
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
   arrange(p.value.adj) %>%
   write_tsv(path = "data/process/5_days_PEG_genus_WMR_paired.tsv")
@@ -590,11 +591,12 @@ genus_WMR_pairs_stats_adjust %>% filter(p.value.adj < 0.05) #No p-values survive
 #Look at top 10 genera by unadjusted p-values
 WMR_genus <- genus_WMR_pairs_stats_adjust %>% 
   arrange(p.value) %>% 
+  filter(p.value < 0.1) %>% #Use 0.1 as p.value cutoff (no bacteria survive FDR correction)
   filter(!genus == "Unclassified") %>% #Remove this genera since it is uninformative
   slice_head(n=9) %>% 
   pull(genus)
-#Add C. diff to the list of genera to plot
-WMR_genus <- c(WMR_genus, "Peptostreptococcaceae Unclassified") 
+#Add C. diff to the list of genera to plot, comment out to leave out, primarily undectable in WMR mice
+#WMR_genus <- c(WMR_genus, "Peptostreptococcaceae Unclassified") 
 
 #Create lineplots of 10 genera
 lp_stool_days <- diversity_stools %>% distinct(day) %>% 
@@ -616,7 +618,7 @@ lp_stool_WMR <- genus_stools %>%
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    scale_x_continuous(limits = c(-1.5,31), breaks = c(0, 5, 10, 15, 20, 30), labels = c(0, 5, 10, 15, 20, 30))+
+    scale_x_continuous(limits = c(-1.5,31), breaks = c(0, 5, 10, 15, 20, 25, 30), labels = c(0, 5, 10, 15, 20, 25, 30))+
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
@@ -625,9 +627,9 @@ lp_stool_WMR <- genus_stools %>%
     facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          text = element_text(size = 16),
           strip.text = element_text(face = "italic"),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
-          text = element_text(size = 16),
           legend.position = "None")
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR.png", lp_stool_WMR, base_height = 5, base_width = 8)
 
@@ -661,10 +663,10 @@ hm_WMR_stool <- genus_WMR_stools %>%
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
 
 #Repeat WMR analysis at the OTU level----
-#Wilcoxon signed rank test for all day 1, day 15 pairs at the OTU level:
+#Wilcoxon signed rank test for all day 1, day 8 pairs at the OTU level:
 otu_WMR_pairs <- otu_stools %>%
   filter(unique_mouse_id %in% WMR_pairs) %>% 
-  filter(day == 1 | day == 15) %>% #Select timepoints to test
+  filter(day == 1 | day == 8) %>% #Select timepoints to test
   group_by(otu) %>%
   nest() %>%
   mutate(model=map(data, ~wilcox.test(.x$agg_rel_abund ~ .x$day, paired = TRUE) %>% tidy())) %>%
@@ -674,7 +676,7 @@ otu_WMR_pairs <- otu_stools %>%
 
 #Adjust p-values for testing multiple genera
 otu_WMR_pairs_stats_adjust <- otu_WMR_pairs %>%
-  select(otu, statistic, p.value, method, alternative, `1`, `15`) %>%
+  select(otu, statistic, p.value, method, alternative, `1`, `8`) %>%
   mutate(p.value.adj=p.adjust(p.value, method="BH")) %>%
   arrange(p.value.adj) %>%
   write_tsv(path = "data/process/5_days_PEG_otu_WMR_paired.tsv")
