@@ -214,7 +214,7 @@ pcoa_subset_plot_tissue <- plot_pcoa(pcoa_5_day_PEG_tissues)+
   scale_alpha_continuous(range = c(.3, 1),
                          breaks= c(4, 6, 20, 30),
                          labels=c(4, 6, 20, 30))+
-  theme(legend.position = NULL)
+  theme(legend.position = "none")
 save_plot(filename = paste0("results/figures/5_days_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 5)
 
 #PCoA faceted over time
