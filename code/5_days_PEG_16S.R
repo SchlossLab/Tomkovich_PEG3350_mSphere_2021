@@ -927,10 +927,10 @@ lp_tissue_mock <- line_plot_genus(genus_mock_tissues %>%
   scale_x_continuous(limits = c(3.5, 30.5), breaks = c(4, 6, 30), labels = c(4, 6, 30))#Change scale since we have less timepoints for tissues
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_tissues.png", lp_tissue_mock, base_height = 5, base_width = 8)
 
-#Analysis of mock-infected mice compared to their corresponding group that was challenged with C. difficile
+#Analysis of mock-infected mice compared to their corresponding group that was challenged with C. difficile----
 #Restrict mock analysis to C, WM, CN, and WMN mice. 
 
-#Custom scale for mock plots
+#Custom scale for mock plots----
 color_scheme_m <- c("#238b45", "#88419d", "#238b45", "#88419d")
 color_groups_m <- c("CN", "WMN", "C", "WM")
 color_labels_m <- c("Clind. without infection", "5-day PEG without infection", "Clind.", "5-day PEG")
@@ -1020,6 +1020,32 @@ shannon_mock_stools_plot <- diversity_mock_stools %>%
   scale_x_continuous(breaks = c(-5, -1, 0, 4, 6, 30),
                      limits = c(-5.5,31))
 save_plot(filename = "results/figures/5_days_PEG_shannon_stools_mock.png", shannon_mock_stools_plot, base_height = 4, base_width = 9, base_aspect_ratio = 2)
+#Plot of shannon diversity in mock tissues over time
+shannon_mock_tissues_plot <- diversity_mock_tissues %>% 
+  mutate(day = as.integer(day)) %>% 
+  group_by(group, day) %>%
+  mutate(median_shannon = median(shannon)) %>%
+  ggplot(x = day, y = shannon, colour = group)+
+  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme_m,
+                      breaks=color_groups_m,
+                      labels=color_labels_m) +
+  scale_linetype_manual(name="Infected", #Dashed lines are mock challenged mice
+                        values=linetype_scheme_m,
+                        breaks=linetype_infected,
+                        labels=linetype_infected) +
+  scale_y_continuous(limits = c(0,4.1), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
+  theme_classic()+
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Shannon Diversity Index")+
+  theme(legend.position = "none", #Remove legend
+        text = element_text(size = 16), # Change font size for entire plot
+        axis.ticks.x = element_blank())+
+  scale_x_continuous(breaks = c(0, 4, 6, 30),
+                     limits = c(-0.5,31))
+save_plot(filename = "results/figures/5_days_PEG_shannon_tissues_mock.png", shannon_mock_tissues_plot, base_height = 4, base_width = 9, base_aspect_ratio = 2)
 
 #Function to perform Kruskal-Wallis test for differences in richness diversity index across infected and mock groups on a particular day with Benjamini Hochberg correction
 #Function will then perform pairwise comparisons for any days where there was a difference between groups
@@ -1092,3 +1118,31 @@ richness_mock_stools_plot <- diversity_mock_stools %>%
   scale_x_continuous(breaks = c(-5, -1, 0, 4, 6, 30),
                      limits = c(-5.5,31))
 save_plot(filename = "results/figures/5_days_PEG_richness_stools_mock.png", richness_mock_stools_plot, base_height = 4, base_width = 9, base_aspect_ratio = 2)
+
+richness_mock_tissues_plot <- diversity_mock_tissues %>% 
+  mutate(day = as.integer(day)) %>% 
+  group_by(group, day) %>%
+  mutate(median_sobs = median(sobs)) %>%
+  ggplot(x = day, y = sobs, colour = group)+
+  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme_m,
+                      breaks=color_groups_m,
+                      labels=color_labels_m) +
+  scale_linetype_manual(name="Infected", #Dashed lines are mock challenged mice
+                        values=linetype_scheme_m,
+                        breaks=linetype_infected,
+                        labels=linetype_infected) +
+  scale_y_continuous(limits = c(0,160), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
+  theme_classic()+
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Number of Observed OTUs")+
+  theme(legend.position = "none", #Remove legend
+        text = element_text(size = 16), # Change font size for entire plot
+        axis.ticks.x = element_blank())+
+  scale_x_continuous(breaks = c(0, 4, 6, 30),
+                     limits = c(-0.5,31))
+save_plot(filename = "results/figures/5_days_PEG_richness_tissues_mock.png", richness_mock_tissues_plot, base_height = 4, base_width = 9, base_aspect_ratio = 2)
+
+#PCoA analysis of mock challenged mice
