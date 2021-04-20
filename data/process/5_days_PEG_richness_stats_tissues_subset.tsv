@@ -1,3 +1,3 @@
-day	statistic	p.value	parameter	method	C	WM	WMC	WMR	p.value.adj
-6	47.881659704817594	4.0052506808165345e-11	2	Kruskal-Wallis rank sum test	83.693	19.979	12.844	NA	8.010501361633069e-11
-30	24.059030800480883	5.96551362157928e-6	2	Kruskal-Wallis rank sum test	89.735	54.32	NA	63.285	5.96551362157928e-6
+day	statistic	p.value	parameter	method	WM	C	WMC	WMR	p.value.adj
+6	47.881659704817594	4.0052506808165345e-11	2	Kruskal-Wallis rank sum test	19.979	83.693	12.844	NA	8.010501361633069e-11
+30	24.059030800480883	5.96551362157928e-6	2	Kruskal-Wallis rank sum test	54.32	89.735	NA	63.285	5.96551362157928e-6
