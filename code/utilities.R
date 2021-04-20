@@ -162,7 +162,10 @@ metadata <- seq_prep_metadata %>%
                                           cfu_d8 == 0 & cfu_d10 > 0 ~ "colonized", #Some mice from WMR group did not show up as colonized until later timepoints, 10_M6 WMR mouse only showed up as colonized on d30?
                                           cfu_d8 == 0 ~ "cleared", #some of the mice from the 1-day PEG subset only have CFU quantified through d8
                                           cfu_d10 == 0 ~ "cleared",
-                                          TRUE ~ "no_data")) 
+                                          TRUE ~ "no_data")) %>% 
+  #Make a column to denote whether mice were challenged with C. difficile (mock vs C. difficile challenged mice)
+  mutate(infected = case_when(grepl("N", group) ~ "no", #Make a new column based on whether mice were challenged with C. difficile
+                       TRUE ~ "yes")) #An N in the Group name indicates they were not challenged with C. difficile, all the other groups were challenged
 
 #Check numbers of each group that have cleared or remain colonized with C. diff by d10
 clear_v_col <- metadata %>% 
