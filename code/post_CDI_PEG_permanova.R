@@ -73,7 +73,7 @@ g_m_adonis <- adonis(post_stools~group * miseq_run, strata = post_stools_variabl
 g_m_adonis_table <- as_tibble(rownames_to_column(g_m_adonis$aov.tab, var = "effects")) %>% 
   write_tsv("data/process/post_CDI_PEG_permanova_stools_group_miseq_run.tsv")
 #Look at majority of variables without nesting---
-post_stools_adonis <- adonis(post_stools~(group/(unique_cage_no*ext_plate))*day, strata = post_stools_variables$unique_mouse_id, data = post_stools_variables, permutations = 1000, parallel = 10)
+post_stools_adonis <- adonis(post_stools~(group/(unique_cage_no*ext_plate*exp_num))*day, strata = post_stools_variables$unique_mouse_id, data = post_stools_variables, permutations = 1000, parallel = 10)
 post_stools_adonis_table <- as_tibble(rownames_to_column(post_stools_adonis$aov.tab, var = "effects")) %>% 
   write_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
 
