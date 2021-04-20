@@ -83,7 +83,7 @@ pcoa_5_day_PEG <- pcoa_data %>%
 #Concatenate output and add - between each sample.
 five_day_PEG_unique_labels <- mothur_format(pcoa_5_day_PEG)
 
-#Split 5 day PEG into stool (+FMT) and tissue subsets:
+#Split 5 day PEG into stool and tissue subsets:
 five_day_PEG_stool_labels <- mothur_format(pcoa_5_day_PEG %>% filter(sample_type == "stool") %>% 
                                              filter(!group %in% c("WMN", "CN"))
                                            )
@@ -92,10 +92,14 @@ five_day_PEG_tissue_labels <-   mothur_format(pcoa_5_day_PEG %>% filter(!sample_
                                                 filter(!group %in% c("WMN", "CN"))
                                               )
 
-#Create subsets without mock samples
-five_day_PEG_stool_mock_labels <- mothur_format(pcoa_5_day_PEG %>% filter(sample_type == "stool"))
+#Create subsets with mock samples
+five_day_PEG_stool_mock_labels <- mothur_format(pcoa_5_day_PEG %>% filter(sample_type == "stool") %>% 
+                                                  #For these PCoAs we just want to compare clindamycin +/- C. difficile and 5-day PEG +/- C. difficilie
+                                                  filter(!group %in% c("WMC", "WMR")))
 
-five_day_PEG_tissue_mock_labels <- mothur_format(pcoa_5_day_PEG %>% filter(!sample_type == "stool")) 
+five_day_PEG_tissue_mock_labels <- mothur_format(pcoa_5_day_PEG %>% filter(!sample_type == "stool")%>% 
+                                                   #For these PCoAs we just want to compare clindamycin +/- C. difficile and 5-day PEG +/- C. difficilie
+                                                   filter(!group %in% c("WMC", "WMR"))) 
 
 #Post-CDI PEG samples with FMT solution & Post-CDI PEG tissues added----
 pcoa_post_CDI_PEG <- pcoa_data %>% 
