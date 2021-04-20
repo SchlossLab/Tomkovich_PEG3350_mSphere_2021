@@ -631,7 +631,7 @@ lp_stool_WMR <- genus_stools %>%
           strip.text = element_text(face = "italic"),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           legend.position = "None")
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR.png", lp_stool_WMR, base_height = 5, base_width = 8)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR.png", lp_stool_WMR, base_height = 4, base_width = 8.5)
 
 #Heatmap of 5-day PEG + 10 day recovery (WMR) group----
 genus_WMR_stools  <-  genus_stools %>% 
