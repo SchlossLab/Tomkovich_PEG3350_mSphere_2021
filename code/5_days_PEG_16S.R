@@ -1145,4 +1145,91 @@ richness_mock_tissues_plot <- diversity_mock_tissues %>%
                      limits = c(-0.5,31))
 save_plot(filename = "results/figures/5_days_PEG_richness_tissues_mock.png", richness_mock_tissues_plot, base_height = 4, base_width = 9, base_aspect_ratio = 2)
 
-#PCoA analysis of mock challenged mice
+#PCoA analysis of mock challenged mice----
+#Define shape scheme based on Infected status
+shape_scheme <- c(1, 19)
+shape_infected <- c("no", "yes")
+
+#Function to plot PCoA data for mock-challenged mice comparison
+plot_mock_pcoa <- function(df){
+  ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day, shape = infected)) +
+    geom_point(size=2) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme_m,
+                        breaks=color_groups_m,
+                        labels=color_labels_m)+ 
+    scale_shape_manual(name="Infected",
+                       values=shape_scheme,
+                       breaks=shape_infected,
+                       labels=shape_infected) +
+    coord_fixed() +
+    labs(x="PCoA 1",
+         y="PCoA 2",
+         alpha= "Day") +
+    theme_classic()+
+    theme(legend.position = "bottom",
+          text = element_text(size = 16))
+}
+
+pcoa_mock_stool <- read_tsv("data/process/5_day_PEG/stools_mock/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
+  mutate(day = as.integer(day)) %>% #Transform day into continuous
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+
+pcoa_axes_5_day_PEG_stool <- read_tsv("data/process/5_day_PEG/stools_mock/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+plot_pcoa_mock_stool <- plot_mock_pcoa(pcoa_mock_stool)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+  theme(legend.position = "none")
+save_plot(filename = paste0("results/figures/5_days_PEG_stool_PCoA_mock.png"), plot_pcoa_mock_stool, base_height = 5, base_width = 5)
+
+#Create stand alone legend for mock PCoAs
+mock_group_legend <- pcoa_mock_stool  %>%
+  filter(group %in% c("WM", "C")) %>% #Just need these 2 groups for color legend
+  ggplot(aes(x = axis1, y = axis2, color=group, alpha = day))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme_m,
+                      breaks=color_groups_m,
+                      labels=color_labels_m)+ 
+  geom_point()+ theme_classic()+ theme(legend.position = "bottom")
+mock_group_legend <- get_legend(mock_group_legend)
+mock_shape_legend <- pcoa_mock_stool  %>%
+  ggplot(aes(x = axis1, y = axis2, shape = infected,))+
+  scale_shape_manual(name="Infected",
+                     values=shape_scheme,
+                     breaks=shape_infected,
+                     labels=shape_infected) +
+  geom_point()+ theme_classic()+ theme(legend.position = "bottom")
+mock_shape_legend <- get_legend(mock_shape_legend)
+mock_legend <- plot_grid(mock_group_legend, mock_shape_legend, nrow = 2)
+save_plot("results/figures/5_days_PEG_pcoa_mock_legend.png", mock_legend, base_height = 1, base_width = 5)
+
+#Create PCoA of mock tisuse samples
+pcoa_mock_tissue <- read_tsv("data/process/5_day_PEG/tissues_mock/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
+  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
+  rename("unique_label" = group) %>%
+  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
+  mutate(day = as.integer(day)) %>% #Transform day into continuous
+  filter(!is.na(axis1)) #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
+
+pcoa_axes_5_day_PEG_tissue <- read_tsv("data/process/5_day_PEG/tissues_mock/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
+axis1 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+axis2 <- pcoa_axes_5_day_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
+
+plot_pcoa_mock_tissue <- plot_mock_pcoa(pcoa_mock_tissue)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
+  theme(legend.position = "none")
+save_plot(filename = paste0("results/figures/5_days_PEG_tissue_PCoA_mock.png"), plot_pcoa_mock_tissue, base_height = 5, base_width = 5)
+
+#Create stand alone alpha legend for mock PCoA of tissue samples
+mock_alpha_legend <- pcoa_mock_tissue  %>%
+  ggplot(aes(x = axis1, y = axis2, alpha = day))+
+  geom_point()+ theme_classic()+ theme(legend.position = "bottom")
+mock_alpha_legend <- get_legend(mock_alpha_legend)
+save_plot("results/figures/5_days_PEG_pcoa_mock_alpha_legend_tissues.png", mock_alpha_legend, base_height = 0.5, base_width = 2.5)
