@@ -295,6 +295,9 @@ for (d in stool_test_days){
   kw_genus_stools <- add_row(kw_genus_stools, stats)  #combine all the dataframes together
 }
 
+#Save combined Kruskal-Wallis tests at the genus level
+kw_genus_stools %>% write_tsv("data/process/5_days_PEG_genus_group_stools.tsv")
+
 #Create empty data frame to combine stat dataframes for all days that were tested
 kw_genus_tissues <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
                                WM =double(),C =double(),WMR =double(),WMC=double(),
@@ -309,6 +312,9 @@ for (d in tissue_test_days){
   assign(name, pull_significant_taxa(stats, genus))
   kw_genus_tissues <- add_row(kw_genus_tissues, stats)  #combine all the dataframes together
 }
+
+#Save combined Kruskal-Wallis tests at the genus level
+kw_genus_tissues %>%  write_tsv("data/process/5_days_PEG_genus_group_tissues.tsv")
 
 #Examine genera that varied between treatment groups across multiple days
 #Stool samples genera
