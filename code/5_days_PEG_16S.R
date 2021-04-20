@@ -591,10 +591,45 @@ genus_WMR_pairs_stats_adjust %>% filter(p.value.adj < 0.05) #No p-values survive
 WMR_genus <- genus_WMR_pairs_stats_adjust %>% 
   arrange(p.value) %>% 
   filter(!genus == "Unclassified") %>% #Remove this genera since it is uninformative
-  slice_head(n=10) %>% 
+  slice_head(n=9) %>% 
   pull(genus)
 #Add C. diff to the list of genera to plot
-WMR_genus <- c(WMR_genus, "Peptostreptococcaceae Unclassified")
+WMR_genus <- c(WMR_genus, "Peptostreptococcaceae Unclassified") 
+
+#Create lineplots of 10 genera
+lp_stool_days <- diversity_stools %>% distinct(day) %>% 
+  filter(!day %in% c("-15", "-10", "-5", "-4", "-2")) %>% #Focus on day -1 through 30 timepoints
+  pull(day)
+facet_labels <- WMR_genus 
+names(facet_labels) <- WMR_genus 
+lp_stool_WMR <- genus_stools %>% 
+    filter(group == "WMR") %>% #Only plot WMR mice
+    filter(genus %in% WMR_genus) %>% #Select only genera of interest
+    mutate(genus = fct_relevel(genus, WMR_genus)) %>% #Reorder genera to match order of genera of interest
+    filter(day %in% lp_stool_days) %>% #Select only timepoints of interest
+    mutate(day = as.integer(day)) %>% 
+    group_by(group, genus, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_line(aes(x = day, y=median, color=group), linetype = "solid")+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    scale_x_continuous(limits = c(-1.5,31), breaks = c(0, 5, 10, 15, 20, 30), labels = c(0, 5, 10, 15, 20, 30))+
+    scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Relative abundance (%)")+
+    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          strip.text = element_text(face = "italic"),
+          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+          text = element_text(size = 16),
+          legend.position = "None")
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR.png", lp_stool_WMR, base_height = 5, base_width = 8)
 
 #Heatmap of 5-day PEG + 10 day recovery (WMR) group----
 genus_WMR_stools  <-  genus_stools %>% 
