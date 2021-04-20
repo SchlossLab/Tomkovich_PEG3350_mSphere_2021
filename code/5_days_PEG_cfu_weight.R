@@ -204,7 +204,7 @@ wmr_cfu_plot <-  ggplot(NULL) +
     scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
                      limits = c(-1, 31),
                      minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+ #only show grey lines separating days on days with statistically sig points
-    theme(legend.position = "bottom",
+    theme(legend.position = "none",
           legend.key= element_rect(colour = "transparent", fill = "transparent"),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 save_plot(filename = "results/figures/5_days_PEG_cfu_WMR.png", wmr_cfu_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
