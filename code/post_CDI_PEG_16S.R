@@ -123,22 +123,32 @@ x_annotation <- sig_shannon_days_stools
 y_position <- max(diversity_stools$shannon)+ 0.05
 label <- kw_label(kw_shannon_stools)
 shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
-  filter(group != "FMT") %>% #drop FMTs
+  filter(group != "FMT", #drop FMTs
+         day != "-15") %>% #Drop since only CWM present on D-15
   plot_shannon_overtime() +
   scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
                      limits = c(-2,31), #removes day -15 here
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  #theme(legend.position = "none")+ #Removing legend to save separately
+  theme(legend.position = "none")+ #Removing legend to save separately
+  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
+  annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
+  annotate("rect", xmin = 3, xmax = 4, ymin = 2, ymax = Inf, fill = "#f768a1", alpha = .15)
+save_plot("results/figures/post_CDI_PEG_shannon_stool.png", shannon_post_cdi_peg_overtime_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2) #Save full Shannon over time plot without legend
+
+#Extract Shannon Legend for all plots
+shannon_post_cdi_peg_overtime_legend <- diversity_stools %>%
+  filter(group != "FMT", #drop FMTs
+         day != "-15") %>% #Drop since only CWM present on D-15) %>% 
+  plot_shannon_overtime() +
+  scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
+                     limits = c(-2,31), #removes day -15 here
+                     minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
   guides(color = guide_legend(ncol = 1))+
   theme(legend.title = element_blank())+
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = 2, ymax = Inf, fill = "#f768a1", alpha = .15)
- 
-save_plot("results/figures/post_CDI_PEG_shannon_stool.png", shannon_post_cdi_peg_overtime_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2) #Save full Shannon over time plot without legend
-
-#Extract Shannon Legend for all plots
-legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg_overtime_stool) %>% as_ggplot()
+legend_shannon_post_cdi_peg <- get_legend(shannon_post_cdi_peg_overtime_legend) %>% as_ggplot()
 save_plot("results/figures/post_CDI_PEG_shannon_legend.png", legend_shannon_post_cdi_peg)
 
 #Alpha Diversity Richness (Sobs)----
