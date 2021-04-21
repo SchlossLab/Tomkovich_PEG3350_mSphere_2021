@@ -150,7 +150,8 @@ cfu <- plot_cfu_data(cfudata) +
   scale_x_continuous(breaks = c(0:10, 15, 20, 25, 30),
                      limits = c(-1, 31),
                      minor_breaks = c(-.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+
-  theme(legend.position = "none")+
+  theme(legend.position = "none",
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey"))+ #Add gray lines to clearly separate symbols by days
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 10^5, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = 10^5, ymax = Inf, fill = "#f768a1", alpha = .15)

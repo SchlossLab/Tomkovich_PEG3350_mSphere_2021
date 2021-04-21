@@ -193,8 +193,7 @@ sobs_post_CDI_PEG <- diversity_data_subset %>%
                      limits = c(-15,35), 
                      minor_breaks = c(-15.5, -14.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
   theme_classic()+
-  theme(legend.position = "none", #Remove legend
-        panel.grid.minor.x = element_line(size = 0.4, color = "grey")) + #Add gray lines to clearly separate symbols by days
+  theme(legend.position = "none")+ #Remove legend
   labs(x = "Days Post-Infection",
        y = "Number of Observed OTUs")
 save_plot("results/figures/post_CDI_PEG_richness_overtime.png", sobs_post_CDI_PEG)
@@ -233,7 +232,6 @@ sobs_post_CDI_PEG_stool <- diversity_stools %>%
                      limits = c(-2, 31),
                      minor_breaks = c(-1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
  scale_y_continuous(limits = c(0,110), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
-  theme_classic()+
   theme(legend.position = "none", #Remove legend
         panel.grid.minor.x = element_line(size = 0.4, color = "grey"))+ #Add gray lines to clearly separate symbols by days
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
