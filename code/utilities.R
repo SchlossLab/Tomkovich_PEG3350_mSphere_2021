@@ -382,15 +382,16 @@ plot_cfu_data <- function(df){
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
+    theme_classic()+
     labs(x = "Days Post-Infection", y = "CFU/g Feces") +
     scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
     geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
     geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
     theme(text = element_text(size = 16))+  # Change font size for entire plot
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
-    theme_classic()+
     theme(legend.position = "bottom",
           legend.key= element_rect(colour = "transparent", fill = "transparent"),
+          axis.ticks.x = element_blank(),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 }
 
