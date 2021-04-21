@@ -385,6 +385,41 @@ groups over time, associated with prolonged colonization (Fig. G)
 
 \textbf{Five-day post-infection community data can predict mice that
 will have prolonged \emph{C. difficile} colonization} After identifying
+bacteria associated with the 5-day, 1-day and post-CDI 1-day PEG
+treatments, we decided to examine the taxa that were influencing
+prolonged \emph{C. difficile} colonization. We trained 3 types of
+machine learning models (random forest, logistic regression, and support
+vector machine) with input bacterial community data from 5 days
+post-infection to predict whether the mice were colonized with \emph{C.
+difficile} 10 days post-infection. We chose 5 days post-infection
+because that was the earliest timepoint where we would see a treatment
+effect in the mice that were given 1-day PEG treatment three days after
+\emph{C. difficile} challenge and then administered an FMT or PBS
+gavage. The random forest model had the highest performance (AUROC =
+0.90, Data Set S1, Sheet X), so we next performed permutation importance
+to examine the bacteria that were driving performance. We selected the
+top 20 bacteria contributing to our models performance and examined
+their relative abundance at 5 days post-infection, the timepoint used to
+predict C. difficile colonization status on day 10 (Fig. 6A). Next, we
+focused on the 5 genera that were \textgreater{} 1 \% relative abundance
+in either the cleared or colonized mice and examined the relative
+abundance dynamics of these bacteria over time. We found \emph{, }, and
+\_ tended to have a higher relative abundance and \textbf{, } had a
+lower relative abundance in the mice with prolonged colonization
+compared to the mice that cleared \emph{C. difficile} (Fig. 6B).
+Previous work examining the impact of PEG on the murine microbiota found
+that PEG treatment resulted in the permanent loss of S24-7, also known
+as \emph{Muribaculum intestinale} (16). We decided to check our
+\emph{Porphyromonadaceae} OTUs because \emph{Muribaculum intestinale} is
+known to be classified as \emph{Porphyromonadaceae} by the Ribosomal
+Database Project (RDP) database (22), \emph{Porphyromonadaceae} was a
+top feature in the random forest model predicting prolonged \emph{C.
+difficile} colonization, and had a high relative abundance in the
+communities of mice that cleared \emph{C. difficile} within 10 days. We
+identified 4 OTUs that had at least (insert minimum percent identity) to
+\emph{Muribaculum intestinale} and examined their abundance in mice that
+either cleared or were still colonized with \emph{C. difficile} at 10
+days post-infection (Fig. S3).
 
 \begin{itemize}
 \item
@@ -408,9 +443,9 @@ will have prolonged \emph{C. difficile} colonization} After identifying
 \item
   Summary of major findings (Fig. 7A)
 \item
-  Discussion of prolonged persistence. C. difficile sequences detected
-  in tissue samples. Association with mucin-degrading bacteria suggested
-  by recent papers.
+  Discussion of prolonged persistence. \emph{C. difficile} sequences
+  detected in tissue samples. Association with mucin-degrading bacteria
+  suggested by recent papers.
 \item
   Discuss why we might not have observed more severe histology in PEG
   mice relative to clindamycin-treated mice
@@ -726,5 +761,14 @@ doi:\href{https://doi.org/10.4161/gmic.2.3.16333}{10.4161/gmic.2.3.16333}.
 structure and metabolism of distinct cecal microbiomes during initial
 infection to promote sustained colonization. mSphere \textbf{3}.
 doi:\href{https://doi.org/10.1128/msphere.00261-18}{10.1128/msphere.00261-18}.
+
+\leavevmode\hypertarget{ref-Vornhagen2020}{}%
+22. \textbf{Vornhagen J}, \textbf{Bassis CM}, \textbf{Ramakrishnan S},
+\textbf{Hein R}, \textbf{Mason S}, \textbf{Bergman Y}, \textbf{Sunshine
+N}, \textbf{Fan Y}, \textbf{Timp W}, \textbf{Schatz MC}, \textbf{Young
+VB}, \textbf{Simner PJ}, \textbf{Bachman MA}. 2020. A plasmid locus
+associated with klebsiella clinical infections encodes a
+microbiome-dependent gut fitness factor.
+doi:\href{https://doi.org/10.1101/2020.02.26.963322}{10.1101/2020.02.26.963322}.
 
 \end{document}

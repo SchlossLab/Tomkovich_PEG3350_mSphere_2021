@@ -188,7 +188,21 @@ f_d_top_p_t <- f_d_sign_contrib_t %>%
   + Only 2 genera significantly impacted by FMT treatment, likely not as important for clearance (Fig. 5F)
   + Bacteria that consistently differ between groups over time, associated with prolonged colonization (Fig. G)
 
-**Five-day post-infection community data can predict mice that will have prolonged *C. difficile* colonization** After identifying 
+``` {r ml results}
+#AUC results
+auc_results <-  read_csv(here("results/performance_results.csv")) %>% 
+  mutate(taxa_level = "genus") %>%  
+  group_by(method) %>% 
+  summarize(median = median(AUC)) %>% 
+  arrange(desc(median))
+#Highest AUC value
+max_auc <- auc_results %>% select(median) %>% max()
+
+
+
+```
+**Five-day post-infection community data can predict mice that will have prolonged *C. difficile* colonization** After identifying bacteria associated with the 5-day, 1-day and post-CDI 1-day PEG treatments, we decided to examine the taxa that were influencing prolonged *C. difficile* colonization. We trained 3 types of machine learning models (random forest, logistic regression, and support vector machine) with input bacterial community data from 5 days post-infection to predict whether the mice were colonized with *C. difficile* 10 days post-infection. We chose 5 days post-infection because that was the earliest timepoint where we would see a treatment effect in the mice that were given 1-day PEG treatment three days after *C. difficile* challenge and then administered an FMT or PBS gavage. The random forest model had the highest performance (AUROC = `r max_auc`, Data Set S1, Sheet X), so we next performed permutation importance to examine the bacteria that were driving performance. We selected the top 20 bacteria contributing to our models performance and examined their relative abundance at 5 days post-infection, the timepoint used to predict C. difficile colonization status on day 10 (Fig. 6A). Next, we focused on the 5 genera that were > 1 % relative abundance in either the cleared or colonized mice and examined the relative abundance dynamics of these bacteria over time. We found _, _, and _ tended to have a higher relative abundance and __, __ had a lower relative abundance in the mice with prolonged colonization compared to the mice that cleared *C. difficile* (Fig. 6B).
+Previous work examining the impact of PEG on the murine microbiota found that PEG treatment resulted in the permanent loss of S24-7, also known as *Muribaculum intestinale* [@Tropini2018]. We decided to check our *Porphyromonadaceae* OTUs because *Muribaculum intestinale* is known to be classified as *Porphyromonadaceae* by the Ribosomal Database Project (RDP) database [@Vornhagen2020], *Porphyromonadaceae* was a top feature in the random forest model predicting prolonged *C. difficile* colonization, and had a high relative abundance in the communities of mice that cleared *C. difficile* within 10 days. We identified 4 OTUs that had at least (insert minimum percent identity) to *Muribaculum intestinale* and examined their abundance in mice that either cleared or were still colonized with *C. difficile* at 10 days post-infection (Fig. S3).
 
 * Figure 6. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.
 
@@ -201,7 +215,7 @@ f_d_top_p_t <- f_d_sign_contrib_t %>%
 
 * Summary of major findings (Fig. 7A)
 
-* Discussion of prolonged persistence. C. difficile sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent papers.
+* Discussion of prolonged persistence. *C. difficile* sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent papers.
 
 * Discuss why we might not have observed more severe histology in PEG mice relative to clindamycin-treated mice
   + Antibiotics may also impact mucus layer
