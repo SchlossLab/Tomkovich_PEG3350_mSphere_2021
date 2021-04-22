@@ -804,7 +804,7 @@ peg_impacted_genera_plot <- pairwise_genus_stools %>%
         strip.background = element_blank(),
         panel.spacing = unit(2, "lines"), #Increase spacing between facets
         legend.position = "none") 
-save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 9)
+save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 8)
 
 #Alternative barbell plot for bacteria that changed with PEG treatment----
 #Format data for barbell plot
@@ -1372,7 +1372,7 @@ names(facet_labels) <- top_10_sig_genus[1:6] #Pick just the top 6
 lp_stool_mock <- line_plot_mock_genus(genus_mock_stools, 
                                  top_10_sig_genus[1:6], lp_stool_days)+
   scale_x_continuous(limits = c(-5.5,30.5), breaks = c(-5, 0, 4, 6, 30), labels = c(-5, 0, 4, 6, 30))#Change scale
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_stools.png", lp_stool_mock, base_height = 5, base_width =10)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_stools.png", lp_stool_mock, base_height = 5, base_width =8)
 
 #Lineplots of the top 6 significant genera in mock tissue samples----
 lp_tissue_days <- diversity_tissues %>% distinct(day) %>% 
