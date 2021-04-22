@@ -775,7 +775,6 @@ peg_wilcoxon_adjust_sig_plot <- peg_wilcoxon_adjust %>%
 #Include C and WMC group for comparison
 facet_labels <- c("Baseline", "Post-treatment")
 names(facet_labels) <- c("B", "P")
-#Plot all groups but WMR group (has different baseline and post-treatment timepoints)
 peg_impacted_genera_plot <- pairwise_genus_stools %>% 
   filter(genus %in% peg_wilcoxon_adjust_sig_plot) %>% 
   filter(day %in% c("B", "P")) %>% #Select baseline and post-treatment timepoints
@@ -798,13 +797,55 @@ peg_impacted_genera_plot <- pairwise_genus_stools %>%
   coord_flip()+
   theme_classic()+
   geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
-  facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed")+
+  facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed", )+
   theme(plot.title=element_text(hjust=0.5),
         text = element_text(size = 16),# Change font size for entire plot
         axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
         strip.background = element_blank(),
+        panel.spacing = unit(2, "lines"), #Increase spacing between facets
         legend.position = "none") 
-save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 8)
+save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.png"), peg_impacted_genera_plot, base_height = 9, base_width = 9)
+
+#Alternative barbell plot for bacteria that changed with PEG treatment----
+#Format data for barbell plot
+peg_impacted_genera_bb <- pairwise_genus_stools %>% 
+  filter(genus %in% peg_wilcoxon_adjust_sig_plot) %>% 
+  filter(day %in% c("B", "P")) %>% #Select baseline and post-treatment timepoints
+  mutate(genus=fct_relevel(genus, levels=rev(peg_wilcoxon_adjust_sig_plot))) %>% #Reorder list of genera in order of significance
+  group_by(group, genus, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  pivot_wider(names_from = day, values_from = median) %>% 
+  ungroup
+#Create barbell plot
+facet_labels <- color_labels
+names(facet_labels) <- color_groups
+peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>% 
+  ggplot(aes(x= genus, color=group))+
+  geom_segment(aes(y= B, yend = P, xend = genus), size = .5,
+               arrow= arrow(length=unit(0.30,"cm"), ends="last"))+
+  geom_point(aes(y = B), shape = 1, stroke = 1, size = 3) + 
+  geom_point(aes(y = P), shape = 16, size = 3) + 
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_hline(yintercept=1/1000, color="gray")+
+  labs(title=NULL, 
+       x=NULL,
+       y="Relative abundance (%)")+
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/1/10000, 1))+
+  coord_flip()+
+  theme_classic()+
+  facet_wrap(~group, labeller = labeller(group = facet_labels), scales = "fixed")+
+  geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(plot.title=element_text(hjust=0.5),
+        text = element_text(size = 16),# Change font size for entire plot
+        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        strip.background = element_blank(),
+        panel.spacing = unit(2, "lines"), #Increase spacing between facets
+        legend.position = "none") 
+save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG_barbell.png"), peg_impacted_genera_bb_plot, base_height = 9, base_width = 8)
+
 
 #Examine genera of interest over time----
 genus_stools_t <- genus_stools %>% 
@@ -1315,7 +1356,7 @@ line_plot_mock_genus <- function(sample_df, genera, timepoints){
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 12))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           strip.text = element_text(face = "italic"),
@@ -1330,8 +1371,8 @@ facet_labels <- top_10_sig_genus[1:6] #Pick just the top 6
 names(facet_labels) <- top_10_sig_genus[1:6] #Pick just the top 6
 lp_stool_mock <- line_plot_mock_genus(genus_mock_stools, 
                                  top_10_sig_genus[1:6], lp_stool_days)+
-  scale_x_continuous(limits = c(-5.5,30.5), breaks = c(-5, -1, 0, 4, 6, 30), labels = c(-5, -1, 0, 4, 6, 30))#Change scale
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_stools.png", lp_stool_mock, base_height = 5, base_width = 8)
+  scale_x_continuous(limits = c(-5.5,30.5), breaks = c(-5, 0, 4, 6, 30), labels = c(-5, 0, 4, 6, 30))#Change scale
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_stools.png", lp_stool_mock, base_height = 5, base_width =10)
 
 #Lineplots of the top 6 significant genera in mock tissue samples----
 lp_tissue_days <- diversity_tissues %>% distinct(day) %>% 
