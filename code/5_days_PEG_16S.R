@@ -29,8 +29,6 @@ diversity_tissues <- subset_tissue(diversity_subset) %>%
 #Figure out how many samples we have per group per day for each subset
 num_stool <- count_subset(diversity_stools) #Number of stool samples per group per day
 num_tissue <- count_subset(diversity_tissues) #Number of tissue samples per group per day
-num_mock_stool <- count_subset(diversity_mock_stools)#Number of stool samples per group per day + mock challenged mice
-num_mock_tissue <- count_subset(diversity_mock_tissues) #Number of stool samples per group per day + mock challenged mice
 
 #Experimental days to analyze with the Kruskal-Wallis test (timepoints with 16S data for at least 3 groups)
 #Baseline (before treatment) for WMR is day -15. For C, WM, and WMC baseline is day -5
@@ -962,8 +960,48 @@ stats_shannon_mock <- function(diversity_subset, timepoints, subset_name){
 
 #Test with shannon for mock stool subset
 mock_kw_shannon_stools <- stats_shannon_mock(diversity_mock_stools, stool_mock_test_days, "mock_stools")
+
+#Function to perform Kruskal-Wallis test for differences in Shannon diversity index across infected and mock groups on a particular day with Benjamini Hochberg correction
+#Function will then perform pairwise comparisons for any days where there was a difference between groups
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+#subset_name = label to append to results filename to indicate subset analyzed. Ex. stool, tissues, stool_mock, tissues_mock
+stats_shannon_mock_t <- function(diversity_subset, timepoints, subset_name){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, shannon, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$shannon, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_shannon_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(-data) %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) 
+  #Pull significant days
+  diversity_sig_days <- pull_sig_days(diversity_stats_adjust)
+  diversity_stats_pairwise <- diversity_stats %>% 
+    filter(day %in% diversity_sig_days) %>% #only perform pairwise tests for days that were significant 
+    group_by(day) %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$shannon, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value, -method, -WM, -C, -WMN) %>% 
+    #Combine with diversity_stats_adjust so that adjusted p-values are on the same table
+    inner_join(diversity_stats_adjust, by = c("day")) %>% 
+    select(-p.value, -parameter, -statistic) %>% 
+    write_tsv(path = paste0("data/process/5_days_PEG_shannon_stats_", subset_name, "_subset.tsv"))
+}
 #Test with shannon for mock tissue subset
-mock_kw_shannon_tissues <- stats_shannon_mock(diversity_mock_tissues, tissue_test_days, "mock_tissues")
+mock_kw_shannon_tissues <- stats_shannon_mock_t(diversity_mock_tissues, tissue_test_days, "mock_tissues")
 
 #Plot of shannon diversity over time
 shannon_mock_stools_plot <- diversity_mock_stools %>% 
@@ -1060,8 +1098,49 @@ stats_richness_mock <- function(diversity_subset, timepoints, subset_name){
 
 #Test with richness for mock stool subset
 mock_kw_richness_stools <- stats_richness_mock(diversity_mock_stools, stool_mock_test_days, "mock_stools")
+
+#Function to perform Kruskal-Wallis test for differences in richness diversity index across infected and mock groups on a particular day with Benjamini Hochberg correction
+#Function will then perform pairwise comparisons for any days where there was a difference between groups
+#Arguments: 
+#diversity_subset <- subset (stools or tissue samples) of diversity_data to perform statistical test on
+#timepoint = timepoints to assess differences between groups specific to the subset (stool or tissue)
+#subset_name = label to append to results filename to indicate subset analyzed. Ex. stool, tissues, stool_mock, tissues_mock
+stats_richness_mock_t <- function(diversity_subset, timepoints, subset_name){
+  diversity_stats <- diversity_subset %>% 
+    filter(day %in% timepoints) %>% 
+    select(group, sobs, day) %>% #Embrace needed around diversity_measure to call a column in the dataframe
+    group_by(day) %>% 
+    nest() %>% 
+    mutate(model=map(data, ~kruskal.test(x=.x$sobs, g=as.factor(.x$group)) %>% tidy())) %>% 
+    mutate(median = map(data, get_sobs_median_group)) %>% 
+    unnest(c(model, median)) %>% 
+    ungroup()  
+  diversity_stats_adjust <- diversity_stats %>% 
+    select(-data) %>% 
+    mutate(p.value.adj=p.adjust(p.value, method="BH")) %>% 
+    arrange(p.value.adj) 
+  #Pull significant days
+  diversity_sig_days <- pull_sig_days(diversity_stats_adjust)
+  diversity_stats_pairwise <- diversity_stats %>% 
+    filter(day %in% diversity_sig_days) %>% #only perform pairwise tests for days that were significant 
+    group_by(day) %>% 
+    mutate(model=map(data, ~pairwise.wilcox.test(x=.x$sobs, g=as.factor(.x$group), p.adjust.method="BH") %>% 
+                       tidy() %>% 
+                       mutate(compare=paste(group1, group2, sep="-")) %>% 
+                       select(-group1, -group2) %>% 
+                       pivot_wider(names_from=compare, values_from=p.value)
+    )
+    ) %>% 
+    unnest(model) %>% 
+    select(-data, -parameter, -statistic, -p.value, -method, -WM, -C, -WMN) %>% 
+    #Combine with diversity_stats_adjust so that adjusted p-values are on the same table
+    inner_join(diversity_stats_adjust, by = c("day")) %>% 
+    select(-p.value, -parameter, -statistic) %>% 
+    write_tsv(path = paste0("data/process/5_days_PEG_richness_stats_", subset_name, "_subset.tsv"))
+}
+
 #Test with richness for mock tissue subset
-mock_kw_richness_tissues <- stats_richness_mock(diversity_mock_tissues, tissue_test_days, "mock_tissues")
+mock_kw_richness_tissues <- stats_richness_mock_t(diversity_mock_tissues, tissue_test_days, "mock_tissues")
 
 #Plot of richness over time
 richness_mock_stools_plot <- diversity_mock_stools %>% 
@@ -1264,3 +1343,4 @@ lp_tissue_mock <- line_plot_mock_genus(genus_mock_tissues,
                                     top_sig_genus_tissues[1:6], lp_tissue_days)+
   scale_x_continuous(limits = c(3.5, 30.5), breaks = c(4, 6, 30), labels = c(4, 6, 30))#Change scale since we have less timepoints for tissues
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_tissues.png", lp_tissue_mock, base_height = 5, base_width = 8)
+
