@@ -348,6 +348,9 @@ genus_subset <- five_day_PEG_subset(agg_genus_data)
 #Create subset dataframes of the 5-days PEG diversity data for just stool samples, tissues. 
 genus_stools <- subset_stool(genus_subset)
 genus_tissues <- subset_tissue(genus_subset)
+genus_cecum <- subset_cecum(genus_subset)
+genus_proximal_colon <- subset_proximal_colon(genus_subset)
+genus_distal_colon <- subset_proximal_colon(genus_subset)
 #The above subsets exclude mock challenged mice (group = WMN or CN)
 #Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
 genus_mock_stools <- subset_stool(add_mocks(genus_subset, agg_genus_data))
@@ -421,6 +424,83 @@ shared_sig_tissues_genus #7 genera including unclassified
 #Drop unclassified bacteria, not informative
 shared_sig_tissues_genus <- shared_sig_tissues_genus[1:6]
 
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_cecum <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                             WM =double(),C =double(),WMR =double(),WMC=double(),
+                             p.value.adj=double(),day=double())
+# Perform kruskal wallis tests at the genus level for the cecum samples----
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, genus_cecum, "cecum")
+  #Make a list of significant genus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_genus_stats_day_", d, "_cecum.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_cecum_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_cecum <- add_row(kw_genus_cecum, stats)  #combine all the dataframes together
+}
+
+#Save combined Kruskal-Wallis tests at the genus level
+kw_genus_cecum %>%  write_tsv("data/process/5_days_PEG_genus_group_cecum.tsv")
+
+#Cecum samples genera
+tissue_test_days #Check days tested. d6 and 30
+shared_sig_cecum_genus <- intersect_all(sig_genus_cecum_day6, sig_genus_cecum_day30) 
+shared_sig_cecum_genus #5 genera including unclassified 
+#Drop unclassified bacteria, not informative
+shared_sig_cecum_genus <- shared_sig_cecum_genus[1:4]
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_proximal_colon <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                                      WM =double(),C =double(),WMR =double(),WMC=double(),
+                                      p.value.adj=double(),day=double())
+# Perform kruskal wallis tests at the genus level for the proximal_colon samples----
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, genus_proximal_colon, "proximal_colon")
+  #Make a list of significant genus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_genus_stats_day_", d, "_proximal_colon.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_proximal_colon_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_proximal_colon <- add_row(kw_genus_proximal_colon, stats)  #combine all the dataframes together
+}
+
+#Save combined Kruskal-Wallis tests at the genus level
+kw_genus_proximal_colon %>%  write_tsv("data/process/5_days_PEG_genus_group_proximal_colon.tsv")
+
+#proximal_colon samples genera
+tissue_test_days #Check days tested. d6 and 30
+shared_sig_proximal_colon_genus <- intersect_all(sig_genus_proximal_colon_day6, sig_genus_proximal_colon_day30) 
+shared_sig_proximal_colon_genus #0 genera at day 30, so 0 shared genera 
+
+#Create empty data frame to combine stat dataframes for all days that were tested
+kw_genus_distal_colon <- data.frame(genus=character(), statistic=double(), p.value = double(), parameter=double(), method=character(),
+                                    WM =double(),C =double(),WMR =double(),WMC=double(),
+                                    p.value.adj=double(),day=double())
+# Perform kruskal wallis tests at the genus level for the distal_colon samples----
+for (d in tissue_test_days){
+  kruskal_wallis_genus(d, genus_distal_colon, "distal_colon")
+  #Make a list of significant genus across sources of mice for a specific day
+  stats <- read_tsv(file = paste0("data/process/5_days_PEG_genus_stats_day_", d, "_distal_colon.tsv")) %>% 
+    mutate(day = d)#Add a day column to specify day tested
+  name <- paste("sig_genus_distal_colon_day", d, sep = "")
+  assign(name, pull_significant_taxa(stats, genus))
+  kw_genus_distal_colon <- add_row(kw_genus_distal_colon, stats)  #combine all the dataframes together
+}
+
+#Save combined Kruskal-Wallis tests at the genus level
+kw_genus_distal_colon %>%  write_tsv("data/process/5_days_PEG_genus_group_distal_colon.tsv")
+
+#distal_colon samples genera
+tissue_test_days #Check days tested. d6 and 30
+shared_sig_distal_colon_genus <- intersect_all(sig_genus_distal_colon_day6, sig_genus_distal_colon_day30) 
+shared_sig_distal_colon_genus #0 genera, because 0 genera were different at day 30
+
+#Examine genera that were shared between tissue compartments on day 6
+sig_shared_tissues <- intersect_all(sig_genus_cecum_day6, sig_genus_proximal_colon_day6, sig_genus_distal_colon_day6)
+#16 genera total including Peptostrep.
+
+#No genera were significant for proximal and distal colon compartments on day 30
+
 #List of the 10 significant genera in stool samples that are significant over the most timepoints
 top_10_sig_genus <- kw_genus_stools %>% 
   filter(p.value.adj < 0.05) %>% #Select only significant p-values
@@ -480,15 +560,16 @@ hm_tissues <- hm_plot_genus(genus_tissues%>%
   scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_tissues.png", hm_tissues, base_height = 14, base_width = 15)
 
-#Lineplots of the top 6 significant genera in tissue samples----
-lp_tissue_days <- diversity_tissues %>% distinct(day) %>% 
+#Lineplots of the top 6 significant genera in cecum samples----
+#Significantly different between groups in the cecum compartment on day 6 & day 30
+lp_tissue_days <- diversity_cecum %>% distinct(day) %>% 
   filter(day %in% c("4", "6", "20", "30")) %>% #Focus on day -1 through 10 timepoints
   pull(day)
-facet_labels <- top_sig_genus_tissues[1:6] #Pick just the top 6
-names(facet_labels) <- top_sig_genus_tissues[1:6] #Pick just the top 6
-lp_tissue <- line_plot_genus(genus_tissues, top_sig_genus_tissues[1:6], lp_tissue_days, "solid")+
+facet_labels <- shared_sig_cecum_genus #4 genera
+names(facet_labels) <- shared_sig_cecum_genus #4 genera
+lp_cecum <- line_plot_genus(genus_cecum, shared_sig_cecum_genus, lp_tissue_days, "solid")+
   scale_x_continuous(limits = c(3.5,30.5), breaks = c(4, 6, 20, 30), labels = c(4, 6,20, 30))#Change scale since we have less timepoints for tissues
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_tissues.png", lp_tissue, base_height = 5, base_width = 8)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_cecum.png", lp_cecum, base_height = 5, base_width = 8)
 
 #List of genera that overlap between top genera for stool and tissue samples----
 top_genera <- intersect_all(top_10_sig_genus, top_sig_genus_tissues)
