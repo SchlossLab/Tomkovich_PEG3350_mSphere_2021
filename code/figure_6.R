@@ -1,14 +1,10 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
-a <- ggdraw() + draw_image("results/figures/ml_performance_genus.png")
-b <- ggdraw() + draw_image("results/figures/ml_top_features_genus.png")
-top_panel <- plot_grid(a, b, labels = c("A", "B"), label_size = 12, nrow=1, rel_widths = c(1,1.5), rel_heights = c(2, 1))
+a <- ggdraw() + draw_image("results/figures/ml_top_features_genus.png")
+b <- ggdraw() + draw_image("results/figures/ml_top10_d5_genus.png")
+c <- ggdraw() + draw_image("results/figures/ml_abund_5_genus_lineplot.png")
 
-c1 <- ggdraw() + draw_image("results/figures/ml_abund_5_genus_area.png")#Note scale could be removed
-c2 <-   ggdraw() + draw_image("results/figures/ml_abund_5_genus_area_legend.png")#Note scale could be removed
-c <- plot_grid(c1, c2, labels = NULL, label_size = 12, ncol=1, rel_widths = c(1,.3), rel_heights = c(1, .3))
-
-plot_grid(top_panel, c, labels = c("", "C"), label_size = 12, ncol=1, rel_widths = c(1, 2), rel_heights = c(1, 1.5))+
-  ggsave("results/figures/figure_6.pdf", width=8, height=7)+
-  ggsave("submission/figure_6.pdf", width=8, height=7)
+plot_grid(a, b, c, labels = c("A", "B", "C"), label_size = 12, ncol=1, rel_heights = c(2, 2, 1))+
+  ggsave("results/figures/figure_6.pdf", width=6.8768, height=9)+
+  ggsave("submission/figure_6.pdf", width=6.876, height=9)
 

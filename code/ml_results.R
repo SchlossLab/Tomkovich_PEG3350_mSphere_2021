@@ -129,11 +129,11 @@ color_scheme_df <- rf_feat %>%
   distinct(genus) %>% #Limit to unique genera
   filter(genus %in% rf_top_feat) %>% 
   #Assign viridis colors to top 5 most abundant genera
-  mutate(color = case_when(genus == "Porphyromonadaceae Unclassified" ~ "#440154FF",
-                           genus == "Akkermansia" ~ "#3B528BFF",
-                           genus == "Enterobacteriaceae Unclassified" ~ "#21908CFF",
-                           genus == "Lachnospiraceae Unclassified" ~ "#5DC863FF",
-                           genus == "Bacteroides" ~ "#FDE725FF",
+  mutate(color = case_when(#genus == "Porphyromonadaceae Unclassified" ~ "#440154FF",
+                           #genus == "Akkermansia" ~ "#3B528BFF",
+                           #genus == "Enterobacteriaceae Unclassified" ~ "#21908CFF",
+                           #genus == "Lachnospiraceae Unclassified" ~ "#5DC863FF",
+                           #genus == "Bacteroides" ~ "#FDE725FF",
                            TRUE ~ "black")) #Rest of colors should be black
 color_scheme <- color_scheme_df %>% pull(color)
 color_bact <- color_scheme_df %>% pull(genus)
@@ -167,7 +167,7 @@ top10_d5_model_taxa <- agg_genus_data %>%
   geom_errorbar(aes(ymax = median, ymin = median), color = "gray50", size = 1)+ #Add lines to indicate the median for each group to the plot
   geom_jitter(aes(shape = subset), size=2, show.legend = TRUE, alpha = .4) +
   scale_colour_manual(name=NULL,
-                      values=c("seagreen3", "mediumpurple"),
+                      values=c("blue", "red"),
                       breaks=c("cleared", "colonized"),
                       labels=c("cleared", "colonized"))+
   scale_shape_manual(name=NULL,
@@ -182,7 +182,7 @@ top10_d5_model_taxa <- agg_genus_data %>%
   scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   theme_classic()+
   theme(text = element_text(size = 14),
-        strip.text = element_text(hjust = 0.5, size = 6.8, face = "italic"),
+        strip.text = element_text(hjust = 0.5, size = 8.6, face = "italic"),
         axis.text.x = element_blank(),
         legend.position = "bottom")
 save_plot(filename = paste0("results/figures/ml_top10_d5_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
@@ -238,3 +238,51 @@ save_plot("results/figures/ml_abund_5_genus_area_legend.png", legend_area_plot, 
 topabund_5_model_taxa_area_plot <- topabund_5_model_taxa_area_plot+
   theme(legend.position = "none") #Remove legend
 save_plot(filename = paste0("results/figures/ml_abund_5_genus_area.png"), topabund_5_model_taxa_area_plot, base_height = 4, base_width = 7)  
+
+#Line plots instead of area plot to convey how the most abundant genera that were top contributors to machine learning models were changing over time
+topabund_5_model_taxa_line_plot <- agg_genus_data %>% 
+  #Solve different baseline timepoints across groups by specifying baseline for each group
+  mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-15" ~ "B",
+                         group == "CWM" & day == "-1" ~ "B",
+                         group == "RM" & day == "-1" ~ "B",
+                         group == "FRM" & day == "-1" ~ "B",
+                         group == "M1" & day == "-11" ~ "B",
+                         group == "1RM1" & day == "-2" ~ "B",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>%  #Use baseline through day 15 timepoints
+  mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>% 
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(genus %in% interp_genera_d5_top_10_abundant) %>%
+  #Reorder genera to match contribution to model
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10_abundant)) %>% 
+  group_by(clearance_status_d10, genus, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop")  %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(aes(x = day, y=median, color=clearance_status_d10, group = clearance_status_d10), linetype = "solid")+
+  scale_colour_manual(name=NULL,
+                      values=c("blue", "red"),
+                      breaks=c("cleared", "colonized"),
+                      labels=c("cleared", "colonized"))+
+  scale_x_discrete(limits = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"), 
+                   labels = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"),
+                   breaks = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"))+
+  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative abundance (%)")+
+  facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 12))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        panel.spacing = unit(1, "lines"), #Increase spacing between facets
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16),
+        axis.text.x = element_text(size = 10),
+        strip.text = element_text(face = "italic", size = 12),
+        legend.position = "None")
+save_plot(filename = paste0("results/figures/ml_abund_5_genus_lineplot.png"), topabund_5_model_taxa_line_plot, base_height = 3, base_width = 10)  
+
+  
