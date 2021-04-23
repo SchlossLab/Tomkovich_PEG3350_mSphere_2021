@@ -719,7 +719,6 @@ line_plot_days <- c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
 lp_fmt <- line_plot_genus(frm_rm_subset, FRMvRM_post_gavage, line_plot_days, "solid")+
 #  scale_x_discrete(limits = c(3, 4, 5:10, 15), breaks = c(3, 4, 5:10, 15), labels = c(3, 4, 5:10, 15)) #Rewrite over -1:10 scale
   scale_x_continuous(limits = c(-1,15), breaks = c(-1:10, 15), labels = c(-1:10, 15))+  #Rewrite over -1:10 scale
-  annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = .01, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = .01, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_fmt.png", lp_fmt, base_height = 5, base_width = 8)
