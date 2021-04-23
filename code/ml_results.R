@@ -285,4 +285,152 @@ topabund_5_model_taxa_line_plot <- agg_genus_data %>%
         legend.position = "None")
 save_plot(filename = paste0("results/figures/ml_abund_5_genus_lineplot.png"), topabund_5_model_taxa_line_plot, base_height = 3, base_width = 10)  
 
+#Examine Porphyromondaceae OTUs that are similar to Muribaculum intestinale----
+#See code/blast_otus.R for how blast search was performed and results
+muribac_otus <- c("Porphyromonadaceae (OTU 6)", "Porphyromonadaceae (OTU 7)", "Porphyromonadaceae (OTU 8)", "Porphyromonadaceae (OTU 21)")
+muribac_otu_names <- c("*Porphyromonadaceae* (OTU 6)", "*Porphyromonadaceae* (OTU 7)", "*Porphyromonadaceae* (OTU 8)", "*Porphyromonadaceae* (OTU 21)")
+#Line plots instead of area plot to convey how the most abundant genera that were top contributors to machine learning models were changing over time
+muribac_otus_line_plot <- agg_otu_data %>% 
+  #Solve different baseline timepoints across groups by specifying baseline for each group
+  mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-15" ~ "B",
+                         group == "CWM" & day == "-1" ~ "B",
+                         group == "RM" & day == "-1" ~ "B",
+                         group == "FRM" & day == "-1" ~ "B",
+                         group == "M1" & day == "-11" ~ "B",
+                         group == "1RM1" & day == "-2" ~ "B",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>%  #Use baseline through day 15 timepoints
+  mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>% 
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(otu %in% muribac_otus) %>%
+  #Reorder genera to match contribution to model
+  mutate(otu_name = fct_relevel(otu_name, muribac_otu_names)) %>% #Reorganize otu_names to match OTU number
+  group_by(clearance_status_d10, otu_name, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop")  %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(aes(x = day, y=median, color=clearance_status_d10, group = clearance_status_d10), linetype = "solid", alpha = 0.6)+
+  scale_colour_manual(name=NULL,
+                      values=c("blue", "red"),
+                      breaks=c("cleared", "colonized"),
+                      labels=c("cleared", "colonized"))+
+  scale_x_discrete(limits = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"), 
+                   labels = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"),
+                   breaks = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"))+
+  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative abundance (%)")+
+  facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        panel.spacing = unit(1, "lines"), #Increase spacing between facets
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16),
+        axis.text.x = element_text(size = 10),
+        strip.text = element_markdown(size = 10),
+        legend.position = "None")
+save_plot(filename = paste0("results/figures/ml_abund_otu_muribaculum_lineplot.png"), muribac_otus_line_plot, base_height = 3, base_width = 10)  
+
+#Examine other Porphyromondaceae OTUs, found by looking in taxonomy file----
+porphyr_otus <- c("Porphyromonadaceae (OTU 10)", "Porphyromonadaceae (OTU 14)", "Porphyromonadaceae (OTU 15)", "Porphyromonadaceae (OTU 25)")
+porphyr_otu_names <- c("*Porphyromonadaceae* (OTU 10)", "*Porphyromonadaceae* (OTU 14)", "*Porphyromonadaceae* (OTU 15)", "*Porphyromonadaceae* (OTU 25)")
+#Line plots instead of area plot to convey how the most abundant genera that were top contributors to machine learning models were changing over time
+porphyr_otus_line_plot <- agg_otu_data %>% 
+  #Solve different baseline timepoints across groups by specifying baseline for each group
+  mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-15" ~ "B",
+                         group == "CWM" & day == "-1" ~ "B",
+                         group == "RM" & day == "-1" ~ "B",
+                         group == "FRM" & day == "-1" ~ "B",
+                         group == "M1" & day == "-11" ~ "B",
+                         group == "1RM1" & day == "-2" ~ "B",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>%  #Use baseline through day 15 timepoints
+  mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>% 
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(otu %in% porphyr_otus) %>%
+  #Reorder genera to match contribution to model
+  mutate(otu_name = fct_relevel(otu_name, porphyr_otu_names)) %>% #Reorganize otu_names to match OTU number
+  group_by(clearance_status_d10, otu_name, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop")  %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(aes(x = day, y=median, color=clearance_status_d10, group = clearance_status_d10), linetype = "solid", alpha = 0.6)+
+  scale_colour_manual(name=NULL,
+                      values=c("blue", "red"),
+                      breaks=c("cleared", "colonized"),
+                      labels=c("cleared", "colonized"))+
+  scale_x_discrete(limits = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"), 
+                   labels = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"),
+                   breaks = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"))+
+  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative abundance (%)")+
+  facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        panel.spacing = unit(1, "lines"), #Increase spacing between facets
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16),
+        axis.text.x = element_text(size = 10),
+        strip.text = element_markdown(size = 10),
+        legend.position = "None")
+save_plot(filename = paste0("results/figures/ml_abund_otu_porphyromonadaceae_lineplot.png"), porphyr_otus_line_plot, base_height = 3, base_width = 10)  
+
+#Examine Lachnospiraceae OTUs, found by looking in taxonomy file----
+lachno_otus <- c("Lachnospiraceae (OTU 4)", "Lachnospiraceae (OTU 11)", "Lachnospiraceae (OTU 16)", "Lachnospiraceae (OTU 17)")
+lachno_otu_names <- c("*Lachnospiraceae* (OTU 4)", "*Lachnospiraceae* (OTU 11)", "*Lachnospiraceae* (OTU 16)", "*Lachnospiraceae* (OTU 17)")
+#Line plots instead of area plot to convey how the most abundant genera that were top contributors to machine learning models were changing over time
+lachno_otus_line_plot <- agg_otu_data %>% 
+  #Solve different baseline timepoints across groups by specifying baseline for each group
+  mutate(day = case_when(group == "C" & day %in% c("-15", "-11", "-1") ~ "B",
+                         group == "WM" & day == "-5" ~ "B",
+                         group == "WMC" & day == "-5" ~ "B",
+                         group == "WMR" & day == "-15" ~ "B",
+                         group == "CWM" & day == "-1" ~ "B",
+                         group == "RM" & day == "-1" ~ "B",
+                         group == "FRM" & day == "-1" ~ "B",
+                         group == "M1" & day == "-11" ~ "B",
+                         group == "1RM1" & day == "-2" ~ "B",
+                         TRUE ~ day)) %>% 
+  filter(day %in% c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>%  #Use baseline through day 15 timepoints
+  mutate(day = fct_relevel(day, "B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15")) %>% 
+  filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
+  filter(otu %in% lachno_otus) %>%
+  #Reorder genera to match contribution to model
+  mutate(otu_name = fct_relevel(otu_name, lachno_otu_names)) %>% #Reorganize otu_names to match OTU number
+  group_by(clearance_status_d10, otu_name, day) %>% 
+  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop")  %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+  ggplot()+
+  geom_line(aes(x = day, y=median, color=clearance_status_d10, group = clearance_status_d10), linetype = "solid", alpha = 0.6)+
+  scale_colour_manual(name=NULL,
+                      values=c("blue", "red"),
+                      breaks=c("cleared", "colonized"),
+                      labels=c("cleared", "colonized"))+
+  scale_x_discrete(limits = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"), 
+                   labels = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"),
+                   breaks = c("B", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15"))+
+  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative abundance (%)")+
+  facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        panel.spacing = unit(1, "lines"), #Increase spacing between facets
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        text = element_text(size = 16),
+        axis.text.x = element_text(size = 10),
+        strip.text = element_markdown(size = 10),
+        legend.position = "None")
+save_plot(filename = paste0("results/figures/ml_abund_otu_lachnospiraceae_lineplot.png"), lachno_otus_line_plot, base_height = 3, base_width = 10)  
+
   
