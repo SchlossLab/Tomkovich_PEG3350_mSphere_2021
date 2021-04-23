@@ -174,6 +174,8 @@ f_d_top_p_t <- f_d_sign_contrib_t %>%
 ***C. difficile* challenge does not have a synergistic disruptive effect on the microbiota of PEG-treated mice** Because *C. difficile* itself can have an impact on the microbiota [@Jenior2018], we also sequenced the tissue and stools of mock-challenged clindamycin and 5-day PEG treated mice. Examining the stools of the mock-infected PEG- and clindamycin-treated mice revealed similar bacterial disruptions as the *C. difficile* challenged mice (Fig. S2A-C). Similarly, there was no difference between the tissues of mock and *C. difficile* challenged mice (Fig. S2D-F). Thus, most of the microbiota alterations we observed in the PEG-treated mice were a result of the laxative and not an interaction between the laxative and *C. difficile*.
 
 **1-day laxative treatment results in transient *C. difficile* colonization and minor microbiota disruption**
+
+* Draft of results
   + Explain motivation for experiment, set-up of experiment (Fig. 4A). 
   + Transient *C. difficile* colonization in 1-day PEG treated mice with all PEG mice clearing by 7dpi (Fig. 4B)
   + PCoA results (Day has larger R2 than treatment group). PEG mice are closer to baseline communites after 7-day period (Fig. 4C)
@@ -181,6 +183,8 @@ f_d_top_p_t <- f_d_sign_contrib_t %>%
   + Highlight bacteria that are disrupted by PEG or clindamycin treatment but recover within 7 days (Fig. 4E)
 
 **Post-CDI laxative treatment disrupts clearance in clindamycin-treated mice regardless of whether an FMT is also administered**
+
+* Draft of results
   + Reiterate motivation for experiment. Saw only a transient microbiota disruption with 1-day PEG treatment alone. Also, see if adding FMT helps with clearance, mention groups have been using PEG or Abx/PEG treatments as a tool to engraft mice with human bacteria communities. Set up of experiment (Fig. 5A).
   + Prolonged *C. difficile* colonization in post-CDI PEG treated mice (Fig. 5B)
   + FMT appears to partially restore alpha diversity (Shannon, but not richness Fig. 5C-D)
@@ -203,13 +207,6 @@ max_auc <- auc_results %>% select(median) %>% max()
 ```
 **Five-day post-infection community data can predict mice that will have prolonged *C. difficile* colonization** After identifying bacteria associated with the 5-day, 1-day and post-CDI 1-day PEG treatments, we decided to examine the taxa that were influencing prolonged *C. difficile* colonization. We trained 3 types of machine learning models (random forest, logistic regression, and support vector machine) with input bacterial community data from 5 days post-infection to predict whether the mice were colonized with *C. difficile* 10 days post-infection. We chose 5 days post-infection because that was the earliest timepoint where we would see a treatment effect in the mice that were given 1-day PEG treatment three days after *C. difficile* challenge and then administered an FMT or PBS gavage. The random forest model had the highest performance (AUROC = `r max_auc`, Data Set S1, Sheet X), so we next performed permutation importance to examine the bacteria that were driving performance. We selected the top 20 bacteria contributing to our models performance and examined their relative abundance at 5 days post-infection, the timepoint used to predict C. difficile colonization status on day 10 (Fig. 6A). Next, we focused on the 5 genera that were > 1 % relative abundance in either the cleared or colonized mice and examined the relative abundance dynamics of these bacteria over time. We found _, _, and _ tended to have a higher relative abundance and __, __ had a lower relative abundance in the mice with prolonged colonization compared to the mice that cleared *C. difficile* (Fig. 6B).
 Previous work examining the impact of PEG on the murine microbiota found that PEG treatment resulted in the permanent loss of S24-7, also known as *Muribaculum intestinale* [@Tropini2018]. We decided to check our *Porphyromonadaceae* OTUs because *Muribaculum intestinale* is known to be classified as *Porphyromonadaceae* by the Ribosomal Database Project (RDP) database [@Vornhagen2020], *Porphyromonadaceae* was a top feature in the random forest model predicting prolonged *C. difficile* colonization, and had a high relative abundance in the communities of mice that cleared *C. difficile* within 10 days. We identified 4 OTUs that had at least (insert minimum percent identity) to *Muribaculum intestinale* and examined their abundance in mice that either cleared or were still colonized with *C. difficile* at 10 days post-infection (Fig. S3).
-
-* Figure 6. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.
-
-* Figure S2. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization.
-  + Ex. *Muribaculum intestinale*. 
-
-
 
 ## Discussion
 
@@ -298,17 +295,17 @@ one_day_sample_max <- max(one_day_samples_per_day$n)
 A. Experimental timeline for groups receiving PEG treatment post clindamycin gavage. B. Median and individual CFU/g of C. difficile measured over time via culture. Asterisks indicate time points with significant differences between groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction. Limit of detection is 1e2 CFU/g. Background shading indicates PEG treatment period for applicable groups. Opacity of points reflects time point. C. Median and individual Shannon Diversity measured over time. Asterisks, background shading, and opacity of points consistent with (B). D. Median and individual richness measured over time. Asterisks, background shading, and opacity of points consistent with (B).
 
 \newpage
-\includegraphics{figure_5_16S.pdf}
-**Figure 5. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. PCoA of all groups + FMT plotted over time. Opacity of points reflects time point. B. Relative abundance of genera significantly different over multiple time points post FMT or PBS treatment, plotted over time. Limit of detection is .1%. C. Relative abundances of top 6 significant genera ranked by number of days significant, plotted over time. Limit of detection is .1%. 
-
-\newpage
-
 \includegraphics{figure_6.pdf}
-**Figure 6. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.** A. 
+**Figure 6. 1-day PEG treatment post C. difficile challenge prolongs colonization regardless of whether an FMT is also administered.** A. PCoA of all groups + FMT plotted over time. Opacity of points reflects time point. B. Relative abundance of genera significantly different over multiple time points post FMT or PBS treatment, plotted over time. Limit of detection is .1%. C. Relative abundances of top 6 significant genera ranked by number of days significant, plotted over time. Limit of detection is .1%. 
+
 \newpage
 
 \includegraphics{figure_7.pdf}
-**Figure 7. Schematic summarizing findings.** A. 
+**Figure 7. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.** A. 
+\newpage
+
+\includegraphics{figure_8.pdf}
+**Figure 8. Schematic summarizing findings.** A. 
 \newpage
 
 \includegraphics{figure_S1.pdf}
@@ -316,7 +313,15 @@ A. Experimental timeline for groups receiving PEG treatment post clindamycin gav
 \newpage
 
 \includegraphics{figure_S2.pdf}
-**Figure S2. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization. Ex. *Muribaculum intestinale*.** A. 
+**Figure S2. Impact of PEG treatment on the mucosal microbiota is greatest 6 days post-infection**  
+\newpage
+
+\includegraphics{figure_S3.pdf}
+**Figure S3. *C. difficile* challenge does not enhance the disruptive effect of PEG on the microbiota.** A. 
+\newpage
+
+\includegraphics{figure_S4.pdf}
+**Figure S4. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization. Ex. *Muribaculum intestinale*.** A. 
 \newpage
 
 ## References
