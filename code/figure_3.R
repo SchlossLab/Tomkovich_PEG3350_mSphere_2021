@@ -1,7 +1,9 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
-a <- ggdraw() + draw_image("results/figures/5_days_PEG_shannon_tissues.png")
+a <- ggdraw() + draw_image("results/figures/5_days_PEG_shannon_cecum.png")
 b <- ggdraw() + draw_image("results/figures/5_days_PEG_tissues_PCoA.png")
+b_legend <- ggdraw() + draw_image("results/figures/5_days_PEG_pcoa_legend_tissues.png")
+b <- plot_grid(b, b_legend, ncol = 1, rel_heights = c(1, .2))
 c <- ggdraw() + draw_image("results/figures/5_days_PEG_genus_lineplot_tissues.png")
 middle_panel <- plot_grid(b, c, labels = c("B", "C"), label_size = 12, nrow = 1, rel_widths = c(.6, 1))
 d <- ggdraw() + draw_image("results/figures/5_days_PEG_histo_scores_d4.png")

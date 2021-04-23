@@ -25,6 +25,12 @@ diversity_stools <- subset_stool(diversity_subset) %>%
   mutate(day = as.numeric(day))
 diversity_tissues <- subset_tissue(diversity_subset) %>%
   mutate(day = as.numeric(day))
+diversity_cecum <- subset_cecum(diversity_subset) %>%
+  mutate(day = as.numeric(day))
+diversity_proximal_colon <- subset_proximal_colon(diversity_subset) %>%
+  mutate(day = as.numeric(day))
+diversity_distal_colon <- subset_distal_colon(diversity_subset) %>%
+  mutate(day = as.numeric(day))
 
 #Figure out how many samples we have per group per day for each subset
 num_stool <- count_subset(diversity_stools) #Number of stool samples per group per day
@@ -62,6 +68,15 @@ sig_shannon_days_stools <- pull_sig_days(kw_shannon_stools)
 #Test with shannon for tissue subset
 kw_shannon_tissues <- kruskal_wallis_shannon(diversity_tissues, tissue_test_days, "tissues")
 sig_shannon_days_tissues <- pull_sig_days(kw_shannon_tissues)
+#Test with shannon for cecum tissues
+kw_shannon_cecum <- kruskal_wallis_shannon(diversity_cecum, tissue_test_days, "cecum")
+sig_shannon_days_cecum <- pull_sig_days(kw_shannon_cecum)
+#Test with shannon for proximal_colon tissues
+kw_shannon_proximal_colon <- kruskal_wallis_shannon(diversity_proximal_colon, tissue_test_days, "proximal_colon")
+sig_shannon_days_proximal_colon <- pull_sig_days(kw_shannon_proximal_colon)
+#Test with shannon for distal_colon tissues
+kw_shannon_distal_colon <- kruskal_wallis_shannon(diversity_distal_colon, tissue_test_days, "distal_colon")
+sig_shannon_days_distal_colon <- pull_sig_days(kw_shannon_distal_colon)
 
 #Function to perform Kruskal-Wallis test for differences in richness (sobs) across groups on a particular day with Benjamini Hochberg correction
 #Arguments: 
@@ -90,6 +105,15 @@ sig_richness_days_stools <- pull_sig_days(kw_richness_stools)
 #Test with richness for tissue subset
 kw_richness_tissues <- kruskal_wallis_richness(diversity_tissues, tissue_test_days, "tissues")
 sig_richness_days_tissues <- pull_sig_days(kw_richness_tissues)
+#Test with richness for cecum tissues
+kw_richness_cecum <- kruskal_wallis_richness(diversity_cecum, tissue_test_days, "cecum")
+sig_richness_days_cecum <- pull_sig_days(kw_richness_cecum)
+#Test with richness for proximal_colon tissues
+kw_richness_proximal_colon <- kruskal_wallis_richness(diversity_proximal_colon, tissue_test_days, "proximal_colon")
+sig_richness_days_proximal_colon <- pull_sig_days(kw_richness_proximal_colon)
+#Test with richness for distal_colon tissues
+kw_richness_distal_colon <- kruskal_wallis_richness(diversity_distal_colon, tissue_test_days, "distal_colon")
+sig_richness_days_distal_colon <- pull_sig_days(kw_richness_distal_colon)
 
 #Shannon and richness plots for stool samples from the 5-days PEG subset----
 #Plot Shannon diversity over time for the subset of stool samples (excluding mock challenged mice):
@@ -118,13 +142,13 @@ richness_stools <- plot_richness_overtime(diversity_stools)+
   theme(legend.position = "bottom")
 save_plot(filename = "results/figures/5_days_PEG_richness_stools.png", richness_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-#Shannon and richness plots for stool samples from the 5-days PEG subset----
+#Shannon and richness plots for tissue samples from the 5-days PEG subset----
 #Statistical annotation labels:
 x_annotation <- sig_shannon_days_tissues
 y_position <- max(diversity_tissues$shannon)+ 0.05
 label <- kw_label(kw_shannon_tissues)
 #Plot
-shannon_tissues <- plot_shannon_overtime(diversity_tissues) +
+shannon_tissues <- plot_shannon_overtime_t(diversity_tissues) +
   scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
                      limits = c(0,31),
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
@@ -136,11 +160,83 @@ x_annotation <- sig_richness_days_tissues
 y_position <- max(diversity_tissues$sobs)+5
 label <- kw_label(kw_richness_tissues)
 #Plot
-richness_tissues <- plot_richness_overtime(diversity_tissues) +
+richness_tissues <- plot_richness_overtime_t(diversity_tissues) +
   scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
                      limits = c(0,31),
                      minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +  theme(legend.position = "bottom")
 save_plot(filename = "results/figures/5_days_PEG_richness_tissues.png", richness_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Shannon and richness plots for cecum tissue samples from the 5-days PEG subset----
+#Statistical annotation labels:
+x_annotation <- sig_shannon_days_cecum
+y_position <- max(diversity_cecum$shannon)+ 0.05
+label <- kw_label(kw_shannon_cecum)
+#Plot
+shannon_cecum <- plot_shannon_overtime_t(diversity_cecum) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_shannon_cecum.png", shannon_cecum, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Statistical annotation labels:
+x_annotation <- sig_richness_days_cecum
+y_position <- max(diversity_cecum$sobs)+5
+label <- kw_label(kw_richness_cecum)
+#Plot
+richness_cecum <- plot_richness_overtime_t(diversity_cecum) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_richness_cecum.png", richness_cecum, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Shannon and richness plots for proximal_colon tissue samples from the 5-days PEG subset----
+#Statistical annotation labels:
+x_annotation <- sig_shannon_days_proximal_colon
+y_position <- max(diversity_proximal_colon$shannon)+ 0.05
+label <- kw_label(kw_shannon_proximal_colon)
+#Plot
+shannon_proximal_colon <- plot_shannon_overtime_t(diversity_proximal_colon) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_shannon_proximal_colon.png", shannon_proximal_colon, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Statistical annotation labels:
+x_annotation <- sig_richness_days_proximal_colon
+y_position <- max(diversity_proximal_colon$sobs)+5
+label <- kw_label(kw_richness_proximal_colon)
+#Plot
+richness_proximal_colon <- plot_richness_overtime_t(diversity_proximal_colon) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_richness_proximal_colon.png", richness_proximal_colon, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Shannon and richness plots for distal_colon tissue samples from the 5-days PEG subset----
+#Statistical annotation labels:
+x_annotation <- sig_shannon_days_distal_colon
+y_position <- max(diversity_distal_colon$shannon)+ 0.05
+label <- kw_label(kw_shannon_distal_colon)
+#Plot
+shannon_distal_colon <- plot_shannon_overtime_t(diversity_distal_colon) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
+  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_shannon_distal_colon.png", shannon_distal_colon, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
+#Statistical annotation labels:
+x_annotation <- sig_richness_days_distal_colon
+y_position <- max(diversity_distal_colon$sobs)+5
+label <- kw_label(kw_richness_distal_colon)
+#Plot
+richness_distal_colon <- plot_richness_overtime_t(diversity_distal_colon) +
+  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
+                     limits = c(0,31),
+                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +  theme(legend.position = "bottom")
+save_plot(filename = "results/figures/5_days_PEG_richness_distal_colon.png", richness_distal_colon, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
 #Distance matrix of 5_day_PEG PCoA subset----
 dist <- read_dist("data/process/5_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist")
@@ -206,24 +302,33 @@ pcoa_axes_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.
 axis1 <- pcoa_axes_5_day_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2 <- pcoa_axes_5_day_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-pcoa_subset_plot_tissue <- plot_pcoa(pcoa_5_day_PEG_tissues)+
+pcoa_subset_plot_tissue <- plot_pcoa_t(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
-  scale_alpha_continuous(range = c(.3, 1),
-                         breaks= c(4, 6, 20, 30),
-                         labels=c(4, 6, 20, 30))+
   theme(legend.position = "none")
 save_plot(filename = paste0("results/figures/5_days_PEG_tissues_PCoA.png"), pcoa_subset_plot_tissue, base_height = 5, base_width = 5)
 
+#Create stand alone legend
+pcoa_shape_legend <- pcoa_5_day_PEG_tissues  %>%
+  ggplot(aes(x = axis1, y = axis2, shape = sample_type))+
+  scale_shape_manual(name = NULL, 
+                     values=sample_shape_scheme,
+                     breaks=sample_shape_groups,
+                     labels=sample_shape_labels)+
+  geom_point()+ theme_classic()+
+  theme(legend.position = "bottom")
+pcoa_shape_legend<- get_legend(pcoa_shape_legend)
+save_plot("results/figures/5_days_PEG_pcoa_legend_tissues.png", pcoa_shape_legend, base_height = .25, base_width = 3)
+
 #PCoA faceted over time
-pcoa_plot_time <- plot_pcoa(pcoa_5_day_PEG_tissues)+
-  labs(x = paste("PCoA 1 (", all_axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", all_axis2,"%)", sep = ""))+
+pcoa_plot_time <- plot_pcoa_t(pcoa_5_day_PEG_tissues)+
+  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
+       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   theme(legend.position = "none")+ #remove legend
   facet_wrap(~ day)
 
 ##Animation of PCoA plot: Tissue Subset--
-pcoa_animated_tissues <- plot_pcoa(pcoa_5_day_PEG_tissues)+
+pcoa_animated_tissues <- plot_pcoa_t(pcoa_5_day_PEG_tissues)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   labs(title = 'Day: {frame_time}') + #Adds time variable to title

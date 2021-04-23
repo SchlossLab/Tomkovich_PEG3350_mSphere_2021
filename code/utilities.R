@@ -213,6 +213,21 @@ subset_tissue <- function(df){
   df %>% filter(!sample_type == "stool")
 }
 
+#Function to filter dataframe (df) to examine cecum tissue samples
+subset_cecum <- function(df){
+  df %>% filter(sample_type == "cecum")
+}
+
+#Function to filter dataframe (df) to examine proximal_colon tissue samples
+subset_proximal_colon <- function(df){
+  df %>% filter(sample_type == "proximal_colon")
+}
+
+#Function to filter dataframe (df) to examine distal_colon tissue samples
+subset_distal_colon <- function(df){
+  df %>% filter(sample_type == "distal_colon")
+}
+
 #Function to add the mock challenged mice (CN and WMN groups) to a dataframe (diversity_data or agg_otu_data)----
 add_mocks <- function(subset_df, original_df){
   subset_df %>% 
@@ -366,6 +381,11 @@ intersect_all <- function(a,b,...){
   Reduce(intersect, list(a,b,...))
 }
 
+#Shape scheme for differntiating types of tissues----
+sample_shape_scheme <- c(19, 17, 15)
+sample_shape_groups <- c("cecum", "proximal_colon", "distal_colon")
+sample_shape_labels <- c("cecum", "proximal colon", "distal colon")
+
 #Functions to plot data----
 #Function to plot cfu data
 #Arguments: df = dataframe to plot
@@ -464,6 +484,33 @@ plot_shannon_overtime <- function(df) {
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
 }
 
+#Function to Plot Shannon Diversity Overtime in tissue samples
+plot_shannon_overtime_t <- function(df) {
+  median_summary <- df %>%
+    group_by(group, day) %>%
+    mutate(median_shannon = median(shannon)) %>%
+    ggplot(x = day, y = shannon, colour = group)+
+    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group, alpha = day, shape = sample_type), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels) +
+    scale_shape_manual(values=sample_shape_scheme,
+                       breaks=sample_shape_groups,
+                       labels=sample_shape_labels)+
+    scale_y_continuous(limits = c(0,4.1), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
+    theme_classic()+
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Shannon Diversity Index")+
+    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
+    theme(legend.position = "bottom",
+          text = element_text(size = 16), # Change font size for entire plot
+          axis.ticks.x = element_blank(),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
+}
+
 #Function to Plot Richness (sobs) Overtime
 plot_richness_overtime <- function(df) {
   median_summary <- df %>%
@@ -488,6 +535,33 @@ plot_richness_overtime <- function(df) {
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
 }
 
+#Function to Plot Richness (sobs) Overtime in tissue samples
+plot_richness_overtime_t <- function(df) {
+  median_summary <- df %>%
+    group_by(group, day) %>%
+    mutate(median_sobs = median(sobs)) %>%
+    ggplot(x = day, y = sobs, group = group, colour = group)+
+    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group, alpha = day, shape = sample_type), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels) +
+    scale_shape_manual(values=sample_shape_scheme,
+                       breaks=sample_shape_groups,
+                       labels=sample_shape_labels)+
+    scale_y_continuous(limits = c(0,160), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
+    theme_classic()+
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Number of Observed OTUs")+
+    annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
+    theme(legend.position = "bottom",
+          text = element_text(size = 16), # Change font size for entire plot
+          axis.ticks.x = element_blank(),
+          panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
+}
+
 #Function to plot PCoA data
 plot_pcoa <- function(df){
   ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day)) +
@@ -497,6 +571,27 @@ plot_pcoa <- function(df){
                         breaks=color_groups,
                         labels=color_labels, 
                         guide = "none")+ #Suppress legend for group colors
+    coord_fixed() +
+    labs(x="PCoA 1",
+         y="PCoA 2",
+         alpha= "Day") +
+    theme_classic()+
+    theme(legend.position = "bottom",
+          text = element_text(size = 16))
+}
+
+#Function to plot PCoA data from tissue samples, differentiate sample_type with shapes
+plot_pcoa_t <- function(df){
+  ggplot(df, aes(x=axis1, y=axis2, color = group, alpha = day, shape = sample_type)) +
+    geom_point(size=2) +
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels, 
+                        guide = "none")+ #Suppress legend for group colors
+    scale_shape_manual(values=sample_shape_scheme,
+                       breaks=sample_shape_groups,
+                       labels=sample_shape_labels)+
     coord_fixed() +
     labs(x="PCoA 1",
          y="PCoA 2",
