@@ -1084,6 +1084,35 @@ peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>%
         legend.position = "none") 
 save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG_barbell.png"), peg_impacted_genera_bb_plot, base_height = 9, base_width = 8)
 
+#Create alternative barbell plot without need of facets
+peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>% 
+  ggplot(aes(x= genus, color=group, ymin= B, ymax = P))+
+  geom_linerange(aes(color = group, xend = genus), size = 1,
+                 arrow= arrow(length=unit(0.30,"cm"), ends="last"),
+                 position = position_dodge(width = 1))+
+  geom_point(aes(y = B, color = group), shape = 1, stroke = 1, size = 3,
+             position = position_dodge(width = 1)) + 
+  geom_point(aes(y = P, color = group), shape = 16, size = 3,
+             position = position_dodge(width = 1)) + 
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_hline(yintercept=1/1000, color="gray")+
+  labs(title=NULL, 
+       x=NULL,
+       y="Relative abundance (%)")+
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100), limits = c(1/1/10000, 1))+
+  coord_flip()+
+  theme_classic()+
+  geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
+  theme(plot.title=element_text(hjust=0.5),
+        text = element_text(size = 16),# Change font size for entire plot
+        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        strip.background = element_blank(),
+        panel.spacing = unit(2, "lines"), #Increase spacing between facets
+        legend.position = "none") 
+save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG_barbell_v2.png"), peg_impacted_genera_bb_plot, base_height = 7, base_width = 6)
 
 #Examine genera of interest over time----
 genus_stools_t <- genus_stools %>% 
