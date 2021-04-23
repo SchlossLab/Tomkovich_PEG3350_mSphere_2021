@@ -1007,16 +1007,16 @@ line_plot_genus <- function(sample_df, genera, timepoints, specify_linetype){
     mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     filter(day %in% timepoints) %>% #Select only timepoints of interest
-    mutate(day = as.integer(day)) %>% 
     group_by(group, genus, day) %>% 
-    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    #mutate(day = as.integer(day)) %>%
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
-    geom_line(aes(x = day, y=median, color=group), linetype = specify_linetype)+
+    geom_line(aes(x = day, y=median, color=group, group = group), linetype = specify_linetype)+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    scale_x_continuous(limits = c(-1.5,11), breaks = c(-1:10), labels = c(-1:10))+
+    #scale_x_continuous(limits = c(-1.5,11), breaks = c(-1:10), labels = c(-1:10))+
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
