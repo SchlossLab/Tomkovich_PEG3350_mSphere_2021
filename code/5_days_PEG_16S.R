@@ -571,6 +571,144 @@ lp_cecum <- line_plot_genus(genus_cecum, shared_sig_cecum_genus, lp_tissue_days,
   scale_x_continuous(limits = c(3.5,30.5), breaks = c(4, 6, 20, 30), labels = c(4, 6,20, 30))#Change scale since we have less timepoints for tissues
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_cecum.png", lp_cecum, base_height = 5, base_width = 8)
 
+#Lineplots of significant genera across compartments
+#Function to create faceted line plots of relative abundances of genera of interest across tissue compartments
+#sample_df = subset dataframe of samples to be plotted
+#genera = list of genera to plot
+#timepoint = day of the experiment to plot
+line_plot_tissue_comp <- function(sample_df, genera, timepoint){
+  sample_df %>% 
+    filter(genus %in% genera) %>% #Select only genera of interest
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
+    mutate(sample_type = fct_relevel(sample_type, c("cecum", "proximal_colon", "distal_colon"))) %>% #Make sure sample type is in the correct order
+    filter(day == timepoint) %>% #Select only timepoint of interest
+    group_by(group, genus, sample_type) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_line(aes(x = sample_type, y=median, color=group, group = group), linetype = "solid")+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    scale_x_discrete(breaks = c("cecum", "proximal_colon", "distal_colon"), labels = c("C", "PC", "DC"))+
+    scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Relative abundance (%)")+
+    facet_wrap(~genus, nrow = 4, labeller = label_wrap_gen(width = 10))+
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          strip.text = element_text(face = "italic"),
+          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+          text = element_text(size = 16),
+          legend.position = "None")
+}
+
+#List of genera (sig_shared_tissues) is based on day 6 statistical analysis
+d4_tissues_lp <- line_plot_tissue_comp(genus_tissues, sig_shared_tissues, "4")
+d6_tissues_lp <- line_plot_tissue_comp(genus_tissues, sig_shared_tissues, "6")
+d30_tissues_lp <- line_plot_tissue_comp(genus_tissues, sig_shared_tissues, "30")
+
+#Function to create faceted line plots of relative abundances of genera of interest across time in different tissue compartments
+#sample_df = subset dataframe of samples to be plotted
+#genera = list of genera to plot
+#tissue_type = type of tissue to plot
+#timepoints = days of the experiment to plot
+line_plot_tissue_comp_time <- function(sample_df, genera, tissue_type, timepoints){
+  sample_df %>% 
+    filter(genus %in% genera) %>% #Select only genera of interest
+    filter(sample_type %in% tissue_type) %>% #Select sample type of interest
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
+    filter(day %in% timepoints) %>% #Select only timepoint of interest
+    mutate(day = fct_relevel(day, c("4", "6", "20", "30"))) %>% 
+    group_by(group, genus, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_line(aes(x = day, y=median, color=group, group = group), linetype = "solid")+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30), expand = c(0.1, 0))+#Change scale since we have less timepoints for tissues
+    scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Relative abundance (%)")+
+    facet_wrap(~genus, nrow = 4, labeller = label_wrap_gen(width = 10))+
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+          text = element_text(size = 16),
+          strip.text = element_text(face = "italic", size = 12),
+          legend.position = "None")
+}
+#Genera that were significant in the stool samples on day 6
+#List of the 10 significant genera in stool samples that are significant over the most timepoints
+top_d6_sig_stools <- kw_genus_stools %>% 
+  filter(p.value.adj < 0.05 & day == "6") %>% #Select only significant p-values
+  pull(genus)
+#21 genera
+#List of genera shared between stool and tissue compartments on d6 post-infection
+shared_d6_genera <- intersect_all(sig_shared_tissues, top_d6_sig_genus)
+#14 genera shared between both compartments (Drops Peptostreptococcaceae and Firmicutes Unclassified)
+
+#16 genera different in all compartments on day 6
+lp_cecum_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "cecum", lp_tissue_days)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_cecum_d6_16_genera.png", lp_cecum_d6_genera, base_height = 5, base_width = 8)
+lp_pc_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "proximal_colon", lp_tissue_days)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_pc_d6_16_genera.png", lp_pc_d6_genera, base_height = 5, base_width = 8)
+lp_dc_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "distal_colon", lp_tissue_days)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_dc_d6_16_genera.png", lp_dc_d6_genera, base_height = 5, base_width = 8)
+
+#Lineplots faceted by tissue type instead of genus, see how same genus is changing over time across compartments
+#Plot of just how Peptostrep., Enterobacteriaceae, Bacteroides, Lachnospiraceae are changing over time across compartments
+#Function to create faceted line plots of relative abundances of genera of interest across tissue compartments
+#sample_df = subset dataframe of samples to be plotted
+#genus_name = genus of interest to plot
+#tissue_type = type of tissue to plot
+#timepoints = days of the experiment to plot
+line_plot_genus_time_facet_comp <- function(sample_df, genus_name, timepoints){
+  facet_labels <-  c("cecum", "proximal colon", "distal colon")
+  names(facet_labels) <- c("cecum", "proximal_colon", "distal_colon")
+  sample_df %>% 
+    filter(genus %in% genus_name) %>% #Select only genera of interest
+    mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
+    mutate(sample_type = fct_relevel(sample_type, c("cecum", "proximal_colon", "distal_colon"))) %>% #Make sure sample type is in the correct order
+    filter(day %in% timepoints) %>% #Select only timepoint of interest
+    mutate(day = fct_relevel(day, c("4", "6", "20", "30"))) %>% 
+    group_by(group, sample_type, day) %>% 
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_line(aes(x = day, y=median, color=group, group = group), linetype = "solid")+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30), expand = c(0.1, 0))+#Change scale since we have less timepoints for tissues
+    scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+    labs(title=genus_name,
+         x="Days Post-Infection",
+         y="Relative abundance (%)")+
+    facet_wrap(~sample_type, nrow = 4, labeller = labeller(sample_type = facet_labels, label_wrap_gen(width = 10)))+
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          text = element_text(size = 16),
+          plot.title = element_markdown(hjust = 0.4, face = "italic", size = 14), #Have only the genera names show up as italics
+          legend.position = "None")
+}
+
+
+lp_pepto <- line_plot_genus_time_facet_comp(genus_tissues, "Peptostreptococcaceae Unclassified", lp_tissue_days)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_peptostreptococcacea.png", lp_pepto, base_height = 5, base_width = 4)
+lp_lachno <- line_plot_genus_time_facet_comp(genus_tissues, "Lachnospiraceae Unclassified", lp_tissue_days)
+lp_entero <- line_plot_genus_time_facet_comp(genus_tissues, "Enterobacteriaceae Unclassified", lp_tissue_days)
+
+
 #List of genera that overlap between top genera for stool and tissue samples----
 top_genera <- intersect_all(top_10_sig_genus, top_sig_genus_tissues)
 #5 genera: Bacteroides, Clostridiales Unclassified, Ruminococcaceae Unclassified, 
