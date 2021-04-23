@@ -79,20 +79,20 @@ rf_feat <- read_feat_imp("results/combined_feature-importance_rf.csv") #%>%
   #Transform bactname variable into factor 
   #mutate(bactname = factor(bactname, levels = unique(as.factor(bactname))))
 
-#Function to get the top 20 features that have the largest impact on AUROC
+#Function to get the top 10 features that have the largest impact on AUROC
 #df = dataframe of feature importances for the 100 seeds
-top_20 <- function(df){
-  data_first_20 <- df %>% 
+top_10 <- function(df){
+  data_first_10 <- df %>% 
     group_by(genus) %>% 
     summarize(median = median(perf_metric_diff)) %>% #Get the median performance metric diff. for each feature
     arrange(desc(median)) %>% #Arrange from largest median to smallest
-    head(20)
+    head(10)
   
-  return(data_first_20)
+  return(data_first_10)
 }
 
-#Top 20 genera for each input dataset with the random forest model
-rf_top_feat <- top_20(rf_feat) %>% pull(genus)
+#Top 10 genera for each input dataset with the random forest model
+rf_top_feat <- top_10(rf_feat) %>% pull(genus)
 
 #Function to filter to top genera for each pairwise comparison & plot results----
 #df = dataframes of feature importances for all seeds
@@ -139,7 +139,7 @@ color_scheme <- color_scheme_df %>% pull(color)
 color_bact <- color_scheme_df %>% pull(genus)
 legend_bact <- color_scheme_df %>% pull(genus)
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
-  ggsave("results/figures/ml_top_features_genus.png", height = 5, width = 8)
+  ggsave("results/figures/ml_top_features_genus.png", height = 2.5, width = 8)
 
 #Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
 source("code/16S_common_files.R") #Reads in mothur output files
