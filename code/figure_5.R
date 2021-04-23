@@ -28,16 +28,6 @@ d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_richness_overtime_stool
 e <- ggdraw() + draw_image("results/figures/post_CDI_PEG_treatment_legend.png")
 fig <- image_graph(width = 400, height = 400, res = 96)
 plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, ncol=1, rel_heights = c(.8,.2, 1,1,1))+
-  ggsave("results/figures/figure_5.pdf", width=4.6, height=7.5)+
-  ggsave("submission/figure_5.pdf", width=4.6, height=7.5)
+  ggsave("results/figures/figure_5.pdf", width=5.5, height=9)+
+  ggsave("submission/figure_5.pdf", width=5.5, height=9)
   
-#Vert version of Fig 4 16S
-f <- ggdraw() + draw_image("results/figures/post_CDI_PEG_stool_pcoa.png", scale = 1.2)
-g <- ggdraw() + draw_image("results/figures/post_CDI_PEG_pcoa_legend_vert.png")
-h <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_lineplot_fmt.png")
-lineplot <- ggdraw() + draw_image("results/figures/post_CDI_PEG_genus_lineplot_stools.png")
-pcoa1 <- plot_grid(f,g, labels = c("A", ""), label_size = 12, nrow = 1, rel_heights = c(1,.5), rel_widths = c(1,.5))
-
-plot_grid(pcoa1, h, lineplot, labels = c("A", "B", "C"), label_size = 12, nrow = 3)+
-  ggsave("results/figures/figure_5_16S.pdf", width = 4, height = 6.7)+
-  ggsave("submission/figure_5_16S.pdf", width = 4, height = 6.7)
