@@ -6,6 +6,6 @@ b <- ggdraw() + draw_image("results/figures/5_days_PEG_weight.png")
 c <- ggdraw() + draw_image("results/figures/5_days_PEG_cfu.png")#Note scale could be removed
 
 plot_grid(a, b, c, labels = c("A", "B", "C"), label_size = 12, ncol=1)+
-  ggsave("results/figures/figure_1.pdf", width=5, height=6.5)+
-  ggsave("submission/figure_1.pdf", width=5, height=6.5)
+  ggsave("results/figures/figure_1.pdf", width=6.875, height=8.375)+
+  ggsave("submission/figure_1.pdf", width=6.875, height=8.375)
   
