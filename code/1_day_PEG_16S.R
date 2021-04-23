@@ -646,10 +646,42 @@ sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostr
                             "Acetatifactor", "Akkermansia", "Butyricicoccus")
 sig_genus_top_list_v2 <- sig_genus_top_list_v2[!(sig_genus_top_list_v2 %in% sig_genus_remove_names)]
 
+#Function to plot genus line plot with discrete day scale
+line_plot_genus_discrete <- function(sample_df, genera, timepoints, specify_linetype){
+  sample_df %>% 
+    filter(genus %in% genera) %>% #Select only genera of interest
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
+    filter(day %in% timepoints) %>% #Select only timepoints of interest
+    group_by(group, genus, day) %>% 
+    #mutate(day = as.integer(day)) %>%
+    summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
+    ggplot()+
+    geom_line(aes(x = day, y=median, color=group, group = group), linetype = specify_linetype)+
+    scale_colour_manual(name=NULL,
+                        values=color_scheme,
+                        breaks=color_groups,
+                        labels=color_labels)+
+    #scale_x_continuous(limits = c(-1.5,11), breaks = c(-1:10), labels = c(-1:10))+
+    scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+    geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+    labs(title=NULL,
+         x="Days Post-Infection",
+         y="Relative abundance (%)")+
+    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    theme_classic()+
+    theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+          strip.text = element_text(face = "italic"),
+          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+          text = element_text(size = 16),
+          legend.position = "None")
+}
+
+
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
 plot_e_days <- c("B","0", "1", "2", "3", "4", "5", "7")
-line_plot_baselinetoD1_5_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v2, plot_e_days, "solid") +
+line_plot_baselinetoD1_5_genera <- line_plot_genus_discrete(agg_genus_data_subset, sig_genus_top_list_v2, plot_e_days, "solid") +
   scale_x_discrete(limits = plot_e_days, breaks = plot_e_days, labels = plot_e_days)
 save_plot(filename = "results/figures/1_Day_PEG_genus_6_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
 
@@ -658,7 +690,7 @@ sig_genus_top_list <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
 
-line_plot_baselinetoD1_all_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list, plot_e_days, "solid")
+line_plot_baselinetoD1_all_genera <- line_plot_genus_discrete(agg_genus_data_subset, sig_genus_top_list, plot_e_days, "solid")
 save_plot(filename = "results/figures/1_Day_PEG_genus_all_baselinetoD1_lineplot.png", line_plot_baselinetoD1_all_genera, base_height = 5, base_width = 15)
 #Comparing these with the difference in AUROC in results/figure_6.pdf:
 #We select porphyromondaceae, akkermansia, enterobacteriaceae, clostridiales, ruminoccocaeae, and acetatifactor
@@ -668,7 +700,7 @@ sig_genus_top_list_v3 <- c("Acetatifactor", "Akkermansia", "Clostridiales Unclas
                              "Porphyromonadaceae Unclassified", "Ruminococcaceae Unclassified")
 facet_labels <- sig_genus_top_list
 names(facet_labels) <- sig_genus_top_list
-line_plot_baselinetoD1_6_genera <- line_plot_genus(agg_genus_data_subset, sig_genus_top_list_v3, plot_e_days, "solid")
+line_plot_baselinetoD1_6_genera <- line_plot_genus_discrete(agg_genus_data_subset, sig_genus_top_list_v3, plot_e_days, "solid")
 save_plot(filename = "results/figures/1_Day_PEG_genus_6_v2_baselinetoD1_lineplot.png", line_plot_baselinetoD1_6_genera, base_height = 5, base_width = 15)
 
   
