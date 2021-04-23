@@ -414,26 +414,6 @@ for (d in tissue_test_days){
 #Save combined Kruskal-Wallis tests at the genus level
 kw_genus_tissues %>%  write_tsv("data/process/5_days_PEG_genus_group_tissues.tsv")
 
-#Examine genera that varied between treatment groups across multiple days
-#Stool samples genera
-stool_test_days #Check days tested. Look at all timepoints post challenge
-shared_sig_stools_genus_d1tod30 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
-                                                sig_genus_stools_day3, sig_genus_stools_day4, 
-                                                sig_genus_stools_day5, sig_genus_tissues_day6,
-                                                sig_genus_stools_day10, sig_genus_stools_day30) #fill in different days to compare
-shared_sig_stools_genus_d1tod30 #only "Peptostreptococcaceae Unclassified"
-#D1 to 10 post challenge
-shared_sig_stools_genus_d1tod10 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
-                                                 sig_genus_stools_day3, sig_genus_stools_day4, 
-                                                 sig_genus_stools_day5, sig_genus_tissues_day6,
-                                                 sig_genus_stools_day10)
-shared_sig_stools_genus_d1tod10 #only "Peptostreptococcaceae Unclassified"
-#D1 to 6 post challenge
-shared_sig_stools_genus_d1tod6 <- intersect_all(sig_genus_stools_day1, sig_genus_stools_day2,                
-                                                 sig_genus_stools_day3, sig_genus_stools_day4, 
-                                                 sig_genus_stools_day5, sig_genus_tissues_day6)
-shared_sig_stools_genus_d1tod6 #4 genera
-
 #Tissue samples genera
 tissue_test_days #Check days tested. d6 and 30
 shared_sig_tissues_genus <- intersect_all(sig_genus_tissues_day6, sig_genus_tissues_day30) 
