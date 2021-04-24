@@ -57,7 +57,7 @@ metadata <- read_excel(here("data/process/metadata.xlsx"), col_types = c("text",
 
 \vspace{35mm}
 
-# An osmotic laxative renders mice susceptible to prolonged *Clostridioides difficile* colonization and hinders clearance 
+# An osmotic laxative renders mice susceptible to prolonged *Clostridioides difficile* colonization and hinders clearance
 
 \vspace{35mm}
 
@@ -84,7 +84,7 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 ## Introduction
 
-Antibiotics are a major risk factor for *Clostridioides difficile* infections (CDIs) because they disrupt microbiota colonization resistance [@Britton2014]. However, antibiotics are not the only types of medications that disrupt the microbiota [@Maier2018; @LeBastard2017; @VichVila2020]. Although, other medications (proton pump inhibitors, osmotic laxatives, antimotility agents, and opioids) have been implicated as risk or protective factors for CDIs through epidemiological studies, whether the association is due to their impact on the microbiome is still unclear [@Oh2018; @Mora2012; @Nehra2018; @Krishna2013; @Tomkovich2019]. 
+Antibiotics are a major risk factor for *Clostridioides difficile* infections (CDIs) because they disrupt microbiota colonization resistance [@Britton2014]. However, antibiotics are not the only types of medications that disrupt the microbiota [@Maier2018; @LeBastard2017; @VichVila2020]. Although, other medications (proton pump inhibitors, osmotic laxatives, antimotility agents, and opioids) have been implicated as risk or protective factors for CDIs through epidemiological studies, whether the association is due to their impact on the microbiome is still unclear [@Oh2018; @Mora2012; @Nehra2018; @Krishna2013; @Tomkovich2019].
 
 Many of the non-antibiotic medications associated with CDIs are known to modulate gastrointestinal motility leading to either increased or decreased colonic transit time, which in turn also strongly impacts microbiota composition and function [@Vandeputte2015; @VujkovicCvijin2020]. Stool consistency often serves as an approximation of intestinal motility. Our group has shown that when *C. difficile* negative controls are separated into two groups based on stool consistency, there are shared microbiota features such as lower alpha diversity in samples from CDI patients and control patients with diarrhea compared to control samples that were *C. difficile* negative with non-diarrheal consistency [@Schubert2015]. These results led to a hypothesis that bacterial communities from patients experiencing diarrhea are susceptible to developing CDIs.
 
@@ -105,13 +105,13 @@ f_d_sign_contrib <- f_d_permanova %>% arrange(desc(R2)) %>%
   filter(`Pr(>F)` < 0.05) #Only select significant contributors
 
 #List of variables that significantly explained variation in stool samples
-f_d_top_effects <- f_d_sign_contrib %>% 
+f_d_top_effects <- f_d_sign_contrib %>%
   pull(effects)
 #Sum of R2 values for variables that significantly explained variation in stool samples
-f_d_top_R2_sum <- f_d_sign_contrib %>% 
+f_d_top_R2_sum <- f_d_sign_contrib %>%
   select(R2) %>% sum
 #P-value for variables that significantly explained variation in stool samples
-f_d_top_p <- f_d_sign_contrib %>% 
+f_d_top_p <- f_d_sign_contrib %>%
   select(`Pr(>F)`) %>% max # Both p values are the same, will be rounded in text
 
 #Number of experiments represented in 5-day subset
@@ -121,30 +121,30 @@ five_day_mice <- metadata %>% filter(group == "C" & exp_num %in% c("M3","M4", "M
              group == "WMC" & exp_num %in% c("M3","M4")|
              group == "WMR" & exp_num %in% c("M5","M6"))
 #Total number of experiments in 5-day subset
-five_day_total_exp <- five_day_mice %>% 
+five_day_total_exp <- five_day_mice %>%
   filter(!duplicated(exp_num)) %>% #Remove duplicate experiment numbers
   tally() #Total number of unique experiments
 
 #PEG impacted genera
-PEG_genera <- read_tsv(here("data/process/5_days_PEG_genus_PEG_paired.tsv")) %>% 
+PEG_genera <- read_tsv(here("data/process/5_days_PEG_genus_PEG_paired.tsv")) %>%
   filter(p.value.adj < 0.05) %>% #Limit to significant genera
   tally()
 
 #Genera that were different between treatment groups
-f_d_group_genera <- read_tsv(here("data/process/5_days_PEG_genus_group_stools.tsv")) %>% 
+f_d_group_genera <- read_tsv(here("data/process/5_days_PEG_genus_group_stools.tsv")) %>%
   filter(p.value.adj < 0.05)  #Select only significant p-values
-f_d_group_total_genera <- f_d_group_genera %>% 
+f_d_group_total_genera <- f_d_group_genera %>%
   filter(!duplicated(genus))  %>% #Remove genera that appear multiple times
   tally()
 #Genera that were different between treatment groups over multiple days
-f_d_group_multi_day <- f_d_group_genera %>% 
+f_d_group_multi_day <- f_d_group_genera %>%
   filter(p.value.adj < 0.05) %>% #Select only significant p-values
-  group_by(genus) %>% 
-  tally() %>% 
+  group_by(genus) %>%
+  tally() %>%
   filter(n > 1) %>% #select genera that vary over multiple timepoints = n > 1
-  arrange(desc(n)) %>%  #Rank by how many time each genera shows up 
+  arrange(desc(n)) %>%  #Rank by how many time each genera shows up
   nrow() #24 genera includes Peptostreptococcaceae and Unclassified
- 
+
 ```
 **5-day laxative treatment differentially disrupts the fecal microbiota compared to clindamycin treatment.** Since osmotic laxatives and clindamycin have previously been shown to disrupt the murine microbiota (ref), we hypothesized the different *C. difficile* colonization dynamics between mice treated with the osmotic laxative or clindamycin were due to the two drugs having differential effects on the microbiota. We profiled the stool microbiota over time by sequencing the V4 region of the 16S rRNA gene to compare changes across treatment groups. We found time and treatment group explained half of the observed variation between fecal communities with most of the remaining variation explained by interactions between treatment group and other experimental variables including time, cage effects, and sequencing preparation (PERMANOVA combined R^2^ = `r f_d_top_R2_sum`, *P* `r format.pval(f_d_top_p, eps = 0.001)`, Fig. 2A, Data Set S1, Sheet X). Cage effects refer to the well-documented phenomenon that mice housed in the same cages have similar microbial communities due to copraphagy (ref), we tried to minimize the impact of cage effects on our experiment by breaking up cagemates when assigning mice to treatment groups and primarily housing only two mice per cage. Importantly, although we conducted a total of `r five_day_total_exp` separate experiments, the experiment number and it's interaction with treatment group was not one of the variables that significantly explained the observed variation in fecal communities (Data Set S1, Sheet X). Interestingly, none of the treatment groups recovered to their baseline community structure either 10 or 30 days post-infection suggesting other community features besides recovery to baseline were responsible for the prolonged *C. difficile* colonization in PEG-treated mice (Fig. 2B).
 
@@ -159,15 +159,15 @@ f_d_sign_contrib_t <- f_d_permanova_t %>% arrange(desc(R2)) %>%
   filter(`Pr(>F)` < 0.05) #Only select significant contributors
 
 #List of variables that significantly explained variation in tissue samples
-f_d_top_effects_t <- f_d_sign_contrib_t %>% 
+f_d_top_effects_t <- f_d_sign_contrib_t %>%
   pull(effects)
 #Sum of R2 values for variables that significantly explained variation in tissue samples
-f_d_top_R2_sum_t <- f_d_sign_contrib_t %>% 
+f_d_top_R2_sum_t <- f_d_sign_contrib_t %>%
   select(R2) %>% sum
 #P-value for variables that significantly explained variation in tissue samples
-f_d_top_p_t <- f_d_sign_contrib_t %>% 
+f_d_top_p_t <- f_d_sign_contrib_t %>%
   select(`Pr(>F)`) %>% max # P value will be rounded in text
- 
+
 ```
 **5-day laxative treatment does not promote more severe CDIs despite altering the mucosal microbiota.** Given the findings from a previous study that demonstrated that PEG treatment disrupts the mucus layer and alters the immune response in mice [@Tropini2018], we decided to examine the impact of PEG treatment on the mucosal microbiota and CDI severity. To evaluate the mucosal microbiota, we sequenced snips of tissue collected from the cecum, proximal colon, and distal colon. Similar to what was observed with the stool samples, alpha diversity was lower in the PEG-treated mice compared to clindamycin treatment (Fig. 3A). Although alpha diversity continued to increase over time based on the communities from PEG-treated mice collected at 20 and 30 days post-infection (Fig. 3A, Data Set S1, Sheet X). Group, day of the experiment, and their interactions with other variables (cage, experiment number, and sample type) explained the majority of the variation observed in mucosal communities (PERMANOVA combined R^2^ = `r f_d_top_R2_sum_t`, *P* `r format.pval(f_d_top_p_t, eps = 0.05)`, Fig. 3B, Data Set S1, Sheet X). We saw the greatest difference in the mucosal microbiota between treatment groups at 6 days post-infection with 16 (insert code instead) genera that were significantly different in all three of the tissue types we collected (cecum, proximal colon, and distal colon; Fig. S3A, Data Set S1, Sheet X). However, at 30 days post-infection only *Bacteroides*, *Clostridiales*, *Firmicutes*, and *Ruminococcaceae* were different between treatment groups and just in the cecum tissues (Fig. 3C, Fig. 2E, Data Set S1, Sheet X). Interestingly, one of the genera that was different between treatment groups at 6 days post-infection was *Peptostreptococcaceae* (the genera with sequences that match C. difficile). *Peptostreptococcaceae* was primarily only present in the 5-day PEG treatment group of mice and decreased in the proximal and distal colon tissues over time (Fig. S2B). Thus, PEG treatment had a significant impact on the mucosal microbiota and we detected *C. difficile* sequences in the cecum, proximal colon, and distal colon tissue communities.
 
@@ -178,25 +178,25 @@ Next, we examined CDI severity by evaluating cecum and colon histopathology [@Re
 
 #Genera that were different between treatment days
 #Genera that were changed by treatment
-pt_d1 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_PTtoD1.tsv")) %>% 
-  filter(p.value.adj < 0.05) 
+pt_d1 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_PTtoD1.tsv")) %>%
+  filter(p.value.adj < 0.05)
 #Genera that were still different at 7 days post-infection  
-pt_d7 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_PTtoD7.tsv")) %>% 
+pt_d7 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_PTtoD7.tsv")) %>%
   filter(p.value.adj < 0.05)
 pt_d7_genera <- pt_d7 %>% pull(genus)
 
-recovered_genera <- pt_d1 %>% 
+recovered_genera <- pt_d1 %>%
   filter(!genus %in% pt_d7_genera) %>% #Remove genera that were still different at day 7
   nrow() #Tally number of rows
 
 
 ```
-**1-day laxative treatment results in transient *C. difficile* colonization and minor microbiota disruption** Next, we decided to examine how a shorter osmotic laxative perturbation would impact the microbiome and susceptibility to *C. difficile*. We administered mice either a 1-day PEG treatment, a 1-day PEG treatment with a 1-day recovery period, or a clindamycin treatment before challenging them with *C. difficile 630* (Fig. 3A). In contrast to the 5-day PEG treated mice, the 1-day PEG treated mice were only transiently colonized and cleared *C. difficile* by 7 days post-infection (Fig. 3B). The stool communities of PEG-treated mice were also only transiently disrupted, with Shannon diversity close to baseline by 7 days post-infection (Fig. 3C-D). We found `r recovered_genera` bacteria were impacted by treatment but recovered close to baseline levels within 7 days post-infection including *Enterobacteriaceae*, *Clostridiales*, *Porpyromonadaceae*, and *Ruminococcaceae* (Fig. 3E, Data Set S1, Sheet X). These findings suggest the duration of treatment matters when considering the impact of the laxatives, with shorter treatments resulting in a transient loss of *C. difficile* colonization resistance. 
+**1-day laxative treatment results in transient *C. difficile* colonization and minor microbiota disruption** Next, we decided to examine how a shorter osmotic laxative perturbation would impact the microbiome and susceptibility to *C. difficile*. We administered mice either a 1-day PEG treatment, a 1-day PEG treatment with a 1-day recovery period, or a clindamycin treatment before challenging them with *C. difficile 630* (Fig. 3A). In contrast to the 5-day PEG treated mice, the 1-day PEG treated mice were only transiently colonized and cleared *C. difficile* by 7 days post-infection (Fig. 3B). The stool communities of PEG-treated mice were also only transiently disrupted, with Shannon diversity close to baseline by 7 days post-infection (Fig. 3C-D). We found `r recovered_genera` bacteria were impacted by treatment but recovered close to baseline levels within 7 days post-infection including *Enterobacteriaceae*, *Clostridiales*, *Porpyromonadaceae*, and *Ruminococcaceae* (Fig. 3E, Data Set S1, Sheet X). These findings suggest the duration of treatment matters when considering the impact of the laxatives, with shorter treatments resulting in a transient loss of *C. difficile* colonization resistance.
 
-**Post-CDI laxative treatment disrupts clearance in clindamycin-treated mice regardless of whether an FMT is also administered** Since 1-day PEG treatment resulted in a more mild microbiota perturbation, we decided to use the 1-day treatment to examine the hypothesis that PEG helps to flush *C. difficile* spores from the intestine. We were also interested in exploring whether PEG might help with engraftment in the context of FMTs. To examine the impact of PEG treatment on *C. difficile* clearance and FMT treatment, we treated 4 groups of mice with clindamycin and then challenged all mice with *C. difficile* before administering the following treatments: no additional treatment, 1-day PEG immediately after challenge, and 1-day PEG treatment 3 days after challenge followed by either administration of an FMT or PBS solution via gavage (Fig. 5A). In contrast to our hypothesis, all groups of mice that received PEG actually exhibited prolonged *C. difficile* colonization (Fig. 5B). 
+**Post-CDI laxative treatment disrupts clearance in clindamycin-treated mice regardless of whether an FMT is also administered** Since 1-day PEG treatment resulted in a more mild microbiota perturbation, we decided to use the 1-day treatment to examine the hypothesis that PEG helps to flush *C. difficile* spores from the intestine. We were also interested in exploring whether PEG might help with engraftment in the context of FMTs. To examine the impact of PEG treatment on *C. difficile* clearance and FMT treatment, we treated 4 groups of mice with clindamycin and then challenged all mice with *C. difficile* before administering the following treatments: no additional treatment, 1-day PEG immediately after challenge, and 1-day PEG treatment 3 days after challenge followed by either administration of an FMT or PBS solution via gavage (Fig. 5A). In contrast to our hypothesis, all groups of mice that received PEG actually exhibited prolonged *C. difficile* colonization (Fig. 5B).
 
 * Draft of results
- 
+
   + Prolonged *C. difficile* colonization in post-CDI PEG treated mice (Fig. 5B)
   + FMT appears to partially restore alpha diversity (Shannon, but not richness Fig. 5C-D)
   + PCoA (necessary?) Could comment on the clustering of Clindamycin and PEG-treated mice that received FMT (Fig. 6A)
@@ -205,10 +205,10 @@ recovered_genera <- pt_d1 %>%
 
 ``` {r ml results}
 #AUC results
-auc_results <-  read_csv(here("results/performance_results.csv")) %>% 
+auc_results <-  read_csv(here("results/performance_results.csv")) %>%
   mutate(taxa_level = "genus") %>%  
-  group_by(method) %>% 
-  summarize(median = median(AUC)) %>% 
+  group_by(method) %>%
+  summarize(median = median(AUC)) %>%
   arrange(desc(median))
 #Highest AUC value
 max_auc <- auc_results %>% select(median) %>% max()
@@ -238,7 +238,7 @@ Previous work examining the impact of PEG on the murine microbiota found that PE
 ## Conclusions
 
 ## Acknowledgements
-We thank members of the Schloss lab for feedback on planning the experiments and data presentation. We thank Andrew Henry for help with media preparation and bacterial culture and the Microbiology and Immunology department's postdoc association writing group members for their feedback on manuscript drafts. We also thank the Unit for Laboratory Animal Medicine at the University of Michigan for maintaining our mouse colony and providing the institutional support for our mouse experiments. Finally, we thank Kwi Kim, Austin Campbell, and Kimberly Vendrov for their help in maintaining the Schloss lab's anaerobic chamber. This work was supported by the National Institutes of Health (U01AI124255). ST was supported by the Michigan Institute for Clincial and Health Research Postdoctoral Translation Scholars Program (UL1TR002240 from the National Center for Advancing Translational Sciences). 
+We thank members of the Schloss lab for feedback on planning the experiments and data presentation. We thank Andrew Henry for help with media preparation and bacterial culture and the Microbiology and Immunology department's postdoc association writing group members for their feedback on manuscript drafts. We also thank the Unit for Laboratory Animal Medicine at the University of Michigan for maintaining our mouse colony and providing the institutional support for our mouse experiments. Finally, we thank Kwi Kim, Austin Campbell, and Kimberly Vendrov for their help in maintaining the Schloss lab's anaerobic chamber. This work was supported by the National Institutes of Health (U01AI124255). ST was supported by the Michigan Institute for Clincial and Health Research Postdoctoral Translation Scholars Program (UL1TR002240 from the National Center for Advancing Translational Sciences).
 
 ## Materials and Methods
 
@@ -251,11 +251,11 @@ five_day_mice <- metadata %>% filter(group == "C" & exp_num %in% c("M3","M4", "M
              group == "WM" & exp_num %in% c("M3","M4", "M5", "M8")|
              group == "WMC" & exp_num %in% c("M3","M4")|
              group == "WMR" & exp_num %in% c("M5","M6"))
-five_d_cfu <- five_day_mice %>% 
+five_d_cfu <- five_day_mice %>%
   filter(sample_type == "stool") %>% #Select only stool samples
   filter(day %in% c(0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 15, 20, 25, 30)) %>%  #select timepoints on plot
   filter(!is.na(avg_cfu)) %>% #Remove rows with NA values
-  group_by(day) %>% 
+  group_by(day) %>%
   count()
 #Figure out min & max number of samples we had cfu counts for
 five_d_cfu_n_min <- min(five_d_cfu$n)
@@ -265,7 +265,7 @@ five_d_cfu_n_max <- max(five_d_cfu$n)
 
 \includegraphics{figure_1.pdf}
 
-**Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for experiments with 5-day PEG treated mice. Clindamycin was administered at 10 mg/kg by intraperitoneal injection. 15% PEG 3350 was administered in the drinking water for five days. B. Weight change from baseline weight in groups after treatment with PEG and/or clindamycin, followed by *C. difficile* challenge. C. *C. difficile* CFU/gram stool measured over time (N = `r five_d_cfu_n_min`-`r five_d_cfu_n_max` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. For B-C, lines represent the median for each treatment group and circles represent samples from individual mice. Asterisks indicate timepoints where the weight change or CFU/g was significantly different between groups by the Kruskal-Wallis test with Benjamini-Hochberg correction for testing multiple timepoints. The data presented are from a total of `r five_day_total_exp` separate experiments. 
+**Figure 1. 5-day PEG treatment prolongs susceptibility and mice become persistently colonized with *C. difficile*.** A. Setup of the experimental timeline for experiments with 5-day PEG treated mice. Clindamycin was administered at 10 mg/kg by intraperitoneal injection. 15% PEG 3350 was administered in the drinking water for five days. B. Weight change from baseline weight in groups after treatment with PEG and/or clindamycin, followed by *C. difficile* challenge. C. *C. difficile* CFU/gram stool measured over time (N = `r five_d_cfu_n_min`-`r five_d_cfu_n_max` mice per timepoint) via serial dilutions. The black line represents the limit of detection for the first serial dilution. CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. For B-C, lines represent the median for each treatment group and circles represent samples from individual mice. Asterisks indicate timepoints where the weight change or CFU/g was significantly different between groups by the Kruskal-Wallis test with Benjamini-Hochberg correction for testing multiple timepoints. The data presented are from a total of `r five_day_total_exp` separate experiments.
 \newpage
 
 \includegraphics{figure_2.pdf}
@@ -273,7 +273,7 @@ five_d_cfu_n_max <- max(five_d_cfu$n)
 \newpage
 
 \includegraphics{figure_3.pdf}
-**Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered.** A. 
+**Figure 3. 5-day PEG treatment does not result in more severe CDIs, although mucosal microbiota is altered.** A.
 \newpage
 
 ``` {r figure_4_permanova}
@@ -292,7 +292,7 @@ one_day_samples_per_day <- metadata %>%
              group == "1RM1" & exp_num %in% c("M6R")| #Had to differentiate experiment 6 from 6R in the metadata to create unique_mouse_id that wouldn't overlap for the M1 & 1RM1 mice that are both labeled with mouse_ids that are #s1-6
              group == "M1" & exp_num %in% c("M6")) %>%
   group_by(day) %>%
-  count() 
+  count()
 #To Do: this code is not specific for CFU values or the timepoints shown on panel B
 one_day_sample_min <- min(one_day_samples_per_day$n)
 one_day_sample_max <- max(one_day_samples_per_day$n)
@@ -300,27 +300,36 @@ one_day_sample_max <- max(one_day_samples_per_day$n)
 
 ```
 \includegraphics{figure_4.pdf}
-**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = `r one_day_sample_min`-`r one_day_sample_max` mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was significantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon diversity Index of the groups over time.  Only days with samples from all groups are shown. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection. 
+**Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = `r one_day_sample_min`-`r one_day_sample_max` mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was significantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon diversity Index of the groups over time.  Only days with samples from all groups are shown. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection.
+
+``` {r figure_5_permanova}
+fig_5_permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
+r_sq_ordered_perm = permanova_results %>% arrange(desc(R2)) %>%
+  select(`effects`, `R2`, `Pr(>F)`) %>%
+  filter(`Pr(>F)` < .05) #filter for sig
+fig_5_permanova_sig_P_val <- r_sq_ordered_perm[,3] %>% sum()
+fig_5_permanova_sig_R2 <- r_sq_ordered_perm[,2] %>% sum() #0.9280951
+```
 
 \includegraphics{figure_5.pdf}
-**Figure 5. 1-day PEG treatment post *C. difficile* challenge prolongs colonization regardless of whether an FMT is also administered.** A. Experimental timeline for groups receiving PEG treatment post clindamycin gavage. B. Median and individual CFU/g of C. difficile measured over time via culture. Asterisks indicate time points with significant differences between groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction. Limit of detection is 1e2 CFU/g. Background shading indicates PEG treatment period for applicable groups. Opacity of points reflects time point. C. Median and individual Shannon Diversity measured over time. Asterisks, background shading, and opacity of points consistent with (B). D. Median and individual richness measured over time. Asterisks, background shading, and opacity of points consistent with (B).
-
+**Figure 5. 1-day PEG treatment post *C. difficile* challenge prolongs colonization regardless of whether an FMT is also administered.** All mice were administered 10 mg/kg clindamycin intraperitoneally (IP) 1 day before challenge with C. difﬁcile 630 spores on day 0. 15% PEG 3350 was administered in the drinking water for 1 day. Mice feces were collected daily through the end of the experiment (30 days post-infection for Clind. + 1-day PEG group, 15 days post-infection for all others). CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. B. CFU/g of C. difficile stool measured over time via serial dilutions. C. Median and individual Shannon Diversity measured over time. D. Median and individual richness measured over time. B-D. Asterisks indicate time points with significant differences between groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction for testing multiple times points. Black line represents the limit of detection for the first serial dilution. Background shading indicates PEG treatment period for applicable groups. Opacity of points reflects time point. The data presented are from a total of *** separate experiments.
 \newpage
+
 \includegraphics{figure_6.pdf}
-**Figure 6. For 1-day PEG treatment post *C. difficile* challenge mice that also receive an FMT only some bacterial genera were restored.** A. PCoA of all groups + FMT plotted over time. Opacity of points reflects time point. B. Relative abundance of genera significantly different over multiple time points post FMT or PBS treatment, plotted over time. Limit of detection is .1%. C. Relative abundances of top 6 significant genera ranked by number of days significant, plotted over time. Limit of detection is .1%. 
+**Figure 6. For 1-day PEG treatment post *C. difficile* challenge mice that also receive an FMT only some bacterial genera were restored.** A. PCoA of all groups + FMT plotted over time. Opacity of points reflects time point. B. Relative abundance of genera significantly different over multiple time points post FMT or PBS treatment, plotted over time. Limit of detection is .1%. C. Relative abundances of top 6 significant genera ranked by number of days significant, plotted over time. Limit of detection is .1%.
 
 \newpage
 
 \includegraphics{figure_7.pdf}
-**Figure 7. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.** A. 
+**Figure 7. Specific microbiota features associated with prolonged *C. difficile* colonization in PEG treated mice.** A.
 \newpage
 
 \includegraphics{figure_8.pdf}
-**Figure 8. Schematic summarizing findings.** A. 
+**Figure 8. Schematic summarizing findings.** A.
 \newpage
 
 \includegraphics{figure_S1.pdf}
-**Figure S1. 5-day PEG treatment plus 10-day recovery mice microbiota dynamics post-infection.** A. 
+**Figure S1. 5-day PEG treatment plus 10-day recovery mice microbiota dynamics post-infection.** A.
 \newpage
 
 \includegraphics{figure_S2.pdf}
@@ -328,11 +337,11 @@ one_day_sample_max <- max(one_day_samples_per_day$n)
 \newpage
 
 \includegraphics{figure_S3.pdf}
-**Figure S3. *C. difficile* challenge does not enhance the disruptive effect of PEG on the microbiota.** A. 
+**Figure S3. *C. difficile* challenge does not enhance the disruptive effect of PEG on the microbiota.** A.
 \newpage
 
 \includegraphics{figure_S4.pdf}
-**Figure S4. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization. Ex. *Muribaculum intestinale*.** A. 
+**Figure S4. Specific OTUs associated with clearance that are mostly absent in mice with prolonged *C. difficile* colonization. Ex. *Muribaculum intestinale*.** A.
 \newpage
 
 ## References

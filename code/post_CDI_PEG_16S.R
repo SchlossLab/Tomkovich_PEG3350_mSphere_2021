@@ -318,9 +318,12 @@ pcoa_axes_post_cdi_PEG_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg33
 axis1_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 axis2_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
 
-#Import current R-squared values and P values for top contributing to PCoA
-#permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
-#r_sq_ordered_perm = permanova_results %>% arrange(desc(R2))
+#fig_5_permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
+#r_sq_ordered_perm = permanova_results %>% arrange(desc(R2)) %>% 
+#  select(`effects`, `R2`, `Pr(>F)`) %>%
+#  filter(`Pr(>F)` < .05) #filter for sig
+#fig_5_permanova_sig_P_val <- r_sq_ordered_perm[,3] %>% sum()
+#fig_5_permanova_sig_R2 <- r_sq_ordered_perm[,2] %>% sum() #0.9280951 
 # Select top 2 contributors (3 to include the total header at the top where R2=1)
 #top_2_contrib = top_n(r_sq_ordered_perm, 3, R2) #top two R2 for this subset is group:unique_cage_no instead of group, unlike 1 day subset
 #top_R2 = signif(top_2_contrib[2,6], 4)
