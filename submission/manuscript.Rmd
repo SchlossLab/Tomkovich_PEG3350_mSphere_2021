@@ -3,11 +3,11 @@ title: ''
 csl: mbio.csl #Get themes at https://github.com/citation-style-language/styles
 fontsize: 11pt
 output:
-  word_document: default
   pdf_document:
     includes:
       in_header: header.tex
     keep_tex: yes
+  word_document: default
   html_document:
     df_print: paged
 geometry: margin=1.0in
@@ -303,8 +303,8 @@ one_day_sample_max <- max(one_day_samples_per_day$n)
 **Figure 4. 1-day PEG treatment renders mice susceptible to transient *C. difficile* colonization.** A. Setup of the experimental timeline for the 1-day PEG treated subset of mice. B. CFU/gram stool measured over time (N = `r one_day_sample_min`-`r one_day_sample_max` mice per timepoint) via several dilutions. The black dotted line represents the limit of detection for the first serial dilution. Asterisks indicate timepoints where the CFU/gram was significantly different between groups using the Kruskall-Wallis test with a Benjamini-Hochberg correction for multiple timepoints. C. Principle Coordinate Analysis plot of the groups over time with the alpha representating the same time scale as in panel D (`r one_day_top_contrib_name`: R^2^ = `r top_R2`; `r one_day_sec_contrib_name`: R^2^ = `r sec_R2`). D. Shannon diversity Index of the groups over time.  Only days with samples from all groups are shown. E. Line plots of relative percent abundance of selected genera over time. Only days with samples from all groups shown. The gray line represents the limit of detection.
 
 ``` {r figure_5_permanova}
-fig_5_permanova_results = read_tsv("data/process/post_CDI_PEG_permanova_stools.tsv")
-r_sq_ordered_perm = permanova_results %>% arrange(desc(R2)) %>%
+fig_5_permanova_results = read_tsv(here("data/process/post_CDI_PEG_permanova_stools.tsv"))
+r_sq_ordered_perm = fig_5_permanova_results %>% arrange(desc(R2)) %>%
   select(`effects`, `R2`, `Pr(>F)`) %>%
   filter(`Pr(>F)` < .05) #filter for sig
 fig_5_permanova_sig_P_val <- r_sq_ordered_perm[,3] %>% sum()
@@ -312,7 +312,7 @@ fig_5_permanova_sig_R2 <- r_sq_ordered_perm[,2] %>% sum() #0.9280951
 ```
 
 \includegraphics{figure_5.pdf}
-**Figure 5. 1-day PEG treatment post *C. difficile* challenge prolongs colonization regardless of whether an FMT is also administered.** All mice were administered 10 mg/kg clindamycin intraperitoneally (IP) 1 day before challenge with C. difﬁcile 630 spores on day 0. 15% PEG 3350 was administered in the drinking water for 1 day. Mice feces were collected daily through the end of the experiment (30 days post-infection for Clind. + 1-day PEG group, 15 days post-infection for all others). CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. B. CFU/g of C. difficile stool measured over time via serial dilutions. C. Median and individual Shannon Diversity measured over time. D. Median and individual richness measured over time. B-D. Asterisks indicate time points with significant differences between groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction for testing multiple times points. Black line represents the limit of detection for the first serial dilution. Background shading indicates PEG treatment period for applicable groups. Opacity of points reflects time point. The data presented are from a total of *** separate experiments.
+**Figure 5. 1-day PEG treatment post *C. difficile* challenge prolongs colonization regardless of whether an FMT is also administered.** All mice were administered 10 mg/kg clindamycin intraperitoneally (IP) 1 day before challenge with *C. difficile* 630 spores on day 0. 15% PEG 3350 was administered in the drinking water for 1 day. Mice feces were collected daily through the end of the experiment (30 days post-infection for Clind. + 1-day PEG group, 15 days post-infection for all others). CFU quantification data was not available for each mouse due to stool sampling difficulties (particularly the day the mice came off of the PEG treatment) or early deaths. B. CFU/g of *C. difficile* stool measured over time via serial dilutions. C. Median and individual Shannon Diversity measured over time. D. Median and individual richness measured over time. B-D. Asterisks indicate time points with significant differences between groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction for testing multiple times points. Black line represents the limit of detection for the first serial dilution. Background shading indicates PEG treatment period for applicable groups. Opacity of points reflects time point. The data presented are from a total of *** separate experiments.
 \newpage
 
 \includegraphics{figure_6.pdf}
