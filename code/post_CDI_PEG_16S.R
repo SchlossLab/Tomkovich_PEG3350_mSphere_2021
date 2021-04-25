@@ -542,6 +542,9 @@ for (d in c(-1, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 15)){
   kw_genus_stools <- add_row(kw_genus_stools, stats)  #combine all the dataframes together
 }
 
+#Save combined Kruskal-Wallis tests at the genus level
+kw_genus_stools %>% write_tsv("data/process/post_CDI_PEG_genus_group_stools.tsv")
+
 #Shared significant genera across from Day 2, 3, 5, 6, 7, 8, 10, 15
 shared_sig_genus_D2toD15 <- intersect_all(sig_genus_day2, sig_genus_day3, sig_genus_day5, sig_genus_day6, sig_genus_day7, sig_genus_day8, sig_genus_day9, sig_genus_day10, sig_genus_day15)
 view(shared_sig_genus_D2toD15)
