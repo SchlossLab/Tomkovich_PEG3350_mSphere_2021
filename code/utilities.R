@@ -329,6 +329,13 @@ get_rel_abund_median_day <- function(x){
     spread(key=day, value=median)
 }
 
+get_rel_abund_median_clearance_status <- function(x){
+  x %>%
+    group_by(clearance_status_d10) %>%
+    summarize(median=median(agg_rel_abund)) %>%
+    spread(key=clearance_status_d10, value=median)
+}
+
 #Function to pull significant days (adjusted p value < 0.05) after Kruskal-Wallis statistical analysis
 pull_sig_days <- function(dataframe){
   dataframe %>% 
