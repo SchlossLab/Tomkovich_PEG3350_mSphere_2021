@@ -180,10 +180,10 @@ Next, we examined CDI severity by evaluating cecum and colon histopathology [@Re
 
 #Genera that were different between treatment days
 #Genera that were changed by treatment
-pt_d1 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_PTtoD1.tsv")) %>%
+pt_d1 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_BtoD1.tsv")) %>%
   filter(p.value.adj < 0.05)
 #Genera that were still different at 7 days post-infection  
-pt_d7 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_PTtoD7.tsv")) %>%
+pt_d7 <- read_tsv(here("data/process/1_Day_PEG_genus_stats_BtoD7.tsv")) %>%
   filter(p.value.adj < 0.05)
 pt_d7_genera <- pt_d7 %>% pull(genus)
 
