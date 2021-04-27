@@ -28,34 +28,22 @@ seed <- 19760620
 metadata <- metadata %>%
   mutate(day = as.integer(day))  #Day variable (transformed to integer to get rid of decimals on PCoA animation
 
-#Analysis of project data
-#Use subsample shared file (removes samples with < 1000 sequences)
-otu_data <- read_tsv("data/process/peg3350.opti_mcc.0.03.subsample.shared") %>%
+#Analysis of project data at the genus level
+genus_data <- read_tsv("data/process/peg3350.subsample.genus.shared") %>%
   select(-label, -numOtus) %>%
   rename(unique_label = Group) %>% 
   left_join(select(metadata, group, unique_label, day, avg_cfu), by = "unique_label") #Join to metadata
 
-#Read in taxonomy labels
-network_labels <- read_tsv(file="data/process/peg3350.taxonomy") %>%
-  select(-Size) %>%
-  mutate(key=OTU) %>%
-  mutate(key=str_to_upper(key)) %>%
-  mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
-  mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>%
-  mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>%
-  mutate(taxa=str_replace_all(taxa, c("Clostridium_" = "Clostridium "))) %>% 
-  mutate(taxa=gsub(".*;","",taxa)) %>%
-  mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>%
-  mutate(taxa=gsub('[0-9]+', '', taxa)) %>%
-  mutate(taxa=str_remove_all(taxa, "[(100)]")) %>%
-  unite(key, taxa, key, sep=" (") %>%
-  mutate(key = paste(key,")", sep="")) %>%
-  select(-OTU, -Taxonomy) %>%
-  rename(otu=key) %>%
-  mutate(otu=paste0(gsub('TU0*', 'TU ', otu))) %>%
-  separate(otu, into = c("bactname", "OTUnumber"), sep = "\\ [(]", remove = FALSE) %>% #Add columns to separate bacteria name from OTU number to utilize ggtext so that only bacteria name is italicized
-  mutate(otu_name = glue("*{bactname}* ({OTUnumber}")) %>% #Markdown notation so that only bacteria name is italicized
-  pull(otu_name)
+#Read in taxonomy labels at the genus level
+## Import genus-level taxonomy into data frame and clean up names
+network_labels <- read_tsv(file="data/process/peg3350.genus.taxonomy") %>%
+  rename_all(tolower) %>% #remove uppercase from column names
+  rename(genus = taxonomy) %>% #Rename taxonomy to genus
+  # Clean up genus names  
+  mutate(genus=str_replace_all(genus, c('Bacteria_unclassified' = 'Unclassified',
+                                        "Clostridium_" = "Clostridium ", #Remove underscores after Clostridium
+                                        "_" = " ", #Removes all other underscores
+                                        "unclassified" = "unclassified")))
 
 #Arguments for spiec-easi
 se_pargs <- list(rep.num=99, seed = seed, ncores = 4)
@@ -67,28 +55,28 @@ radian.rescale <- function(x, start=0, direction=1) {
 }
 
 #Test of spiec-easi
-se_peg <- otu_data %>% 
+se_peg <- genus_data %>% 
   filter(group %in% c("WM", "WMC", "WMR",
                       "M1", "1RM1",
                       "CWM", "FRM", "RM") & day > 0) %>% 
   select(-unique_label, -group, -day, Cdiff = avg_cfu) %>% 
   filter(!is.na(Cdiff))
-se_peg <- otu_data %>% 
-  filter(group == "WM" & day > 0) %>% 
-  select(-unique_label, -group, -day, Cdiff = avg_cfu) %>% 
-  filter(!is.na(Cdiff))
+#se_peg <- genus_data %>% 
+#  filter(group == "WMR" & day > 0) %>% 
+#  select(-unique_label, -group, -day, Cdiff = avg_cfu) %>% 
+#  filter(!is.na(Cdiff))
 
-otus_present <- se_peg %>% 
+genera_present <- se_peg %>% 
   summarise_all(function(x){
-                  sum(x >= 1) >= .1 * nrow(se_wm) #select OTUS present in 10% of samples for the group of interest
+                  sum(x >= 1) >= .1 * nrow(se_peg) #select OTUS present in 10% of samples for the group of interest
           }) %>% 
   gather(OTU, present) %>% 
   filter(present == TRUE) %>% 
   pull(OTU)
 
-#Taking two long with all OTUs. Limit to 10% of OTUs in the selected group (69 OTUs total)
+#Taking two long with all OTUs. Limit to 10% of OTUs in the selected group (25 OTUs total)
 se_peg <- se_peg %>% 
-  select(otus_present) %>% 
+  select(genera_present) %>% 
   as.matrix
 
 se_model <- spiec.easi(se_peg, method = 'mb', lambda.min.ratio = 1e-3, nlambda = 500,
@@ -104,7 +92,7 @@ wm_plot <- plot(ig.mb, layout = se_coord, vertex.size = vsize, vertex.label=NA, 
 
 # determine edge weights
 se_beta <- symBeta(getOptBeta(se_model), mode='maxabs')
-elist.mb <- summary(sebeta)
+elist.mb <- summary(se_beta)
 hist(elist.mb[,3], main='', xlab = 'edge weights')
 
 #Degree statistics from the network
@@ -178,85 +166,4 @@ peg_network_graph <- ggnet2(se_output$cdiff_network, mode = 'kamadakawai',
   ylim(-0.1, 1) + xlim(-0.1, 1.1) + 
   theme(axis.title = element_blank(), axis.text =element_blank(),
         axis.ticks = element_blank())
-
-
-networks <- list(clinda_network, strep_network, cef_network, strep_colonized_network, cef_colonized_network)
-# centrality
-# all look fairly similar
-# slightly lower amount of high degree for comminities remaining colonized
-# Cef has significantly different betweenness, 
-#  cleared communities have much higher betweenness centrality
-#   so cleared communities have slightly more connections 
-get_centrality <- function(x){
-  net <- x$full_network
-  tibble(antibiotic = x$antibiotic,
-         clearance = x$clearance,
-         #otu = x$all_otus,
-         degree = igraph::degree(net, mode="in"), # number of its adjacent edges
-         betweenness = igraph::betweenness(net, directed=T, weights=NA)) %>% # the number of shortest paths going through node
-    gather(metric, value, -antibiotic, -clearance)
-}
-
-centrality_df <- map_dfr(networks, get_centrality) 
-# test diffs
-pvalue_df <- centrality_df %>% 
-  mutate(subset = paste(antibiotic, clearance, sep = '_')) %>% 
-  select(metric, subset, value) %>% 
-  group_by(metric) %>% 
-  nest()  %>% 
-  mutate(data = map(data, function(data) nest(group_by(data, subset)))) %>% 	
-  mutate(data = map(data, function(nested_df){
-    test_df <- sapply(nested_df$data, function(x) sapply(nested_df$data, function(y) wilcox.test(x$value,y$value)$p.value)) %>% 
-      data.frame
-    test_df[upper.tri(test_df)] <- NA # set all of upper triangle to 1 to eliminate duplicate comparisons
-    colnames(test_df) <- nested_df$subset
-    test_df <- test_df %>% 
-      mutate(row_names = nested_df$subset) %>% 
-      pivot_longer(col = -row_names, names_to = 'col_names', values_to = 'pvalue') %>% 
-      filter(pvalue != 1, !is.na(pvalue)) %>% # eliminate all self comparisons and upper triangle
-      mutate(pvalue = p.adjust(pvalue, method = 'BH')) # correct p values
-    return(test_df)
-  })) %>% 
-  unnest(data)
-
-annotation_df <- data.frame(metric = rep(c('Degree Centrality', 'Betweenness Centrality'), each = 6),
-                            x1=c(1, 1, 2.85, 2.85, 3.15, 3.15, 1, 1, 2.85, 2.85, 3.15, 3.15), 
-                            x2=c(1.85, 2.15, 1.85, 2.15, 1.85, 2.15, 1.85, 2.15, 1.85, 2.15, 1.85, 2.15), 
-                            xnote = c(1.5, 1.5, 2.5, 2.5, 2.5, 2.5, 1.5, 1.5, 2.5, 2.5, 2.5, 2.5),
-                            y1 = c(10^0.843, 10^0.878, 10^0.913, 10^0.948, 10^0.983, 10^1.018, 
-                                   10^2.41, 10^2.51, 10^2.61, 10^2.71, 10^2.81, 10^2.91),
-                            ynote = c(10^0.8445, 10^0.8795, 10^0.9145, 10^0.9495, 10^0.9845, 10^1.0195, 
-                                      10^2.42, 10^2.52, 10^2.62, 10^2.72, 10^2.82, 10^2.92),
-                            annotations='*', clearance = 'NA', antibiotic = 'NA')
-
-centrality_plot <- centrality_df %>% 
-  mutate(antibiotic = factor(antibiotic, levels = c('Clindamycin', 'Cefoperazone', 'Streptomycin')),
-         metric = case_when(metric == 'betweenness' ~ 'Betweenness Centrality',
-                            metric == 'degree' ~ 'Degree Centrality',
-                            T ~ metric)) %>% 
-  ggplot(aes(x = antibiotic, y = value + .1, fill = clearance, color = antibiotic)) + 
-  geom_boxplot(width = 0.6,  position = position_dodge2(preserve = "single"),
-               show.legend = F) + 
-  geom_point(size = NA, shape = 22) + 
-  scale_color_manual(values = abx_color$color, limits = abx_color$abx) + 
-  scale_fill_manual(values = c(NA, 'gray'), limits = c('Cleared', 'Colonized')) + 
-  facet_wrap(.~metric, scales = 'free') + 
-  scale_y_log10(breaks = c(0.1, 1, 10, 100),
-                labels = c('0', '1', '10', '100')) + 
-  guides(color = 'none') + theme_bw() + 
-  labs(x = NULL, y = NULL, fill = NULL) +
-  theme(legend.position = c(0.5, 0.565),
-        panel.spacing = unit(5,'lines'),
-        strip.background = element_blank(),
-        strip.text = element_text(size = 14)) +
-  guides(fill = guide_legend(override.aes = list(size = 5))) + 
-  geom_text(data = annotation_df, aes(x = xnote, y = ynote, label = annotations), 
-            color = 'black') +
-  geom_segment(data = annotation_df, aes(x = x1, xend = x2, y = y1, yend = y1), 
-               color = 'black', size = 0.25)
-
-
-#igraph tutorial---- https://kateto.net/netscix2016.html 
-gl <- graph(edges=c(1,2, 2,3, 3,1), n =3, directed =F)
-plot(gl)  
 
