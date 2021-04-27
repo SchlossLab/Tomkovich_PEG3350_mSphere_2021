@@ -130,6 +130,10 @@ mouse_id	group	cage_no	ear_mark	day	tube_label	exp_num	unique_label	ext_plate	ex
 16	C	8	1R	4	C 16 D4 10/25/2019	M8	M8C16D4	plate_2	H7	NA	2020-01-30T00:00:00Z	2020-02-13T00:00:00Z	2020-02-13T00:00:00Z	motility_plates_1-2	2020-02-23T00:00:00Z	NA
 17	C	9	N	4	C 17 D4 10/25/2019	M8	M8C17D4	plate_2	H8	NA	2020-01-30T00:00:00Z	2020-02-13T00:00:00Z	2020-02-13T00:00:00Z	motility_plates_1-2	2020-02-23T00:00:00Z	NA
 19	C	10	N	4	C 19 D4 10/25/2019	M8	M8C19D4	plate_2	H10	NA	2020-01-30T00:00:00Z	2020-02-13T00:00:00Z	2020-02-13T00:00:00Z	motility_plates_1-2	2020-02-23T00:00:00Z	NA
+NA	NA	NA	NA	NA	NA	NA	water1	plate_1	NA	NA	NA	NA	NA	motility_plates_1-2	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock1	plate_1	NA	NA	NA	NA	NA	motility_plates_1-2	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water2	plate_2	NA	NA	NA	NA	NA	motility_plates_1-2	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock2	plate_2	NA	NA	NA	NA	NA	motility_plates_1-2	NA	NA
 1	C	1	N	1	C 1 D1 8/1/2019	M7	M7C1D1	plate_3	A1	NA	2020-03-02T00:00:00Z	NA	NA	motility_plates_3-6	2020-07-08T00:00:00Z	From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,
 1	C	1	N	3	C 1 D3 8/3/2019	M7	M7C1D3	plate_3	A2	NA	2020-03-02T00:00:00Z	NA	NA	motility_plates_3-6	2020-07-08T00:00:00Z	From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,
 2	C	1	1R	1	C 2 D1 8/1/2019	M7	M7C2D1	plate_3	A3	NA	2020-03-02T00:00:00Z	NA	NA	motility_plates_3-6	2020-07-08T00:00:00Z	From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,
@@ -505,6 +509,14 @@ NA	NA	NA	NA	4	FMT from D4 #2	M9	FMT2D4	plate_5	B10	NA	2020-03-02T00:00:00Z	NA	NA
 18	RM	9	1R	5	RM 18 D5 11/12/2019	M9	M9RM18D5	plate_6	H8	NA	2020-03-02T00:00:00Z	NA	NA	motility_plates_3-6	2020-07-08T00:00:00Z	From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,
 18	RM	9	1R	7	RM 18 D7 11/14/2019	M9	M9RM18D7	plate_6	H9	NA	2020-03-02T00:00:00Z	NA	NA	motility_plates_3-6	2020-07-08T00:00:00Z	From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,
 18	RM	9	1R	-1	RM 18 Dn1 11/6/2019	M9	M9RM18Dn1	plate_6	H10	NA	2020-03-02T00:00:00Z	NA	NA	motility_plates_3-6	2020-07-08T00:00:00Z	From Lucas: plates 5 and 6 were incorrectly labeled at 3 and 4 (I checked the dates on them to make sure they were the right plates) but because of the mix up it is possible that 5 and 6 may be flipped (small chance). So just double check that the results look ok,
+NA	NA	NA	NA	NA	NA	NA	water3	plate_3	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock3	plate_3	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water4	plate_4	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock4	plate_4	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water5	plate_5	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock5	plate_5	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water6	plate_6	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock6	plate_6	NA	NA	NA	NA	NA	motility_plates_3-6	NA	NA
 4	WMC	2	N	-5	WMC 4 Dn5 12/11/2018	M3	M3WMC4Dn5	plate_7	A1	NA	2020-07-05T00:00:00Z	2020-07-14T00:00:00Z	2020-07-14T00:00:00Z	motility_plates_7-10	2020-07-26T00:00:00Z	NA
 5	WMC	2	1R	-5	WMC 5 Dn5 12/11/2018	M3	M3WMC5Dn5	plate_7	A2	NA	2020-07-05T00:00:00Z	2020-07-14T00:00:00Z	2020-07-14T00:00:00Z	motility_plates_7-10	2020-07-26T00:00:00Z	NA
 6	WMC	2	1L	-5	WMC 6 Dn5 12/11/2018	M3	M3WMC6Dn5	plate_7	A3	NA	2020-07-05T00:00:00Z	2020-07-14T00:00:00Z	2020-07-14T00:00:00Z	motility_plates_7-10	2020-07-26T00:00:00Z	NA
@@ -877,6 +889,14 @@ NA	NA	NA	NA	4	FMT from D4 #2	M9	FMT2D4	plate_5	B10	NA	2020-03-02T00:00:00Z	NA	NA
 23	WM	12	N	0	WM 23 D0 10/21/2019	M8	M8WM23D0	plate_10	H8	NA	2020-07-05T00:00:00Z	NA	NA	motility_plates_7-10	2020-07-26T00:00:00Z	NA
 24	WM	12	1R	0	WM 24 D0 10/21/2019	M8	M8WM24D0	plate_10	H9	NA	2020-07-05T00:00:00Z	NA	NA	motility_plates_7-10	2020-07-26T00:00:00Z	NA
 11	WM	6	N	1	WM 11 D1 10/22/2019	M8	M8WM11D1	plate_10	H10	NA	2020-07-05T00:00:00Z	NA	NA	motility_plates_7-10	2020-07-26T00:00:00Z	NA
+NA	NA	NA	NA	NA	NA	NA	water7	plate_7	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock7	plate_7	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water8	plate_8	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock8	plate_8	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water9	plate_9	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock9	plate_9	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water10	plate_10	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock10	plate_10	NA	NA	NA	NA	NA	motility_plates_7-10	NA	NA
 1	WM	1	N	-5	WM 1 Dn5 12/11/2018	M3	M3WM1Dn5	plate_11	A1	NA	2019-07-26T00:00:00Z	NA	NA	CDIp52_Motility11-13	2020-08-13T00:00:00Z	NA
 3	WM	1	1L	1	WM 3 D1 12/17/2018	M3	M3WM3D1	plate_11	A2	NA	2019-07-26T00:00:00Z	NA	NA	CDIp52_Motility11-13	2020-08-13T00:00:00Z	NA
 1	WMN	1	N	-1	WMN 1 Dn1 1/28/2019	M3	M4WMN1Dn1	plate_11	A3	NA	2019-07-26T00:00:00Z	NA	NA	CDIp52_Motility11-13	2020-08-13T00:00:00Z	NA
@@ -1159,6 +1179,12 @@ NA	NA	NA	NA	4	FMT from D4 #2	M9	FMT2D4	plate_5	B10	NA	2020-03-02T00:00:00Z	NA	NA
 22	WM	11	1R	3	WM 22 D3 10/24/2019	M8	M8WM22D3	plate_13	H8	NA	2019-07-26T00:00:00Z	NA	NA	CDIp52_Motility11-13	2020-08-13T00:00:00Z	NA
 23	WM	12	N	3	WM 23 D3 10/24/2019	M8	M8WM23D3	plate_13	H9	NA	2019-07-26T00:00:00Z	NA	NA	CDIp52_Motility11-13	2020-08-13T00:00:00Z	NA
 24	WM	12	1R	3	WM 24 D3 10/24/2019	M8	M8WM24D3	plate_13	H10	NA	2019-07-26T00:00:00Z	NA	NA	CDIp52_Motility11-13	2020-08-13T00:00:00Z	NA
+NA	NA	NA	NA	NA	NA	NA	water11	plate_11	NA	NA	NA	NA	NA	CDIp52_Motility11-13	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock11	plate_11	NA	NA	NA	NA	NA	CDIp52_Motility11-13	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water12	plate_12	NA	NA	NA	NA	NA	CDIp52_Motility11-13	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock12	plate_12	NA	NA	NA	NA	NA	CDIp52_Motility11-13	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water13	plate_13	NA	NA	NA	NA	NA	CDIp52_Motility11-13	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock13	plate_13	NA	NA	NA	NA	NA	CDIp52_Motility11-13	NA	NA
 21	CWM	11	N	-2	CWM 21 D8 11/15/2019	M9	M9CWM21D8	plate_14	A1	NA	NA	NA	NA	motility_plates_14-17	NA	NA
 22	CWM	11	1R	-2	CWM 22 D8 11/15/2019	M9	M9CWM22D8	plate_14	A2	NA	NA	NA	NA	motility_plates_14-17	NA	NA
 23	CWM	12	N	-2	CWM 23 D8 11/15/2019	M9	M9CWM23D8	plate_14	A3	NA	NA	NA	NA	motility_plates_14-17	NA	NA
@@ -1536,5 +1562,10 @@ NA	NA	NA	NA	4	FMT from D4 #2	M9	FMT2D4	plate_5	B10	NA	2020-03-02T00:00:00Z	NA	NA
 13	WMN	7	N	4	WMN 13 D4 10/25/2019	M8	M8WMN13D4	plate_17	H9	NA	NA	NA	NA	motility_plates_14-17	NA	NA
 20	C	10	1R	4	C 20 D4 10/25/2019	M8	M8C20D4	plate_17	H10	NA	NA	NA	NA	motility_plates_14-17	NA	NA
 NA	NA	NA	NA	NA	NA	NA	water14	plate_14	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock14	plate_14	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
+NA	NA	NA	NA	NA	NA	NA	water15	plate_15	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock15	plate_15	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
 NA	NA	NA	NA	NA	NA	NA	water16	plate_16	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock16	plate_16	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
 NA	NA	NA	NA	NA	NA	NA	water17	plate_17	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
+NA	NA	NA	NA	NA	NA	NA	mock17	plate_17	NA	NA	NA	NA	NA	motility_plates_14-17	NA	NA
