@@ -233,7 +233,7 @@ in all 3 groups of PEG-treated mice, with the greatest change in weight
 observed on the fifth day of PEG treatment and the mice recovered most
 of the weight five days after treatment (Fig. 1B). After either PEG,
 clindamycin, or PEG and clindamycin treatment all mice were challenged
-with 10\textsuperscript{3} \emph{C. difficile} 630 spores (Fig. 1A). All
+with 10\textsuperscript{5} \emph{C. difficile} 630 spores (Fig. 1A). All
 treatments rendered mice susceptible to \emph{C. difficile}
 colonization. However, PEG-treated mice remained colonized with \emph{C.
 difficile} at a high level through thirty days post-infection (Fig. 1C).
@@ -339,7 +339,7 @@ S3A, Data Set S1, Sheet X). However, at 30 days post-infection only
 in the cecum tissues (Fig. 3C, Fig. 2E, Data Set S1, Sheet X).
 Interestingly, one of the bacteria that was different between treatment
 groups at 6 days post-infection was \emph{Peptostreptococcaceae} (the
-genera with an OTU sequence that matches \emph{C. difficile}).
+genera that contains a sequence that matches \emph{C. difficile}).
 \emph{Peptostreptococcaceae} was primarily only present in the 5-day PEG
 treatment group of mice and decreased in the proximal and distal colon
 tissues over time (Fig. S2B). Thus, PEG treatment had a significant
@@ -465,30 +465,31 @@ colonization observed in 5-day PEG and post-CDI PEG treated mice.
 Previous work examining the impact of PEG on the murine microbiota found
 that PEG treatment resulted in the permanent loss of S24-7, also known
 as \emph{Muribaculum intestinale} (16). We decided to check our
-\emph{Porphyromonadaceae} OTUs because \emph{Muribaculum intestinale} is
-classified as \emph{Porphyromonadaceae} by the Ribosomal Database
-Project (RDP) database (31) and \emph{Porphyromonadaceae} was a top
-feature in the random forest model predicting prolonged \emph{C.
-difficile} colonization. We identified 4 OTUs that had at least 92\%
-identity to \emph{Muribaculum intestinale} and examined their abundance
-in mice that either cleared or were still colonized with \emph{C.
-difficile} at 10 days post-infection. While all of the OTUs, were
-decreased by PEG and clindamycin treatment, there was some recovery in
-the mice that cleared (Fig. S4A). We also examined other
-\emph{Porphyromonadaceae} and \emph{Lachnospiraceae} OTUs since these
-were the 2 genera that were important to our classification model and
-contained multiple OTUs that were different at 5 days post-infection
-between mice that either cleared or remained colonized with \emph{C.
-difficile} by 10 days post-infection (Data Set S1, sheet X). While
-individual \emph{Porphyromonadaceae} and \emph{Lachnospiraceae} OTUs
-tended to be more abundant in the mice that clear \emph{C. difficile}
-relative to the mice that exhibit prolonged colonization (Fig. S4B-C),
-there is no single OTU that fits the pattern we observed at the genus
-level (Fig. 7C), suggesting multiple \emph{Porphyromonadaceae} and
-\emph{Lachnospiraceae} OTUs influenced \emph{C. difficile} clearance.
-Overall, our results suggest that specific bacterial community
-differences explain the prolonged \emph{C. difficile} colonization we
-observed in 5-day PEG and post-CDI 1-day PEG treated mice.
+\emph{Porphyromonadaceae} operational taxonomic units (OTUs) because
+\emph{Muribaculum intestinale} is classified as
+\emph{Porphyromonadaceae} by the Ribosomal Database Project (RDP)
+database (31) and \emph{Porphyromonadaceae} was a top feature in the
+random forest model predicting prolonged \emph{C. difficile}
+colonization. We identified 4 OTUs that had at least 92\% identity to
+\emph{Muribaculum intestinale} and examined their abundance in mice that
+either cleared or were still colonized with \emph{C. difficile} at 10
+days post-infection. While all of the OTUs, were decreased by PEG and
+clindamycin treatment, there was some recovery in the mice that cleared
+(Fig. S4A). We also examined other \emph{Porphyromonadaceae} and
+\emph{Lachnospiraceae} OTUs since these were the 2 genera that were
+important to our classification model and contained multiple OTUs that
+were different at 5 days post-infection between mice that either cleared
+or remained colonized with \emph{C. difficile} by 10 days post-infection
+(Data Set S1, sheet X). While individual \emph{Porphyromonadaceae} and
+\emph{Lachnospiraceae} OTUs tended to be more abundant in the mice that
+clear \emph{C. difficile} relative to the mice that exhibit prolonged
+colonization (Fig. S4B-C), there is no single OTU that fits the pattern
+we observed at the genus level (Fig. 7C), suggesting multiple
+\emph{Porphyromonadaceae} and \emph{Lachnospiraceae} OTUs influenced
+\emph{C. difficile} clearance. Overall, our results suggest that
+specific bacterial community differences explain the prolonged \emph{C.
+difficile} colonization we observed in 5-day PEG and post-CDI 1-day PEG
+treated mice.
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -565,94 +566,210 @@ Sciences).
 
 \textbf{Figure 1. 5-day PEG treatment prolongs susceptibility and mice
 become persistently colonized with \emph{C. difficile}.} A. Setup of the
-experimental timeline for experiments with 5-day PEG treated mice.
-Clindamycin was administered at 10 mg/kg by intraperitoneal injection.
-15\% PEG 3350 was administered in the drinking water for five days. B.
-Weight change from baseline weight in groups after treatment with PEG
-and/or clindamycin, followed by \emph{C. difficile} challenge. C.
-\emph{C. difficile} CFU/gram stool measured over time (N = 16-59 mice
-per time point) via serial dilutions. The black line represents the
-limit of detection for the first serial dilution. CFU quantification
-data was not available for each mouse due to stool sampling difficulties
-(particularly the day the mice came off of the PEG treatment) or early
-deaths. For B-C, lines represent the median for each treatment group and
-circles represent samples from individual mice. Asterisks indicate time
-points where the weight change or CFU/g was significantly different
-between groups by the Kruskal-Wallis test with Benjamini-Hochberg
-correction for testing multiple time points. The data presented are from
-a total of 5 separate experiments. \newpage
+experimental time line for experiments with 5-day PEG treated mice
+consisting of 4 treatment groups. 1. Clindamycin was administered at 10
+mg/kg by intraperitoneal injection. 2. 15\% PEG 3350 was administered in
+the drinking water for five days. 3. 5-day PEG plus clindamycin
+treatment. 4. 5-day PEG plus 10-day recovery treatment. All treatment
+groups were then challenged with 10\textsuperscript{5} \emph{C.
+difficile} 630 spores. A subset of mice were euthanized on either 4 or 6
+days post-infection and tissues were collected for histopathology
+analysis, the remaining mice were followed through 20 or 30 days
+post-infection. B. Weight change from baseline weight in groups after
+treatment with PEG and/or clindamycin, followed by \emph{C. difficile}
+challenge. C. \emph{C. difficile} CFU/gram stool measured over time (N =
+16-59 mice per time point) via serial dilutions. The black line
+represents the limit of detection for the first serial dilution. CFU
+quantification data was not available for each mouse due to stool
+sampling difficulties (particularly the day the mice came off of the PEG
+treatment) or early deaths. For B-C, lines represent the median for each
+treatment group and circles represent samples from individual mice.
+Asterisks indicate time points where the weight change or CFU/g was
+significantly different between groups by the Kruskal-Wallis test with
+Benjamini-Hochberg correction for testing multiple time points. The data
+presented are from a total of 5 separate experiments. \newpage
 
 \includegraphics{figure_2.pdf} \textbf{Figure 2. 5-day PEG treatment
 disrupts the stool microbiota for a longer amount of time compared to
-clindamycin-treated mice.} A. PCoA of Bray-Curtis distances from stool
-samples collected throughout the experiment. \newpage
+clindamycin-treated mice.} A. Principal Coordinate analysis (PCoA) of
+Bray-Curtis distances from stool samples collected throughout the
+experiment. For A and C, each circle represents a sample from an
+individual mouse and the transparency of the symbol corresponds to the
+day post-infection. B. Bray-Curtis distances of stool samples collected
+on either day 10 or 30 post-infection relative to the baseline sample
+collected for each mouse (before any drug treatments were administered).
+C. Shannon diversity in stool communities over time. The line indicates
+the median value for each treatment group. The colors of the symbols and
+lines represent the four treatment groups. D. 14 of the 33 genera
+affected by PEG treatment (Data Set S1, sheet X). The symbols represent
+the median relative abundance for a treatment group at either baseline
+(open circle) or 1-day post treatment (closed circle). Data from the
+5-day PEG and 5-day PEG plus 10-day recovery groups were analyzed by
+paired Wilcoxan signed-rank test with Benjamini-Hochberg correction for
+testing all identified genera. The clindamycin and 5-day PEG plus
+clindamycin treatment groups are shown for comparison. E. 6 of the 24
+genera that were significantly different between the four treatment
+groups over multiple time points. Differences between treatment groups
+were identified by Kruskal-Wallis test with Benjamini-Hochberg
+correction for testing all identified genera. The gray vertical line (D)
+and horizontal vertical lines (E) indicate the limit of detection.
+\newpage
 
 \includegraphics{figure_3.pdf} \textbf{Figure 3. 5-day PEG treatment
 does not result in more severe CDIs, although mucosal microbiota is
-altered.} A. \newpage
+altered.} A. Shannon diversity in cecum communities over time. The line
+indicates the median value for each treatment group. The colors of the
+symbols and lines represent the four treatment groups. A similar pattern
+was observed with the proximal and distal colon communities (Data Set
+S1, sheet X-X). B. PCoA of Bray-Curtis distances from mucosal samples
+collected throughout the experiment. Circles, triangles, and squares
+indicate cecum, proximal colon, and distal colon communities,
+respectively. For A-B, transparency of the symbol corresponds to the day
+post-infection that the sample was collected. C. The median relative
+abundance of the 4 genera that were significantly different between the
+cecum communities of different treatment groups on day 6 and day 30
+(Data Set S1, sheet X). The gray vertical line indicate the limit of
+detection. D-E. The histopathology summary scores from cecum and colon
+H\&E stained slides. The summary score is the total score based on
+evaluation of edema, cellular infiltration, and inflammation. Each
+category is given a score ranging from 0-4, thus the maximum possible
+summary score is 12. The tissue for histology was collected at either 4
+(D) or 6 (E) days post-infection with the exception that one set of
+5-day PEG treated mock-challenged mice were collected on day 0
+post-infection (first set of open circles in D). Histology data were
+analyzed with the Kruskal-Wallis test followed by pairwise Wilcoxon
+comparisons with Benjamini-Hochberg correction. \newpage
 
 \includegraphics{figure_4.pdf} \textbf{Figure 4. 1-day PEG treatment
 renders mice susceptible to transient \emph{C. difficile} colonization.}
-A. Setup of the experimental timeline for the 1-day PEG treated subset
-of mice. B. CFU/gram stool measured over time (N = 12-18 mice per time
-point) via several dilutions. The black dotted line represents the limit
-of detection for the first serial dilution. Asterisks indicate time
-points where the CFU/gram was significantly different between groups
-using the Kruskall-Wallis test with a Benjamini-Hochberg correction for
-multiple time points. C. Principle Coordinate Analysis plot of the
-groups over time with the alpha representating the same time scale as in
-panel D (day: R\textsuperscript{2} = 0.43; group: R\textsuperscript{2} =
-0.19). D. Shannon diversity Index of the groups over time. Only days
-with samples from all groups are shown. E. Line plots of relative
-percent abundance of selected genera over time. Only days with samples
-from all groups shown. The gray line represents the limit of detection.
+A. Setup of the experimental time line for the 1-day PEG treated mice
+consisting of 3 treatment groups. 1. Clindamycin was administered at 10
+mg/kg by intraperitoneal injection. 2. 15\% PEG 3350 was administered in
+the drinking water for 1 day. 3. 1-day PEG plus 1-day recovery. The
+three treatment groups were then challenged with 10\textsuperscript{5}
+\emph{C. difficile} 630 spores. B. \emph{C. difficile} CFU/gram stool
+measured over time (N = 12-18 mice per time point) via several
+dilutions. The black dotted line represents the limit of detection for
+the first serial dilution. Asterisks indicate time points where the
+CFU/gram was significantly different between treatment groups by
+Kruskall-Wallis test with Benjamini-Hochberg correction for testing
+multiple time points. C. PCoA of Bray-Curtis distances from stool
+communities collected from the three treatment groups over time (day:
+R\textsuperscript{2} = 0.43; group: R\textsuperscript{2} = 0.19). D.
+Shannon diversity in stool communities over time with colored lines
+representing the median value for each treatment group. For B-D, each
+symbol represents a sample from an individual mouse and symbol
+transparency corresponds to the day post-infection that the sample was
+collected. E. Median relative abundances per treatment group for 6 out
+of the 14 genera that were affected by treatment, but recovered close to
+baseline levels by 7 days post-infection (Fig. 3E, Data Set S1, Sheet
+X). Stool samples from either baseline and day 1 or baseline and day 7
+were analyzed by paired Wilcoxan signed-rank test with
+Benjamini-Hochberg correction for testing all identified genera. The
+gray horizontal line represents the limit of detection.
 
 \includegraphics{figure_5.pdf} \textbf{Figure 5. 1-day PEG treatment
 post \emph{C. difficile} challenge prolongs colonization regardless of
-whether an FMT is also administered.} All mice were administered 10
-mg/kg clindamycin intraperitoneally (IP) 1 day before challenge with
-\emph{C. difficile} 630 spores on day 0. 15\% PEG 3350 was administered
-in the drinking water for 1 day. Mice feces were collected daily through
-the end of the experiment (30 days post-infection for Clind. + 1-day PEG
-group, 15 days post-infection for all others). CFU quantification data
-was not available for each mouse due to stool sampling difficulties
-(particularly the day the mice came off of the PEG treatment) or early
-deaths. B. CFU/g of \emph{C. difficile} stool measured over time via
-serial dilutions. C. Median and individual Shannon Diversity measured
-over time. D. Median and individual richness measured over time. B-D.
-Asterisks indicate time points with significant differences between
-groups using Kruskall-Wallis tests with a Benjamini-Hochberg correction
-for testing multiple times points. Black line represents the limit of
-detection for the first serial dilution. Background shading indicates
-PEG treatment period for applicable groups. Opacity of points reflects
-time point. The data presented are from a total of *** separate
+whether an FMT is also administered.} A. Setup off the experimental time
+line for experiments with post-CDI PEG treated mice. There were a total
+of 4 different treatment groups. All mice were administered 10 mg/kg
+clindamycin intraperitoneally (IP) 1 day before challenge with
+10\textsuperscript{3-5} \emph{C. difficile} 630 spores. 1. Did not
+receive any additional treatment. 2. Immediately after \emph{C.
+difficile} challenge, mice received 15\% PEG 3350 in the drinking water
+for 1 day. 3-4. 3-days after challenge, mice received 1-day PEG
+treatment and then received either a fecal microbiota transplant (3) or
+PBS (4) solution by oral gavage. Mice were followed through 15-30 days
+post-infection (only the post-CDI 1-day PEG group was followed through
+30 days post-infection). B. CFU/g of \emph{C. difficile} stool measured
+over time via serial dilutions. The black line represents the limit of
+detection for the first serial dilution. C-D. Shannon diversity (C) and
+richness (D) in stool communities over time. B-D. Each symbol represents
+a stool sample from an individual mouse with the lines representing the
+median value for each treatment group. The transparancy of the symbol
+corresponds to the day post-infection. Asterisks indicate time points
+with significant differences between groups by a Kruskall-Wallis test
+with a Benjamini-Hochberg correction for testing multiple times points.
+Colored rectangles indicates the 1-day PEG treatment period for
+applicable groups. The data presented are from a total of 3 separate
 experiments. \newpage
 
 \includegraphics{figure_6.pdf} \textbf{Figure 6. For 1-day PEG treatment
 post \emph{C. difficile} challenge mice that also receive an FMT only
-some bacterial genera were restored.} A. PCoA of all groups + FMT
-plotted over time. Opacity of points reflects time point. B. Relative
-abundance of genera significantly different over multiple time points
-post FMT or PBS treatment, plotted over time. Limit of detection is
-.1\%. C. Relative abundances of top 6 significant genera ranked by
-number of days significant, plotted over time. Limit of detection is
-.1\%.
+some bacterial genera were restored.} A. PCoA of Bray-Curtis distances
+from stool samples collected over time as well as the FMT solution that
+was administered to one treatment group. Each circle represents an
+individual sample, the transparency of the circle corresponds to day
+post-infection as shown in Fig. 6C-D. B. Median relative abundances of 2
+genera that were significantly different over multiple time points in
+mice that were administered either FMT or PBS solution via gavage C.
+Median relative abundances of the top 6 out of 24 genera that were
+significant over multiple timepoints, plotted over time (Data Set S1,
+Sheet X). For B-C, colored rectangles indicates the 1-day PEG treatment
+period for applicable groups. Gray horizontal lines represent the limit
+of detection.
 
 \newpage
 
 \includegraphics{figure_7.pdf} \textbf{Figure 7. Specific microbiota
 features associated with prolonged \emph{C. difficile} colonization in
-PEG treated mice.} A. \newpage
+PEG treated mice.} A. Top ten bacteria that contributed to the random
+forest model trained on five day post-infection community relative
+abundance data to predict wehther mice would still be colonized with
+\emph{C. difficile} 10 days post-infection. The median (point) and
+interquantile range (lines) change in AUROC when the bacteria is left
+out of the model is shown. B. The median relative abundances at 5 days
+post-infection of the top ten bacteria that contributed to the random
+forest classification model. Color indicates whether the mice were still
+colonized with \emph{C. difficile} 10 days post-infection and the black
+horizontal line represents the median relative abundance. Each symbol
+represents a stool sample from an individual mouse and the shape of the
+symbol indicates whether the PEG-treated mice recieved a 5-day (Fig.
+1-3), 1-day (Fig. 4) or post-CDI PEG (Fig. 5-6) treatment. C. The median
+relative abundances of the 5 genera with greater than 1\% median
+relative abundance in the stool community over time. For B-C, the gray
+horizontal line represents the limit of detection. \newpage
 
 \includegraphics{figure_8.pdf} \textbf{Figure 8. Schematic summarizing
-findings.} A. \newpage
+findings.} A. The gut microbiota of our C57Bl/6 mice is restant to
+\emph{C. difficle} but treatment with either the antibiotic,
+clindamycin, or the osmotic laxative, PEG 3350 renders the mice
+susceptible to \emph{C. difficile} colonization. Recovery of
+colonization resistance in clindamycin-treated mice is relatively
+straightforward and the mice clear \emph{C.difficile} within 10 days
+post-infection. However, for mice that recieved a 5-day PEG treatment or
+a 1-day PEG treatment after \emph{C. difficile} challenge recovery of
+colonization resistance is more uncertain because mice were still
+colonized with \emph{C. difficile} 30 days post-infection in the case of
+several PEG treatments. We found increased \emph{Porphyromonadaceae} and
+\emph{Lachnospiraceae} were associated with recovery of colonization
+resistance, while increased \emph{Enterobacteriaceae} and
+\emph{Bacteroides} were associated with prolonged \emph{C. difficle}
+colonization. B.Considering that most hospitals recommend not performing
+\emph{C. difficile} testing on patients taking laxatives and laxatives
+are used when administering fecal microbiota transplants via colonoscopy
+to patients with recurrent CDIs. further studies are needed to evaluate
+if laxatives impact human microbiota colonization resistance. Further
+studies are needed to understand the impact of osmotic laxatives on
+\emph{C. difficile} colonization resistance and clearance in human
+patients. \newpage
 
-\includegraphics{figure_S1.pdf} \textbf{Figure S1. 5-day PEG treatment
-plus 10-day recovery mice microbiota dynamics post-infection.} A.
-\newpage
+\includegraphics{figure_S1.pdf} \textbf{Figure S1. Microbiota dynamics
+post-infection in the 5-day PEG treatment plus 10-day recovery mice.} A.
+\emph{C. difficile} CFU/g over time in the stool samples collected from
+5-day PEG treatment plus 10-day recovery mice. Same data presented in
+Fig. 1C, but the data for the other 3 treatment groups have been
+removed. B. Median relative abundances of 8 bacterial genera from day 0
+post-infection onward from the 10-day recovery mice. We analyzed samples
+from day 0 and day 8 post-infection, which represented the the time
+points where mice were challenged with \emph{C. difficile} and when the
+median relative \emph{C. difficile} CFU stabilized for the group using
+the paired Wilcoxan signed-rank test, but no genera were signifcant
+after Benjamini-Hochberg correction. \newpage
 
-\includegraphics{figure_S2.pdf} \textbf{Figure S2. Impact of PEG
-treatment on the mucosal microbiota is greatest 6 days post-infection}\\
+\includegraphics{figure_S2.pdf} \textbf{Figure S2. PEG treatment still
+has a large impact on the mucosal microbiota 6 days post-infection} A.
+The\\
 \newpage
 
 \includegraphics{figure_S3.pdf} \textbf{Figure S3. \emph{C. difficile}
@@ -660,9 +777,9 @@ challenge does not enhance the disruptive effect of PEG on the
 microbiota.} A. \newpage
 
 \includegraphics{figure_S4.pdf} \textbf{Figure S4. Specific OTUs
-associated with clearance that are mostly absent in mice with prolonged
-\emph{C. difficile} colonization. Ex. \emph{Muribaculum intestinale}.}
-A. \newpage
+associated with clearance by 10 days post-infection that are mostly
+absent in mice with prolonged \emph{C. difficile} colonization. Ex.
+\emph{Muribaculum intestinale}.} A. \newpage
 
 \hypertarget{references}{%
 \subsection*{References}\label{references}}
