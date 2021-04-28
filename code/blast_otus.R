@@ -302,27 +302,27 @@ muribac_seq_all <- muribac_seq_all %>%
   mutate(ncbi_blast_result = "")
 
 otu_334_blast_results <- read_csv("data/process/blast/OTU_0334_HitTable.csv") %>%
-  mutate(otu = 334) %>% head(5)
+  mutate(otu = "Otu0334") %>% head(5)
 otu_333_blast_results <- read_csv("data/process/blast/OTU_0333_HitTable.csv" ) %>%
-  mutate(otu = 333) %>% head(5)
+  mutate(otu = "Otu0333") %>% head(5)
 otu_624_blast_results <- read_csv("data/process/blast/OTU_0624_HitTable.csv") %>%
-  mutate(otu = 624) %>% head(5)
+  mutate(otu = "Otu0624") %>% head(5)
 otu_0038_blast_results <- read_csv("data/process/blast/OTU_0038_HitTable.csv") %>%
-  mutate(otu = 38) %>% head(5)
+  mutate(otu = "Otu0038") %>% head(5)
 otu_8_blast_results <- read_csv("data/process/blast/OTU_0008_HitTable.csv") %>%
-  mutate(otu = 8) %>% head(5)
+  mutate(otu = "Otu0008") %>% head(5)
 otu_7_blast_results <- read_csv("data/process/blast/OTU_0007_HitTable.csv") %>%
-  mutate(otu = 7) %>% head(5)
+  mutate(otu = "Otu0007") %>% head(5)
 otu_6_blast_results <- read_csv("data/process/blast/OTU_0006_HitTable.csv") %>%
-  mutate(otu = 6) %>% head(5)
+  mutate(otu = "Otu0006") %>% head(5)
 otu_21_blast_results <- read_csv("data/process/blast/OTU_0021_HitTable.csv") %>%
-  mutate(otu = 21) %>% head(5)
+  mutate(otu = "Otu0021") %>% head(5)
 
 otus_to_plot = rbind(otu_6_blast_results, otu_7_blast_results, otu_8_blast_results,
                 otu_21_blast_results, otu_0038_blast_results, otu_333_blast_results,
                 otu_334_blast_results, otu_624_blast_results)
 
-write_csv2(otus_to_plot, "data/process/blast/muribaculum_blast_results.csv")
+write_csv(otus_to_plot, "data/process/blast/muribaculum_blast_results.csv")
 facet_labels = c("OTU 6", "OTU 7", "OTU 8", "OTU 21", "OTU 38", "OTU 333", "OTU 334", "OTU 624")
 
 potential_muri_otus_plot <- otus_to_plot %>%
