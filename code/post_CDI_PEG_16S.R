@@ -117,49 +117,6 @@ kruskal_wallis_richness <- function(diversity_subset, timepoints, subset_name){
 kw_richness_stools <- kruskal_wallis_richness(diversity_stools, stool_test_days, "stools")
 sig_richness_days_stools <- pull_sig_days(kw_richness_stools)
 
-#Plot Richness overtime 
-sobs_post_CDI_PEG <- diversity_data_subset %>%
-  filter(group != "FMT") %>% #Remove FMTs
-  group_by(group, day) %>%
-  mutate(median_sobs = median(sobs)) %>%
-  ggplot(x = day, y = sobs, colour =  group) +
-  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  scale_x_continuous(breaks = c(-15, -1:10, 15, 20, 25, 30),
-                     limits = c(-15,35), 
-                     minor_breaks = c(-15.5, -14.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  theme_classic()+
-  theme(legend.position = "none")+ #Remove legend
-  labs(x = "Days Post-Infection",
-       y = "Number of Observed OTUs")
-save_plot("results/figures/post_CDI_PEG_richness_overtime.png", sobs_post_CDI_PEG)
-
-#Richness oVertime 10 Day Version
-sobs_post_CDI_PEG_10d <- diversity_data_subset_10d %>%
-  filter(group != "FMT") %>% #Remove FMTs
-  group_by(group, day) %>%
-  mutate(median_sobs = median(sobs)) %>%
-  ggplot(x = day, y = sobs, colour =  group) +
-  geom_point(mapping = aes(x = day, y = sobs, color = group, fill = group), alpha = .2, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-  geom_line(mapping = aes(x = day, y = median_sobs, color = group), alpha = 0.6, size = 1) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  scale_x_continuous(breaks = c(-1:10),
-                     limits = c(-1.5,11),
-                     minor_breaks = c(-1.5:10.5)) +
-  theme_classic()+
-  theme(legend.position = "none", #Remove legend
-        panel.grid.minor.x = element_line(size = 0.4, color = "grey")) + #Add gray lines to clearly separate symbols by days
-  labs(x = "Days Post-Infection",
-       y = "Number of Observed OTUs")
-save_plot("results/figures/post_CDI_PEG_richness_overtime_10d.png", sobs_post_CDI_PEG_10d)
-
 #Richness over time for stools
 x_annotation <- sig_richness_days_stools
 y_position <- max(diversity_stools$sobs)+1.5
@@ -179,72 +136,7 @@ sobs_post_CDI_PEG_stool <- diversity_stools %>%
   annotate("rect", xmin = 3, xmax = 4, ymin = 50, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot("results/figures/post_CDI_PEG_richness_overtime_stool.png", sobs_post_CDI_PEG_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
-#Plot Stool + Tissue PCoA data----
-#Pull post_CDI_PEG subset of PCoA data
-pcoa_post_cdi_peg <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
-  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
-  rename("unique_label" = group) %>%
-  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
-  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3| is.na(day))#limit to experimental time frame & FMT samples
-
-#Pull axes from loadings file
-pcoa_axes_post_cdi_PEG <- read_tsv("data/process/post_CDI_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
-axis1 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-axis2 <- pcoa_axes_post_cdi_PEG %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-
-#PCoA plot and save the plot
-pcoa_subset_plot <- plot_pcoa(pcoa_post_cdi_peg)+
-  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2,"%)", sep = ""))
-save_plot(filename = paste0("results/figures/post_CDI_PEG_pcoa.png"), pcoa_subset_plot, base_height = 5, base_width = 5)
-
-#Create stand alone legend
-group_legend <- pcoa_post_cdi_peg  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
-  geom_point()+ theme_classic()+
-  guides(color = guide_legend(ncol = 2))
-group_legend <- get_legend(group_legend)
-save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 6)
-#Create Standalone legend, vertical
-group_legend_vert <- pcoa_post_cdi_peg  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels= str_wrap(color_labels, 25))+
-  geom_point()+ theme_classic()
-group_legend_vert <- get_legend(group_legend_vert)
-save_plot("results/figures/post_CDI_PEG_pcoa_legend_vert.png", group_legend_vert, base_height = 1.5, base_width = 2)
-
-#PCoA plot over time as a still and a as an animation
-pcoa_plot_time <- plot_pcoa(pcoa_post_cdi_peg)+
-  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
-  theme( legend.position = "none")+ #remove legend
-  facet_wrap(~ day)
-
-pcoa_animated <- pcoa_post_cdi_peg %>%
-  filter(group != "FMT") %>%
-  plot_pcoa()+
-  labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Anotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
-  labs(title = 'Day: {frame_time}') + #Adds time variable to title
-  transition_time(day)+  #Day variable used to cycle through time on animation
-  shadow_mark() #Shows previous timepoints
-
-# Implement better frames per second for animation
-pcoa_gif <- animate(pcoa_animated, duration = , fps = 10,
-                    res = 150, width = 20, height = 20, unit = "cm")
-# Save as gif file
-anim_save(animation = pcoa_gif, filename = 'results/post_CDI_PEG_pcoa_over_time.gif')
-
-#Plot Stool Only PCoA data----
+#Plot Stool PCoA data----
 pcoa_post_cdi_peg_stool <- read_tsv("data/process/post_CDI_PEG/stools/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
   select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
   rename("unique_label" = group) %>%
@@ -283,6 +175,28 @@ pcoa_subset_plot_stool <- plot_pcoa(pcoa_post_cdi_peg_stool)+
   #annotate("text", x = -.45, y = .33, label = "italic(P) < 0.05", parse = TRUE, size = 3.2)
 save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa_subset_plot_stool, base_height = 6, base_width = 6)
 
+#Create stand alone legend
+group_legend <- pcoa_post_cdi_peg_stool  %>%
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+
+  geom_point()+ theme_classic()+
+  guides(color = guide_legend(ncol = 2))
+group_legend <- get_legend(group_legend)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 6)
+#Create Standalone legend, vertical
+group_legend_vert <- pcoa_post_cdi_peg_stool  %>%
+  ggplot(aes(x = axis1, y = axis2, color = group))+
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels= str_wrap(color_labels, 25))+
+  geom_point()+ theme_classic()
+group_legend_vert <- get_legend(group_legend_vert)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend_vert.png", group_legend_vert, base_height = 1.5, base_width = 2)
+
 #Animate stool only PCoA over time
 pcoa_animated_stool <- pcoa_post_cdi_peg_stool %>%
   filter(group != "FMT") %>%
@@ -298,31 +212,6 @@ pcoa_gif_stool <- animate(pcoa_animated_stool, duration = , fps = 10,
                     res = 150, width = 20, height = 20, unit = "cm")
 # Save as gif file
 anim_save(animation = pcoa_gif_stool, filename = 'results/post_CDI_PEG_stool_pcoa_over_time.gif')
-
-#Plot Tissue Only PCoA data----
-pcoa_post_cdi_peg_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
-  select(group, axis1, axis2) %>% #Limit to 2 PCoA axes
-  rename("unique_label" = group) %>%
-  left_join(metadata, by= "unique_label") %>% #merge metadata and PCoA data frames
-  mutate(day = as.integer(day)) %>% #Day variable (transformed to integer to get rid of decimals on PCoA animation
-  filter(!is.na(axis1)) %>% #Remove all samples that weren't sequenced or were sequenced and didn't make the subsampling cutoff
-  filter(day > -3)#limit to experimental time frame
-#Pull axes from loadings file
-pcoa_axes_post_cdi_PEG_tissues <- read_tsv("data/process/post_CDI_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.loadings")
-axis1_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 1) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-axis2_tissues <- pcoa_axes_post_cdi_PEG_tissues %>% filter(axis == 2) %>% pull(loading) %>% round(digits = 1) #Pull value & round to 1 decimal
-
-pcoa_subset_plot_tissues <- pcoa_post_cdi_peg_tissues %>% 
-  mutate(`Mouse Number` = as.factor(mouse_id)) %>%
-  ggplot(aes(x=axis1, y=axis2, color = `Mouse Number`, shape = sample_type)) + #Did not specitfy day since all tissues are from Day 30
-  geom_point(size=2) +
-  coord_fixed() + 
-  theme_classic()+
-  labs(x = paste("PCoA 1 (", axis1_tissues, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2_tissues,"%)", sep = ""),
-       alpha = "Day",
-       shape = "Tissue Type")
-save_plot(filename = paste0("results/figures/post_CDI_PEG_tissue_pcoa.png"), pcoa_subset_plot_tissues, base_height = 5, base_width = 5)
 
 #OTU Analysis------
 #Function to test at the otu level:
