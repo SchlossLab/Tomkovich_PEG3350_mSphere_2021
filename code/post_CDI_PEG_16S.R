@@ -58,66 +58,6 @@ kruskal_wallis_shannon <- function(diversity_subset, timepoints, subset_name){
 kw_shannon_stools <- kruskal_wallis_shannon(diversity_stools, stool_test_days, "stools")
 sig_shannon_days_stools <- pull_sig_days(kw_shannon_stools)
 
-#Plot Shannon
-shannon_post_cdi_peg <- diversity_data_subset %>%
-  filter(group != "FMT") %>% #drop FMT from shannon
-  group_by(group, day) %>%
-  mutate(median_shannon = median(shannon)) %>%
-  ggplot(aes(x=group, y=shannon, colour=group, alpha = day))+
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels)+
-  #  scale_shape_manual(name=NULL,
-  #                     values=shape_scheme,
-  #                     breaks=shape_experiment,
-  #                     labels=shape_experiment) +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
-  geom_errorbar(aes(ymax = median_shannon, ymin = median_shannon), color = "gray50", size = 1)+ #Add lines to indicate the median for each group to the plot
-  geom_jitter(size=2, alpha=0.6, show.legend = TRUE) +
-  labs(title=NULL,
-       x=NULL,
-       y="Shannon Diversity Index")+
-  ylim(0, 4)+
-  facet_wrap(~ day)+
-  theme_classic()+
-  theme(legend.position = c(.5, .5), #Save Legend in center for later legend extraction
-        text = element_text(size = 14), # Change font size for entire plot
-        axis.text.x= element_blank(),#Remove x axis labels
-        axis.ticks.x = element_blank())
-shannon_post_cdi_peg_no_legend <- shannon_post_cdi_peg +
-  theme(legend.position = "none") #Remove legend
-save_plot("results/figures/post_CDI_PEG_shannon.png", shannon_post_cdi_peg_no_legend) #Save Shannon plot without legend
-
-#Plot Shannon over time days -1 to 30 for post CDI PEG subset: all samples except FMTs
-x_annotation <- sig_shannon_days_stools
-y_position <- max(diversity_stools$shannon)+ 0.05
-label <- kw_label(kw_shannon_stools)
-shannon_post_cdi_peg_overtime_full <- diversity_data_subset %>%
-  filter(group != "FMT") %>% #drop FMTs
-  filter(day != "-15") %>% #Remove -15 timepoint
-  plot_shannon_overtime() +
-  scale_x_continuous(breaks = c(-1:10, 15, 20, 25, 30),
-                     limits = c(-2,35), #removes day -15 here
-                     minor_breaks = c(-2.5:10.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) +
-  labs(x = "Day",
-       y = "Shannon Diversity Index") +
-  theme(legend.position = "none") #Removing legend to save separately
-save_plot("results/figures/post_CDI_PEG_shannon_overtime.png", shannon_post_cdi_peg_overtime_full) #Save full Shannon over time plot without legend
-
-
-#Plot Shannon over time for first 10 days for post CDI PEG subset (all samples)
-shannon_post_cdi_peg_overtime_10d <- diversity_data_subset_10d %>%
-  plot_shannon_overtime() +
-  scale_x_continuous(breaks = c(-1:10),
-                     limits = c(-1.5,10.5),
-                     minor_breaks = c(-1.5:10.5)) +
-  labs(x = "Day",
-       y = "Shannon Diversity Index") +
-  theme(legend.position = "none")
-save_plot("results/figures/shannon_post_cdi_peg_overtime_10d.png", shannon_post_cdi_peg_overtime_10d) #Save 10 day Shannon plot without legend
-#Warning because stat for day 15 annotation is removed when we limit x axis to day 1:10
-
 #Plot Shannon over time for stools only
 x_annotation <- sig_shannon_days_stools
 y_position <- max(diversity_stools$shannon)+ 0.05
