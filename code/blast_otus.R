@@ -321,6 +321,8 @@ otu_21_blast_results <- read_csv("data/process/blast/OTU_0021_HitTable.csv") %>%
 otus_to_plot = rbind(otu_6_blast_results, otu_7_blast_results, otu_8_blast_results,
                 otu_21_blast_results, otu_0038_blast_results, otu_333_blast_results,
                 otu_334_blast_results, otu_624_blast_results)
+
+write_csv2(otus_to_plot, "data/process/blast/muribaculum_blast_results.csv")
 facet_labels = c("OTU 6", "OTU 7", "OTU 8", "OTU 21", "OTU 38", "OTU 333", "OTU 334", "OTU 624")
 
 potential_muri_otus_plot <- otus_to_plot %>%
