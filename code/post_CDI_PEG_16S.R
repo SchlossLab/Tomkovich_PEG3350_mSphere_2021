@@ -167,7 +167,8 @@ axis2_stool <- pcoa_axes_post_cdi_PEG_stool %>% filter(axis == 2) %>% pull(loadi
 
 pcoa_subset_plot_stool <- plot_pcoa(pcoa_post_cdi_peg_stool)+
   labs(x = paste("PCoA 1 (", axis1_stool, "%)", sep = ""), #Annotations for each axis from loadings file
-       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))
+       y = paste("PCoA 2 (", axis2_stool,"%)", sep = ""))+
+  theme(legend.position = "none")
   #annotate("text", x = -.6, y = .41, label = paste(str_to_title(top_R2_title)), size = 3.2) +
   #annotate("text", x = -.45, y = .41, label = paste(str_to_title(sec_R2_title)), size = 3.2) +
   #annotate("text", x = -.6, y = .375, label = paste("italic(R)^2: ", top_R2, sep = "" ), parse = TRUE, size = 3.2) +
@@ -178,25 +179,26 @@ save_plot(filename = paste0("results/figures/post_CDI_PEG_stool_pcoa.png"), pcoa
 
 #Create stand alone legend
 group_legend <- pcoa_post_cdi_peg_stool  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
+  ggplot(aes(x = axis1, y = axis2, color = group, alpha = day))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
   geom_point()+ theme_classic()+
-  guides(color = guide_legend(ncol = 2))
+  guides(color = guide_legend(ncol = 2))+ 
+  theme(legend.position = "bottom")
 group_legend <- get_legend(group_legend)
-save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 6)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 9)
 #Create Standalone legend, vertical
 group_legend_vert <- pcoa_post_cdi_peg_stool  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
+  ggplot(aes(x = axis1, y = axis2, color = group, alpha = day))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
                       labels= str_wrap(color_labels, 25))+
   geom_point()+ theme_classic()
 group_legend_vert <- get_legend(group_legend_vert)
-save_plot("results/figures/post_CDI_PEG_pcoa_legend_vert.png", group_legend_vert, base_height = 1.5, base_width = 2)
+save_plot("results/figures/post_CDI_PEG_pcoa_legend_vert.png", group_legend_vert, base_height = 3, base_width = 1.8)
 
 #Animate stool only PCoA over time
 pcoa_animated_stool <- pcoa_post_cdi_peg_stool %>%
