@@ -375,3 +375,107 @@ bacteriodes_1_and_2_otus <- otu_1_and_2_blast_results %>%
         legend.position = "none", #Remove legend
         axis.text.x = element_blank())
 save_plot("results/figures/otus_1_and_2_bacteriodes_blast_results.png", bacteriodes_1_and_2_otus, base_height =5, base_width = 6)
+
+#Investigate Lachnospiraceae and Porphyromonadaceae OTUs
+porphyr_otu_nums <- c("Otu0006", "Otu0007", "Otu0008", "Otu0010", "Otu0021", "Otu0025", "Otu0048", "Otu0122")
+lachno_otu_nums <- c("Otu0029", "Otu0033", "Otu0062", "Otu0073")
+
+porphyr_otus <- taxonomy %>%
+  filter(OTU %in% porphyr_otu_nums)
+
+lachno_otus <- taxonomy %>%
+  filter(OTU %in% lachno_otu_nums)
+
+porphyr_seq_all <- map_df(porphyr_otu_nums, function(porphyr_otu_nums){
+  porphyr_seq <- otu_seqs %>% 
+    filter(str_detect(name, porphyr_otu_nums))
+})
+
+lachno_seq_all <- map_df(lachno_otu_nums, function(lachno_otu_nums){
+  lachno_seq <- otu_seqs %>% 
+    filter(str_detect(name, lachno_otu_nums))
+})
+
+porphyr_seq_all %>% pull(sequence)
+lachno_seq_all %>% pull(sequence)
+
+#Load data from porphyromonadaceae Otus
+otu_0010_blast_results <- read_csv("data/process/blast/OTU_0010_HitTable.csv") %>%
+  mutate(otu = "Otu0010") %>% head(4)
+otu_0025_blast_results <- read_csv("data/process/blast/OTU_0025_HitTable.csv" ) %>%
+  mutate(otu = "Otu0025") %>% head(4)
+otu_0122_blast_results <- read_csv("data/process/blast/OTU_0122_HitTable.csv") %>%
+  mutate(otu = "Otu0122") %>% head(4)
+otu_0048_blast_results <- read_csv("data/process/blast/OTU_0048_HitTable.csv") %>%
+  mutate(otu = "Otu0048") %>% head(4)
+otu_8_blast_results <- read_csv("data/process/blast/OTU_0008_HitTable.csv") %>%
+  mutate(otu = "Otu0008") %>% head(4)
+otu_7_blast_results <- read_csv("data/process/blast/OTU_0007_HitTable.csv") %>%
+  mutate(otu = "Otu0007") %>% head(4)
+otu_6_blast_results <- read_csv("data/process/blast/OTU_0006_HitTable.csv") %>%
+  mutate(otu = "Otu0006") %>% head(4)
+otu_21_blast_results <- read_csv("data/process/blast/OTU_0021_HitTable.csv") %>%
+  mutate(otu = "Otu0021") %>% head(4)
+
+#Create Dateframe for plotting
+porphyr_otus_to_plot = rbind(otu_6_blast_results, otu_7_blast_results, otu_8_blast_results,
+                     otu_0010_blast_results, otu_21_blast_results, otu_0025_blast_results,
+                     otu_0048_blast_results, otu_0122_blast_results)
+#Specificy facet labels
+facet_labels = c("OTU 6", "OTU 7", "OTU 8", "OTU 10", "OTU 21", "OTU 25", "OTU 48", "OTU 122")
+#Plot porphyromonadaceae otus
+porphyr_otus_plot <- porphyr_otus_to_plot %>%
+  ggplot(aes(x=`Scientific Name`, y = `Per. ident` , color = `Scientific Name`, shape=`Scientific Name`, show.legend = FALSE))+
+  geom_text(aes(label = `Scientific Name`), position = position_jitter(width = 0.5, height = 0.5), size = 3)+
+  scale_shape_identity()+
+  labs(title="Porphyromonadaceae OTUs Blastn Results", 
+       x=NULL,
+       y="% Identity")+
+  facet_wrap(~ `otu`, labeller = labeller(name = facet_labels)) +
+  scale_y_continuous(name = "% Identity", breaks=c(85, 87, 89, 91, 93, 95, 97), labels=c(85, 87, 89, 91, 93, 95, 97)) +
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otus_porphyromonadaceae_v2_blast_results_.png", porphyr_otus_plot, base_height =5, base_width = 6)
+
+otu_0010_blast_results <- read_csv("data/process/blast/OTU_0010_HitTable.csv") %>%
+  mutate(otu = "Otu0010") %>% head(4)
+otu_0025_blast_results <- read_csv("data/process/blast/OTU_0025_HitTable.csv" ) %>%
+  mutate(otu = "Otu0025") %>% head(4)
+otu_0122_blast_results <- read_csv("data/process/blast/OTU_0122_HitTable.csv") %>%
+  mutate(otu = "Otu0122") %>% head(4)
+otu_0048_blast_results <- read_csv("data/process/blast/OTU_0048_HitTable.csv") %>%
+  mutate(otu = "Otu0048") %>% head(4)
+
+#Load data from Lachnospiraceae Otus
+otu_0029_blast_results <- read_csv("data/process/blast/OTU_0029_HitTable.csv") %>%
+  mutate(otu = "Otu0029") %>% head(4)
+otu_0033_blast_results <- read_csv("data/process/blast/OTU_0033_HitTable.csv" ) %>%
+  mutate(otu = "Otu0033") %>% head(4)
+otu_0062_blast_results <- read_csv("data/process/blast/OTU_0062_HitTable.csv") %>%
+  mutate(otu = "Otu0062") %>% head(4)
+otu_0073_blast_results <- read_csv("data/process/blast/OTU_0073_HitTable.csv") %>%
+  mutate(otu = "Otu0073") %>% head(4)
+
+lachno_otus_to_plot = rbind(otu_0029_blast_results, otu_0033_blast_results, otu_0062_blast_results,
+                            otu_0073_blast_results)
+
+#Specificy facet labels
+facet_labels = c("OTU 29", "OTU 33", "OTU 62", "OTU 73")
+#Plot Lachnospiraceae otus
+lachno_otus_plot <- lachno_otus_to_plot %>%
+  ggplot(aes(x=`Scientific Name`, y = `Per. ident` , color = `Scientific Name`, shape=`Scientific Name`, show.legend = FALSE))+
+  geom_text(aes(label = `Scientific Name`), position = position_jitter(width = 0.5, height = 0.5), size = 3)+
+  scale_shape_identity()+
+  labs(title="Lachnospiraceae OTUs Blastn Results", 
+       x=NULL,
+       y="% Identity")+
+  facet_wrap(~ `otu`, labeller = labeller(name = facet_labels)) +
+  scale_y_continuous(name = "% Identity", breaks=c(85, 87, 89, 91, 93, 95, 97), labels=c(85, 87, 89, 91, 93, 95, 97)) +
+  theme_classic()+
+  theme(plot.title = element_text(hjust =0.5),
+        legend.position = "none", #Remove legend
+        axis.text.x = element_blank())
+save_plot("results/figures/otus_lachnospiraceae_blast_results.png", lachno_otus_plot, base_height =5, base_width = 6)
+
