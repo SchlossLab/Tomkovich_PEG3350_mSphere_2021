@@ -231,14 +231,15 @@ save_plot(filename = paste0("results/figures/1_Day_PEG_PCoA.png"), pcoa_subset_p
 
 #Create stand alone legend
 group_legend <- pcoa_1_day_PEG  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
+  ggplot(aes(x = axis1, y = axis2, alpha = day))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-  geom_point()+ theme_classic() 
+  geom_point()+ theme_classic() +
+  theme(legend.position = "right")
 group_legend <- get_legend(group_legend)
-save_plot("results/figures/1_day_PEG_pcoa_legend.png", group_legend, base_height = .8, base_width = 2.2)
+save_plot("results/figures/1_day_PEG_pcoa_legend.png", group_legend, base_height = 2.2, base_width = .5)
 
 pcoa_animated <- plot_pcoa(pcoa_1_day_PEG)+
   labs(x = paste("PCoA 1 (", axis1, "%)", sep = ""), #Annotations for each axis from loadings file
