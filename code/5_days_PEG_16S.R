@@ -842,7 +842,8 @@ color_mice <- color_mice <- c("5_M5",  "6_M5",  "7_M5",  "8_M5",  "9_M5",  "10_M
 color_mice_values <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", 
                        "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#9B870C")
 color_mice_labels <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10 , 11)
-
+#Note: 8_M6 and 11_M6 (not numbered and #10, respectively) died during the experiment. 8_M6 died before challenge
+# 11_M6 #10 was found dead by us on 6/3/19 which corresponded to 6 days post-infection
 lp_stool_WMR_indiv <- genus_stools %>% 
   filter(group == "WMR") %>% #Only plot WMR mice
   filter(genus %in% WMR_genus) %>% #Select only genera of interest
