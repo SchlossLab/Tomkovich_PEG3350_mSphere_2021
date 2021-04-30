@@ -651,7 +651,7 @@ plot_genus_dx <- function(sample_df, genera, timepoint){
     filter(genus %in% genera) %>%
     filter(day == timepoint) %>%
     mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000
-    ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
+    ggplot(aes(x= genus_name, y=agg_rel_abund, color=group))+
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -669,7 +669,7 @@ plot_genus_dx <- function(sample_df, genera, timepoint){
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
           legend.position = "none",
-          axis.text.y = element_text(face = "italic"), #Have only the genus names show up as italics
+          axis.text.y = element_markdown(), #Have only the genus names show up as italics
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
@@ -718,10 +718,10 @@ hm_plot_genus <- function(sample_df, genera, timepoints){
                              "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(genus %in% genera) %>%
     filter(day %in% timepoints) %>% 
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
-    geom_tile(aes(x = day, y=genus, fill=median))+
+    geom_tile(aes(x = day, y=genus_name, fill=median))+
     labs(title=NULL,
          x=NULL,
          y=NULL)+
@@ -735,7 +735,7 @@ hm_plot_genus <- function(sample_df, genera, timepoints){
     #    scale_y_discrete(limits=rev(levels(as.factor(sample_df$genus))))+#List genera names alphabetically
     theme(plot.title=element_text(hjust=0.5),
           strip.background = element_blank(), #get rid of box around facet_wrap labels
-          axis.text.y = element_markdown(face = "italic"), #Have only the genus names show up as italics
+          axis.text.y = element_markdown(), #Have only the genus names show up as italics
           text = element_text(size = 16)) # Change font size for entire plot
 }
 #Function to create a heatmap plot the relative abundances of a list of Genera over time, faceted by genus----
@@ -753,21 +753,21 @@ hm_plot_genus_facet <- function(sample_df, exp_groups, genera_list, timepoints, 
                              "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
     filter(genus %in% genera_list) %>%
     filter(day %in% timepoints) %>% 
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
     geom_tile(aes(x = day, y=group, fill=median))+
     labs(title=NULL,
          x=NULL,
          y=NULL)+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10)) + 
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10)) + 
     scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     scale_y_discrete(label = exp_group_labels)+ #Descriptive group names that match the rest of the plots
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          strip.text = element_text(face = "italic"),
-          plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+          strip.text = element_markdown(),
+          plot.title = element_markdown(hjust = 0.5), 
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
@@ -812,10 +812,10 @@ hm_plot_tissues_genera <- function(sample_df, genera, timepoints){
                              "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(genus %in% genera) %>%
     filter(day %in% timepoints) %>% 
-    group_by(group, genus, day, sample_type) %>% 
+    group_by(group, genus_name, day, sample_type) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
-    geom_tile(aes(x = day, y=genus, fill=median))+
+    geom_tile(aes(x = day, y=genus_name, fill=median))+
     labs(title=NULL,
          x=NULL,
          y=NULL)+
@@ -867,7 +867,7 @@ hm_1_otu <- function(sample_df, specify_otu, timepoints){
 #timepoints = days of the experiment to plot
 hm_1_genus <- function(sample_df, specify_genus, timepoints){
   genus_format_name <-sample_df %>% select(genus) %>% distinct(genus) %>% 
-    filter(genus == specify_genus) %>% pull(genus) #Get genus name
+    filter(genus == specify_genus) %>% pull(genus_name) #Get genus name
   sample_df %>%
     mutate(group = fct_relevel(group, "CN", "C", "1RM1", "M1", "FRM", "RM", "CWM", "WMR", "WMC", "WMN", "WM")) %>% #Specify the order of the groups
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
@@ -889,7 +889,7 @@ hm_1_genus <- function(sample_df, specify_genus, timepoints){
                                "5-day PEG 3350 without infection", "5-day PEG 3350"))+ #Descriptive group names that match the rest of the plots
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          plot.title = element_text(face = "italic", hjust = 0.5), #Italicize genus name
+          plot.title = element_markdown(hjust = 0.5), #Italicize genus name
           text = element_text(size = 16)) # Change font size for entire plot
 }
 
@@ -899,7 +899,7 @@ hm_1_genus <- function(sample_df, specify_genus, timepoints){
 genus_over_time <- function(genus_plot, sample_df){
   specify_genus_name <- sample_df %>% 
     filter(genus == genus_plot) %>% 
-    pull(genus)
+    pull(genus_name)
   genus_median <- sample_df %>% 
     filter(genus == genus_plot) %>% 
     group_by(group, day) %>% 
@@ -922,7 +922,7 @@ genus_over_time <- function(genus_plot, sample_df){
          y="Relative abundance (%)") +
     scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     theme_classic()+
-    theme(plot.title=element_text(hjust = 0.5, face = "italic"),
+    theme(plot.title=element_markdown(hjust = 0.5),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"),  # Add gray lines to clearly separate symbols by days)
           text = element_text(size = 18)) # Change font size for entire plot
 }
@@ -999,12 +999,20 @@ otu_gi_distrib <- function(otu_plot, sample_df, timepoint, group_name){
 #timepoints = days of the experiment to plot
 #specify_linetype = "solid" for C. diff challenged. "dashed" for mice that were mock challenged
 line_plot_genus <- function(sample_df, genera, timepoints, specify_linetype){
+  genus_name_order <- sample_df %>% 
+    filter(genus %in% genera) %>% 
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    arrange(factor(genus)) %>% #Arrange in factor order
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    filter(!duplicated(genus_name)) %>% 
+    pull(genus_name) #Order genus name in same order as list of genera to plot
   sample_df %>% 
     filter(genus %in% genera) %>% #Select only genera of interest
-    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% #Reorder genera to match order of genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     filter(day %in% timepoints) %>% #Select only timepoints of interest
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     mutate(day = as.integer(day)) %>%
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
@@ -1019,10 +1027,10 @@ line_plot_genus <- function(sample_df, genera, timepoints, specify_linetype){
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          strip.text = element_text(face = "italic"),
+          strip.text = element_markdown(),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16),
           legend.position = "None")

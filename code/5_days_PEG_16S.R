@@ -577,13 +577,21 @@ save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_cecum.png", lp_c
 #genera = list of genera to plot
 #timepoint = day of the experiment to plot
 line_plot_tissue_comp <- function(sample_df, genera, timepoint){
+  genus_name_order <- sample_df %>% 
+    filter(genus %in% genera) %>% 
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    arrange(factor(genus)) %>% #Arrange in factor order
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    filter(!duplicated(genus_name)) %>% 
+    pull(genus_name) #Order genus name in same order as list of genera to plot
   sample_df %>% 
     filter(genus %in% genera) %>% #Select only genera of interest
-    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% #Reorder genera to match order of genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     mutate(sample_type = fct_relevel(sample_type, c("cecum", "proximal_colon", "distal_colon"))) %>% #Make sure sample type is in the correct order
     filter(day == timepoint) %>% #Select only timepoint of interest
-    group_by(group, genus, sample_type) %>% 
+    group_by(group, genus_name, sample_type) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
     geom_line(aes(x = sample_type, y=median, color=group, group = group), linetype = "solid")+
@@ -597,10 +605,10 @@ line_plot_tissue_comp <- function(sample_df, genera, timepoint){
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 4, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          strip.text = element_text(face = "italic"),
+          strip.text = element_markdown(),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16),
           legend.position = "None")
@@ -617,14 +625,22 @@ d30_tissues_lp <- line_plot_tissue_comp(genus_tissues, sig_shared_tissues, "30")
 #tissue_type = type of tissue to plot
 #timepoints = days of the experiment to plot
 line_plot_tissue_comp_time <- function(sample_df, genera, tissue_type, timepoints){
+  genus_name_order <- sample_df %>% 
+    filter(genus %in% genera) %>% 
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    arrange(factor(genus)) %>% #Arrange in factor order
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    filter(!duplicated(genus_name)) %>% 
+    pull(genus_name) #Order genus name in same order as list of genera to plot
   sample_df %>% 
     filter(genus %in% genera) %>% #Select only genera of interest
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
     filter(sample_type %in% tissue_type) %>% #Select sample type of interest
-    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% #Reorder genera to match order of genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     filter(day %in% timepoints) %>% #Select only timepoint of interest
     mutate(day = fct_relevel(day, c("4", "6", "20", "30"))) %>% 
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
     geom_line(aes(x = day, y=median, color=group, group = group), linetype = "solid")+
@@ -638,12 +654,12 @@ line_plot_tissue_comp_time <- function(sample_df, genera, tissue_type, timepoint
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16),
-          strip.text = element_text(face = "italic", size = 9.5),
+          strip.text = element_markdown(size = 9.5),
           legend.position = "None")
 }
 #Genera that were significant in the stool samples on day 6
@@ -671,11 +687,15 @@ save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_dc_d6_10_genera.
 #genus_name = genus of interest to plot
 #tissue_type = type of tissue to plot
 #timepoints = days of the experiment to plot
-line_plot_genus_time_facet_comp <- function(sample_df, genus_name, timepoints){
+line_plot_genus_time_facet_comp <- function(sample_df, list_genus_name, timepoints){
   facet_labels <-  c("cecum", "proximal colon", "distal colon")
   names(facet_labels) <- c("cecum", "proximal_colon", "distal_colon")
+  format_genus_name <- sample_df %>% 
+    filter(genus == list_genus_name) %>% 
+    filter(!duplicated(genus)) %>% 
+    pull(genus_name)
   sample_df %>% 
-    filter(genus %in% genus_name) %>% #Select only genera of interest
+    filter(genus %in% list_genus_name) %>% #Select only genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     mutate(sample_type = fct_relevel(sample_type, c("cecum", "proximal_colon", "distal_colon"))) %>% #Make sure sample type is in the correct order
     filter(day %in% timepoints) %>% #Select only timepoint of interest
@@ -691,14 +711,14 @@ line_plot_genus_time_facet_comp <- function(sample_df, genus_name, timepoints){
     scale_x_discrete(breaks = c(4, 6, 20, 30), labels = c(4, 6, 20, 30), expand = c(0.1, 0))+#Change scale since we have less timepoints for tissues
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
-    labs(title=genus_name,
+    labs(title=format_genus_name,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
     facet_wrap(~sample_type, nrow = 4, labeller = labeller(sample_type = facet_labels, label_wrap_gen(width = 10)))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           text = element_text(size = 16),
-          plot.title = element_markdown(hjust = 0.4, face = "italic", size = 14), #Have only the genera names show up as italics
+          plot.title = element_markdown(hjust = 0.4, size = 14), #Have only the genera names show up as italics
           legend.position = "None")
 }
 
@@ -776,13 +796,23 @@ lp_stool_days <- diversity_stools %>% distinct(day) %>%
   pull(day)
 facet_labels <- WMR_genus 
 names(facet_labels) <- WMR_genus 
+
+WMR_genus_name_order <- genus_stools %>% 
+  filter(genus %in% WMR_genus) %>% 
+  mutate(genus = fct_relevel(genus, WMR_genus)) %>% #Reorder genera to match order of genera of interest
+  arrange(factor(genus)) %>% #Arrange in factor order
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  filter(!duplicated(genus_name)) %>% 
+  pull(genus_name) #Order genus name in same order as list of genera to plot
+
 lp_stool_WMR <- genus_stools %>% 
     filter(group == "WMR") %>% #Only plot WMR mice
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
     filter(genus %in% WMR_genus) %>% #Select only genera of interest
-    mutate(genus = fct_relevel(genus, WMR_genus)) %>% #Reorder genera to match order of genera of interest
+    mutate(genus_name = fct_relevel(genus_name, WMR_genus_name_order)) %>% #Reorder genera to match order of genera of interest
     filter(day %in% lp_stool_days) %>% #Select only timepoints of interest
     mutate(day = as.integer(day)) %>% 
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
     geom_line(aes(x = day, y=median, color=group), linetype = "solid")+
@@ -796,11 +826,11 @@ lp_stool_WMR <- genus_stools %>%
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           text = element_text(size = 16),
-          strip.text = element_text(face = "italic"),
+          strip.text = element_markdown(),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           legend.position = "None")
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR.png", lp_stool_WMR, base_height = 4, base_width = 8.5)
@@ -816,7 +846,8 @@ color_mice_labels <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10 , 11)
 lp_stool_WMR_indiv <- genus_stools %>% 
   filter(group == "WMR") %>% #Only plot WMR mice
   filter(genus %in% WMR_genus) %>% #Select only genera of interest
-  mutate(genus = fct_relevel(genus, WMR_genus)) %>% #Reorder genera to match order of genera of interest
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  mutate(genus_name = fct_relevel(genus_name, WMR_genus_name_order)) %>% #Reorder genera to match order of genera of interest
   filter(day %in% lp_stool_days) %>% #Select only timepoints of interest
   mutate(day = as.integer(day)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000 
@@ -832,11 +863,11 @@ lp_stool_WMR_indiv <- genus_stools %>%
   labs(title=NULL,
        x="Days Post-Infection",
        y="Relative abundance (%)")+
-  facet_wrap(~genus, ncol = 2, labeller = label_wrap_gen(width = 10))+
+  facet_wrap(~genus_name, ncol = 2, labeller = label_wrap_gen(width = 10))+
   theme_classic()+
   theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
         text = element_text(size = 16),
-        strip.text = element_text(face = "italic"),
+        strip.text = element_markdown(),
         plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
         legend.position = "None")
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR_indiv.png", lp_stool_WMR_indiv, base_height = 8, base_width = 8.5)
@@ -846,17 +877,24 @@ genus_WMR_stools  <-  genus_stools %>%
   filter(group == "WMR")
 hm_WMR_stool_days <- c("1", "2", "3", "4",
                        "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")
+#Rearrange genus name order since we don't need a break after Unclassified
+WMR_genus_name_order <- genus_stools %>% 
+  filter(genus %in% WMR_genus) %>% 
+  mutate(genus = fct_relevel(genus, WMR_genus)) %>% #Reorder genera to match order of genera of interest
+  arrange(factor(genus)) %>% #Arrange in factor order
+  filter(!duplicated(genus_name)) %>% 
+  pull(genus_name) #Order genus name in same order as list of genera to plot
 hm_WMR_stool <- genus_WMR_stools %>%
     mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
     mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
                              "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the groups  
     filter(genus %in% WMR_genus) %>%
-    mutate(genus = fct_relevel(genus, rev(WMR_genus))) %>% #Rearrange order of genera to match significance + Peptostreptococcaceae
+    mutate(genus_name = fct_relevel(genus_name, rev(WMR_genus_name_order))) %>% #Rearrange order of genera to match significance + Peptostreptococcaceae
     filter(day %in% hm_WMR_stool_days) %>% 
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
-    geom_tile(aes(x = day, y=genus, fill=median))+
+    geom_tile(aes(x = day, y=genus_name, fill=median))+
     labs(title=NULL,
          x=NULL,
          y=NULL)+
@@ -865,7 +903,7 @@ hm_WMR_stool <- genus_WMR_stools %>%
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
           strip.background = element_blank(), #get rid of box around facet_wrap labels
-          axis.text.y = element_text(face = "italic"), #Have genera names in italics
+          axis.text.y = element_markdown(), #Have genera names in italics
           text = element_text(size = 16))+ # Change font size for entire plot+
   scale_x_discrete(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30), labels = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30)) 
 save_plot(filename = "results/figures/5_days_PEG_genus_heatmap_stools_WMR.png", hm_WMR_stool, base_height = 8, base_width = 8)
@@ -990,12 +1028,19 @@ peg_wilcoxon_adjust_sig_plot <- peg_wilcoxon_adjust %>%
 #Include C and WMC group for comparison
 facet_labels <- c("Baseline", "Post-treatment")
 names(facet_labels) <- c("B", "P")
+peg_impacted_genus_names <- pairwise_genus_stools %>% 
+  filter(genus %in% peg_wilcoxon_adjust_sig_plot) %>% 
+  mutate(genus=fct_relevel(genus, levels=rev(peg_wilcoxon_adjust_sig_plot))) %>% #Reorder list of genera in order of significance
+  arrange(factor(genus)) %>% #Arrange in factor order
+  filter(!duplicated(genus_name)) %>% 
+  pull(genus_name) #Order genus name in same order as list of genera to plot
+#Create plot
 peg_impacted_genera_plot <- pairwise_genus_stools %>% 
   filter(genus %in% peg_wilcoxon_adjust_sig_plot) %>% 
   filter(day %in% c("B", "P")) %>% #Select baseline and post-treatment timepoints
-  mutate(genus=fct_relevel(genus, levels=rev(peg_wilcoxon_adjust_sig_plot))) %>% #Reorder list of genera in order of significance
+  mutate(genus_name=fct_relevel(genus_name, levels=rev(peg_impacted_genus_names))) %>% #Reorder list of genera in order of significance
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
-  ggplot(aes(x= genus, y=agg_rel_abund, color=group))+
+  ggplot(aes(x= genus_name, y=agg_rel_abund, color=group))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
@@ -1015,7 +1060,7 @@ peg_impacted_genera_plot <- pairwise_genus_stools %>%
   facet_wrap(~day, labeller = labeller(day = facet_labels), scales = "fixed", )+
   theme(plot.title=element_text(hjust=0.5),
         text = element_text(size = 16),# Change font size for entire plot
-        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        axis.text.y = element_markdown(), #Make sure genera names are in italics
         strip.background = element_blank(),
         panel.spacing = unit(2, "lines"), #Increase spacing between facets
         legend.position = "none") 
@@ -1026,8 +1071,8 @@ save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG.p
 peg_impacted_genera_bb <- pairwise_genus_stools %>% 
   filter(genus %in% peg_wilcoxon_adjust_sig_plot) %>% 
   filter(day %in% c("B", "P")) %>% #Select baseline and post-treatment timepoints
-  mutate(genus=fct_relevel(genus, levels=rev(peg_wilcoxon_adjust_sig_plot))) %>% #Reorder list of genera in order of significance
-  group_by(group, genus, day) %>% 
+  mutate(genus_name=fct_relevel(genus_name, levels=rev(peg_impacted_genus_names))) %>% #Reorder list of genera in order of significance
+  group_by(group, genus_name, day) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
   pivot_wider(names_from = day, values_from = median) %>% 
   ungroup
@@ -1035,8 +1080,8 @@ peg_impacted_genera_bb <- pairwise_genus_stools %>%
 facet_labels <- color_labels
 names(facet_labels) <- color_groups
 peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>% 
-  ggplot(aes(x= genus, color=group))+
-  geom_segment(aes(y= B, yend = P, xend = genus), size = .5,
+  ggplot(aes(x= genus_name, color=group))+
+  geom_segment(aes(y= B, yend = P, xend = genus_name), size = .5,
                arrow= arrow(length=unit(0.30,"cm"), ends="last"))+
   geom_point(aes(y = B), shape = 1, stroke = 1, size = 3) + 
   geom_point(aes(y = P), shape = 16, size = 3) + 
@@ -1055,7 +1100,7 @@ peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>%
   geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title=element_text(hjust=0.5),
         text = element_text(size = 16),# Change font size for entire plot
-        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        axis.text.y = element_markdown(), #Make sure genera names are in italics
         strip.background = element_blank(),
         panel.spacing = unit(2, "lines"), #Increase spacing between facets
         legend.position = "none") 
@@ -1063,8 +1108,8 @@ save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG_b
 
 #Create alternative barbell plot without need of facets
 peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>% 
-  ggplot(aes(x= genus, color=group, ymin= B, ymax = P))+
-  geom_linerange(aes(color = group, xend = genus), size = 1,
+  ggplot(aes(x= genus_name, color=group, ymin= B, ymax = P))+
+  geom_linerange(aes(color = group, xend = genus_name), size = 1,
                  arrow= arrow(length=unit(0.30,"cm"), ends="last"),
                  position = position_dodge(width = 1))+
   geom_point(aes(y = B, color = group), shape = 1, stroke = 1, size = 3,
@@ -1085,7 +1130,7 @@ peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>%
   geom_vline(xintercept = c((1:18) - 0.5 ), color = "grey") + # Add gray lines to clearly separate OTUs
   theme(plot.title=element_text(hjust=0.5),
         text = element_text(size = 16),# Change font size for entire plot
-        axis.text.y = element_markdown(face = "italic"), #Make sure genera names are in italics
+        axis.text.y = element_markdown(), #Make sure genera names are in italics
         strip.background = element_blank(),
         panel.spacing = unit(2, "lines"), #Increase spacing between facets
         legend.position = "none") 
@@ -1576,14 +1621,22 @@ save_plot("results/figures/5_days_PEG_pcoa_mock_alpha_legend_tissues.png", mock_
 #genera = list of genera to plot
 #timepoints = days of the experiment to plot
 line_plot_mock_genus <- function(sample_df, genera, timepoints){
+  genus_name_order <- sample_df %>% 
+    filter(genus %in% genera) %>% 
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    arrange(factor(genus)) %>% #Arrange in factor order
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    filter(!duplicated(genus_name)) %>% 
+    pull(genus_name) #Order genus name in same order as list of genera to plot
   sample_df %>% 
     filter(group %in% c("C", "WM", "CN","WMN")) %>%  ##Select only mock challenged & corresponding C. diff challenged groups
     filter(genus %in% genera) %>% #Select only genera of interest
-    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% #Reorder genera to match order of genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     filter(day %in% timepoints) %>% #Select only timepoints of interest
     mutate(day = as.integer(day)) %>% 
-    group_by(group, genus, day, infected) %>% 
+    group_by(group, genus_name, day, infected) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
     geom_line(aes(x = day, y=median, color=group, linetype =infected), alpha = 0.6, size = 1)+
@@ -1600,10 +1653,10 @@ line_plot_mock_genus <- function(sample_df, genera, timepoints){
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 12))+
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 12))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          strip.text = element_text(face = "italic"),
+          strip.text = element_markdown(),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16),
           legend.position = "None")
@@ -1622,10 +1675,10 @@ save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_stools.png"
 lp_tissue_days <- diversity_tissues %>% distinct(day) %>% 
   filter(day %in% c("4", "6", "30")) %>% #Focus on day -1 through 10 timepoints
   pull(day)
-facet_labels <- top_sig_genus_tissues[1:6] #Pick just the top 6
-names(facet_labels) <- top_sig_genus_tissues[1:6] #Pick just the top 6
+facet_labels <- shared_sig_cecum_genus #Same genera in Fig. 3F
+names(facet_labels) <- shared_sig_cecum_genus #Same genera in Fig. 3F
 lp_tissue_mock <- line_plot_mock_genus(genus_mock_tissues, 
-                                    top_sig_genus_tissues[1:6], lp_tissue_days)+
+                                       shared_sig_cecum_genus, lp_tissue_days)+
   scale_x_continuous(limits = c(3.5, 30.5), breaks = c(4, 6, 30), labels = c(4, 6, 30))#Change scale since we have less timepoints for tissues
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_mock_tissues.png", lp_tissue_mock, base_height = 5, base_width = 8)
 
