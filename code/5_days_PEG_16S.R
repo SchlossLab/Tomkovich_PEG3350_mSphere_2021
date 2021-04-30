@@ -731,65 +731,6 @@ otu_stools <- otu_stools %>%
 otu_tissues <- otu_tissues %>% 
   mutate(day = as.integer(day))
 
-#Examine C. difficile otu over time----
-peptostrep_stools <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_otu_peptostreptococcaceae_stools.png", peptostrep_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-peptostrep_tissues <- otu_over_time("Peptostreptococcaceae (OTU 12)", otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_otu_peptostreptococcaceae_tissues.png", peptostrep_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-#Examine Bacteroides otu over time----
-bacteroides_stools <- otu_over_time("Bacteroides (OTU 1)", otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_otu_bacteroides_stools.png", bacteroides_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-bacteroides_tissues <- otu_over_time("Bacteroides (OTU 1)", otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_otu_bacteroides_tissues.png", bacteroides_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-#Examine Enterobacteriaceae (OTU 2) over time----
-entero2_stools <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_otu_enterobacteriaceae_stools.png", entero2_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-entero2_tissues <- otu_over_time("Enterobacteriaceae (OTU 2)", otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_otu_enterobacteriaceae_tissues.png", entero2_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
-#Examine Porphyromonadaceae otu over time----
-porph_stools <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_stools)+
-  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
-                     limits = c(-16,31),
-                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-save_plot(filename = "results/figures/5_days_PEG_otu_porphyromonadaceae8_stools.png", porph_stools, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-porph_tissues <- otu_over_time("Porphyromonadaceae (OTU 8)", otu_tissues)+
-  scale_x_continuous(breaks = c(0, 4, 6, 20, 30),
-                     limits = c(0,31),
-                     minor_breaks = c(3.5, 4.5, 5.5, 6.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
-
-save_plot(filename = "results/figures/5_days_PEG_otu_porphyromonadaceae8_porph_tissues.png", porph_tissues, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
-
 #Examine changes that happen in WMR group "5-day PEG 3350 + 10-day recovery" 
 #post C. difficile challenge (day 1 versus day 8)---- 
 #Day 8 because that is when the group median stabilizes
