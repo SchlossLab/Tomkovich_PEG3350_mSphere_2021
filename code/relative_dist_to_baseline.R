@@ -101,6 +101,34 @@ save_plot(filename = "results/figures/5_days_PEG_bc_d30_baseline.png", d30_basel
 plot_grid(d10_baseline, d30_baseline, nrow = 1)+
   ggsave("results/figures/5_days_PEG_bc_combined_baseline.png", height = 3, width = 5)
 
+#Create faceted version for day 10 and day 30 relative to baseline
+facet_labels <- c("Day 10", "Day 30") #Create descriptive labels for facets
+names(facet_labels) <- c("10", "30") #values that correspond to group, which is the variable we're faceting by
+d10_30_facet_plot <- five_d_stools %>% 
+  filter(row_day %in% c("10", "30"),
+         col_day %in% c("baseline")) %>% 
+  group_by(group, row_day) %>% 
+  mutate(median = median(distances)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = group, y = distances, color = group)) +
+  geom_errorbar(aes(ymax=median, ymin=median), color = "gray50", size = 1, show.legend = FALSE)+ #Add lines to indicate median 
+  geom_jitter(size=2) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels)+ 
+  labs(title = NULL, x = NULL, y = "Bray-Curtis distance \n relative to baseline")+
+  facet_wrap(~row_day, labeller = labeller(row_day = facet_labels)) + #Make sure you specify facet_labels before running function
+  theme(plot.title = element_text(hjust = 0.5)) +#Center plot title
+  theme_classic()+
+  lims(y = c(0, 1))+
+  theme(legend.position = "none",
+        strip.background = element_blank(), #get rid of box around facet_wrap labels
+        text = element_text(size = 14),# Change font size for entire plot
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())+ #Remove x axis ticks
+  ggsave("results/figures/5_days_PEG_bc_combined_baseline.png", height = 3, width = 5)
+
 #Format 1-day PEG stool samples distance matrix----
 one_d_stools <- format_dist_df("data/process/1_day_PEG/peg3350.opti_mcc.braycurtis.0.03.lt.ave.dist") %>% 
   #Rename day values to baseline based on the group 
@@ -165,5 +193,3 @@ d15_baseline <- plot_bc_dist(post_CDI_stools, "15")
 save_plot(filename = "results/figures/post_CDI_PEG_bc_d15_baseline.png", d15_baseline, base_height = 4, base_width = 4)
 d30_baseline <- plot_bc_dist(post_CDI_stools, "30")
 save_plot(filename = "results/figures/post_CDI_PEG_bc_d30_baseline.png", d30_baseline, base_height = 4, base_width = 4)
-
-

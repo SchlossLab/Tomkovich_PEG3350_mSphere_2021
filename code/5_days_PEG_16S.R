@@ -126,8 +126,34 @@ shannon_stools <- plot_shannon_overtime(diversity_stools) +
   scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
                      limits = c(-16,31),
                      minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "none")
 save_plot(filename = "results/figures/5_days_PEG_shannon_stools.png", shannon_stools, base_height = 4, base_width = 9, base_aspect_ratio = 2)
+
+#Create 2nd version of shannon overtime for stool samples with no points
+shannon_stools_median <- diversity_stools %>%
+  group_by(group, day) %>%
+  mutate(median_shannon = median(shannon)) %>%
+  ggplot(x = day, y = shannon, colour = group)+
+  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  scale_y_continuous(limits = c(0,4.1), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
+  scale_x_continuous(breaks = c(-15, -10, -5, -4, -2, -1:10, 15, 20, 30),
+                     limits = c(-16,31),
+                     minor_breaks = c(-15.5,-14.5, -10.5, -9.5, -5.5, -4.5, -3.5, -2.5, -1.5:10.5, 14.5, 15.5, 19.5, 20.5, 29.5, 30.5)) +
+  
+  theme_classic()+
+  labs(title=NULL,
+       x="Days post-challenge",
+       y="Shannon diversity index")+
+  annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
+  theme(legend.position = "none",
+        text = element_text(size = 16), # Change font size for entire plot
+        axis.ticks.x = element_blank(),
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days))
+save_plot(filename = "results/figures/5_days_PEG_shannon_stools_median.png", shannon_stools_median, base_height = 4, base_width = 9, base_aspect_ratio = 2)
 
 #Plot richness over time for the subset of stool samples
 #Statistical annotation labels:
@@ -280,14 +306,16 @@ anim_save(animation = pcoa_gif_stool, filename = 'results/5_days_PEG_pcoa_over_t
 
 #Create stand alone legend
 group_legend <- pcoa_5_day_PEG_stool  %>%
-  ggplot(aes(x = axis1, y = axis2, color = group))+
+  ggplot(aes(x = axis1, y = axis2, color = group, alpha = day))+
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
                       labels=color_labels)+
-  geom_point()+ theme_classic()
+  geom_point()+ theme_classic()+
+  guides(colour = guide_legend(nrow = 2), alpha = guide_legend(nrow = 2))+
+  theme(legend.position = "bottom")
 group_legend <- get_legend(group_legend)
-save_plot("results/figures/5_days_PEG_pcoa_legend.png", group_legend, base_height = 1, base_width = 2.3)
+save_plot("results/figures/5_days_PEG_pcoa_legend.png", group_legend, base_height = 0.75, base_width = 5.5)
 
 #Tissue subset
 pcoa_5_day_PEG_tissues <- read_tsv("data/process/5_day_PEG/tissues/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
