@@ -195,7 +195,7 @@ wmr_cfu_plot <-  ggplot(NULL) +
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "CFU/g Feces") +
+    labs(x = "Days post-challenge", y = "CFU/g feces") +
     scale_y_log10(breaks = c(100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10), 
                   labels = c('10^2', '10^3', '10^4', '10^5', '10^6', '10^7', '10^8', '10^9', '10^10')) + # scale y axis log10 and label 10^x
     geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
@@ -233,7 +233,7 @@ wmr_cfu_plot_indiv <-  wmr_cfu %>%
                       values=color_mice_values,
                       breaks=color_mice,
                       labels=color_mice_labels)+
-  labs(x = "Days Post-Infection", y = "CFU/g Feces") +
+  labs(x = "Days post-challenge", y = "CFU/g feces") +
   scale_y_log10(breaks = c(100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10), 
                 labels = c('10^2', '10^3', '10^4', '10^5', '10^6', '10^7', '10^8', '10^9', '10^10')) + # scale y axis log10 and label 10^x
   geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating

@@ -398,7 +398,7 @@ plot_cfu_data <- function(df){
                         breaks=color_groups,
                         labels=color_labels)+
     theme_classic()+
-    labs(x = "Days Post-Infection", y = "CFU/g Feces") +
+    labs(x = "Days post-challenge", y = "CFU/g feces") +
     scale_y_log10(breaks = c(100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10), 
                   labels = c('10^2', '10^3', '10^4', '10^5', '10^6', '10^7', '10^8', '10^9', '10^10')) + # scale y axis log10 and label 10^x
     geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
@@ -426,7 +426,7 @@ plot_weight <- function(df){
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
+    labs(x = "Days post-challenge", y = "Weight change (g)") +
     ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme_classic()+
@@ -447,7 +447,7 @@ plot_weight_medians <- function(df){
                         values=color_scheme,
                         breaks=color_groups,
                         labels=color_labels)+
-    labs(x = "Days Post-Infection", y = "Weight Change (g)") +
+    labs(x = "Days post-challenge", y = "Weight change (g)") +
     ylim(-6, 4)+ #Make y-axis for weight_change data uniform across figures
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme_classic()+
@@ -463,7 +463,7 @@ plot_shannon_overtime <- function(df) {
     group_by(group, day) %>%
     mutate(median_shannon = median(shannon)) %>%
     ggplot(x = day, y = shannon, colour = group)+
-    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -472,8 +472,8 @@ plot_shannon_overtime <- function(df) {
     scale_y_continuous(limits = c(0,4.1), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
     theme_classic()+
     labs(title=NULL,
-         x="Days Post-Infection",
-         y="Shannon Diversity Index")+
+         x="Days post-challenge",
+         y="Shannon diversity index")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
           text = element_text(size = 16), # Change font size for entire plot
@@ -487,7 +487,7 @@ plot_shannon_overtime_t <- function(df) {
     group_by(group, day) %>%
     mutate(median_shannon = median(shannon)) %>%
     ggplot(x = day, y = shannon, colour = group)+
-    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group, alpha = day, shape = sample_type), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group, shape = sample_type), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -499,8 +499,8 @@ plot_shannon_overtime_t <- function(df) {
     scale_y_continuous(limits = c(0,4.1), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
     theme_classic()+
     labs(title=NULL,
-         x="Days Post-Infection",
-         y="Shannon Diversity Index")+
+         x="Days post-challenge",
+         y="Shannon diversity index")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
           text = element_text(size = 16), # Change font size for entire plot
@@ -514,7 +514,7 @@ plot_richness_overtime <- function(df) {
     group_by(group, day) %>%
     mutate(median_sobs = median(sobs)) %>%
     ggplot(x = day, y = sobs, group = group, colour = group)+
-    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -523,8 +523,8 @@ plot_richness_overtime <- function(df) {
     scale_y_continuous(limits = c(0,160), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
     theme_classic()+
     labs(title=NULL,
-         x="Days Post-Infection",
-         y="Number of Observed OTUs")+
+         x="Days post-challenge",
+         y="Number of observed OTUs")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
           text = element_text(size = 16), # Change font size for entire plot
@@ -538,7 +538,7 @@ plot_richness_overtime_t <- function(df) {
     group_by(group, day) %>%
     mutate(median_sobs = median(sobs)) %>%
     ggplot(x = day, y = sobs, group = group, colour = group)+
-    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group, alpha = day, shape = sample_type), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group, shape = sample_type), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -550,8 +550,8 @@ plot_richness_overtime_t <- function(df) {
     scale_y_continuous(limits = c(0,160), expand = c(0, .2))+ #expand argument gets rid of the extra space around the scale
     theme_classic()+
     labs(title=NULL,
-         x="Days Post-Infection",
-         y="Number of Observed OTUs")+
+         x="Days post-challenge",
+         y="Number of observed OTUs")+
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
           text = element_text(size = 16), # Change font size for entire plot
@@ -882,7 +882,7 @@ hm_1_genus <- function(sample_df, specify_genus, timepoints){
     labs(title=genus_format_name,
          x=NULL,
          y=NULL)+
-    scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nAbundance",
+    scale_fill_distiller(trans = "log10",palette = "YlGnBu", direction = 1, name = "Relative \nabundance",
                          limits = c(1/10000, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     scale_y_discrete(label = c("Clind. without infection", "Clind.", "1-day PEG 3350 + 1-day recovery", "1-day PEG 3350", "Clind. + 3-day recovery + 1-day PEG 3350 + FMT", "Clind. + 3-day recovery + 1-day PEG 3350",
                                "Clind. + 1-day PEG 3350", "5-day PEG 3350 + 10-day recovery", "5-day PEG 3350 + Clind.", 
@@ -1025,7 +1025,7 @@ line_plot_genus <- function(sample_df, genera, timepoints, specify_linetype){
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+

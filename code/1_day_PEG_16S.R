@@ -629,7 +629,7 @@ line_plot_genus_discrete <- function(sample_df, genera, timepoints, specify_line
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+

@@ -603,7 +603,7 @@ line_plot_tissue_comp <- function(sample_df, genera, timepoint){
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
@@ -652,7 +652,7 @@ line_plot_tissue_comp_time <- function(sample_df, genera, tissue_type, timepoint
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
@@ -712,7 +712,7 @@ line_plot_genus_time_facet_comp <- function(sample_df, list_genus_name, timepoin
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=format_genus_name,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~sample_type, nrow = 4, labeller = labeller(sample_type = facet_labels, label_wrap_gen(width = 10)))+
     theme_classic()+
@@ -824,7 +824,7 @@ lp_stool_WMR <- genus_stools %>%
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
@@ -861,7 +861,7 @@ lp_stool_WMR_indiv <- genus_stools %>%
   scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
   labs(title=NULL,
-       x="Days Post-Infection",
+       x="Days post-challenge",
        y="Relative abundance (%)")+
   facet_wrap(~genus_name, ncol = 2, labeller = label_wrap_gen(width = 10))+
   theme_classic()+
@@ -1351,8 +1351,8 @@ shannon_mock_stools_plot <- diversity_mock_stools %>%
   scale_y_continuous(limits = c(0,4.1), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
   theme_classic()+
   labs(title=NULL,
-       x="Days Post-Infection",
-       y="Shannon Diversity Index")+
+       x="Days post-challenge",
+       y="Shannon diversity index")+
   theme(legend.position = "none", #Remove legend
         text = element_text(size = 16), # Change font size for entire plot
         axis.ticks.x = element_blank())+
@@ -1377,8 +1377,8 @@ shannon_mock_tissues_plot <- diversity_mock_tissues %>%
   scale_y_continuous(limits = c(0,4.1), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
   theme_classic()+
   labs(title=NULL,
-       x="Days Post-Infection",
-       y="Shannon Diversity Index")+
+       x="Days post-challenge",
+       y="Shannon diversity index")+
   theme(legend.position = "none", #Remove legend
         text = element_text(size = 16), # Change font size for entire plot
         axis.ticks.x = element_blank())+
@@ -1490,8 +1490,8 @@ richness_mock_stools_plot <- diversity_mock_stools %>%
   scale_y_continuous(limits = c(0,160), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
   theme_classic()+
   labs(title=NULL,
-       x="Days Post-Infection",
-       y="Number of Observed OTUs")+
+       x="Days post-challenge",
+       y="Number of observed OTUs")+
   theme(legend.position = "none", #Remove legend
         text = element_text(size = 16), # Change font size for entire plot
         axis.ticks.x = element_blank())+
@@ -1516,8 +1516,8 @@ richness_mock_tissues_plot <- diversity_mock_tissues %>%
   scale_y_continuous(limits = c(0,160), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
   theme_classic()+
   labs(title=NULL,
-       x="Days Post-Infection",
-       y="Number of Observed OTUs")+
+       x="Days post-challenge",
+       y="Number of observed OTUs")+
   theme(legend.position = "none", #Remove legend
         text = element_text(size = 16), # Change font size for entire plot
         axis.ticks.x = element_blank())+
@@ -1651,7 +1651,7 @@ line_plot_mock_genus <- function(sample_df, genera, timepoints){
     scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
     geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
     labs(title=NULL,
-         x="Days Post-Infection",
+         x="Days post-challenge",
          y="Relative abundance (%)")+
     facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 12))+
     theme_classic()+
