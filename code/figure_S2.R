@@ -1,6 +1,6 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
-a <- ggdraw() + draw_image("results/figures/5_days_PEG_genus_lineplot_cecum_d6_16_genera.png")
+a <- ggdraw() + draw_image("results/figures/5_days_PEG_genus_lineplot_cecum_d6_10_genera.png")
 b <- ggdraw() + draw_image("results/figures/5_days_PEG_genus_lineplot_peptostreptococcacea.png")
 b <- plot_grid(b, NULL, labels = NULL)
 

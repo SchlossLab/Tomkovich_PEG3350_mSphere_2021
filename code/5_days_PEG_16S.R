@@ -643,7 +643,7 @@ line_plot_tissue_comp_time <- function(sample_df, genera, tissue_type, timepoint
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16),
-          strip.text = element_text(face = "italic", size = 12),
+          strip.text = element_text(face = "italic", size = 9.5),
           legend.position = "None")
 }
 #Genera that were significant in the stool samples on day 6
