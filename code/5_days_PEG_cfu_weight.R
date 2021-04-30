@@ -209,6 +209,41 @@ wmr_cfu_plot <-  ggplot(NULL) +
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 save_plot(filename = "results/figures/5_days_PEG_cfu_WMR.png", wmr_cfu_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
+#Make a second version where each unique mouse = a different colored line
+#Plot of just the cfu data for the WMR group (5-day PEG + 10-day recovery)
+wmr_cfu_mice <- cfudata %>% 
+  filter(group == "WMR") %>% 
+  filter(day %in% c("-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% 
+  filter(!duplicated(unique_mouse_id)) %>% #Remove duplicate mouse ids
+  mutate(unique_mouse_id = factor(unique_mouse_id, levels = unique(as.factor(unique_mouse_id)))) %>% 
+  pull(unique_mouse_id)
+color_mice <- c("5_M5",  "6_M5",  "7_M5",  "8_M5",  "9_M5",  "10_M5", "7_M6",  "9_M6",  "10_M6", "11_M6", "12_M6")
+color_mice_values <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", 
+                       "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#9B870C")
+color_mice_labels <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10 , 11)
+
+wmr_cfu_plot_indiv <-  wmr_cfu %>% 
+  ggplot()+
+  geom_line(mapping = aes(x = day, y = avg_cfu, group = unique_mouse_id, color = unique_mouse_id), alpha = 0.8, size = 1.5) +
+  scale_colour_manual(name="Mouse",
+                      values=color_mice_values,
+                      breaks=color_mice,
+                      labels=color_mice_labels)+
+  labs(x = "Days Post-Infection", y = "CFU/g Feces") +
+  scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
+  geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
+  geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
+  theme(text = element_text(size = 16))+  # Change font size for entire plot
+  theme_classic()+
+  scale_x_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30),
+                     limits = c(-1, 31),
+                     minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+ #only show grey lines separating days on days with statistically sig points
+  guides(colour = guide_legend(nrow = 1))+#Limit number of rows in the legend
+  theme(legend.position = "bottom",
+        legend.key= element_rect(colour = "transparent", fill = "transparent"),
+        panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
+save_plot(filename = "results/figures/5_days_PEG_cfu_WMR_indiv.png", wmr_cfu_plot_indiv, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
+
 #Weight change plot----
 
 #Dataframe of weight data for days -15 through 10 of the experiment:

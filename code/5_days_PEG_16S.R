@@ -864,6 +864,42 @@ lp_stool_WMR <- genus_stools %>%
           legend.position = "None")
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR.png", lp_stool_WMR, base_height = 4, base_width = 8.5)
 
+#Create lineplots of 10 genera
+#Alternative version with lines for individual mice 
+#Same scale used in code/5_days_PEG_16S.R
+color_mice <- color_mice <- c("5_M5",  "6_M5",  "7_M5",  "8_M5",  "9_M5",  "10_M5", "7_M6",  "9_M6",  "10_M6", "11_M6", "12_M6")
+color_mice_values <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", 
+                       "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#9B870C")
+color_mice_labels <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10 , 11)
+
+lp_stool_WMR_indiv <- genus_stools %>% 
+  filter(group == "WMR") %>% #Only plot WMR mice
+  filter(genus %in% WMR_genus) %>% #Select only genera of interest
+  mutate(genus = fct_relevel(genus, WMR_genus)) %>% #Reorder genera to match order of genera of interest
+  filter(day %in% lp_stool_days) %>% #Select only timepoints of interest
+  mutate(day = as.integer(day)) %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000 
+  ggplot()+
+  geom_line(aes(x = day, y=agg_rel_abund, color=unique_mouse_id, group =unique_mouse_id), linetype = "solid", alpha = 0.8)+
+  scale_colour_manual(name="Mouse",
+                      values=color_mice_values,
+                      breaks=color_mice,
+                      labels=color_mice_labels)+
+  scale_x_continuous(limits = c(-1.5,31), breaks = c(0, 5, 10, 15, 20, 25, 30), labels = c(0, 5, 10, 15, 20, 25, 30))+
+  scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
+  labs(title=NULL,
+       x="Days Post-Infection",
+       y="Relative abundance (%)")+
+  facet_wrap(~genus, ncol = 2, labeller = label_wrap_gen(width = 10))+
+  theme_classic()+
+  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
+        text = element_text(size = 16),
+        strip.text = element_text(face = "italic"),
+        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
+        legend.position = "None")
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_stools_WMR_indiv.png", lp_stool_WMR_indiv, base_height = 8, base_width = 8.5)
+
 #Heatmap of 5-day PEG + 10 day recovery (WMR) group----
 genus_WMR_stools  <-  genus_stools %>% 
   filter(group == "WMR")
