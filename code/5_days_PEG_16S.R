@@ -350,7 +350,7 @@ genus_stools <- subset_stool(genus_subset)
 genus_tissues <- subset_tissue(genus_subset)
 genus_cecum <- subset_cecum(genus_subset)
 genus_proximal_colon <- subset_proximal_colon(genus_subset)
-genus_distal_colon <- subset_proximal_colon(genus_subset)
+genus_distal_colon <- subset_distal_colon(genus_subset)
 #The above subsets exclude mock challenged mice (group = WMN or CN)
 #Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
 genus_mock_stools <- subset_stool(add_mocks(genus_subset, agg_genus_data))
@@ -497,7 +497,7 @@ shared_sig_distal_colon_genus #0 genera, because 0 genera were different at day 
 
 #Examine genera that were shared between tissue compartments on day 6
 sig_shared_tissues <- intersect_all(sig_genus_cecum_day6, sig_genus_proximal_colon_day6, sig_genus_distal_colon_day6)
-#16 genera total including Peptostrep.
+#10 genera total including Peptostrep.
 
 #No genera were significant for proximal and distal colon compartments on day 30
 
@@ -638,7 +638,7 @@ line_plot_tissue_comp_time <- function(sample_df, genera, tissue_type, timepoint
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 4, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
@@ -656,13 +656,13 @@ top_d6_sig_stools <- kw_genus_stools %>%
 shared_d6_genera <- intersect_all(sig_shared_tissues, top_d6_sig_genus)
 #14 genera shared between both compartments (Drops Peptostreptococcaceae and Firmicutes Unclassified)
 
-#16 genera different in all compartments on day 6
+#10 genera different in all compartments on day 6
 lp_cecum_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "cecum", lp_tissue_days)
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_cecum_d6_16_genera.png", lp_cecum_d6_genera, base_height = 5, base_width = 8)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_cecum_d6_10_genera.png", lp_cecum_d6_genera, base_height = 5, base_width = 8)
 lp_pc_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "proximal_colon", lp_tissue_days)
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_pc_d6_16_genera.png", lp_pc_d6_genera, base_height = 5, base_width = 8)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_pc_d6_10_genera.png", lp_pc_d6_genera, base_height = 5, base_width = 8)
 lp_dc_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "distal_colon", lp_tissue_days)
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_dc_d6_16_genera.png", lp_dc_d6_genera, base_height = 5, base_width = 8)
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_dc_d6_10_genera.png", lp_dc_d6_genera, base_height = 5, base_width = 8)
 
 #Lineplots faceted by tissue type instead of genus, see how same genus is changing over time across compartments
 #Plot of just how Peptostrep., Enterobacteriaceae, Bacteroides, Lachnospiraceae are changing over time across compartments
