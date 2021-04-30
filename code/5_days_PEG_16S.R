@@ -346,7 +346,7 @@ pcoa_shape_legend <- pcoa_5_day_PEG_tissues  %>%
   geom_point()+ theme_classic()+
   theme(legend.position = "bottom",
         legend.box="vertical",
-        legend.margin=margin())
+        legend.margin=margin()) #Minimize margin space
 pcoa_shape_legend<- get_legend(pcoa_shape_legend)
 save_plot("results/figures/5_days_PEG_pcoa_legend_tissues.png", pcoa_shape_legend, base_height = .7, base_width = 3)
 
@@ -1372,6 +1372,7 @@ shannon_mock_stools_plot <- diversity_mock_stools %>%
   ggplot(x = day, y = shannon, colour = group)+
   geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
   scale_colour_manual(name=NULL,
+                      guide = NULL,
                       values=color_scheme_m,
                       breaks=color_groups_m,
                       labels=color_labels_m) +
@@ -1384,7 +1385,8 @@ shannon_mock_stools_plot <- diversity_mock_stools %>%
   labs(title=NULL,
        x="Days post-challenge",
        y="Shannon diversity index")+
-  theme(legend.position = "none", #Remove legend
+  theme(legend.position = c(.9, .9), #Remove legend
+        legend.key.width=unit(1.5,"cm"), #Expand size of legend key lines
         text = element_text(size = 16), # Change font size for entire plot
         axis.ticks.x = element_blank())+
   scale_x_continuous(breaks = c(-5, -1, 0, 4, 6, 30),
@@ -1573,6 +1575,10 @@ plot_mock_pcoa <- function(df){
                        values=shape_scheme,
                        breaks=shape_infected,
                        labels=shape_infected) +
+    scale_alpha_continuous(name = "day",
+                          limits = c(-5, 30),
+                          breaks = c(-5, 0, 10, 20, 30),
+                          labels = c(-5, 0, 10, 20, 30))+
     coord_fixed() +
     labs(x="PCoA 1",
          y="PCoA 2",
@@ -1607,7 +1613,12 @@ mock_group_legend <- pcoa_mock_stool  %>%
                       values=color_scheme_m,
                       breaks=color_groups_m,
                       labels=color_labels_m)+ 
-  geom_point()+ theme_classic()+ theme(legend.position = "bottom")
+  scale_alpha_continuous(name = "day",
+                        limits = c(-5, 30),
+                        breaks = c(-5, 0, 10, 20, 30),
+                        labels = c(-5, 0, 10, 20, 30))+
+  geom_point()+ theme_classic()+ theme(legend.position = "bottom")+
+  theme(legend.margin=margin()))
 mock_group_legend <- get_legend(mock_group_legend)
 mock_shape_legend <- pcoa_mock_stool  %>%
   ggplot(aes(x = axis1, y = axis2, shape = infected,))+
@@ -1615,10 +1626,15 @@ mock_shape_legend <- pcoa_mock_stool  %>%
                      values=shape_scheme,
                      breaks=shape_infected,
                      labels=shape_infected) +
-  geom_point()+ theme_classic()+ theme(legend.position = "bottom")
+  scale_alpha_continuous(name = "day",
+                        limits = c(-5, 30),
+                        breaks = c(-5, 0, 10, 20, 30),
+                        labels = c(-5, 0, 10, 20, 30))+
+  geom_point()+ theme_classic()+ theme(legend.position = "bottom")+
+  theme(legend.margin=margin())
 mock_shape_legend <- get_legend(mock_shape_legend)
-mock_legend <- plot_grid(mock_group_legend, mock_shape_legend, nrow = 2)
-save_plot("results/figures/5_days_PEG_pcoa_mock_legend.png", mock_legend, base_height = 1, base_width = 5)
+mock_legend <- plot_grid(mock_group_legend, mock_shape_legend, nrow = 1)
+save_plot("results/figures/5_days_PEG_pcoa_mock_legend.png", mock_legend, base_height = .5, base_width = 9.5)
 
 #Create PCoA of mock tisuse samples
 pcoa_mock_tissue <- read_tsv("data/process/5_day_PEG/tissues_mock/peg3350.opti_mcc.braycurtis.0.03.lt.ave.pcoa.axes") %>%
@@ -1637,13 +1653,6 @@ plot_pcoa_mock_tissue <- plot_mock_pcoa(pcoa_mock_tissue)+
        y = paste("PCoA 2 (", axis2,"%)", sep = ""))+
   theme(legend.position = "none")
 save_plot(filename = paste0("results/figures/5_days_PEG_tissue_PCoA_mock.png"), plot_pcoa_mock_tissue, base_height = 5, base_width = 5)
-
-#Create stand alone alpha legend for mock PCoA of tissue samples
-mock_alpha_legend <- pcoa_mock_tissue  %>%
-  ggplot(aes(x = axis1, y = axis2, alpha = day))+
-  geom_point()+ theme_classic()+ theme(legend.position = "bottom")
-mock_alpha_legend <- get_legend(mock_alpha_legend)
-save_plot("results/figures/5_days_PEG_pcoa_mock_alpha_legend_tissues.png", mock_alpha_legend, base_height = 0.5, base_width = 2.5)
 
 #Line Plots of specific bacterial genera in mock-infected mice----
 
