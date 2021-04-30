@@ -593,52 +593,7 @@ sig_genus_top_5_list <- sig_genus_top_list[!(sig_genus_top_list %in% sig_genus_r
 
 #Plot Genus pairwise results----
 
-
-#Plot most relevant genera from baseline to Day 1 facted by genus
-facet_labels <- sig_genus_pairs
-names(facet_labels) <- sig_genus_pairs
-hm_baselinetoD1_5_genera <- hm_plot_genus_facet(agg_genus_data_subset, rev(color_groups), sig_genus_top_5_list, hm_days, rev(color_labels)) +
-  scale_x_discrete(limits = c("B", "1", "2", "5", "7"), breaks = c("B", "1", "2", "5", "7"), labels = c("B", "1", "2", "5", "7")) +
-  facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 10)) 
-save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_heatmap.png", hm_baselinetoD1_5_genera, base_height = 4, base_width = 15)
-
-
-#Plot genus pairwise results in a line plot faceted by genus
-facet_labels <- sig_genus_pairs
-names(facet_labels) <- sig_genus_pairs
-
-line_plot_baselinetoD1_5_genera <- agg_genus_data_subset %>%
-  mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
-  mutate(day = factor(day, levels = unique(as.factor(day)))) %>% #Transform day variable into factor variable
-  mutate(day = fct_relevel(day, "-15", "-11", "-10", "-5", "-4", "-2", "-1", "0", "1", "2", "3", "4",
-                           "5", "6", "7", "8", "9", "10", "15", "20", "25", "30")) %>% #Specify the order of the days  
-  filter(genus %in% sig_genus_top_5_list) %>%
-  filter(day %in% hm_days) %>% 
-  group_by(group, genus, day) %>% 
-  summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
-  ggplot()+
-  geom_line(mapping = aes(x=day, y=median, group=group, color=group))+
-  scale_x_discrete(limits = c("B", "1", "2", "5", "7"), breaks = c("B", "1", "2", "5", "7"), labels = c("B", "1", "2", "5", "7")) +
-  scale_colour_manual(name=NULL,
-                      values=color_scheme,
-                      breaks=color_groups,
-                      labels=color_labels) +
-  labs(title=NULL,
-       x=NULL,
-       y=NULL)+
-  facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 10)) + 
-  theme_classic()+
-  labs(title=NULL,
-       x="Days Post-Infection",
-       y="Relative Abundance") +
-  theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-        strip.text = element_text(face = "italic"),
-        legend.position = "bottom",
-        plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
-        text = element_text(size = 16)) # Change font size for entire plot
-save_plot(filename = "results/figures/1_Day_PEG_genus_5_baselinetoD1_lineplot.png", line_plot_baselinetoD1_5_genera, base_height = 5, base_width = 15)
-
-#Lineplot v2 with function from code/utilities.R #
+#Lineplot v2 with function based off of the line_plot function from code/utilities.R #
 #Chose 1 more genera to make it an even 6
 sig_genus_top_list_v2 <- sig_genus_pairs[!(sig_genus_pairs %in% sig_genus_pairs_D7)] #14 genera
 sig_genus_remove_names <- c("Ruminococcus", "Unclassified", "Alistipes", "Clostridium XlVb", "Enterorhabdus", "Pseudoflavonifractor", 
@@ -648,12 +603,20 @@ sig_genus_top_list_v2 <- sig_genus_top_list_v2[!(sig_genus_top_list_v2 %in% sig_
 
 #Function to plot genus line plot with discrete day scale
 line_plot_genus_discrete <- function(sample_df, genera, timepoints, specify_linetype){
+  genus_name_order <- sample_df %>% 
+    filter(genus %in% genera) %>% 
+    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    arrange(factor(genus)) %>% #Arrange in factor order
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    filter(!duplicated(genus_name)) %>% 
+    pull(genus_name) #Order genus name in same order as list of genera to plot
   sample_df %>% 
     filter(genus %in% genera) %>% #Select only genera of interest
-    mutate(genus = fct_relevel(genus, genera)) %>% #Reorder genera to match order of genera of interest
+    mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+    mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% #Reorder genera to match order of genera of interest
     mutate(group = fct_relevel(group, rev(color_groups))) %>% #Specify the order of the groups
     filter(day %in% timepoints) %>% #Select only timepoints of interest
-    group_by(group, genus, day) %>% 
+    group_by(group, genus_name, day) %>% 
     #mutate(day = as.integer(day)) %>%
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
@@ -668,10 +631,10 @@ line_plot_genus_discrete <- function(sample_df, genera, timepoints, specify_line
     labs(title=NULL,
          x="Days Post-Infection",
          y="Relative abundance (%)")+
-    facet_wrap(~genus, nrow = 2, labeller = label_wrap_gen(width = 10))+
+    facet_wrap(~genus_name, nrow = 2, labeller = label_wrap_gen(width = 10))+
     theme_classic()+
     theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-          strip.text = element_text(face = "italic"),
+          strip.text = element_markdown(),
           plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
           text = element_text(size = 16),
           legend.position = "None")
