@@ -43,14 +43,32 @@ agg_taxonomic_data <- function(taxonomic_level) {
   agg_taxa_data %>%
     group_by(unique_label, {{ taxonomic_level }}) %>% #Embracing treats the taxonomic_level argument as a column name
     summarize(agg_rel_abund=sum(rel_abund)) %>%
-    # Merge relative abundance data to specifci taxonomic_level data
+    # Merge relative abundance data to specific taxonomic_level data
     left_join(., metadata, by = "unique_label") %>%
     ungroup()
 }
 
 # Relative abundance data at the otu level:
 agg_otu_data <- agg_taxonomic_data(otu)
-agg_genus_data <- agg_taxonomic_data(genus)
+agg_genus_data <- agg_taxonomic_data(genus) %>% 
+  #Format genus names to use with ggtext, Unclassifed and roman numerals should not be italicized (genus_end, genus_prefix)
+  separate(genus, c("genus_name", "genus_end"), sep = "\\s", extra = "merge", remove = FALSE) %>% 
+  mutate(genus_name = case_when(genus_end == "Incertae Sedis XI Unclassified" ~ "Clostridiales Incertae Sedis",
+                                genus_end == "Saccharibacteria Unclassified" ~ "Candidatus Saccharibacteria",
+                                genus_end == "sensu stricto" ~ "Clostridium sensu stricto",
+                                TRUE ~ genus_name)) %>% 
+  extract(genus_end, "genus_prefix", "(Unclassified)", remove = FALSE) %>% 
+  mutate(genus_end = case_when(genus_end == "1 Unclassified" ~ "1",
+                               genus_end == "2 Unclassified" ~ "2",
+                               genus_end == "Incertae Sedis XI Unclassified" ~ "XI",
+                               genus_end == "Incertae Sedis XIII Unclassified" ~ "XIII",
+                               genus_end == "Saccharibacteria Unclassified" ~ "",
+                               genus_end == "sensu stricto" ~ "",
+                               genus_end == "Unclassified" ~ "",
+                               TRUE ~ genus_end)) %>% 
+  replace_na(list(genus_prefix = "", genus_end = "")) %>% 
+  mutate(genus_name = glue("{genus_prefix} *{genus_name}* {genus_end}")) #Markdown notation so that only bacteria name is italicized
+
 
 #Rename otus to match naming convention used previously and add a column that will work with ggtext package:
 agg_otu <- agg_otu_data %>%
