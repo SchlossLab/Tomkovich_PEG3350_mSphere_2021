@@ -196,7 +196,8 @@ wmr_cfu_plot <-  ggplot(NULL) +
                         breaks=color_groups,
                         labels=color_labels)+
     labs(x = "Days Post-Infection", y = "CFU/g Feces") +
-    scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
+    scale_y_log10(breaks = c(100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10), 
+                  labels = c('10^2', '10^3', '10^4', '10^5', '10^6', '10^7', '10^8', '10^9', '10^10')) + # scale y axis log10 and label 10^x
     geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
     geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
     theme(text = element_text(size = 16))+  # Change font size for entire plot
@@ -205,7 +206,10 @@ wmr_cfu_plot <-  ggplot(NULL) +
                      limits = c(-1, 31),
                      minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+ #only show grey lines separating days on days with statistically sig points
     theme(legend.position = "none",
+          axis.text.y = element_markdown(size = 12),
           legend.key= element_rect(colour = "transparent", fill = "transparent"),
+          text = element_text(size = 16), # Change font size for entire plot
+          axis.ticks.x = element_blank(),
           panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 save_plot(filename = "results/figures/5_days_PEG_cfu_WMR.png", wmr_cfu_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
@@ -230,7 +234,8 @@ wmr_cfu_plot_indiv <-  wmr_cfu %>%
                       breaks=color_mice,
                       labels=color_mice_labels)+
   labs(x = "Days Post-Infection", y = "CFU/g Feces") +
-  scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
+  scale_y_log10(breaks = c(100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10), 
+                labels = c('10^2', '10^3', '10^4', '10^5', '10^6', '10^7', '10^8', '10^9', '10^10')) + # scale y axis log10 and label 10^x
   geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
   geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
   theme(text = element_text(size = 16))+  # Change font size for entire plot
@@ -240,6 +245,9 @@ wmr_cfu_plot_indiv <-  wmr_cfu %>%
                      minor_breaks = c(-.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5))+ #only show grey lines separating days on days with statistically sig points
   guides(colour = guide_legend(nrow = 1))+#Limit number of rows in the legend
   theme(legend.position = "bottom",
+        axis.text.y = element_markdown(size = 12),
+        text = element_text(size = 16), # Change font size for entire plot
+        axis.ticks.x = element_blank(),
         legend.key= element_rect(colour = "transparent", fill = "transparent"),
         panel.grid.minor.x = element_line(size = 0.4, color = "grey"))#Add gray lines to clearly separate symbols by days)
 save_plot(filename = "results/figures/5_days_PEG_cfu_WMR_indiv.png", wmr_cfu_plot_indiv, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
@@ -298,3 +306,9 @@ weight_plot <- plot_weight(weightdata) +
                      minor_breaks = c(-15.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines around days on days with points)
 save_plot(filename = "results/figures/5_days_PEG_weight.png", weight_plot , base_height = 4, base_width = 8.5, base_aspect_ratio = 2)
 
+#Plots with just the median lines for each group
+v2_weight_plot <- plot_weight_medians(weightdata) +
+  scale_x_continuous(breaks = c(-15, -10, -5, 0, 5, 10, 15, 20, 25, 30),
+                     limits = c(-16, 31),
+                     minor_breaks = c(-15.5:10.5, 11.5, 12.5, 14.5, 15.5, 19.5, 20.5, 24.5, 25.5, 29.5, 30.5)) #only show grey lines around days on days with points)
+save_plot(filename = "results/figures/5_days_PEG_weight_median.png", v2_weight_plot, base_height = 4, base_width = 8.5, base_aspect_ratio = 2)

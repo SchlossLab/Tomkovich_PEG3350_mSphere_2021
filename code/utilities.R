@@ -242,18 +242,6 @@ count_subset <- function(subset){
     arrange(day)
 }
 
-#Function to have y-axis in scientific notation----
-fancy_scientific <- function(l) {
-  # turn in to character string in scientific notation
-  l <- format(l, scientific = TRUE)
-  # quote the part before the exponent to keep all the digits
-  l <- gsub("^(.*)e", "'\\1'e", l)
-  # turn the 'e+' into plotmath format
-  l <- gsub("e", "%*%10^", l)
-  # return this as an expression
-  parse(text=l)
-}
-
 #Functions used in statistical analysis----
 #Function to calculate the median cfu values per group from a dataframe (x)
 get_cfu_median <- function(x){
@@ -403,7 +391,7 @@ plot_cfu_data <- function(df){
     summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
   #Plot cfu for just the inital 10days
   cfu_plot <- ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 0.6, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
@@ -411,11 +399,13 @@ plot_cfu_data <- function(df){
                         labels=color_labels)+
     theme_classic()+
     labs(x = "Days Post-Infection", y = "CFU/g Feces") +
-    scale_y_log10(labels=fancy_scientific, breaks = c(10, 100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10, 10^11, 10^12))+ #Scientific notation labels for y-axis
+    scale_y_log10(breaks = c(100, 10^3, 10^4, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10), 
+                  labels = c('10^2', '10^3', '10^4', '10^5', '10^6', '10^7', '10^8', '10^9', '10^10')) + # scale y axis log10 and label 10^x
     geom_hline(yintercept = 100, linetype=2) + #Line that represents our limit of detection when quantifying C. difficile CFU by plating
     geom_text(x = 11, y = 104, color = "black", label = "LOD") + #Label for line that represents our limit of detection when quantifying C. difficile CFU by plating
     annotate("text", y = y_position, x = x_annotation, label = label, size =7)+ #Add statistical annotations
     theme(legend.position = "bottom",
+          axis.text.y = element_markdown(size = 12),
           legend.key= element_rect(colour = "transparent", fill = "transparent"),
           text = element_text(size = 16), # Change font size for entire plot
           axis.ticks.x = element_blank(),
@@ -430,7 +420,7 @@ plot_weight <- function(df){
     group_by(group, day) %>%
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
-    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group, alpha = day), size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
+    geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
     geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
