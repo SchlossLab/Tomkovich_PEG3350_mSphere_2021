@@ -1,6 +1,7 @@
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
+source("code/16S_common_files.R") #Reads in mothur output files
 library(viridis)
-library(scales)
+#library(scales)
 
 set.seed(19760620) #Same seed used for mothur analysis
 
@@ -75,7 +76,10 @@ read_feat_imp <- function(file_path){
   return(final_feat_imp)
 }
 
-rf_feat <- read_feat_imp("results/combined_feature-importance_rf.csv") #%>% 
+rf_feat <- read_feat_imp("results/combined_feature-importance_rf.csv") %>%
+  #Join to agg_genus_data so that genus_name_column will be included
+  left_join(select(agg_genus_data, genus, genus_name), by = "genus")
+
   #Transform bactname variable into factor 
   #mutate(bactname = factor(bactname, levels = unique(as.factor(bactname))))
 
@@ -94,22 +98,22 @@ top_10 <- function(df){
 #Top 10 genera for each input dataset with the random forest model
 rf_top_feat <- top_10(rf_feat) %>% pull(genus)
 
-#Function to filter to top genera for each pairwise comparison & plot results----
+#Function to filter to top genera & plot results----
 #df = dataframes of feature importances for all seeds
 #top_feat = dataframes of top features
 #comp_name = name of comparison to title the plot (in quotes)
 plot_feat_imp <- function(df, top_feat){
   df %>% 
     filter(genus %in% top_feat) %>% 
-    ggplot(aes(fct_reorder(genus, -perf_metric_diff, .desc = TRUE), perf_metric_diff, color = genus))+
+    ggplot(aes(fct_reorder(genus_name, -perf_metric_diff, .desc = TRUE), perf_metric_diff))+
     stat_summary(fun = 'median', 
                  fun.max = function(x) quantile(x, 0.75), 
                  fun.min = function(x) quantile(x, 0.25),
                  position = position_dodge(width = 1)) + 
-    scale_colour_manual(name=NULL,
-                        values=color_scheme,
-                        breaks=color_bact,
-                        labels=legend_bact)+
+#    scale_colour_manual(name=NULL,
+#                        values=color_scheme,
+#                        breaks=color_bact,
+ #                       labels=legend_bact)+
     coord_flip()+
     labs(title=NULL, 
          x=NULL,
@@ -117,14 +121,14 @@ plot_feat_imp <- function(df, top_feat){
     theme_classic()+
     theme(plot.title=element_text(hjust=0.5),
           text = element_text(size = 15),# Change font size for entire plot
-          axis.text.y = element_text(face = "italic"), #Genus in italics
+          axis.text.y = element_markdown(), #Genus in italics
           strip.background = element_blank(),
           legend.position = "none")   
 }
 
 #Plot feature importances for the top genera for each comparison----
 #Figure out colors for top 5 most abundant genera based on viridis scale
-show_col(viridis_pal()(5))
+#show_col(viridis_pal()(5))
 color_scheme_df <- rf_feat %>% 
   distinct(genus) %>% #Limit to unique genera
   filter(genus %in% rf_top_feat) %>% 
@@ -135,14 +139,10 @@ color_scheme_df <- rf_feat %>%
                            #genus == "Lachnospiraceae Unclassified" ~ "#5DC863FF",
                            #genus == "Bacteroides" ~ "#FDE725FF",
                            TRUE ~ "black")) #Rest of colors should be black
-color_scheme <- color_scheme_df %>% pull(color)
-color_bact <- color_scheme_df %>% pull(genus)
-legend_bact <- color_scheme_df %>% pull(genus)
 rf_feat_5dpi <- plot_feat_imp(rf_feat, rf_top_feat)+
   ggsave("results/figures/ml_top_features_genus.png", height = 2.5, width = 8)
 
 #Examine relative abundances in mice that clear within 10 days vs mice with prolonged colonization----
-source("code/16S_common_files.R") #Reads in mothur output files
 
 #Create shape scale based on each subset group
 shape_scheme <- c(1, 4, 19, 8)
@@ -152,14 +152,23 @@ shape_labels <- c("Clind.", "1-day PEG", "5-day PEG", "Post-CDI PEG")
 interp_genera_d5_top_10 <- rf_top_feat[1:10]
 #Plot the top 10 features that were important to Day 5 model and 
 #using facet_wrap, highlight the genera that correlate with colonization
+#Create genus_name_order
+genus_name_order <- agg_genus_data %>% 
+  filter(genus %in% interp_genera_d5_top_10) %>% 
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
+  arrange(factor(genus)) %>% #arrange rows in factor order
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  filter(!duplicated(genus_name)) %>% 
+  pull(genus_name) #Order genus name in same order as list of genera to plot
 top10_d5_model_taxa <- agg_genus_data %>% 
   filter(day == 5) %>% #Used d5 timepoint for ml input data
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
   filter(genus %in% interp_genera_d5_top_10) %>%
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
   #Reorder genera to match contribution to model
-  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10)) %>% 
+  mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
-  group_by(clearance_status_d10, genus) %>% 
+  group_by(clearance_status_d10, genus_name) %>% 
   mutate(median=(median(agg_rel_abund + 1/2000))) %>% #create a column of median values for each group
   ungroup() %>% 
   ggplot(aes(x=clearance_status_d10, y =agg_rel_abund, colour= clearance_status_d10))+
@@ -175,14 +184,14 @@ top10_d5_model_taxa <- agg_genus_data %>%
                      breaks=shape_groups,
                      labels=shape_labels)+
   geom_hline(yintercept=1/1000, color="gray")+
-  facet_wrap(~ genus, nrow=2, labeller = label_wrap_gen(width = 10))+
+  facet_wrap(~ genus_name, nrow=2, labeller = label_wrap_gen(width = 10))+
   labs(title=NULL,
        x=NULL,
        y="Relative abundance (%)") +
   scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   theme_classic()+
   theme(text = element_text(size = 14),
-        strip.text = element_text(hjust = 0.5, size = 8.6, face = "italic"),
+        strip.text = element_markdown(hjust = 0.5, size = 8.6),
         axis.text.x = element_blank(),
         legend.position = "bottom")
 save_plot(filename = paste0("results/figures/ml_top10_d5_genus.png"), top10_d5_model_taxa, base_height = 5, base_width = 8)  
@@ -191,6 +200,15 @@ save_plot(filename = paste0("results/figures/ml_top10_d5_genus.png"), top10_d5_m
 #List of genera to include in area plot, select genera where the median for either cleared or colonized mice is greater than 1%
 interp_genera_d5_top_10_abundant <- c("Porphyromonadaceae Unclassified", "Akkermansia", "Enterobacteriaceae Unclassified",
                                       "Lachnospiraceae Unclassified", "Bacteroides")
+#Create same variable with markdown formatted genus names
+genus_name_order <- agg_genus_data %>% 
+  filter(genus %in% interp_genera_d5_top_10_abundant) %>% 
+  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10_abundant)) %>% 
+  arrange(factor(genus)) %>% #arrange rows in factor order
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  filter(!duplicated(genus_name)) %>% 
+  pull(genus_name) #Order genus name in same order as list of genera to plot
+
 #Labels for facet
 facet_labels <- c("cleared", "colonized")
 names(facet_labels) <- c("cleared", "colonized")
@@ -212,11 +230,12 @@ topabund_5_model_taxa_area_plot <- agg_genus_data %>%
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
   filter(genus %in% interp_genera_d5_top_10_abundant) %>%
   #Reorder genera to match contribution to model
-  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10_abundant)) %>% 
-  group_by(clearance_status_d10, genus, day) %>% 
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% 
+  group_by(clearance_status_d10, genus_name, day) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
   ggplot()+
-  geom_area(aes(x = day, y=median, group = genus, fill = genus))+
+  geom_area(aes(x = day, y=median, group = genus_name, fill = genus_name))+
   scale_fill_viridis(discrete = T)+
   labs(title=NULL,
        x=NULL,
@@ -226,7 +245,7 @@ topabund_5_model_taxa_area_plot <- agg_genus_data %>%
   facet_wrap(~clearance_status_d10, labeller = labeller(clearance_status_d10 = facet_labels), nrow = 1)+
   theme_classic()+
   theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
-        legend.text = element_text(face = "italic"), #Italicize genus name
+        legend.text = element_markdown(), #Italicize genus name
         legend.title = element_blank(),
         text = element_text(size = 16))+ # Change font size for entire plot
   guides(color = guide_legend(ncol = 2))
@@ -257,8 +276,9 @@ topabund_5_model_taxa_line_plot <- agg_genus_data %>%
   filter(clearance_status_d10 %in% c("colonized", "cleared")) %>% #Remove samples we don't have clearance status d10 data for
   filter(genus %in% interp_genera_d5_top_10_abundant) %>%
   #Reorder genera to match contribution to model
-  mutate(genus = fct_relevel(genus, interp_genera_d5_top_10_abundant)) %>% 
-  group_by(clearance_status_d10, genus, day) %>% 
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% 
+  group_by(clearance_status_d10, genus_name, day) %>% 
   summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop")  %>% #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
   ggplot()+
   geom_line(aes(x = day, y=median, color=clearance_status_d10, group = clearance_status_d10), linetype = "solid")+
@@ -272,16 +292,16 @@ topabund_5_model_taxa_line_plot <- agg_genus_data %>%
   scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
   labs(title=NULL,
-       x="Days Post-Infection",
+       x="Days post-challenge",
        y="Relative abundance (%)")+
-  facet_wrap(~genus, nrow = 1, labeller = label_wrap_gen(width = 12))+
+  facet_wrap(~genus_name, nrow = 1, labeller = label_wrap_gen(width = 12))+
   theme_classic()+
   theme(strip.background = element_blank(), #get rid of box around facet_wrap labels
         panel.spacing = unit(1, "lines"), #Increase spacing between facets
         plot.title = element_markdown(hjust = 0.5), #Have only the genera names show up as italics
         text = element_text(size = 16),
         axis.text.x = element_text(size = 10),
-        strip.text = element_text(face = "italic", size = 12),
+        strip.text = element_markdown(size = 12),
         legend.position = "None")
 save_plot(filename = paste0("results/figures/ml_abund_5_genus_lineplot.png"), topabund_5_model_taxa_line_plot, base_height = 3, base_width = 10)  
 
@@ -322,7 +342,7 @@ muribac_otus_line_plot <- agg_otu_data %>%
   scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
   labs(title=NULL,
-       x="Days Post-Infection",
+       x="Days post-challenge",
        y="Relative abundance (%)")+
   facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
   theme_classic()+
@@ -426,7 +446,7 @@ porphyr_otus_line_plot <- agg_otu_data %>%
   scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
   labs(title=NULL,
-       x="Days Post-Infection",
+       x="Days post-challenge",
        y="Relative abundance (%)")+
   facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
   theme_classic()+
@@ -477,7 +497,7 @@ lachno_otus_line_plot <- agg_otu_data %>%
   scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
   labs(title=NULL,
-       x="Days Post-Infection",
+       x="Days post-challenge",
        y="Relative abundance (%)")+
   facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
   theme_classic()+
@@ -532,7 +552,7 @@ porphyr_otus_line_plot <-   ggplot(NULL)+
   scale_y_continuous(trans = "log10", limits = c(1/10900, 1), breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
   geom_hline(yintercept=1/1000, color="gray")+ #Represents limit of detection
   labs(title=NULL,
-       x="Days Post-Infection",
+       x="Days post-challenge",
        y="Relative abundance (%)")+
   facet_wrap(~otu_name, nrow = 1, labeller = label_wrap_gen(width = 10))+
   theme_classic()+
