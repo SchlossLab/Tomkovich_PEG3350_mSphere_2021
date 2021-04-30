@@ -338,15 +338,17 @@ save_plot(filename = paste0("results/figures/5_days_PEG_tissues_PCoA.png"), pcoa
 
 #Create stand alone legend
 pcoa_shape_legend <- pcoa_5_day_PEG_tissues  %>%
-  ggplot(aes(x = axis1, y = axis2, shape = sample_type))+
+  ggplot(aes(x = axis1, y = axis2, shape = sample_type, alpha = day))+
   scale_shape_manual(name = NULL, 
                      values=sample_shape_scheme,
                      breaks=sample_shape_groups,
                      labels=sample_shape_labels)+
   geom_point()+ theme_classic()+
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom",
+        legend.box="vertical",
+        legend.margin=margin())
 pcoa_shape_legend<- get_legend(pcoa_shape_legend)
-save_plot("results/figures/5_days_PEG_pcoa_legend_tissues.png", pcoa_shape_legend, base_height = .25, base_width = 3)
+save_plot("results/figures/5_days_PEG_pcoa_legend_tissues.png", pcoa_shape_legend, base_height = .7, base_width = 3)
 
 #PCoA faceted over time
 pcoa_plot_time <- plot_pcoa_t(pcoa_5_day_PEG_tissues)+
