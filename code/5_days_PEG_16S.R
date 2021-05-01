@@ -381,10 +381,6 @@ genus_tissues <- subset_tissue(genus_subset)
 genus_cecum <- subset_cecum(genus_subset)
 genus_proximal_colon <- subset_proximal_colon(genus_subset)
 genus_distal_colon <- subset_distal_colon(genus_subset)
-#The above subsets exclude mock challenged mice (group = WMN or CN)
-#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
-genus_mock_stools <- subset_stool(add_mocks(genus_subset, agg_genus_data))
-genus_mock_tissues <- subset_tissue(add_mocks(genus_subset, agg_genus_data))
 
 #Function to test for differences across groups at the genus level for specific timepoints
 #Function to test at the genus level:
@@ -710,6 +706,49 @@ save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_pc_d6_10_genera.
 lp_dc_d6_genera <- line_plot_tissue_comp_time(genus_tissues, sig_shared_tissues, "distal_colon", lp_tissue_days)
 save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_dc_d6_10_genera.png", lp_dc_d6_genera, base_height = 5, base_width = 8)
 
+#10 genera shown on day 6, need to include legend----
+#Cecum compartment only, same as "results/figures/5_days_PEG_genus_lineplot_cecum_d6_10_genera.png", but a single timepoint instead of overtime
+#WM, C, and WMC groups of mice
+#Create genus_name_order
+genus_name_order <- genus_tissues %>%
+  filter(genus %in% sig_shared_tissues) %>% 
+  mutate(genus = fct_relevel(genus, sig_shared_tissues)) %>% 
+  arrange(factor(genus)) %>% #arrange rows in factor order
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  filter(!duplicated(genus_name)) %>% 
+  pull(genus_name) #Order genus name in same order as list of genera to plot
+dist_cecum_d6_genera <- genus_tissues %>% 
+  filter(day == 6) %>% #Timepoint where there was 10 significant genera that overlapped between 3 types of tissues
+  filter(sample_type == "cecum") %>% #Only show cecum compartment in the paper
+  filter(genus %in% sig_shared_tissues) %>%
+  mutate(genus_name = str_replace(genus_name, "Unclassified", "Unclassified<br>")) %>% #Create linebreak after Unclassified
+  #Reorder genera to match contribution to model
+  mutate(genus_name = fct_relevel(genus_name, genus_name_order)) %>% 
+  mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% 
+  group_by(group, genus_name) %>% 
+  mutate(median=(median(agg_rel_abund + 1/2000))) %>% #create a column of median values for each group
+  ungroup() %>% 
+  ggplot(aes(x=group, y =agg_rel_abund, colour= group))+
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  geom_errorbar(aes(ymax = median, ymin = median), color = "gray50", size = 1)+ #Add lines to indicate the median for each group to the plot
+  geom_jitter(size=2, show.legend = TRUE, alpha = .4) +
+  scale_colour_manual(name=NULL,
+                      values=color_scheme,
+                      breaks=color_groups,
+                      labels=color_labels) +
+  geom_hline(yintercept=1/1000, color="gray")+
+  facet_wrap(~ genus_name, nrow=2, labeller = label_wrap_gen(width = 10))+
+  labs(title=NULL,
+       x=NULL,
+       y="Relative abundance (%)") +
+  scale_y_log10(breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1), labels=c(1e-2, 1e-1, 1, 10, 100))+
+  theme_classic()+
+  theme(text = element_text(size = 14),
+        strip.text = element_markdown(hjust = 0.5, size = 8.6),
+        axis.text.x = element_blank(),
+        legend.position = "bottom")
+save_plot(filename = paste0("results/figures/5_days_PEG_genus_dist_cecum_d6_10_genera.png"), dist_cecum_d6_genera, base_height = 5, base_width = 8)  
+
 #Lineplots faceted by tissue type instead of genus, see how same genus is changing over time across compartments
 #Plot of just how Peptostrep., Enterobacteriaceae, Bacteroides, Lachnospiraceae are changing over time across compartments
 #Function to create faceted line plots of relative abundances of genera of interest across tissue compartments
@@ -753,8 +792,9 @@ line_plot_genus_time_facet_comp <- function(sample_df, list_genus_name, timepoin
 }
 
 
-lp_pepto <- line_plot_genus_time_facet_comp(genus_tissues, "Peptostreptococcaceae Unclassified", lp_tissue_days)
-save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_peptostreptococcacea.png", lp_pepto, base_height = 5, base_width = 4)
+lp_pepto <- line_plot_genus_time_facet_comp(genus_tissues %>% filter(!group == "WMC"), "Peptostreptococcaceae Unclassified", lp_tissue_days)+
+  theme(legend.position = "right")
+save_plot(filename = "results/figures/5_days_PEG_genus_lineplot_peptostreptococcacea.png", lp_pepto, base_height = 5, base_width = 6)
 lp_lachno <- line_plot_genus_time_facet_comp(genus_tissues, "Lachnospiraceae Unclassified", lp_tissue_days)
 lp_entero <- line_plot_genus_time_facet_comp(genus_tissues, "Enterobacteriaceae Unclassified", lp_tissue_days)
 
@@ -1655,6 +1695,10 @@ plot_pcoa_mock_tissue <- plot_mock_pcoa(pcoa_mock_tissue)+
 save_plot(filename = paste0("results/figures/5_days_PEG_tissue_PCoA_mock.png"), plot_pcoa_mock_tissue, base_height = 5, base_width = 5)
 
 #Line Plots of specific bacterial genera in mock-infected mice----
+#The above genus_subsets subsets exclude mock challenged mice (group = WMN or CN)
+#Also create dataframes of diversity data that includes mock challenged mice (WMN and C), separated into stool and tissue samples
+genus_mock_stools <- subset_stool(add_mocks(genus_subset, agg_genus_data))
+genus_mock_tissues <- subset_tissue(add_mocks(genus_subset, agg_genus_data))
 
 #Function to create faceted line plots of relative abundances of genera of interest over time for mock challenged mice comparisons
 #sample_df = subset dataframe of samples to be plotted
