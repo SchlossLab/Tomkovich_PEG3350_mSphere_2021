@@ -83,7 +83,6 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 \newpage
 
 ## Introduction
-
 Antibiotics are a major risk factor for *Clostridioides difficile* infections (CDIs) because they disrupt microbiota colonization resistance [@Britton2014]. However, antibiotics are not the only types of medications that disrupt the microbiota [@Maier2018; @LeBastard2017; @VichVila2020]. Although, other medications (proton pump inhibitors, osmotic laxatives, antimotility agents, and opioids) have been implicated as risk or protective factors for CDIs through epidemiological studies, whether the association is due to their impact on the microbiome is still unclear [@Oh2018; @Mora2012; @Nehra2018; @Krishna2013; @Tomkovich2019].
 
 Many of the non-antibiotic medications associated with CDIs are known to modulate gastrointestinal motility leading to either increased or decreased colonic transit time, which in turn also strongly impacts microbiota composition and function [@Vandeputte2015; @VujkovicCvijin2020]. Stool consistency often serves as an approximation of intestinal motility [@Vandeputte2015]. Our group has shown that when *C. difficile* negative controls are separated into two groups based on stool consistency, there are shared microbiota features such as lower alpha diversity in samples from CDI patients and control patients with diarrhea compared to control samples that were *C. difficile* negative with non-diarrheal consistency [@Schubert2014]. These results led to a hypothesis that bacterial communities from patients experiencing diarrhea are susceptible to developing CDIs.
@@ -95,7 +94,6 @@ Beyond susceptibility, PEG is also relevant in the context of treating recurrent
 Our group has used C57BL/6 mice to characterize how antibiotics disrupt the microbiota and influence *C. difficile* susceptibility and clearance [@Schubert2015; @Jenior2017; @Tomkovich2020]. Although, two groups have now shown PEG treatment alone renders mice susceptible to *C. difficile* [@Ferreyra2014; @VanInsberghe2020], these studies have raised additional questions regarding the dynamics and severity of infection as well as the role of laxative treatment in *C. difficile* clearance. Addressing these questions will better inform how we think about laxatives in the context of CDIs. Here, we characterized how long PEG-treated mice remain susceptible, whether PEG treatment results in more sustained *C. difficile* colonization and severe CDI and  than mice treated with clindamycin, and if PEG treatment after colonization can promote *C. difficile* clearance.
 
 ## Results
-
 **5-day laxative treatment led to prolonged *C. difficile* colonization in mice.** Building off of previous work that showed treating mice with the osmotic laxative, PEG 3350, rendered mice susceptible to *C. difficile* colonization [@Ferreyra2014; @VanInsberghe2020], we decided to test how long *C. difficile* colonization is sustained and how long PEG-treated mice remain susceptible to *C. difficile*.  We compared three groups of mice treated with PEG 3350 to one group of mice treated with our standard 10 mg/kg clindamycin treatment, which temporarily renders the mice susceptible to *C. difficile* colonization, with mice typically clearing *C. difficile* within 10 days post-challenge [@Tomkovich2019; @Tomkovich2020]. All three groups of PEG-treated mice were administered a 15% PEG solution in the drinking water for 5-days, 1. received no additional treatment, 2. was also treated with clindamycin, and 3. was allowed to recover for 10 days prior to challenge (Fig. 1A). PEG treatment resulted in weight loss in all 3 groups of PEG-treated mice relative to their baseline weights, with the greatest change in weight observed on the fifth day of PEG treatment. The mice recovered most of the lost weight by five days after treatment (Fig. 1B). After either the PEG, clindamycin, or PEG and clindamycin treatment all mice were challenged with 10^5^ *C. difficile* 630 spores (Fig. 1A). All treatments rendered mice susceptible to *C. difficile* colonization. However, PEG-treated mice remained colonized with *C. difficile* at a high level through thirty days post-challenge (Fig. 1C). In contrast, the clindamycin-treated mice cleared *C. difficile* within ten days post-challenge (Fig. 1C). Therefore, PEG treatment led to sustained colonization in contrast to clindamycin mice that naturally cleared *C. difficile* within ten days post-challenge. 
 
 Notably, we also found PEG-treated mice were still susceptible to *C. difficile* colonization after a 10-day recovery period, although *C. difficile* was not detectable in most of the group in the initial five days post-challenge (Fig. 1C, S1A). One mouse was found dead on the 6th day post-challenge, presumable due to *C. difficile* as the bacteria became detecable in that mouse on the 4th day post-challenge (Fig. S1A, mouse 10). From 8 days post-challenge onward, the density of *C. difficile* stabilized in the 10-day recovery group and remained high through 20-30 days post-challenge (Fig. 1C). Thus, osmotic laxative treatment alone was sufficient to render mice susceptible to prolonged *C. difficile* colonization and PEG-treated mice remained susceptible through ten days post-treatment.
@@ -258,8 +256,8 @@ max_auc <- auc_results %>% select(median) %>% max()
 Previous work examining the impact of PEG on the murine microbiota found that PEG treatment resulted in the permanent loss of *Muribaculum intestinale* [@Tropini2018]., which is classified as *Porphyromonadaceae* by the Ribosomal Database Project (RDP) database [@Vornhagen2020]. *Porphyromonadaceae* was a top feature in the random forest model predicting prolonged *C. difficile* colonization. We identified 4 OTUs that had 92-96% identity to *Muribaculum intestinale* and examined their abundance in mice that either cleared or were still colonized with *C. difficile* at 10 days post-challenge. While all of the OTUs, were decreased by PEG and clindamycin treatment, there was some recovery in the mice that cleared (Fig. S4A). We also examined other *Porphyromonadaceae* and *Lachnospiraceae* OTUs since these were the 2 genera that were important to our classification model and contained multiple OTUs that were different at 5 days post-challenge between mice that either cleared or remained colonized with *C. difficile* by 10 days post-challenge (Data Set S1, sheet X). While individual *Porphyromonadaceae* and *Lachnospiraceae* OTUs tended to be more abundant in the mice that clear *C. difficile* relative to the mice that exhibit prolonged colonization (Fig. S4B-C), there is no single OTU that fits the pattern we observed at the genus level (Fig. 7C), suggesting multiple *Porphyromonadaceae* and *Lachnospiraceae* OTUs influenced *C. difficile* clearance. Overall, our results suggest that specific bacterial community differences explain the prolonged *C. difficile* colonization we observed in 5-day PEG and post-CDI 1-day PEG treated mice.
 
 ## Discussion
+By following osmotic laxative treated mice over time, we found 5-day and 1-day PEG treatments exhibited either prolonged or transient *C. difficile* colonization after challenge. The differences in *C. difficile* colonization dynamics between the 5- and 1-day PEG treatments were associated with differences in how much the treatments disrupted the microbiota. We also found the intestinal communties of 5-day PEG treated mice had not regained colonization resistance after a 10-day recovery period. Additionally, treating mice with PEG after *C. difficile* challenge prolongs colonization instead of enhancing clearance, as suggested by the literature. Overall, our results demonstrated that treating mice with an osmotic laxative rendered mice susceptible to *C. difficile* colonization and duration of colonization depended on the length of PEG treatment and whether treatment was administered before or after *C. difficile* challenge. Note (remove figure 8?)
 
-* Summary of major findings (Fig. 8A)
 
 * Discussion of prolonged persistence. *C. difficile* sequences detected in tissue samples. Association with mucin-degrading bacteria suggested by recent papers.
 
@@ -282,6 +280,10 @@ We thank members of the Schloss lab for feedback on planning the experiments and
 
 ## Materials and Methods
 * Histopathology [@Theriot2011]
+
+\newpage
+
+## References
 
 \newpage
 ```{r sample_size for figure legends}
@@ -397,15 +399,13 @@ post_CDI_total_exp <- post_CDI_mice %>%
 \newpage
 
 \includegraphics{figure_S2.pdf}
-**Figure S2. PEG treatment still has a large impact on the mucosal microbiota 6 days post-challenge** A. The   
+**Figure S2. PEG treatment still has a large impact on the mucosal microbiota 6 days post-challenge** A. The relative abundances of the 10 bacterial genera that were significantly different between treatment groups at 6 days post-infection in cecum tissue (the relative abundances of the 10 genera were also significantly different in the proximal and distal colon tissues, Data Sheet S1, Sheet X). Each symbol represents a tissue sample from an individual mouse, the horizonal line represents the median relative abundance for each treatment group. B. The relative abunance of *Peptostreptococacceae* in the three types of tissue sample communities over time. For A-B, the gray horizontal lines represent the limit of detection.
 \newpage
 
 \includegraphics{figure_S3.pdf}
-**Figure S3. *C. difficile* challenge does not enhance the disruptive effect of PEG on the microbiota.** A.
+**Figure S3. *C. difficile* challenge does not enhance the disruptive effect of PEG on the microbiota.** A, D. PCoAs of the Bray-Curtis distances from the stool (A) and tissue (D) communities  from mock- and *C. difficile*-challenged treatment groups. Each symbol represents a sample from an individual mouse with open and closed circles representing mock and *C. difficile*-challenged mice, respectively. B, E. Median Shannon diversity in stool (B) and tissue (E) communities collected over time. C, F. The median relative abundances of genera that were significant between treatment groups displayed in either stool (Fig. 2E) or cecum tissue (Fig. 3C) communities for stool (C) and tissue (F) commmunites from mock- and *C. difficile*-challenged mice. For B-F, the dashed and solid lines represent the median value for mock and *C. difficile*-challenged mice, respectively. For E-F, tissues from mock-challenged clindamycin treated mice were only collected 4 days post-challenge so there is no dashed line for this group.
 \newpage
 
 \includegraphics{figure_S4.pdf}
-**Figure S4. Specific OTUs associated with clearance by 10 days post-challenge that are mostly absent in mice with prolonged *C. difficile* colonization. Ex. *Muribaculum intestinale*.** A.
+**Figure S4. Specific OTUs associated with clearance by 10 days post-challenge that are mostly absent in mice with prolonged *C. difficile* colonization.** Remove this figure?
 \newpage
-
-## References
