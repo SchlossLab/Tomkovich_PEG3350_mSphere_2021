@@ -1,6 +1,4 @@
-#Load packages
-library(tidyverse)
-library(lubridate)
+library(lubridate) #Load package for dates
 source("code/utilities.R") #Loads libraries, reads in metadata, functions
 
 ### Join sequence samples (samples we have raw sequencing data for) to metadata
@@ -68,4 +66,4 @@ write_tsv(mimarks, 'data/raw/peg3350.tsv', na = " ")
 
 #After creating the .project file, the mimarks file, and running make.sra package, you are ready to submit.
 #Instructions: https://mothur.org/wiki/creating_a_new_submission/
-#I prefer using the ftp instructions and transferring the files using FileZilla
+#I prefer using the ftp instructions: https://www-ncbi-nlm-nih-gov.proxy.lib.umich.edu/sra/docs/submitfiles/  
