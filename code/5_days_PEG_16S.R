@@ -134,7 +134,7 @@ shannon_stools_median <- diversity_stools %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>%
   ggplot(x = day, y = shannon, colour = group)+
-  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
+  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 1, size = 1) +
   scale_colour_manual(name=NULL,
                       values=color_scheme,
                       breaks=color_groups,
@@ -923,7 +923,7 @@ lp_stool_WMR_indiv <- genus_stools %>%
   mutate(day = as.integer(day)) %>% 
   mutate(agg_rel_abund = agg_rel_abund + 1/2000) %>% # 2,000 is 2 times the subsampling parameter of 1000 
   ggplot()+
-  geom_line(aes(x = day, y=agg_rel_abund, color=unique_mouse_id, group =unique_mouse_id), linetype = "solid", alpha = 0.8)+
+  geom_line(aes(x = day, y=agg_rel_abund, color=unique_mouse_id, group =unique_mouse_id), linetype = "solid", alpha = 1)+
   scale_colour_manual(name="Mouse",
                       values=color_mice_values,
                       breaks=color_mice,
@@ -1410,7 +1410,7 @@ shannon_mock_stools_plot <- diversity_mock_stools %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>%
   ggplot(x = day, y = shannon, colour = group)+
-  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
+  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group, linetype = infected), alpha = 1, size = 1) +
   scale_colour_manual(name=NULL,
                       guide = NULL,
                       values=color_scheme_m,
@@ -1438,7 +1438,7 @@ shannon_mock_tissues_plot <- diversity_mock_tissues %>%
   group_by(group, day) %>%
   mutate(median_shannon = median(shannon)) %>%
   ggplot(x = day, y = shannon, colour = group)+
-  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
+  geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group, linetype = infected), alpha = 1, size = 1) +
   scale_colour_manual(name=NULL,
                       values=color_scheme_m,
                       breaks=color_groups_m,
@@ -1551,7 +1551,7 @@ richness_mock_stools_plot <- diversity_mock_stools %>%
   group_by(group, day) %>%
   mutate(median_sobs = median(sobs)) %>%
   ggplot(x = day, y = sobs, colour = group)+
-  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
+  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group, linetype = infected), alpha = 1, size = 1) +
   scale_colour_manual(name=NULL,
                       values=color_scheme_m,
                       breaks=color_groups_m,
@@ -1577,7 +1577,7 @@ richness_mock_tissues_plot <- diversity_mock_tissues %>%
   group_by(group, day) %>%
   mutate(median_sobs = median(sobs)) %>%
   ggplot(x = day, y = sobs, colour = group)+
-  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group, linetype = infected), alpha = 0.6, size = 1) +
+  geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group, linetype = infected), alpha = 1, size = 1) +
   scale_colour_manual(name=NULL,
                       values=color_scheme_m,
                       breaks=color_groups_m,
@@ -1723,7 +1723,7 @@ line_plot_mock_genus <- function(sample_df, genera, timepoints){
     group_by(group, genus_name, day, infected) %>% 
     summarize(median=median(agg_rel_abund + 1/2000),`.groups` = "drop") %>%  #Add small value (1/2Xsubssampling parameter) so that there are no infinite values with log transformation
     ggplot()+
-    geom_line(aes(x = day, y=median, color=group, linetype =infected), alpha = 0.6, size = 1)+
+    geom_line(aes(x = day, y=median, color=group, linetype =infected), alpha = 1, size = 1)+
     scale_colour_manual(name=NULL,
                         values=color_scheme_m,
                         breaks=color_groups_m,

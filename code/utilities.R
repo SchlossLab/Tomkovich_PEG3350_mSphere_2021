@@ -392,7 +392,7 @@ plot_cfu_data <- function(df){
   #Plot cfu for just the inital 10days
   cfu_plot <- ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 0.6, size = 1.5) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 1, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -421,7 +421,7 @@ plot_weight <- function(df){
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
     geom_point(df, mapping = aes(x = day, y = weight_change, color= group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 1, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -442,7 +442,7 @@ plot_weight_medians <- function(df){
     group_by(group, day) %>%
     summarize(median_weight_change = median(weight_change, na.rm = TRUE))
   ggplot(NULL) +
-    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 0.6, size = 1.5) +
+    geom_line(median_summary, mapping = aes(x = day, y = median_weight_change, color = group), alpha = 1, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -464,7 +464,7 @@ plot_shannon_overtime <- function(df) {
     mutate(median_shannon = median(shannon)) %>%
     ggplot(x = day, y = shannon, colour = group)+
     geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
+    geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 1, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -488,7 +488,7 @@ plot_shannon_overtime_t <- function(df) {
     mutate(median_shannon = median(shannon)) %>%
     ggplot(x = day, y = shannon, colour = group)+
     geom_point(mapping = aes(x = day, y = shannon, group = group, color = group, fill = group, shape = sample_type), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 0.6, size = 1) +
+    geom_line(mapping = aes(x = day, y = median_shannon, group = group, color = group), alpha = 1, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -515,7 +515,7 @@ plot_richness_overtime <- function(df) {
     mutate(median_sobs = median(sobs)) %>%
     ggplot(x = day, y = sobs, group = group, colour = group)+
     geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
+    geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 1, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -539,7 +539,7 @@ plot_richness_overtime_t <- function(df) {
     mutate(median_sobs = median(sobs)) %>%
     ggplot(x = day, y = sobs, group = group, colour = group)+
     geom_point(mapping = aes(x = day, y = sobs, group = group, color = group, fill = group, shape = sample_type), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 0.6, size = 1) +
+    geom_line(mapping = aes(x = day, y = median_sobs, group = group, color = group), alpha = 1, size = 1) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,

@@ -13,7 +13,7 @@ diversity_data_subset <- one_day_PEG_subset(diversity_data) %>%
                          group == "1RM1" & day == "-2" ~ "B",
                          TRUE ~ day))#Replace day -2 and day -1 with baseline to represent the baseline timepoint
 
- diversity_data_subset <- diversity_data_subset %>%
+diversity_data_subset <- diversity_data_subset %>%
    filter(day %in% c("B", 0, 1, 2, 3, 4, 5, 6, 7)) %>%
    mutate(day = fct_relevel(day, "B", "0", "1" , "2", "3", "4", "5", "6", "7")) #Specify the order of the days for plotting overtime
  

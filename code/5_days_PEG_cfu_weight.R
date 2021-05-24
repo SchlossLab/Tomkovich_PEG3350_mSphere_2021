@@ -190,7 +190,7 @@ wmr_median_summary <- wmr_cfu %>%
   summarize(median_avg_cfu = median(avg_cfu, na.rm = TRUE))
 wmr_cfu_plot <-  ggplot(NULL) +
     geom_point(wmr_cfu, mapping = aes(x = day, y = avg_cfu, color= group, fill = group), alpha = 0.7, size = 1.5, show.legend = FALSE, position = position_dodge(width = 0.6)) +
-    geom_line(wmr_median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 0.6, size = 1.5) +
+    geom_line(wmr_median_summary, mapping = aes(x = day, y = median_avg_cfu, group = group, color = group), alpha = 1, size = 1.5) +
     scale_colour_manual(name=NULL,
                         values=color_scheme,
                         breaks=color_groups,
@@ -228,7 +228,7 @@ color_mice_labels <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10 , 11)
 
 wmr_cfu_plot_indiv <-  wmr_cfu %>% 
   ggplot()+
-  geom_line(mapping = aes(x = day, y = avg_cfu, group = unique_mouse_id, color = unique_mouse_id), alpha = 0.8, size = 1.5) +
+  geom_line(mapping = aes(x = day, y = avg_cfu, group = unique_mouse_id, color = unique_mouse_id), alpha = 1, size = 1.5) +
   scale_colour_manual(name="Mouse",
                       values=color_mice_values,
                       breaks=color_mice,

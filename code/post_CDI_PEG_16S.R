@@ -73,7 +73,7 @@ shannon_post_cdi_peg_overtime_stool <- diversity_stools %>%
   scale_y_continuous(limits = c(0,4.1), expand = c(0, 0))+ #expand argument gets rid of the extra space around the scale
   annotate("rect", xmin = 0, xmax = 1, ymin = 0, ymax = Inf, fill = "#88419d", alpha = .15)+ #shade to indicate PEG treatment in Clind + 1-day PEG group
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = 2, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
-  annotate("rect", xmin = 3, xmax = 4, ymin = 2, ymax = Inf, fill = "#f768a1", alpha = .15)+
+  annotate("rect", xmin = 3, xmax = 4, ymin = 2, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot("results/figures/post_CDI_PEG_shannon_stool.png", shannon_post_cdi_peg_overtime_stool, base_height = 4, base_width = 8.5, base_aspect_ratio = 2) #Save full Shannon over time plot without legend
 
 #Extract Shannon Legend for all plots
@@ -540,3 +540,4 @@ lp_fmt <- line_plot_genus(frm_rm_subset, FRMvRM_post_gavage, line_plot_days, "so
   annotate("rect", xmin = 3, xmax = 4, ymin = 0, ymax = .01, fill = "#225ea8", alpha = .15)+ #shade to indicate PEG treatment in Clind + 3-day recovery + 1-day PEG + FMT/PBS
   annotate("rect", xmin = 3, xmax = 4, ymin = .01, ymax = Inf, fill = "#f768a1", alpha = .15)
 save_plot(filename = "results/figures/post_CDI_PEG_genus_lineplot_fmt.png", lp_fmt, base_height = 5, base_width = 8)
+
