@@ -16,7 +16,7 @@ Antibiotics are a major risk factor for *Clostridioides difficile* infections (C
 	| |- manuscript.pdf    # PDF version of *.Rmd file
 	| |- header.tex   # LaTeX header file to format pdf version of manuscript
 	| |- references.bib # BibTeX formatted references
-	| |- XXXX.csl     # csl file to format references for journal XXX
+	| |- mSphere.csl     # csl file to format references for journal XXX
 	|
 	|- data           # raw and primary data, are not changed once created
 	| |- references/  # reference files to be used in analysis
@@ -66,11 +66,11 @@ Antibiotics are a major risk factor for *Clostridioides difficile* infections (C
 #### Running analysis
 Download 16S rRNA sequencing dataset from the NCBI Sequence Read Archive (BioProject Accession no. PRJNA727293).
 ```
-git clone https://github.com/tomkoset/Tomkovich_PEG3350_XXXX_2020
+git clone https://github.com/tomkoset/Tomkovich_PEG3350_mSphere_2020
 ```
-Transfer 16S rRNA sequencing fastq.gz files into  Tomkovich_PEG3350_XXXX_2020/data/raw
+Transfer 16S rRNA sequencing fastq.gz files into  Tomkovich_PEG3350_mSphere_2020/data/raw
 ```
-cd  Tomkovich_PEG3350_XXXX_2020
+cd  Tomkovich_PEG3350_mSphere_2020
 ```
 Obtain the SILVA reference alignment from version 132 described at https://mothur.org/blog/2018/SILVA-v132-reference-files/. We will use the SEED v. 132, which contain 12,083 bacterial sequences. This also contains the reference taxonomy. We will limit the databases to only include bacterial sequences.
 ```
