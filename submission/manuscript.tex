@@ -113,47 +113,51 @@ Arbor, MI, USA
 Antibiotics are a major risk factor for \emph{Clostridioides difficile}
 infections (CDIs) because of their impact on the microbiota. However,
 non-antibiotic medications such as the ubiquitous osmotic laxative
-polyethylene glycol (PEG) 3350, also alter the microbiota, but whether
+polyethylene glycol (PEG) 3350 also alter the microbiota. But whether
 PEG impacts CDI susceptibility and clearance is unclear. To examine how
 PEG impacts susceptibility, we treated C57Bl/6 mice with 5-day and 1-day
 doses of 15\% PEG in the drinking water and then challenged the mice
 with \emph{C. difficile} 630. We used clindamycin-treated mice as a
 control because they consistently clear \emph{C. difficile} within 10
-days post-challenge (dpc). PEG treatment alone was sufficient to render
-mice susceptible and 5-day PEG-treated mice remain colonized for up to
-30 dpc. In contrast, 1-day PEG treated mice were transiently colonized,
-clearing \emph{C. difficile} within 7 dpc. To examine how PEG treatment
-impacts clearance, we administered a 1-day PEG treatment to
-clindamycin-treated, \emph{C. difficile}-challenged mice. Administering
-PEG to mice after \emph{C. difficile} challenge prolonged colonization
-up to 30 dpc. When we trained a random forest model with community data
-from 5 dpc, we were able to predict which mice would exhibit prolonged
-colonization (AUROC = 0.90). Examining the dynamics of these bacterial
-during the post-challenge period revealed patterns in the relative
-abundances of \emph{Bacteroides}, \emph{Enterobacteriaceae},
-\emph{Porphyromonadaceae}, \emph{Lachnospiraceae}, and
-\emph{Akkermansia} that were associated with prolonged \emph{C.
-difficile} colonization in PEG-treated mice.
+days post-challenge. PEG treatment alone was sufficient to render mice
+susceptible and 5-day PEG-treated mice remained colonized for up to 30
+days post-challenge. In contrast, 1-day PEG treated mice were
+transiently colonized, clearing \emph{C. difficile} within 7 days
+post-challenge. To examine how PEG treatment impacts clearance, we
+administered a 1-day PEG treatment to clindamycin-treated, \emph{C.
+difficile}-challenged mice. Administering PEG to mice after \emph{C.
+difficile} challenge prolonged colonization up to 30 days
+post-challenge. When we trained a random forest model with community
+data from 5 days post-challenge, we were able to predict which mice
+would exhibit prolonged colonization (AUROC = 0.90). Examining the
+dynamics of these bacterial populations during the post-challenge period
+revealed patterns in the relative abundances of \emph{Bacteroides},
+\emph{Enterobacteriaceae}, \emph{Porphyromonadaceae},
+\emph{Lachnospiraceae}, and \emph{Akkermansia} that were associated with
+prolonged \emph{C. difficile} colonization in PEG-treated mice. Thus,
+the osmotic laxative, PEG, rendered mice susceptible to \emph{C.
+difficile} colonization and hindered clearance.
 
 \hypertarget{importance}{%
 \subsection{Importance}\label{importance}}
 
-Diarrheal samples induced by medications such as laxatives are typically
-rejected for \emph{Clostridiodes difficile} testing. However, there are
-some microbiota similarities between diarrheal and \emph{C. difficile}
-infection (CDI) communities such as lower diversity compared to samples
-from healthy patients, which lead us to hypothesize that diarrhea may be
-an indicator of \emph{C. difficile} risk. We explored how osmotic
-laxatives disrupt the microbiota's colonization resistance to \emph{C.
-difficile} by administering a laxative to mice either before or after
-\emph{C. difficile} challenge. Our findings suggest the osmotic laxative
-disrupts colonization resistance to \emph{C. difficile}, as well as
-clearance in mice already colonized with \emph{C. difficile}.
-Considering that most hospitals recommend not performing \emph{C.
-difficile} testing on patients taking laxatives and laxatives are used
-when administering fecal microbiota transplants via colonoscopy to
-patients with recurrent CDIs, further studies are needed to evaluate if
-laxatives impact microbiota colonization resistance in humans.
+Diarrheal samples from patients taking laxatives are typically rejected
+for \emph{Clostridiodes difficile} testing. However, there are
+similarities between the bacterial communities from people with diarrhea
+or \emph{C. difficile} infections (CDI) including lower diversity
+compared to communities from healthy patients, which led us to
+hypothesize that diarrhea may be an indicator of \emph{C. difficile}
+risk. We explored how osmotic laxatives disrupt the microbiota's
+colonization resistance to \emph{C. difficile} by administering a
+laxative to mice either before or after \emph{C. difficile} challenge.
+Our findings suggest that osmotic laxatives disrupt colonization
+resistance to \emph{C. difficile}, and prevent clearance among mice
+already colonized with \emph{C. difficile}. Considering that most
+hospitals recommend not performing \emph{C. difficile} testing on
+patients taking laxatives and laxatives are used when administering
+fecal microbiota transplants via colonoscopy to patients with recurrent
+CDIs, further studies are needed to evaluate if laxatives impact
+microbiota colonization resistance in humans.
 
 \newpage
 
@@ -175,28 +179,30 @@ decreased colonic transit time, which in turn also strongly impacts
 microbiota composition and function (10, 11). Stool consistency often
 serves as an approximation of intestinal motility (10). Our group has
 shown that when \emph{C. difficile} negative samples from patients are
-separated into two groups based on stool consistency, there are shared
-microbiota features such as lower alpha diversity in samples from CDI
-patients and \emph{C. difficile} negative patients with diarrhea
-compared to samples that were \emph{C. difficile} negative with
-non-diarrheal stool consistency (12). These results led to the
-hypothesis that bacterial communities from patients experiencing
-diarrhea are susceptible to developing CDIs, regardless of how they
-developed diarrhea.
+separated into two groups based on stool consistency, there are similar
+microbiota features between samples from CDI patients and \emph{C.
+difficile} negative patients with diarrhea compared to samples that were
+\emph{C. difficile} negative with non-diarrheal stool consistency (12).
+The similar community features between CDI patients and patients with
+diarrhea included low alpha diversity and only 6 bacterial taxa had
+higher relative abundances in communities from CDI patients. These
+results led to the hypothesis that bacterial communities from patients
+experiencing diarrhea are susceptible to developing CDIs, regardless of
+how they developed diarrhea.
 
-Osmotic laxatives can lead to diarrhea depending on the dose
-administered and temporarily disrupt the human intestinal microbiota
-(13). The ubiquitous osmotic laxative, polyethylene glycol (PEG) 3350 is
-found in Miralax, Nulytely, and Golytely and is also commonly used as
-bowel preparation for colonoscopies. Interestingly, previous studies
-have shown that treating mice with PEG alone altered microbiota
-composition, reduced acetate and butyrate production, altered the mucus
-barrier, and rendered the mice susceptible to \emph{C. difficile}
-colonization (14--17). The mucus barrier is thought to mediate
-protection from CDIs by protecting intestinal epithelial cells from the
-toxins produced by \emph{C. difficile} (18, 19). Whether laxative
-administration results in more severe CDIs in mice and how long mice
-remain colonized with \emph{C. difficile} after challenge is unclear.
+depending on the dose administered, osmotic laxatives can lead to
+diarrhea and temporarily disrupt the human intestinal microbiota (13).
+The ubiquitous osmotic laxative, polyethylene glycol (PEG) 3350 is found
+in Miralax, Nulytely, and Golytely and is also commonly used as bowel
+preparation for colonoscopies. Interestingly, previous studies have
+shown that treating mice with PEG alone altered microbiota composition,
+reduced acetate and butyrate production, altered the mucus barrier, and
+rendered the mice susceptible to \emph{C. difficile} colonization
+(14--17). The mucus barrier is thought to mediate protection from CDIs
+by protecting intestinal epithelial cells from the toxins produced by
+\emph{C. difficile} (18, 19). Whether laxative administration results in
+more severe CDIs in mice and how long mice remain colonized with
+\emph{C. difficile} after challenge is unclear.
 
 Beyond susceptibility, PEG is also relevant in the context of treating
 recurrent CDIs via fecal microbiota transplant (FMT) where a healthy
@@ -204,23 +210,24 @@ microbiota is administered to the patient to restore colonization
 resistance. For FMTs that are delivered via colonoscopy, patients
 typically undergo bowel preparation by taking an osmotic laxative prior
 to the procedure. Many of the FMT studies to date rationalize the use of
-laxatives (20--22) based on a 1996 case study with 2 pediatric patients
-where the authors suggested in the discussion that the laxative may help
-flush \emph{C. difficile} spores and toxins from the intestine (23).
+laxatives prior to the FMT (20--22) based on a 1996 case study with 2
+pediatric patients where the authors suggested in the discussion that
+the laxative may help flush \emph{C. difficile} spores and toxins from
+the intestine (23).
 
 Our group has used C57BL/6 mice to characterize how antibiotics disrupt
 the microbiota and influence \emph{C. difficile} susceptibility and
-clearance (24--26). Although two groups have now shown PEG treatment
-alone renders mice susceptible to \emph{C. difficile} (15, 17), these
-studies have raised additional questions regarding the dynamics and
-severity of infection as well as the role of laxative treatment in
-\emph{C. difficile} clearance. Here, we characterized how long
-PEG-treated mice remain susceptible, whether PEG treatment results in
-more sustained \emph{C. difficile} colonization and severe CDI than mice
-treated with clindamycin, and if PEG treatment after challenge can
-promote \emph{C. difficile} clearance. Addressing these questions will
-better inform how we think about laxatives and diarrhea in the context
-of CDIs.
+clearance (24--26). Although two groups have now shown that PEG
+treatment alone renders mice susceptible to \emph{C. difficile} (15,
+17), these studies have raised additional questions regarding the
+dynamics and severity of infection as well as the role of laxative
+treatment in \emph{C. difficile} clearance. Here, we characterized how
+long PEG-treated mice remain susceptible, whether PEG treatment results
+in more sustained \emph{C. difficile} colonization and severe CDI than
+mice treated with clindamycin, and whether PEG treatment after challenge
+can promote \emph{C. difficile} clearance. Addressing these questions
+will better inform how we think about laxatives and diarrhea in the
+context of CDIs.
 
 \hypertarget{results}{%
 \subsection{Results}\label{results}}
@@ -233,23 +240,23 @@ test how long \emph{C. difficile} colonization is sustained and how long
 PEG-treated mice remain susceptible to \emph{C. difficile}. We compared
 three groups of mice treated with PEG 3350 to one group of mice treated
 with our standard 10 mg/kg clindamycin treatment, which temporarily
-renders the mice susceptible to \emph{C. difficile} colonization, with
-mice typically clearing \emph{C. difficile} within 10 days
-post-challenge (9, 26). All three groups of PEG-treated mice were
-administered a 15\% PEG solution in the drinking water for 5-days. The
-first group received no additional treatment. The second group was also
-treated with clindamycin. A third group was allowed to recover for 10
-days prior to challenge (Fig. 1A). The PEG treatment resulted in weight
-loss for the 3 groups of mice, with the greatest change in weight
-observed on the fifth day of the PEG treatment. The mice recovered most
-of the lost weight by five days after treatment (Fig. 1B). After either
-the PEG, clindamycin, or PEG and clindamycin treatment all mice were
-challenged with 10\textsuperscript{5} \emph{C. difficile} 630 spores
-(Fig. 1A). All treatments rendered mice susceptible to \emph{C.
-difficile} colonization. In contrast to the mice that only received
-clindamycin, PEG-treated mice remained colonized with \emph{C.
-difficile} at a high level through thirty days post-challenge (Fig. 1C).
-The clindamycin-treated mice cleared \emph{C. difficile} within ten days
+renders mice susceptible to \emph{C. difficile} colonization, with mice
+typically clearing \emph{C. difficile} within 10 days post-challenge (9,
+26). All three groups of PEG-treated mice were administered a 15\% PEG
+solution in the drinking water for 5-days. The first group received no
+additional treatment. The second group was also treated with
+clindamycin. A third group was allowed to recover for 10 days prior to
+challenge (Fig. 1A). The PEG treatment resulted in weight loss for the 3
+groups of mice, with the greatest change in weight observed on the fifth
+day of the PEG treatment. The mice recovered most of the lost weight by
+five days after treatment (Fig. 1B). After either the PEG, clindamycin,
+or PEG and clindamycin treatment all mice were challenged with
+10\textsuperscript{5} \emph{C. difficile} 630 spores (Fig. 1A). All
+treatments rendered mice susceptible to \emph{C. difficile}
+colonization. In contrast to the mice that only received clindamycin,
+PEG-treated mice remained colonized with \emph{C. difficile} at a high
+level through thirty days post-challenge (Fig. 1C). The
+clindamycin-treated mice cleared \emph{C. difficile} within ten days
 post-challenge (Fig. 1C). It was noteworthy that PEG-treated mice were
 still susceptible to \emph{C. difficile} colonization after a 10-day
 recovery period, although \emph{C. difficile} was not detectable in most
@@ -284,19 +291,20 @@ suggesting other community features besides recovery to baseline were
 responsible for the prolonged \emph{C. difficile} colonization in
 PEG-treated mice (Fig. 2B).
 
-Since none of the communities completely recovered in the follow-up
-period after treatments, we next profiled community diversity and
+Because time and treatment group influenced most of the variation
+between communities, we next profiled community diversity and
 composition. We examined the alpha diversity dynamics by calculating the
 communities' Shannon diversity. Although both clindamycin and PEG
-treatments decreased diversity, Shannon diversity was lower in the
+treatments decreased diversity, the Shannon diversity was lower in the
 groups of mice that received PEG treatment compared to those that
-received clindamycin through thirty days post-challenge (Fig. 2C; Data
-Set S1, sheet 2). We next examined the bacterial genera that shifted
-after PEG treatment by comparing the baseline samples of mice treated
-with only PEG to samples from the same mice one day post-PEG-treatment.
-We found 18 genera that were altered by PEG treatment (Data Set S1,
-sheet 3). The majority of the bacterial relative abundances decreased
-after the PEG treatment, but the relative abundance among members of the
+received clindamycin alone through thirty days post-challenge (Fig. 2C;
+Data Set S1, sheet 2). We next identified the bacterial genera whose
+relative abundances shifted after PEG treatment by comparing the
+baseline samples of mice treated with only PEG to samples from the same
+mice one day post-PEG-treatment. We found 18 genera whose relative
+abundances were altered by PEG treatment (Data Set S1, sheet 3). The
+majority of the bacterial relative abundances decreased after the PEG
+treatment, but the relative abundance among members of the
 \emph{Enterobacteriaceae} and \emph{Bacteroides} increased. The increase
 in \emph{Bacteroides} relative abundance was unique to PEG treated mice,
 as the \emph{Bacteroides} relative abundance actually decreased in
@@ -380,8 +388,8 @@ difference in the histopathology score of the colon between PEG and
 clindamycin-treated mice, there was not a signifant difference in the
 cecum and the overall score was relatively low (1.5 to 2.5 out of 12,
 Fig. 3E). Therefore, although PEG treatment had a disruptive effect on
-the mucosal microbiota, the impact of \emph{C. difficile} 630 challenge
-on the cecum and colon was similar between PEG and clindamycin treated
+the mucosal microbiota, the impact of \emph{C. difficile} challenge on
+the cecum and colon was similar between PEG and clindamycin treated
 mice.
 
 \textbf{\emph{C. difficile} challenge did not have a synergistic
@@ -465,28 +473,30 @@ difficile} colonization. We trained 3 machine learning models (random
 forest, logistic regression, and support vector machine) with bacterial
 community data from 5 days post-challenge to predict whether the mice
 were still colonized with \emph{C. difficile} 10 days post-challenge. We
-chose 5 days post-challenge because that was the earliest time point
-where we saw a treatment effect in the post-challenge 1-day PEG
-experiments. The random forest model had the highest performance (median
-AUROC = 0.90, Data Set S1, sheet 19), suggesting the 5-day post
-challenge microbiota is an excellent predictor of prolonged \emph{C.
-difficile} colonization. Next, we performed permutation importance to
-examine the bacteria that were the top contributors to the random forest
-model predicting prolonged \emph{C. difficile }colonization. We selected
-10 genera that contributed the most to our model's performance (Fig. 7A)
-and examined their relative abundance at 5 days post-challenge, the time
-point used to predict \emph{C. difficile} colonization status on day 10
-(Fig. 7B). Next, we focused on the 5 genera that had a greater than 1\%
-relative abundance in either the cleared or colonized mice and examined
-how the bacteria changed over time. We found \emph{Enterobacteriaceae}
-and \emph{Bacteroides} tended to have a higher relative abundance, the
-relative abundance of \emph{Akkermansia} was initially decreased and
-then increased, and \emph{Porphyromonadaceae} and \emph{Lachnospiraceae}
-had a lower relative abundance in the mice with prolonged colonization
-compared to the mice that cleared \emph{C. difficile} (Fig. 7C).
-Together these results suggest a combination of low and high abundance
-bacterial genera influence the prolonged colonization observed in 5-day
-PEG and post-challenge 1-day PEG treated mice.
+chose to predict the status based on communities 5 days post-challenge
+because that was the earliest time point where we saw a treatment effect
+in the post-challenge 1-day PEG experiments. The random forest model had
+the highest performance (median AUROC = 0.90, Data Set S1, sheet 19) and
+indicated that the 5-day post challenge microbiota was an excellent
+predictor of prolonged \emph{C. difficile} colonization. Next, we
+performed a permutation importance test to identify the bacteria that
+were the top contributors to the random forest model for predicting
+prolonged \emph{C. difficile }colonization. We selected 10 genera that
+contributed the most to our model's performance (Fig. 7A) and examined
+their relative abundance at 5 days post-challenge, the time point used
+to predict \emph{C. difficile} colonization status on day 10 (Fig. 7B).
+Next, we focused on the 5 genera that had a greater than 1\% relative
+abundance in either the cleared or colonized mice and examined how the
+bacteria changed over time. We found \emph{Enterobacteriaceae} and
+\emph{Bacteroides} tended to consistently have a higher relative
+abundance, the relative abundance of \emph{Akkermansia} was initially
+low and then increased, and \emph{Porphyromonadaceae} and
+\emph{Lachnospiraceae} had a lower relative abundance in the mice with
+prolonged colonization compared to the mice that cleared \emph{C.
+difficile} (Fig. 7C). Together these results suggest a combination of
+low and high abundance bacterial genera influence the prolonged
+colonization observed in 5-day PEG and post-challenge 1-day PEG treated
+mice.
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -494,21 +504,22 @@ PEG and post-challenge 1-day PEG treated mice.
 While the disruptive effect of antibiotics on \emph{C. difficile}
 colonization resistance is well established, the extent to which other
 drugs such as laxatives disrupt colonization resistance was unclear. By
-following osmotic laxative treated mice over time, we found that a 5-day
-PEG treatment before challenge resulted in prolonged \emph{C. difficile}
-colonization, while a 1-day PEG treatment resulted in transient
-colonization. The differences in \emph{C. difficile} colonization
-dynamics between the 5- and 1-day PEG treated mice were associated with
-differences in how much the treatments disrupted the microbiota.
-Additionally, the intestinal communities of 5-day PEG treated mice did
-not regain colonization resistance after a 10-day recovery period. In
-contrast to the other 5-day PEG treatment groups, \emph{C. difficile}
-was not immediately detectable in the stools of most of the mice in the
-10-day recovery group. We also examined the impact of PEG treatment
-after \emph{C. difficile} challenge. In opposition to the hypothesis
-suggested by the literature, we found that PEG treatment prolonged
-colonization relative to mice that only recieved clindamycin treatment.
-We identified patterns in the relative abundances of \emph{Bacteroides},
+following mice treated with an osmotic laxative over time, we found that
+a 5-day PEG treatment before challenge resulted in prolonged \emph{C.
+difficile} colonization, while a 1-day PEG treatment resulted in
+transient colonization without the use of antibiotics. The differences
+in \emph{C. difficile} colonization dynamics between the 5- and 1-day
+PEG treated mice were associated with differences in how much the
+treatments disrupted the microbiota. Additionally, the intestinal
+communities of 5-day PEG treated mice did not regain colonization
+resistance after a 10-day recovery period. In contrast to the other
+5-day PEG treatment groups, \emph{C. difficile} was not immediately
+detectable in the stools of most of the mice in the 10-day recovery
+group. We also examined the impact of PEG treatment after \emph{C.
+difficile} challenge. In opposition to the hypothesis suggested by the
+literature, we found that PEG treatment prolonged colonization relative
+to mice that only recieved clindamycin treatment. We identified patterns
+in the relative abundances of \emph{Bacteroides},
 \emph{Enterobacteriaceae}, \emph{Akkermansia},
 \emph{Porphyromonadaceae}, and \emph{Lachnospiraceae} that were
 associated with prolonged \emph{C. difficile} colonization (Fig. 8).
@@ -620,25 +631,25 @@ colonization, and CDIs are warranted.
 
 Considering laxatives are also used to prepare patients when
 administering fecal microbiota transplants via colonoscopy to treat
-recurrent CDIs, it will be important to determine if osmotic laxatives
-impact \emph{C. difficile} clearance in the human intestinal tract. It
-is still unclear what the best administration route is because there
-have been no studies designed to evaluate the best administration route
-for FMTs (68). Nevertheless, results from the FMT National Registry
-where 85\% of FMTs were delivered by colonoscopy demonstrate FMTs are
-highly effective treatment for recurrent CDIs with 90\% achieving
-resolution in the 1 month follow-up window (69). A surprising number of
-studies continue to hypothesize that PEG or bowel preparation can clear
-\emph{C. difficile} spores and toxins despite the paucity of supporting
-evidence (20--23). There was even a clinical trial (NCT01630096)
-designed to examine whether administering PEG 3350 (NuLYTELY) prior to
-antibiotic treatment reduced disease severity that started recruitment
-in 2012 (70), but no results have been posted to date. Here we sought to
-evaluate the impact of treating \emph{C. difficile} colonized mice with
-PEG (with or without FMT) and found clearance was delayed. Further
-studies are needed to understand the impact of osmotic laxatives on
-\emph{C. difficile} colonization resistance and clearance in human
-patients receiving FMTs.
+recurrent CDIs, it will be important to determine whether osmotic
+laxatives impact \emph{C. difficile} clearance in the human intestinal
+tract. It is still unclear what the best administration route is because
+there have been no studies designed to evaluate the best administration
+route for FMTs (68). Nevertheless, results from the FMT National
+Registry where 85\% of FMTs were delivered by colonoscopy demonstrate
+FMTs are highly effective treatment for recurrent CDIs with 90\%
+achieving resolution in the 1 month follow-up window (69). A surprising
+number of studies continue to hypothesize that PEG or bowel preparation
+can clear \emph{C. difficile} spores and toxins despite the paucity of
+supporting evidence (20--23). There was even a clinical trial
+(NCT01630096) designed to examine whether administering PEG 3350
+(NuLYTELY) prior to antibiotic treatment reduced disease severity that
+started recruitment in 2012 (70), but no results have been posted to
+date. Here we sought to evaluate the impact of treating \emph{C.
+difficile} colonized mice with PEG (with or without FMT) and found
+clearance was delayed. Further studies are needed to understand the
+impact of osmotic laxatives on \emph{C. difficile} colonization
+resistance and clearance in human patients receiving FMTs.
 
 We have demonstrated that osmotic laxative treatment alone has a
 substantial impact on the microbiota and rendered mice susceptible to
@@ -695,7 +706,7 @@ injection. All PEG treatment groups received a sham intraperitoneal
 injection containing filter sterilized saline.
 
 \textbf{\emph{C. difficile} challenge model.} Mice were challenged with
-25 microliters off \emph{C. difficile} 630 spores at
+25 microliters of \emph{C. difficile} 630 spores at
 10\textsuperscript{5} concentration, except for 1 experiment where the
 concentration was 10\textsuperscript{3} (Fig. 5A). All mock challenged
 mice received 25 ul vehicle solution (Ultrapure water). A Dymax stepper
@@ -736,8 +747,8 @@ collected from the mice on day 0 post-challenge were also plated onto
 TCCFA plates to ensure mice were not already colonized with \emph{C.
 difficile} prior to challenge.
 
-\textbf{16S rRNA gene sequencing.} Stool samples that were stored in the
--80°C were placed into 96-well plates for DNA extractions and library
+\textbf{16S rRNA gene sequencing.} Stool samples were stored at -80°C
+and were placed into 96-well plates for DNA extractions and library
 preparation. DNA was extracted using the DNeasy Powersoil HTP 96 kit
 (Qiagen) and an EpMotion 5075 automated pipetting system (Eppendorf).
 For library preparation, each plate had a mock community control
@@ -753,16 +764,16 @@ KAPA Biosystems), and sequenced with the MiSeq system (Illumina).
 with mothur (v. 1.43) using a previously published protocol (71, 72).
 Paired sequencing reads were combined and aligned with the SILVA (v.
 132) reference database (73) and taxonomy was assigned with a modified
-version (v. 16) of the Ribosomal Database Project (v. 11.5) (74). The
-error rate for are sequencing data was 0.0559\% based on the 17 mock
-communities we ran with the samples. Samples were rarefied to 1,000
-sequences, 1,000 times for alpha and beta diversity analyses in order to
-account for uneven sequencing across samples. All but 3 out of 17 water
-controls had less than 1000 sequences. PCoAs were generated based on
-Bray-Curtis Index distance matrices. Permutational multivariate analysis
-of variance (PERMANOVA) tests were performed on mothur-generated
-Bray-Curtis distance matrices with the adonis function from the vegan R
-package (75).
+version of the Ribosomal Database Project reference sequences (v. 16)
+(74). The error rate for are sequencing data was 0.0559\% based on the
+17 mock communities we ran with the samples. Samples were rarefied to
+1,000 sequences, 1,000 times for alpha and beta diversity analyses in
+order to account for uneven sequencing across samples. All but 3 of the
+17 water controls had fewer than 1000 sequences. PCoAs were generated
+based on Bray-Curtis Index distance matrices. Permutational multivariate
+analysis of variance (PERMANOVA) tests were performed on
+mothur-generated Bray-Curtis distance matrices with the adonis function
+from the vegan R package (75).
 
 \textbf{Histopathology.} H\&E stained sections of cecum and colon
 tissues collected at either 0, 4, or 6 days post-challenge were coded to
@@ -802,7 +813,7 @@ by pairwise Wilcoxon comparisons with Benjamini-Hocherg correction.
 
 \textbf{Code availability.} Code for data analysis and generating this
 paper with accompanying figures is available at
-\url{https://github.com/SchlossLab/Tomkovich_PEG3350_XXXX_2021}.
+\url{https://github.com/SchlossLab/Tomkovich_PEG3350_mSphere_2021}.
 
 \textbf{Data availability.} The 16S rRNA sequencing data have been
 deposited in the National Center for Biotechnology Information Sequence
@@ -815,674 +826,488 @@ Read Archive (BioProject Accession no. PRJNA727293).
 
 \hypertarget{refs}{}
 \leavevmode\hypertarget{ref-Britton2014}{}%
-1. \textbf{Britton RA}, \textbf{Young VB}. 2014. Role of the intestinal
-microbiota in resistance to colonization by \emph{Clostridium
-difficile}. Gastroenterology \textbf{146}:1547--1553.
-doi:\href{https://doi.org/10.1053/j.gastro.2014.01.059}{10.1053/j.gastro.2014.01.059}.
+1. Britton RA, Young VB. 2014. Role of the intestinal microbiota in
+resistance to colonization by \emph{Clostridium difficile}.
+Gastroenterology 146:1547--1553.
 
 \leavevmode\hypertarget{ref-Maier2018}{}%
-2. \textbf{Maier L}, \textbf{Pruteanu M}, \textbf{Kuhn M},
-\textbf{Zeller G}, \textbf{Telzerow A}, \textbf{Anderson EE},
-\textbf{Brochado AR}, \textbf{Fernandez KC}, \textbf{Dose H},
-\textbf{Mori H}, \textbf{Patil KR}, \textbf{Bork P}, \textbf{Typas A}.
+2. Maier L, Pruteanu M, Kuhn M, Zeller G, Telzerow A, Anderson EE,
+Brochado AR, Fernandez KC, Dose H, Mori H, Patil KR, Bork P, Typas A.
 2018. Extensive impact of non-antibiotic drugs on human gut bacteria.
-Nature \textbf{555}:623--628.
-doi:\href{https://doi.org/10.1038/nature25979}{10.1038/nature25979}.
+Nature 555:623--628.
 
 \leavevmode\hypertarget{ref-LeBastard2017}{}%
-3. \textbf{Bastard QL}, \textbf{Al-Ghalith GA}, \textbf{Grégoire M},
-\textbf{Chapelet G}, \textbf{Javaudin F}, \textbf{Dailly E},
-\textbf{Batard E}, \textbf{Knights D}, \textbf{Montassier E}. 2017.
-Systematic review: Human gut dysbiosis induced by non-antibiotic
-prescription medications. Alimentary Pharmacology \& Therapeutics
-\textbf{47}:332--345.
-doi:\href{https://doi.org/10.1111/apt.14451}{10.1111/apt.14451}.
+3. Bastard QL, Al-Ghalith GA, Grégoire M, Chapelet G, Javaudin F, Dailly
+E, Batard E, Knights D, Montassier E. 2017. Systematic review: Human gut
+dysbiosis induced by non-antibiotic prescription medications. Alimentary
+Pharmacology \& Therapeutics 47:332--345.
 
 \leavevmode\hypertarget{ref-VichVila2020}{}%
-4. \textbf{Vila AV}, \textbf{Collij V}, \textbf{Sanna S}, \textbf{Sinha
-T}, \textbf{Imhann F}, \textbf{Bourgonje AR}, \textbf{Mujagic Z},
-\textbf{Jonkers DMAE}, \textbf{Masclee AAM}, \textbf{Fu J},
-\textbf{Kurilshikov A}, \textbf{Wijmenga C}, \textbf{Zhernakova A},
-\textbf{Weersma RK}. 2020. Impact of commonly used drugs on the
+4. Vila AV, Collij V, Sanna S, Sinha T, Imhann F, Bourgonje AR, Mujagic
+Z, Jonkers DMAE, Masclee AAM, Fu J, Kurilshikov A, Wijmenga C,
+Zhernakova A, Weersma RK. 2020. Impact of commonly used drugs on the
 composition and metabolic function of the gut microbiota. Nature
-Communications \textbf{11}.
-doi:\href{https://doi.org/10.1038/s41467-019-14177-z}{10.1038/s41467-019-14177-z}.
+Communications 11.
 
 \leavevmode\hypertarget{ref-Oh2018}{}%
-5. \textbf{Oh J}, \textbf{Makar M}, \textbf{Fusco C}, \textbf{McCaffrey
-R}, \textbf{Rao K}, \textbf{Ryan EE}, \textbf{Washer L}, \textbf{West
-LR}, \textbf{Young VB}, \textbf{Guttag J}, \textbf{Hooper DC},
-\textbf{Shenoy ES}, \textbf{Wiens J}. 2018. A generalizable, data-driven
-approach to predict daily risk of \emph{Clostridium difficile} infection
-at two large academic health centers. Infection Control \& Hospital
-Epidemiology \textbf{39}:425--433.
-doi:\href{https://doi.org/10.1017/ice.2018.16}{10.1017/ice.2018.16}.
+5. Oh J, Makar M, Fusco C, McCaffrey R, Rao K, Ryan EE, Washer L, West
+LR, Young VB, Guttag J, Hooper DC, Shenoy ES, Wiens J. 2018. A
+generalizable, data-driven approach to predict daily risk of
+\emph{Clostridium difficile} infection at two large academic health
+centers. Infection Control \& Hospital Epidemiology 39:425--433.
 
 \leavevmode\hypertarget{ref-Mora2012}{}%
-6. \textbf{Mora AL}, \textbf{Salazar M}, \textbf{Pablo-Caeiro J},
-\textbf{Frost CP}, \textbf{Yadav Y}, \textbf{DuPont HL}, \textbf{Garey
-KW}. 2012. Moderate to high use of opioid analgesics are associated with
-an increased risk of \emph{Clostridium difficile} infection. The
-American Journal of the Medical Sciences \textbf{343}:277--280.
-doi:\href{https://doi.org/10.1097/maj.0b013e31822f42eb}{10.1097/maj.0b013e31822f42eb}.
+6. Mora AL, Salazar M, Pablo-Caeiro J, Frost CP, Yadav Y, DuPont HL,
+Garey KW. 2012. Moderate to high use of opioid analgesics are associated
+with an increased risk of \emph{Clostridium difficile} infection. The
+American Journal of the Medical Sciences 343:277--280.
 
 \leavevmode\hypertarget{ref-Nehra2018}{}%
-7. \textbf{Nehra AK}, \textbf{Alexander JA}, \textbf{Loftus CG},
-\textbf{Nehra V}. 2018. Proton pump inhibitors: Review of emerging
-concerns. Mayo Clinic Proceedings \textbf{93}:240--246.
-doi:\href{https://doi.org/10.1016/j.mayocp.2017.10.022}{10.1016/j.mayocp.2017.10.022}.
+7. Nehra AK, Alexander JA, Loftus CG, Nehra V. 2018. Proton pump
+inhibitors: Review of emerging concerns. Mayo Clinic Proceedings
+93:240--246.
 
 \leavevmode\hypertarget{ref-Krishna2013}{}%
-8. \textbf{Krishna SG}, \textbf{Zhao W}, \textbf{Apewokin SK},
-\textbf{Krishna K}, \textbf{Chepyala P}, \textbf{Anaissie EJ}. 2013.
-Risk factors, preemptive therapy, and antiperistaltic agents for
+8. Krishna SG, Zhao W, Apewokin SK, Krishna K, Chepyala P, Anaissie EJ.
+2013. Risk factors, preemptive therapy, and antiperistaltic agents for
 \emph{Clostridium difficile} infection in cancer patients. Transplant
 Infectious Disease n/a--n/a.
-doi:\href{https://doi.org/10.1111/tid.12112}{10.1111/tid.12112}.
 
 \leavevmode\hypertarget{ref-Tomkovich2019}{}%
-9. \textbf{Tomkovich S}, \textbf{Lesniak NA}, \textbf{Li Y},
-\textbf{Bishop L}, \textbf{Fitzgerald MJ}, \textbf{Schloss PD}. 2019.
-The proton pump inhibitor omeprazole does not promote
+9. Tomkovich S, Lesniak NA, Li Y, Bishop L, Fitzgerald MJ, Schloss PD.
+2019. The proton pump inhibitor omeprazole does not promote
 \emph{Clostridioides difficile} colonization in a murine model. mSphere
-\textbf{4}.
-doi:\href{https://doi.org/10.1128/msphere.00693-19}{10.1128/msphere.00693-19}.
+4.
 
 \leavevmode\hypertarget{ref-Vandeputte2015}{}%
-10. \textbf{Vandeputte D}, \textbf{Falony G}, \textbf{Vieira-Silva S},
-\textbf{Tito RY}, \textbf{Joossens M}, \textbf{Raes J}. 2015. Stool
-consistency is strongly associated with gut microbiota richness and
-composition, enterotypes and bacterial growth rates. Gut
-\textbf{65}:57--62.
-doi:\href{https://doi.org/10.1136/gutjnl-2015-309618}{10.1136/gutjnl-2015-309618}.
+10. Vandeputte D, Falony G, Vieira-Silva S, Tito RY, Joossens M, Raes J.
+2015. Stool consistency is strongly associated with gut microbiota
+richness and composition, enterotypes and bacterial growth rates. Gut
+65:57--62.
 
 \leavevmode\hypertarget{ref-VujkovicCvijin2020}{}%
-11. \textbf{Vujkovic-Cvijin I}, \textbf{Sklar J}, \textbf{Jiang L},
-\textbf{Natarajan L}, \textbf{Knight R}, \textbf{Belkaid Y}. 2020. Host
-variables confound gut microbiota studies of human disease. Nature
-\textbf{587}:448--454.
-doi:\href{https://doi.org/10.1038/s41586-020-2881-9}{10.1038/s41586-020-2881-9}.
+11. Vujkovic-Cvijin I, Sklar J, Jiang L, Natarajan L, Knight R, Belkaid
+Y. 2020. Host variables confound gut microbiota studies of human
+disease. Nature 587:448--454.
 
 \leavevmode\hypertarget{ref-Schubert2014}{}%
-12. \textbf{Schubert AM}, \textbf{Rogers MAM}, \textbf{Ring C},
-\textbf{Mogle J}, \textbf{Petrosino JP}, \textbf{Young VB},
-\textbf{Aronoff DM}, \textbf{Schloss PD}. 2014. Microbiome data
-distinguish patients with \emph{Clostridium difficile} infection and
+12. Schubert AM, Rogers MAM, Ring C, Mogle J, Petrosino JP, Young VB,
+Aronoff DM, Schloss PD. 2014. Microbiome data distinguish patients with
+\emph{Clostridium difficile} infection and
 non-\emph{C.~difficile}-associated diarrhea from healthy controls. mBio
-\textbf{5}.
-doi:\href{https://doi.org/10.1128/mbio.01021-14}{10.1128/mbio.01021-14}.
+5.
 
 \leavevmode\hypertarget{ref-Nagata2019}{}%
-13. \textbf{Nagata N}, \textbf{Tohya M}, \textbf{Fukuda S}, \textbf{Suda
-W}, \textbf{Nishijima S}, \textbf{Takeuchi F}, \textbf{Ohsugi M},
-\textbf{Tsujimoto T}, \textbf{Nakamura T}, \textbf{Shimomura A},
-\textbf{Yanagisawa N}, \textbf{Hisada Y}, \textbf{Watanabe K},
-\textbf{Imbe K}, \textbf{Akiyama J}, \textbf{Mizokami M},
-\textbf{Miyoshi-Akiyama T}, \textbf{Uemura N}, \textbf{Hattori M}. 2019.
-Effects of bowel preparation on the human gut microbiome and metabolome.
-Scientific Reports \textbf{9}.
-doi:\href{https://doi.org/10.1038/s41598-019-40182-9}{10.1038/s41598-019-40182-9}.
+13. Nagata N, Tohya M, Fukuda S, Suda W, Nishijima S, Takeuchi F, Ohsugi
+M, Tsujimoto T, Nakamura T, Shimomura A, Yanagisawa N, Hisada Y,
+Watanabe K, Imbe K, Akiyama J, Mizokami M, Miyoshi-Akiyama T, Uemura N,
+Hattori M. 2019. Effects of bowel preparation on the human gut
+microbiome and metabolome. Scientific Reports 9.
 
 \leavevmode\hypertarget{ref-Kashyap2013}{}%
-14. \textbf{Kashyap PC}, \textbf{Marcobal A}, \textbf{Ursell LK},
-\textbf{Larauche M}, \textbf{Duboc H}, \textbf{Earle KA},
-\textbf{Sonnenburg ED}, \textbf{Ferreyra JA}, \textbf{Higginbottom SK},
-\textbf{Million M}, \textbf{Tache Y}, \textbf{Pasricha PJ},
-\textbf{Knight R}, \textbf{Farrugia G}, \textbf{Sonnenburg JL}. 2013.
-Complex interactions among diet, gastrointestinal transit, and gut
-microbiota in humanized mice. Gastroenterology \textbf{144}:967--977.
-doi:\href{https://doi.org/10.1053/j.gastro.2013.01.047}{10.1053/j.gastro.2013.01.047}.
+14. Kashyap PC, Marcobal A, Ursell LK, Larauche M, Duboc H, Earle KA,
+Sonnenburg ED, Ferreyra JA, Higginbottom SK, Million M, Tache Y,
+Pasricha PJ, Knight R, Farrugia G, Sonnenburg JL. 2013. Complex
+interactions among diet, gastrointestinal transit, and gut microbiota in
+humanized mice. Gastroenterology 144:967--977.
 
 \leavevmode\hypertarget{ref-Ferreyra2014}{}%
-15. \textbf{Ferreyra JA}, \textbf{Wu KJ}, \textbf{Hryckowian AJ},
-\textbf{Bouley DM}, \textbf{Weimer BC}, \textbf{Sonnenburg JL}. 2014.
-Gut microbiota-produced succinate promotes \emph{C.~difficile} infection
-after antibiotic treatment or motility disturbance. Cell Host \& Microbe
-\textbf{16}:770--777.
-doi:\href{https://doi.org/10.1016/j.chom.2014.11.003}{10.1016/j.chom.2014.11.003}.
+15. Ferreyra JA, Wu KJ, Hryckowian AJ, Bouley DM, Weimer BC, Sonnenburg
+JL. 2014. Gut microbiota-produced succinate promotes \emph{C.~difficile}
+infection after antibiotic treatment or motility disturbance. Cell Host
+\& Microbe 16:770--777.
 
 \leavevmode\hypertarget{ref-Tropini2018}{}%
-16. \textbf{Tropini C}, \textbf{Moss EL}, \textbf{Merrill BD},
-\textbf{Ng KM}, \textbf{Higginbottom SK}, \textbf{Casavant EP},
-\textbf{Gonzalez CG}, \textbf{Fremin B}, \textbf{Bouley DM},
-\textbf{Elias JE}, \textbf{Bhatt AS}, \textbf{Huang KC},
-\textbf{Sonnenburg JL}. 2018. Transient osmotic perturbation causes
-long-term alteration to the gut microbiota. Cell
-\textbf{173}:1742--1754.e17.
-doi:\href{https://doi.org/10.1016/j.cell.2018.05.008}{10.1016/j.cell.2018.05.008}.
+16. Tropini C, Moss EL, Merrill BD, Ng KM, Higginbottom SK, Casavant EP,
+Gonzalez CG, Fremin B, Bouley DM, Elias JE, Bhatt AS, Huang KC,
+Sonnenburg JL. 2018. Transient osmotic perturbation causes long-term
+alteration to the gut microbiota. Cell 173:1742--1754.e17.
 
 \leavevmode\hypertarget{ref-VanInsberghe2020}{}%
-17. \textbf{VanInsberghe D}, \textbf{Elsherbini JA}, \textbf{Varian B},
-\textbf{Poutahidis T}, \textbf{Erdman S}, \textbf{Polz MF}. 2020.
-Diarrhoeal events can trigger long-term \emph{Clostridium difficile}
-colonization with recurrent blooms. Nature Microbiology
-\textbf{5}:642--650.
-doi:\href{https://doi.org/10.1038/s41564-020-0668-2}{10.1038/s41564-020-0668-2}.
+17. VanInsberghe D, Elsherbini JA, Varian B, Poutahidis T, Erdman S,
+Polz MF. 2020. Diarrhoeal events can trigger long-term \emph{Clostridium
+difficile} colonization with recurrent blooms. Nature Microbiology
+5:642--650.
 
 \leavevmode\hypertarget{ref-Olson2013}{}%
-18. \textbf{Olson A}, \textbf{Diebel LN}, \textbf{Liberati DM}. 2013.
-Effect of host defenses on \emph{Clostridium difficile} toxininduced
-intestinal barrier injury. Journal of Trauma and Acute Care Surgery
-\textbf{74}:983--990.
-doi:\href{https://doi.org/10.1097/ta.0b013e3182858477}{10.1097/ta.0b013e3182858477}.
+18. Olson A, Diebel LN, Liberati DM. 2013. Effect of host defenses on
+\emph{Clostridium difficile} toxininduced intestinal barrier injury.
+Journal of Trauma and Acute Care Surgery 74:983--990.
 
 \leavevmode\hypertarget{ref-Diebel2014}{}%
-19. \textbf{Diebel LN}, \textbf{Liberati DM}. 2014. Reinforcement of the
-intestinal mucus layer protects against \emph{Clostridium difficile}
-intestinal injury in~vitro. Journal of the American College of Surgeons
-\textbf{219}:460--468.
-doi:\href{https://doi.org/10.1016/j.jamcollsurg.2014.05.005}{10.1016/j.jamcollsurg.2014.05.005}.
+19. Diebel LN, Liberati DM. 2014. Reinforcement of the intestinal mucus
+layer protects against \emph{Clostridium difficile} intestinal injury
+in~vitro. Journal of the American College of Surgeons 219:460--468.
 
 \leavevmode\hypertarget{ref-vanNood2013}{}%
-20. \textbf{Nood E van}, \textbf{Vrieze A}, \textbf{Nieuwdorp M},
-\textbf{Fuentes S}, \textbf{Zoetendal EG}, \textbf{Vos WM de},
-\textbf{Visser CE}, \textbf{Kuijper EJ}, \textbf{Bartelsman JFWM},
-\textbf{Tijssen JGP}, \textbf{Speelman P}, \textbf{Dijkgraaf MGW},
-\textbf{Keller JJ}. 2013. Duodenal infusion of donor feces for recurrent
-\emph{Clostridium difficile}. New England Journal of Medicine
-\textbf{368}:407--415.
-doi:\href{https://doi.org/10.1056/nejmoa1205037}{10.1056/nejmoa1205037}.
+20. Nood E van, Vrieze A, Nieuwdorp M, Fuentes S, Zoetendal EG, Vos WM
+de, Visser CE, Kuijper EJ, Bartelsman JFWM, Tijssen JGP, Speelman P,
+Dijkgraaf MGW, Keller JJ. 2013. Duodenal infusion of donor feces for
+recurrent \emph{Clostridium difficile}. New England Journal of Medicine
+368:407--415.
 
 \leavevmode\hypertarget{ref-Razik2017}{}%
-21. \textbf{Razik R}, \textbf{Osman M}, \textbf{Lieberman A},
-\textbf{Allegretti JR}, \textbf{Kassam Z}. 2017. Faecal microbiota
-transplantation for \emph{Clostridium difficile} infection: A
+21. Razik R, Osman M, Lieberman A, Allegretti JR, Kassam Z. 2017. Faecal
+microbiota transplantation for \emph{Clostridium difficile} infection: A
 multicentre study of non-responders. Medical Journal of Australia
-\textbf{207}:159--160.
-doi:\href{https://doi.org/10.5694/mja16.01452}{10.5694/mja16.01452}.
+207:159--160.
 
 \leavevmode\hypertarget{ref-Postigo2012}{}%
-22. \textbf{Postigo R}, \textbf{Kim JH}. 2012. Colonoscopic versus
-nasogastric fecal transplantation for the treatment of \emph{Clostridium
-difficile} infection: A review and pooled analysis. Infection
-\textbf{40}:643--648.
-doi:\href{https://doi.org/10.1007/s15010-012-0307-9}{10.1007/s15010-012-0307-9}.
+22. Postigo R, Kim JH. 2012. Colonoscopic versus nasogastric fecal
+transplantation for the treatment of \emph{Clostridium difficile}
+infection: A review and pooled analysis. Infection 40:643--648.
 
 \leavevmode\hypertarget{ref-Liacouras1996}{}%
-23. \textbf{Liacouras CA}, \textbf{Piccoli DA}. 1996. Whole-bowel
-irrigation as an adjunct to the treatment of chronic, relapsing
-\emph{Clostridium difficile} colitis. Journal of Clinical
-Gastroenterology \textbf{22}:186--189.
-doi:\href{https://doi.org/10.1097/00004836-199604000-00007}{10.1097/00004836-199604000-00007}.
+23. Liacouras CA, Piccoli DA. 1996. Whole-bowel irrigation as an adjunct
+to the treatment of chronic, relapsing \emph{Clostridium difficile}
+colitis. Journal of Clinical Gastroenterology 22:186--189.
 
 \leavevmode\hypertarget{ref-Schubert2015}{}%
-24. \textbf{Schubert AM}, \textbf{Sinani H}, \textbf{Schloss PD}. 2015.
-Antibiotic-induced alterations of the murine gut microbiota and
-subsequent effects on colonization resistance against \emph{Clostridium
-difficile}. mBio \textbf{6}.
-doi:\href{https://doi.org/10.1128/mbio.00974-15}{10.1128/mbio.00974-15}.
+24. Schubert AM, Sinani H, Schloss PD. 2015. Antibiotic-induced
+alterations of the murine gut microbiota and subsequent effects on
+colonization resistance against \emph{Clostridium difficile}. mBio 6.
 
 \leavevmode\hypertarget{ref-Jenior2017}{}%
-25. \textbf{Jenior ML}, \textbf{Leslie JL}, \textbf{Young VB},
-\textbf{Schloss PD}. 2017. \emph{Clostridium difficile} colonizes
-alternative nutrient niches during infection across distinct murine gut
-microbiomes. mSystems \textbf{2}.
-doi:\href{https://doi.org/10.1128/msystems.00063-17}{10.1128/msystems.00063-17}.
+25. Jenior ML, Leslie JL, Young VB, Schloss PD. 2017. \emph{Clostridium
+difficile} colonizes alternative nutrient niches during infection across
+distinct murine gut microbiomes. mSystems 2.
 
 \leavevmode\hypertarget{ref-Tomkovich2020}{}%
-26. \textbf{Tomkovich S}, \textbf{Stough JMA}, \textbf{Bishop L},
-\textbf{Schloss PD}. 2020. The initial gut microbiota and response to
-antibiotic perturbation influence \emph{Clostridioides difficile}
-clearance in mice. mSphere \textbf{5}.
-doi:\href{https://doi.org/10.1128/msphere.00869-20}{10.1128/msphere.00869-20}.
+26. Tomkovich S, Stough JMA, Bishop L, Schloss PD. 2020. The initial gut
+microbiota and response to antibiotic perturbation influence
+\emph{Clostridioides difficile} clearance in mice. mSphere 5.
 
 \leavevmode\hypertarget{ref-Reeves2011}{}%
-27. \textbf{Reeves AE}, \textbf{Theriot CM}, \textbf{Bergin IL},
-\textbf{Huffnagle GB}, \textbf{Schloss PD}, \textbf{Young VB}. 2011. The
-interplay between microbiome dynamics and pathogen dynamics in a murine
-model of \emph{Clostridium difficile} infection \textbf{2}:145--158.
-doi:\href{https://doi.org/10.4161/gmic.2.3.16333}{10.4161/gmic.2.3.16333}.
+27. Reeves AE, Theriot CM, Bergin IL, Huffnagle GB, Schloss PD, Young
+VB. 2011. The interplay between microbiome dynamics and pathogen
+dynamics in a murine model of \emph{Clostridium difficile} infection
+2:145--158.
 
 \leavevmode\hypertarget{ref-Dieterle2020}{}%
-28. \textbf{Dieterle MG}, \textbf{Putler R}, \textbf{Perry DA},
-\textbf{Menon A}, \textbf{Abernathy-Close L}, \textbf{Perlman NS},
-\textbf{Penkevich A}, \textbf{Standke A}, \textbf{Keidan M},
-\textbf{Vendrov KC}, \textbf{Bergin IL}, \textbf{Young VB}, \textbf{Rao
-K}. 2020. Systemic inflammatory mediators are effective biomarkers for
-predicting adverse outcomes in \emph{Clostridioides difficile}
-infection. mBio \textbf{11}.
-doi:\href{https://doi.org/10.1128/mbio.00180-20}{10.1128/mbio.00180-20}.
+28. Dieterle MG, Putler R, Perry DA, Menon A, Abernathy-Close L, Perlman
+NS, Penkevich A, Standke A, Keidan M, Vendrov KC, Bergin IL, Young VB,
+Rao K. 2020. Systemic inflammatory mediators are effective biomarkers
+for predicting adverse outcomes in \emph{Clostridioides difficile}
+infection. mBio 11.
 
 \leavevmode\hypertarget{ref-Jenior2018}{}%
-29. \textbf{Jenior ML}, \textbf{Leslie JL}, \textbf{Young VB},
-\textbf{Schloss PD}. 2018. \emph{Clostridium difficile} alters the
-structure and metabolism of distinct cecal microbiomes during initial
-infection to promote sustained colonization. mSphere \textbf{3}.
-doi:\href{https://doi.org/10.1128/msphere.00261-18}{10.1128/msphere.00261-18}.
+29. Jenior ML, Leslie JL, Young VB, Schloss PD. 2018. \emph{Clostridium
+difficile} alters the structure and metabolism of distinct cecal
+microbiomes during initial infection to promote sustained colonization.
+mSphere 3.
 
 \leavevmode\hypertarget{ref-Iino2007}{}%
-30. \textbf{Iino T}, \textbf{Mori K}, \textbf{Tanaka K}, \textbf{Suzuki
-K-i}, \textbf{Harayama S}. 2007. \emph{Oscillibacter valericigenes} gen.
-Nov., sp. Nov., a valerate-producing anaerobic bacterium isolated from
-the alimentary canal of a japanese corbicula clam. International Journal
-of Systematic and Evolutionary Microbiology \textbf{57}:1840--1845.
-doi:\href{https://doi.org/10.1099/ijs.0.64717-0}{10.1099/ijs.0.64717-0}.
+30. Iino T, Mori K, Tanaka K, Suzuki K-i, Harayama S. 2007.
+\emph{Oscillibacter valericigenes} gen. Nov., sp. Nov., a
+valerate-producing anaerobic bacterium isolated from the alimentary
+canal of a japanese corbicula clam. International Journal of Systematic
+and Evolutionary Microbiology 57:1840--1845.
 
 \leavevmode\hypertarget{ref-Jump2014}{}%
-31. \textbf{Jump RLP}, \textbf{Polinkovsky A}, \textbf{Hurless K},
-\textbf{Sitzlar B}, \textbf{Eckart K}, \textbf{Tomas M},
-\textbf{Deshpande A}, \textbf{Nerandzic MM}, \textbf{Donskey CJ}. 2014.
-Metabolomics analysis identifies intestinal microbiota-derived
-biomarkers of colonization resistance in clindamycin-treated mice. PLoS
-ONE \textbf{9}:e101267.
-doi:\href{https://doi.org/10.1371/journal.pone.0101267}{10.1371/journal.pone.0101267}.
+31. Jump RLP, Polinkovsky A, Hurless K, Sitzlar B, Eckart K, Tomas M,
+Deshpande A, Nerandzic MM, Donskey CJ. 2014. Metabolomics analysis
+identifies intestinal microbiota-derived biomarkers of colonization
+resistance in clindamycin-treated mice. PLoS ONE 9:e101267.
 
 \leavevmode\hypertarget{ref-McDonald2018}{}%
-32. \textbf{McDonald JAK}, \textbf{Mullish BH}, \textbf{Pechlivanis A},
-\textbf{Liu Z}, \textbf{Brignardello J}, \textbf{Kao D}, \textbf{Holmes
-E}, \textbf{Li JV}, \textbf{Clarke TB}, \textbf{Thursz MR},
-\textbf{Marchesi JR}. 2018. Inhibiting growth of \emph{Clostridioides
-difficile} by restoring valerate, produced by the intestinal microbiota.
-Gastroenterology \textbf{155}:1495--1507.e15.
-doi:\href{https://doi.org/10.1053/j.gastro.2018.07.014}{10.1053/j.gastro.2018.07.014}.
+32. McDonald JAK, Mullish BH, Pechlivanis A, Liu Z, Brignardello J, Kao
+D, Holmes E, Li JV, Clarke TB, Thursz MR, Marchesi JR. 2018. Inhibiting
+growth of \emph{Clostridioides difficile} by restoring valerate,
+produced by the intestinal microbiota. Gastroenterology
+155:1495--1507.e15.
 
 \leavevmode\hypertarget{ref-Pfeiffer2012}{}%
-33. \textbf{Pfeiffer N}, \textbf{Desmarchelier C}, \textbf{Blaut M},
-\textbf{Daniel H}, \textbf{Haller D}, \textbf{Clavel T}. 2012.
-\emph{Acetatifactor muris} gen. Nov., sp. Nov., a novel bacterium
+33. Pfeiffer N, Desmarchelier C, Blaut M, Daniel H, Haller D, Clavel T.
+2012. \emph{Acetatifactor muris} gen. Nov., sp. Nov., a novel bacterium
 isolated from the intestine of an obese mouse. Archives of Microbiology
-\textbf{194}:901--907.
-doi:\href{https://doi.org/10.1007/s00203-012-0822-1}{10.1007/s00203-012-0822-1}.
+194:901--907.
 
 \leavevmode\hypertarget{ref-Lawley2012}{}%
-34. \textbf{Lawley TD}, \textbf{Clare S}, \textbf{Walker AW},
-\textbf{Stares MD}, \textbf{Connor TR}, \textbf{Raisen C},
-\textbf{Goulding D}, \textbf{Rad R}, \textbf{Schreiber F},
-\textbf{Brandt C}, \textbf{Deakin LJ}, \textbf{Pickard DJ},
-\textbf{Duncan SH}, \textbf{Flint HJ}, \textbf{Clark TG},
-\textbf{Parkhill J}, \textbf{Dougan G}. 2012. Targeted restoration of
-the intestinal microbiota with a simple, defined bacteriotherapy
+34. Lawley TD, Clare S, Walker AW, Stares MD, Connor TR, Raisen C,
+Goulding D, Rad R, Schreiber F, Brandt C, Deakin LJ, Pickard DJ, Duncan
+SH, Flint HJ, Clark TG, Parkhill J, Dougan G. 2012. Targeted restoration
+of the intestinal microbiota with a simple, defined bacteriotherapy
 resolves relapsing \emph{Clostridium difficile} disease in mice. PLoS
-Pathogens \textbf{8}:e1002995.
-doi:\href{https://doi.org/10.1371/journal.ppat.1002995}{10.1371/journal.ppat.1002995}.
+Pathogens 8:e1002995.
 
 \leavevmode\hypertarget{ref-Frost2021}{}%
-35. \textbf{Frost LR}, \textbf{Cheng JKJ}, \textbf{Unnikrishnan M}.
-2021. \emph{Clostridioides difficile} biofilms: A mechanism of
-persistence in the gut? PLOS Pathogens \textbf{17}:e1009348.
-doi:\href{https://doi.org/10.1371/journal.ppat.1009348}{10.1371/journal.ppat.1009348}.
+35. Frost LR, Cheng JKJ, Unnikrishnan M. 2021. \emph{Clostridioides
+difficile} biofilms: A mechanism of persistence in the gut? PLOS
+Pathogens 17:e1009348.
 
 \leavevmode\hypertarget{ref-Engevik2021}{}%
-36. \textbf{Engevik MA}, \textbf{Danhof HA}, \textbf{Auchtung J},
-\textbf{Endres BT}, \textbf{Ruan W}, \textbf{Bassères E},
-\textbf{Engevik AC}, \textbf{Wu Q}, \textbf{Nicholson M}, \textbf{Luna
-RA}, \textbf{Garey KW}, \textbf{Crawford SE}, \textbf{Estes MK},
-\textbf{Lux R}, \textbf{Yacyshyn MB}, \textbf{Yacyshyn B},
-\textbf{Savidge T}, \textbf{Britton RA}, \textbf{Versalovic J}. 2021.
-Fusobacterium nucleatum adheres to \emph{Clostridioides difficile} via
-the RadD adhesin to enhance biofilm formation in intestinal mucus.
-Gastroenterology \textbf{160}:1301--1314.e8.
-doi:\href{https://doi.org/10.1053/j.gastro.2020.11.034}{10.1053/j.gastro.2020.11.034}.
+36. Engevik MA, Danhof HA, Auchtung J, Endres BT, Ruan W, Bassères E,
+Engevik AC, Wu Q, Nicholson M, Luna RA, Garey KW, Crawford SE, Estes MK,
+Lux R, Yacyshyn MB, Yacyshyn B, Savidge T, Britton RA, Versalovic J.
+2021. Fusobacterium nucleatum adheres to \emph{Clostridioides difficile}
+via the RadD adhesin to enhance biofilm formation in intestinal mucus.
+Gastroenterology 160:1301--1314.e8.
 
 \leavevmode\hypertarget{ref-Engevik2020}{}%
-37. \textbf{Engevik MA}, \textbf{Engevik AC}, \textbf{Engevik KA},
-\textbf{Auchtung JM}, \textbf{Chang-Graham AL}, \textbf{Ruan W},
-\textbf{Luna RA}, \textbf{Hyser JM}, \textbf{Spinler JK},
-\textbf{Versalovic J}. 2020. Mucin-degrading microbes release
-monosaccharides that chemoattract \emph{Clostridioides difficile} and
-facilitate colonization of the human intestinal mucus layer. ACS
-Infectious Diseases \textbf{7}:1126--1142.
-doi:\href{https://doi.org/10.1021/acsinfecdis.0c00634}{10.1021/acsinfecdis.0c00634}.
+37. Engevik MA, Engevik AC, Engevik KA, Auchtung JM, Chang-Graham AL,
+Ruan W, Luna RA, Hyser JM, Spinler JK, Versalovic J. 2020.
+Mucin-degrading microbes release monosaccharides that chemoattract
+\emph{Clostridioides difficile} and facilitate colonization of the human
+intestinal mucus layer. ACS Infectious Diseases 7:1126--1142.
 
 \leavevmode\hypertarget{ref-Dejea2018}{}%
-38. \textbf{Dejea CM}, \textbf{Fathi P}, \textbf{Craig JM},
-\textbf{Boleij A}, \textbf{Taddese R}, \textbf{Geis AL}, \textbf{Wu X},
-\textbf{Shields CED}, \textbf{Hechenbleikner EM}, \textbf{Huso DL},
-\textbf{Anders RA}, \textbf{Giardiello FM}, \textbf{Wick EC},
-\textbf{Wang H}, \textbf{Wu S}, \textbf{Pardoll DM}, \textbf{Housseau
-F}, \textbf{Sears CL}. 2018. Patients with familial adenomatous
-polyposis harbor colonic biofilms containing tumorigenic bacteria.
-Science \textbf{359}:592--597.
-doi:\href{https://doi.org/10.1126/science.aah3648}{10.1126/science.aah3648}.
+38. Dejea CM, Fathi P, Craig JM, Boleij A, Taddese R, Geis AL, Wu X,
+Shields CED, Hechenbleikner EM, Huso DL, Anders RA, Giardiello FM, Wick
+EC, Wang H, Wu S, Pardoll DM, Housseau F, Sears CL. 2018. Patients with
+familial adenomatous polyposis harbor colonic biofilms containing
+tumorigenic bacteria. Science 359:592--597.
 
 \leavevmode\hypertarget{ref-Semenyuk2015}{}%
-39. \textbf{Semenyuk EG}, \textbf{Poroyko VA}, \textbf{Johnston PF},
-\textbf{Jones SE}, \textbf{Knight KL}, \textbf{Gerding DN},
-\textbf{Driks A}. 2015. Analysis of bacterial communities during
+39. Semenyuk EG, Poroyko VA, Johnston PF, Jones SE, Knight KL, Gerding
+DN, Driks A. 2015. Analysis of bacterial communities during
 \emph{Clostridium difficile} infection in the mouse. Infection and
-Immunity \textbf{83}:4383--4391.
-doi:\href{https://doi.org/10.1128/iai.00145-15}{10.1128/iai.00145-15}.
+Immunity 83:4383--4391.
 
 \leavevmode\hypertarget{ref-Deng2018}{}%
-40. \textbf{Deng H}, \textbf{Yang S}, \textbf{Zhang Y}, \textbf{Qian K},
-\textbf{Zhang Z}, \textbf{Liu Y}, \textbf{Wang Y}, \textbf{Bai Y},
-\textbf{Fan H}, \textbf{Zhao X}, \textbf{Zhi F}. 2018. Bacteroides
-fragilis prevents \emph{Clostridium difficile} infection in a mouse
-model by restoring gut barrier and microbiome regulation. Frontiers in
-Microbiology \textbf{9}.
-doi:\href{https://doi.org/10.3389/fmicb.2018.02976}{10.3389/fmicb.2018.02976}.
+40. Deng H, Yang S, Zhang Y, Qian K, Zhang Z, Liu Y, Wang Y, Bai Y, Fan
+H, Zhao X, Zhi F. 2018. Bacteroides fragilis prevents \emph{Clostridium
+difficile} infection in a mouse model by restoring gut barrier and
+microbiome regulation. Frontiers in Microbiology 9.
 
 \leavevmode\hypertarget{ref-Normington2021}{}%
-41. \textbf{Normington C}, \textbf{Moura IB}, \textbf{Bryant JA},
-\textbf{Ewin DJ}, \textbf{Clark EV}, \textbf{Kettle MJ}, \textbf{Harris
-HC}, \textbf{Spittal W}, \textbf{Davis G}, \textbf{Henn MR},
-\textbf{Ford CB}, \textbf{Wilcox MH}, \textbf{Buckley AM}. 2021.
-Biofilms harbour \emph{Clostridioides difficile}, serving as a reservoir
-for recurrent infection. npj Biofilms and Microbiomes \textbf{7}.
-doi:\href{https://doi.org/10.1038/s41522-021-00184-w}{10.1038/s41522-021-00184-w}.
+41. Normington C, Moura IB, Bryant JA, Ewin DJ, Clark EV, Kettle MJ,
+Harris HC, Spittal W, Davis G, Henn MR, Ford CB, Wilcox MH, Buckley AM.
+2021. Biofilms harbour \emph{Clostridioides difficile}, serving as a
+reservoir for recurrent infection. npj Biofilms and Microbiomes 7.
 
 \leavevmode\hypertarget{ref-Hassall2021}{}%
-42. \textbf{Hassall J}, \textbf{Cheng JKJ}, \textbf{Unnikrishnan M}.
-2021. Dissecting individual interactions between pathogenic and
-commensal bacteria within a multispecies gut microbial community.
-mSphere \textbf{6}.
-doi:\href{https://doi.org/10.1128/msphere.00013-21}{10.1128/msphere.00013-21}.
+42. Hassall J, Cheng JKJ, Unnikrishnan M. 2021. Dissecting individual
+interactions between pathogenic and commensal bacteria within a
+multispecies gut microbial community. mSphere 6.
 
 \leavevmode\hypertarget{ref-Cirstea2018}{}%
-43. \textbf{Cirstea M}, \textbf{Radisavljevic N}, \textbf{Finlay BB}.
-2018. Good bug, bad bug: Breaking through microbial stereotypes. Cell
-Host \& Microbe \textbf{23}:10--13.
-doi:\href{https://doi.org/10.1016/j.chom.2017.12.008}{10.1016/j.chom.2017.12.008}.
+43. Cirstea M, Radisavljevic N, Finlay BB. 2018. Good bug, bad bug:
+Breaking through microbial stereotypes. Cell Host \& Microbe 23:10--13.
 
 \leavevmode\hypertarget{ref-BorgesCanha2015}{}%
-44. \textbf{Canha MB}. 2015. Role of colonic microbiota in colorectal
+44. Canha MB. 2015. Role of colonic microbiota in colorectal
 carcinogenesis: A systematic review. Revista Española de Enfermedades
-Digestivas \textbf{107}.
-doi:\href{https://doi.org/10.17235/reed.2015.3830/2015}{10.17235/reed.2015.3830/2015}.
+Digestivas 107.
 
 \leavevmode\hypertarget{ref-Pereira2020}{}%
-45. \textbf{Pereira FC}, \textbf{Wasmund K}, \textbf{Cobankovic I},
-\textbf{Jehmlich N}, \textbf{Herbold CW}, \textbf{Lee KS},
-\textbf{Sziranyi B}, \textbf{Vesely C}, \textbf{Decker T},
-\textbf{Stocker R}, \textbf{Warth B}, \textbf{Bergen M von},
-\textbf{Wagner M}, \textbf{Berry D}. 2020. Rational design of a
-microbial consortium of mucosal sugar utilizers reduces
-\emph{Clostridioides difficile} colonization. Nature Communications
-\textbf{11}.
-doi:\href{https://doi.org/10.1038/s41467-020-18928-1}{10.1038/s41467-020-18928-1}.
+45. Pereira FC, Wasmund K, Cobankovic I, Jehmlich N, Herbold CW, Lee KS,
+Sziranyi B, Vesely C, Decker T, Stocker R, Warth B, Bergen M von, Wagner
+M, Berry D. 2020. Rational design of a microbial consortium of mucosal
+sugar utilizers reduces \emph{Clostridioides difficile} colonization.
+Nature Communications 11.
 
 \leavevmode\hypertarget{ref-Rodriguez2016}{}%
-46. \textbf{Rodriguez C}, \textbf{Taminiau B}, \textbf{Korsak N},
-\textbf{Avesani V}, \textbf{Broeck JV}, \textbf{Brach P}, \textbf{Delmée
-M}, \textbf{Daube G}. 2016. Longitudinal survey of \emph{Clostridium
+46. Rodriguez C, Taminiau B, Korsak N, Avesani V, Broeck JV, Brach P,
+Delmée M, Daube G. 2016. Longitudinal survey of \emph{Clostridium
 difficile} presence and gut microbiota composition in a belgian nursing
-home. BMC Microbiology \textbf{16}.
-doi:\href{https://doi.org/10.1186/s12866-016-0848-7}{10.1186/s12866-016-0848-7}.
+home. BMC Microbiology 16.
 
 \leavevmode\hypertarget{ref-Sangster2016}{}%
-47. \textbf{Sangster W}, \textbf{Hegarty JP}, \textbf{Schieffer KM},
-\textbf{Wright JR}, \textbf{Hackman J}, \textbf{Toole DR},
-\textbf{Lamendella R}, \textbf{Stewart DB}. 2016. Bacterial and fungal
-microbiota changes distinguish \emph{C.~difficile} infection from other
-forms of diarrhea: Results of a prospective inpatient study. Frontiers
-in Microbiology \textbf{7}.
-doi:\href{https://doi.org/10.3389/fmicb.2016.00789}{10.3389/fmicb.2016.00789}.
+47. Sangster W, Hegarty JP, Schieffer KM, Wright JR, Hackman J, Toole
+DR, Lamendella R, Stewart DB. 2016. Bacterial and fungal microbiota
+changes distinguish \emph{C.~difficile} infection from other forms of
+diarrhea: Results of a prospective inpatient study. Frontiers in
+Microbiology 7.
 
 \leavevmode\hypertarget{ref-Vakili2020a}{}%
-48. \textbf{Vakili B}, \textbf{Fateh A}, \textbf{Aghdaei HA},
-\textbf{Sotoodehnejadnematalahi F}, \textbf{Siadat SD}. 2020. Intestinal
-microbiota in elderly inpatients with \emph{Clostridioides difficile}
-infection. Infection and Drug Resistance \textbf{Volume 13}:2723--2731.
-doi:\href{https://doi.org/10.2147/idr.s262019}{10.2147/idr.s262019}.
+48. Vakili B, Fateh A, Aghdaei HA, Sotoodehnejadnematalahi F, Siadat SD.
+2020. Intestinal microbiota in elderly inpatients with
+\emph{Clostridioides difficile} infection. Infection and Drug Resistance
+Volume 13:2723--2731.
 
 \leavevmode\hypertarget{ref-Vakili2020b}{}%
-49. \textbf{Vakili B}, \textbf{Fateh A}, \textbf{Aghdaei HA},
-\textbf{Sotoodehnejadnematalahi F}, \textbf{Siadat SD}. 2020.
-Characterization of gut microbiota in hospitalized patients with
+49. Vakili B, Fateh A, Aghdaei HA, Sotoodehnejadnematalahi F, Siadat SD.
+2020. Characterization of gut microbiota in hospitalized patients with
 \emph{Clostridioides difficile} infection. Current Microbiology
-\textbf{77}:1673--1680.
-doi:\href{https://doi.org/10.1007/s00284-020-01980-x}{10.1007/s00284-020-01980-x}.
+77:1673--1680.
 
 \leavevmode\hypertarget{ref-Li2019}{}%
-50. \textbf{Li X}, \textbf{Chu Q}, \textbf{Huang Y}, \textbf{Xiao Y},
-\textbf{Song L}, \textbf{Zhu S}, \textbf{Kang Y}, \textbf{Lu S},
-\textbf{Xu J}, \textbf{Ren Z}. 2019. Consortium of probiotics attenuates
-colonization of \emph{Clostridioides difficile}. Frontiers in
-Microbiology \textbf{10}.
-doi:\href{https://doi.org/10.3389/fmicb.2019.02871}{10.3389/fmicb.2019.02871}.
+50. Li X, Chu Q, Huang Y, Xiao Y, Song L, Zhu S, Kang Y, Lu S, Xu J, Ren
+Z. 2019. Consortium of probiotics attenuates colonization of
+\emph{Clostridioides difficile}. Frontiers in Microbiology 10.
 
 \leavevmode\hypertarget{ref-Theriot2011}{}%
-51. \textbf{Theriot CM}, \textbf{Koumpouras CC}, \textbf{Carlson PE},
-\textbf{Bergin II}, \textbf{Aronoff DM}, \textbf{Young VB}. 2011.
-Cefoperazone-treated mice as an experimental platform to assess
-differential virulence of \emph{Clostridium difficile} strains. Gut
-Microbes \textbf{2}:326--334.
-doi:\href{https://doi.org/10.4161/gmic.19142}{10.4161/gmic.19142}.
+51. Theriot CM, Koumpouras CC, Carlson PE, Bergin II, Aronoff DM, Young
+VB. 2011. Cefoperazone-treated mice as an experimental platform to
+assess differential virulence of \emph{Clostridium difficile} strains.
+Gut Microbes 2:326--334.
 
 \leavevmode\hypertarget{ref-Kester2020}{}%
-52. \textbf{Kester JC}, \textbf{Brubaker DK}, \textbf{Velazquez J},
-\textbf{Wright C}, \textbf{Lauffenburger DA}, \textbf{Griffith LG}.
-2020. \emph{Clostridioides difficile}-associated antibiotics alter human
-mucosal barrier functions by microbiome-independent mechanisms.
-Antimicrobial Agents and Chemotherapy \textbf{64}.
-doi:\href{https://doi.org/10.1128/aac.01404-19}{10.1128/aac.01404-19}.
+52. Kester JC, Brubaker DK, Velazquez J, Wright C, Lauffenburger DA,
+Griffith LG. 2020. \emph{Clostridioides difficile}-associated
+antibiotics alter human mucosal barrier functions by
+microbiome-independent mechanisms. Antimicrobial Agents and Chemotherapy
+64.
 
 \leavevmode\hypertarget{ref-Bergstrom2020}{}%
-53. \textbf{Bergstrom K}, \textbf{Shan X}, \textbf{Casero D},
-\textbf{Batushansky A}, \textbf{Lagishetty V}, \textbf{Jacobs JP},
-\textbf{Hoover C}, \textbf{Kondo Y}, \textbf{Shao B}, \textbf{Gao L},
-\textbf{Zandberg W}, \textbf{Noyovitz B}, \textbf{McDaniel JM},
-\textbf{Gibson DL}, \textbf{Pakpour S}, \textbf{Kazemian N},
-\textbf{McGee S}, \textbf{Houchen CW}, \textbf{Rao CV}, \textbf{Griffin
-TM}, \textbf{Sonnenburg JL}, \textbf{McEver RP}, \textbf{Braun J},
-\textbf{Xia L}. 2020. Proximal colonderived o-glycosylated mucus
-encapsulates and modulates the microbiota. Science
-\textbf{370}:467--472.
-doi:\href{https://doi.org/10.1126/science.aay7367}{10.1126/science.aay7367}.
+53. Bergstrom K, Shan X, Casero D, Batushansky A, Lagishetty V, Jacobs
+JP, Hoover C, Kondo Y, Shao B, Gao L, Zandberg W, Noyovitz B, McDaniel
+JM, Gibson DL, Pakpour S, Kazemian N, McGee S, Houchen CW, Rao CV,
+Griffin TM, Sonnenburg JL, McEver RP, Braun J, Xia L. 2020. Proximal
+colonderived o-glycosylated mucus encapsulates and modulates the
+microbiota. Science 370:467--472.
 
 \leavevmode\hypertarget{ref-McDonald2018b}{}%
-54. \textbf{McDonald LC}, \textbf{Gerding DN}, \textbf{Johnson S},
-\textbf{Bakken JS}, \textbf{Carroll KC}, \textbf{Coffin SE},
-\textbf{Dubberke ER}, \textbf{Garey KW}, \textbf{Gould CV},
-\textbf{Kelly C}, \textbf{Loo V}, \textbf{Sammons JS}, \textbf{Sandora
-TJ}, \textbf{Wilcox MH}. 2018. Clinical practice guidelines for
-\emph{Clostridium difficile} infection in adults and children: 2017
-update by the infectious diseases society of america (IDSA) and society
-for healthcare epidemiology of america (SHEA). Clinical Infectious
-Diseases \textbf{66}:e1--e48.
-doi:\href{https://doi.org/10.1093/cid/cix1085}{10.1093/cid/cix1085}.
+54. McDonald LC, Gerding DN, Johnson S, Bakken JS, Carroll KC, Coffin
+SE, Dubberke ER, Garey KW, Gould CV, Kelly C, Loo V, Sammons JS, Sandora
+TJ, Wilcox MH. 2018. Clinical practice guidelines for \emph{Clostridium
+difficile} infection in adults and children: 2017 update by the
+infectious diseases society of america (IDSA) and society for healthcare
+epidemiology of america (SHEA). Clinical Infectious Diseases 66:e1--e48.
 
 \leavevmode\hypertarget{ref-Ahmad2017}{}%
-55. \textbf{Ahmad SM}, \textbf{Blanco N}, \textbf{Dewart CM},
-\textbf{Dobosz A}, \textbf{Malani AN}. 2017. Laxative use in the setting
-of positive testing for \emph{Clostridium difficile} infection.
-Infection Control \& Hospital Epidemiology \textbf{38}:1513--1515.
-doi:\href{https://doi.org/10.1017/ice.2017.221}{10.1017/ice.2017.221}.
+55. Ahmad SM, Blanco N, Dewart CM, Dobosz A, Malani AN. 2017. Laxative
+use in the setting of positive testing for \emph{Clostridium difficile}
+infection. Infection Control \& Hospital Epidemiology 38:1513--1515.
 
 \leavevmode\hypertarget{ref-Bilinskaya2018}{}%
-56. \textbf{Bilinskaya A}, \textbf{Goodlet KJ}, \textbf{Nailor MD}.
-2018. Evaluation of a best practice alert to reduce unnecessary
-\emph{Clostridium difficile} testing following receipt of a laxative.
-Diagnostic Microbiology and Infectious Disease \textbf{92}:50--55.
-doi:\href{https://doi.org/10.1016/j.diagmicrobio.2018.04.009}{10.1016/j.diagmicrobio.2018.04.009}.
+56. Bilinskaya A, Goodlet KJ, Nailor MD. 2018. Evaluation of a best
+practice alert to reduce unnecessary \emph{Clostridium difficile}
+testing following receipt of a laxative. Diagnostic Microbiology and
+Infectious Disease 92:50--55.
 
 \leavevmode\hypertarget{ref-Cook2020}{}%
-57. \textbf{Cook PP}, \textbf{Nichols S}, \textbf{Coogan M},
-\textbf{Opera J}, \textbf{DeHart M}. 2020. Reduction in testing and
-change in testing algorithm associated with decrease in number of
-nosocomial \emph{Clostridioides} (\emph{Clostridium}) \emph{difficile}
-infections. American Journal of Infection Control
-\textbf{48}:1019--1022.
-doi:\href{https://doi.org/10.1016/j.ajic.2019.12.028}{10.1016/j.ajic.2019.12.028}.
+57. Cook PP, Nichols S, Coogan M, Opera J, DeHart M. 2020. Reduction in
+testing and change in testing algorithm associated with decrease in
+number of nosocomial \emph{Clostridioides} (\emph{Clostridium})
+\emph{difficile} infections. American Journal of Infection Control
+48:1019--1022.
 
 \leavevmode\hypertarget{ref-Appaneal2019}{}%
-58. \textbf{Appaneal HJ}, \textbf{Caffrey AR}, \textbf{Beganovic M},
-\textbf{Avramovic S}, \textbf{LaPlante KL}. 2019. Predictors of
-\emph{Clostridioides difficile} recurrence across a national cohort of
-veterans in outpatient, acute, and long-term care settings. American
-Journal of Health-System Pharmacy \textbf{76}:581--590.
-doi:\href{https://doi.org/10.1093/ajhp/zxz032}{10.1093/ajhp/zxz032}.
+58. Appaneal HJ, Caffrey AR, Beganovic M, Avramovic S, LaPlante KL.
+2019. Predictors of \emph{Clostridioides difficile} recurrence across a
+national cohort of veterans in outpatient, acute, and long-term care
+settings. American Journal of Health-System Pharmacy 76:581--590.
 
 \leavevmode\hypertarget{ref-Dubberke2011}{}%
-59. \textbf{Dubberke ER}, \textbf{Yan Y}, \textbf{Reske KA},
-\textbf{Butler AM}, \textbf{Doherty J}, \textbf{Pham V}, \textbf{Fraser
-VJ}. 2011. Development and validation of a \emph{Clostridium difficile}
+59. Dubberke ER, Yan Y, Reske KA, Butler AM, Doherty J, Pham V, Fraser
+VJ. 2011. Development and validation of a \emph{Clostridium difficile}
 infection risk prediction model. Infection Control \& Hospital
-Epidemiology \textbf{32}:360--366.
-doi:\href{https://doi.org/10.1086/658944}{10.1086/658944}.
+Epidemiology 32:360--366.
 
 \leavevmode\hypertarget{ref-Obritsch2010}{}%
-60. \textbf{Obritsch MD}, \textbf{Stroup JS}, \textbf{Carnahan RM},
-\textbf{Scheck DN}. 2010. \emph{Clostridium difficile}-associated
-diarrhea in a tertiary care medical center. Baylor University Medical
-Center Proceedings \textbf{23}:363--367.
-doi:\href{https://doi.org/10.1080/08998280.2010.11928654}{10.1080/08998280.2010.11928654}.
+60. Obritsch MD, Stroup JS, Carnahan RM, Scheck DN. 2010.
+\emph{Clostridium difficile}-associated diarrhea in a tertiary care
+medical center. Baylor University Medical Center Proceedings
+23:363--367.
 
 \leavevmode\hypertarget{ref-White2019}{}%
-61. \textbf{White NC}, \textbf{Mendo-Lopez R}, \textbf{Papamichael K},
-\textbf{Cuddemi CA}, \textbf{Barrett C}, \textbf{Daugherty K},
-\textbf{Pollock N}, \textbf{Kelly CP}, \textbf{Alonso CD}. 2019.
-Laxative use does not preclude diagnosis or reduce disease severity in
-\emph{Clostridioides difficile} infection. Clinical Infectious Diseases
-\textbf{71}:1472--1478.
-doi:\href{https://doi.org/10.1093/cid/ciz978}{10.1093/cid/ciz978}.
+61. White NC, Mendo-Lopez R, Papamichael K, Cuddemi CA, Barrett C,
+Daugherty K, Pollock N, Kelly CP, Alonso CD. 2019. Laxative use does not
+preclude diagnosis or reduce disease severity in \emph{Clostridioides
+difficile} infection. Clinical Infectious Diseases 71:1472--1478.
 
 \leavevmode\hypertarget{ref-Poirier2019}{}%
-62. \textbf{Poirier D}, \textbf{Gervais P}, \textbf{Fuchs M},
-\textbf{Roussy J-F}, \textbf{Paquet-Bolduc B}, \textbf{Trottier S},
-\textbf{Longtin J}, \textbf{Loo VG}, \textbf{Longtin Y}. 2019.
-Predictors of \emph{Clostridioides difficile} infection among
-asymptomatic, colonized patients: A retrospective cohort study. Clinical
-Infectious Diseases \textbf{70}:2103--2210.
-doi:\href{https://doi.org/10.1093/cid/ciz626}{10.1093/cid/ciz626}.
+62. Poirier D, Gervais P, Fuchs M, Roussy J-F, Paquet-Bolduc B, Trottier
+S, Longtin J, Loo VG, Longtin Y. 2019. Predictors of
+\emph{Clostridioides difficile} infection among asymptomatic, colonized
+patients: A retrospective cohort study. Clinical Infectious Diseases
+70:2103--2210.
 
 \leavevmode\hypertarget{ref-Huang2014}{}%
-63. \textbf{Huang H}, \textbf{Wu S}, \textbf{Chen R}, \textbf{Xu S},
-\textbf{Fang H}, \textbf{Weintraub A}, \textbf{Nord CE}. 2014. Risk
-factors of \emph{Clostridium difficile} infections among patients in a
-university hospital in shanghai, china. Anaerobe \textbf{30}:65--69.
-doi:\href{https://doi.org/10.1016/j.anaerobe.2014.08.015}{10.1016/j.anaerobe.2014.08.015}.
+63. Huang H, Wu S, Chen R, Xu S, Fang H, Weintraub A, Nord CE. 2014.
+Risk factors of \emph{Clostridium difficile} infections among patients
+in a university hospital in shanghai, china. Anaerobe 30:65--69.
 
 \leavevmode\hypertarget{ref-Gorkiewicz2013}{}%
-64. \textbf{Gorkiewicz G}, \textbf{Thallinger GG}, \textbf{Trajanoski
-S}, \textbf{Lackner S}, \textbf{Stocker G}, \textbf{Hinterleitner T},
-\textbf{Gülly C}, \textbf{Högenauer C}. 2013. Alterations in the colonic
-microbiota in response to osmotic diarrhea. PLoS ONE \textbf{8}:e55817.
-doi:\href{https://doi.org/10.1371/journal.pone.0055817}{10.1371/journal.pone.0055817}.
+64. Gorkiewicz G, Thallinger GG, Trajanoski S, Lackner S, Stocker G,
+Hinterleitner T, Gülly C, Högenauer C. 2013. Alterations in the colonic
+microbiota in response to osmotic diarrhea. PLoS ONE 8:e55817.
 
 \leavevmode\hypertarget{ref-Shobar2016}{}%
-65. \textbf{Shobar RM}, \textbf{Velineni S}, \textbf{Keshavarzian A},
-\textbf{Swanson G}, \textbf{DeMeo MT}, \textbf{Melson JE},
-\textbf{Losurdo J}, \textbf{Engen PA}, \textbf{Sun Y}, \textbf{Koenig
-L}, \textbf{Mutlu EA}. 2016. The effects of bowel preparation on
-microbiota-related metrics differ in health and in inflammatory bowel
-disease and for the mucosal and luminal microbiota compartments.
-Clinical and Translational Gastroenterology \textbf{7}:e143.
-doi:\href{https://doi.org/10.1038/ctg.2015.54}{10.1038/ctg.2015.54}.
+65. Shobar RM, Velineni S, Keshavarzian A, Swanson G, DeMeo MT, Melson
+JE, Losurdo J, Engen PA, Sun Y, Koenig L, Mutlu EA. 2016. The effects of
+bowel preparation on microbiota-related metrics differ in health and in
+inflammatory bowel disease and for the mucosal and luminal microbiota
+compartments. Clinical and Translational Gastroenterology 7:e143.
 
 \leavevmode\hypertarget{ref-Drago2016}{}%
-66. \textbf{Drago L}, \textbf{Toscano M}, \textbf{Grandi RD},
-\textbf{Casini V}, \textbf{Pace F}. 2016. Persisting changes of
-intestinal microbiota after bowel lavage and colonoscopy. European
-Journal of Gastroenterology \& Hepatology \textbf{28}:532--537.
-doi:\href{https://doi.org/10.1097/meg.0000000000000581}{10.1097/meg.0000000000000581}.
+66. Drago L, Toscano M, Grandi RD, Casini V, Pace F. 2016. Persisting
+changes of intestinal microbiota after bowel lavage and colonoscopy.
+European Journal of Gastroenterology \& Hepatology 28:532--537.
 
 \leavevmode\hypertarget{ref-Jalanka2014}{}%
-67. \textbf{Jalanka J}, \textbf{Salonen A}, \textbf{Salojärvi J},
-\textbf{Ritari J}, \textbf{Immonen O}, \textbf{Marciani L},
-\textbf{Gowland P}, \textbf{Hoad C}, \textbf{Garsed K}, \textbf{Lam C},
-\textbf{Palva A}, \textbf{Spiller RC}, \textbf{Vos WM de}. 2014. Effects
-of bowel cleansing on the intestinal microbiota. Gut
-\textbf{64}:1562--1568.
-doi:\href{https://doi.org/10.1136/gutjnl-2014-307240}{10.1136/gutjnl-2014-307240}.
+67. Jalanka J, Salonen A, Salojärvi J, Ritari J, Immonen O, Marciani L,
+Gowland P, Hoad C, Garsed K, Lam C, Palva A, Spiller RC, Vos WM de.
+2014. Effects of bowel cleansing on the intestinal microbiota. Gut
+64:1562--1568.
 
 \leavevmode\hypertarget{ref-Kampouri2021}{}%
-68. \textbf{Kampouri E}, \textbf{Croxatto A}, \textbf{Prod'hom G},
-\textbf{Guery B}. 2021. \emph{Clostridioides difficile} infection, still
-a long way to go. Journal of Clinical Medicine \textbf{10}:389.
-doi:\href{https://doi.org/10.3390/jcm10030389}{10.3390/jcm10030389}.
+68. Kampouri E, Croxatto A, Prod'hom G, Guery B. 2021.
+\emph{Clostridioides difficile} infection, still a long way to go.
+Journal of Clinical Medicine 10:389.
 
 \leavevmode\hypertarget{ref-Kelly2021}{}%
-69. \textbf{Kelly CR}, \textbf{Yen EF}, \textbf{Grinspan AM},
-\textbf{Kahn SA}, \textbf{Atreja A}, \textbf{Lewis JD}, \textbf{Moore
-TA}, \textbf{Rubin DT}, \textbf{Kim AM}, \textbf{Serra S},
-\textbf{Nersesova Y}, \textbf{Fredell L}, \textbf{Hunsicker D},
-\textbf{McDonald D}, \textbf{Knight R}, \textbf{Allegretti JR},
-\textbf{Pekow J}, \textbf{Absah I}, \textbf{Hsu R}, \textbf{Vincent J},
-\textbf{Khanna S}, \textbf{Tangen L}, \textbf{Crawford CV},
-\textbf{Mattar MC}, \textbf{Chen LA}, \textbf{Fischer M},
-\textbf{Arsenescu RI}, \textbf{Feuerstadt P}, \textbf{Goldstein J},
-\textbf{Kerman D}, \textbf{Ehrlich AC}, \textbf{Wu GD}, \textbf{Laine
-L}. 2021. Fecal microbiota transplantation is highly effective in
+69. Kelly CR, Yen EF, Grinspan AM, Kahn SA, Atreja A, Lewis JD, Moore
+TA, Rubin DT, Kim AM, Serra S, Nersesova Y, Fredell L, Hunsicker D,
+McDonald D, Knight R, Allegretti JR, Pekow J, Absah I, Hsu R, Vincent J,
+Khanna S, Tangen L, Crawford CV, Mattar MC, Chen LA, Fischer M,
+Arsenescu RI, Feuerstadt P, Goldstein J, Kerman D, Ehrlich AC, Wu GD,
+Laine L. 2021. Fecal microbiota transplantation is highly effective in
 real-world practice: Initial results from the FMT national registry.
-Gastroenterology \textbf{160}:183--192.e3.
-doi:\href{https://doi.org/10.1053/j.gastro.2020.09.038}{10.1053/j.gastro.2020.09.038}.
+Gastroenterology 160:183--192.e3.
 
 \leavevmode\hypertarget{ref-Dieterle2018}{}%
-70. \textbf{Dieterle MG}, \textbf{Rao K}, \textbf{Young VB}. 2018. Novel
-therapies and preventative strategies for primary and recurrent
-\emph{Clostridiuml difficile} infections. Annals of the New York Academy
-of Sciences \textbf{1435}:110--138.
-doi:\href{https://doi.org/10.1111/nyas.13958}{10.1111/nyas.13958}.
+70. Dieterle MG, Rao K, Young VB. 2018. Novel therapies and preventative
+strategies for primary and recurrent \emph{Clostridiuml difficile}
+infections. Annals of the New York Academy of Sciences 1435:110--138.
 
 \leavevmode\hypertarget{ref-Kozich2013}{}%
-71. \textbf{Kozich JJ}, \textbf{Westcott SL}, \textbf{Baxter NT},
-\textbf{Highlander SK}, \textbf{Schloss PD}. 2013. Development of a
-dual-index sequencing strategy and curation pipeline for analyzing
-amplicon sequence data on the MiSeq illumina sequencing platform.
-Applied and Environmental Microbiology \textbf{79}:5112--5120.
-doi:\href{https://doi.org/10.1128/aem.01043-13}{10.1128/aem.01043-13}.
+71. Kozich JJ, Westcott SL, Baxter NT, Highlander SK, Schloss PD. 2013.
+Development of a dual-index sequencing strategy and curation pipeline
+for analyzing amplicon sequence data on the MiSeq illumina sequencing
+platform. Applied and Environmental Microbiology 79:5112--5120.
 
 \leavevmode\hypertarget{ref-Schloss2009}{}%
-72. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
-\textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
-\textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
-\textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
-\textbf{Thallinger GG}, \textbf{Horn DJV}, \textbf{Weber CF}. 2009.
-Introducing mothur: Open-source, platform-independent,
-community-supported software for describing and comparing microbial
-communities. Applied and Environmental Microbiology
-\textbf{75}:7537--7541.
-doi:\href{https://doi.org/10.1128/aem.01541-09}{10.1128/aem.01541-09}.
+72. Schloss PD, Westcott SL, Ryabin T, Hall JR, Hartmann M, Hollister
+EB, Lesniewski RA, Oakley BB, Parks DH, Robinson CJ, Sahl JW, Stres B,
+Thallinger GG, Horn DJV, Weber CF. 2009. Introducing mothur:
+Open-source, platform-independent, community-supported software for
+describing and comparing microbial communities. Applied and
+Environmental Microbiology 75:7537--7541.
 
 \leavevmode\hypertarget{ref-Quast2012}{}%
-73. \textbf{Quast C}, \textbf{Pruesse E}, \textbf{Yilmaz P},
-\textbf{Gerken J}, \textbf{Schweer T}, \textbf{Yarza P}, \textbf{Peplies
-J}, \textbf{Glöckner FO}. 2012. The SILVA ribosomal RNA gene database
-project: Improved data processing and web-based tools. Nucleic Acids
-Research \textbf{41}:D590--D596.
-doi:\href{https://doi.org/10.1093/nar/gks1219}{10.1093/nar/gks1219}.
+73. Quast C, Pruesse E, Yilmaz P, Gerken J, Schweer T, Yarza P, Peplies
+J, Glöckner FO. 2012. The SILVA ribosomal RNA gene database project:
+Improved data processing and web-based tools. Nucleic Acids Research
+41:D590--D596.
 
 \leavevmode\hypertarget{ref-Cole2013}{}%
-74. \textbf{Cole JR}, \textbf{Wang Q}, \textbf{Fish JA}, \textbf{Chai
-B}, \textbf{McGarrell DM}, \textbf{Sun Y}, \textbf{Brown CT},
-\textbf{Porras-Alfaro A}, \textbf{Kuske CR}, \textbf{Tiedje JM}. 2013.
-Ribosomal database project: Data and tools for high throughput rRNA
-analysis. Nucleic Acids Research \textbf{42}:D633--D642.
-doi:\href{https://doi.org/10.1093/nar/gkt1244}{10.1093/nar/gkt1244}.
+74. Cole JR, Wang Q, Fish JA, Chai B, McGarrell DM, Sun Y, Brown CT,
+Porras-Alfaro A, Kuske CR, Tiedje JM. 2013. Ribosomal database project:
+Data and tools for high throughput rRNA analysis. Nucleic Acids Research
+42:D633--D642.
 
 \leavevmode\hypertarget{ref-Vegan2018}{}%
-75. \textbf{Oksanen J}, \textbf{Blanchet FG}, \textbf{Friendly M},
-\textbf{Kindt R}, \textbf{Legendre P}, \textbf{McGlinn D},
-\textbf{Minchin PR}, \textbf{O'Hara RB}, \textbf{Simpson GL},
-\textbf{Solymos P}, \textbf{Stevens MHH}, \textbf{Szoecs E},
-\textbf{Wagner H}. 2018. Vegan: Community ecology package.
+75. Oksanen J, Blanchet FG, Friendly M, Kindt R, Legendre P, McGlinn D,
+Minchin PR, O'Hara RB, Simpson GL, Solymos P, Stevens MHH, Szoecs E,
+Wagner H. 2018. Vegan: Community ecology package.
 
 \leavevmode\hypertarget{ref-mikropml}{}%
-76. \textbf{Topçuoğlu B}, \textbf{Lapp Z}, \textbf{Sovacool KL},
-\textbf{Snitkin E}, \textbf{Wiens J}, \textbf{Schloss PD}. 2020.
-mikRopML: User-friendly r package for robust machine learning pipelines.
+76. Topçuoğlu B, Lapp Z, Sovacool KL, Snitkin E, Wiens J, Schloss PD.
+2020. mikRopML: User-friendly r package for robust machine learning
+pipelines.
 
 \leavevmode\hypertarget{ref-Topcuoglu2021}{}%
-77. \textbf{Topçuoğlu B}, \textbf{Lapp Z}, \textbf{Sovacool K},
-\textbf{Snitkin E}, \textbf{Wiens J}, \textbf{Schloss P}. 2021.
-Mikropml: User-friendly r package for supervised machine learning
-pipelines. Journal of Open Source Software \textbf{6}:3073.
-doi:\href{https://doi.org/10.21105/joss.03073}{10.21105/joss.03073}.
+77. Topçuoğlu B, Lapp Z, Sovacool K, Snitkin E, Wiens J, Schloss P.
+2021. Mikropml: User-friendly r package for supervised machine learning
+pipelines. Journal of Open Source Software 6:3073.
 
 \leavevmode\hypertarget{ref-Topcuoglu2020}{}%
-78. \textbf{Topçuoğlu BD}, \textbf{Lesniak NA}, \textbf{Ruffin MT},
-\textbf{Wiens J}, \textbf{Schloss PD}. 2020. A framework for effective
-application of machine learning to microbiome-based classification
-problems. mBio \textbf{11}.
-doi:\href{https://doi.org/10.1128/mbio.00434-20}{10.1128/mbio.00434-20}.
+78. Topçuoğlu BD, Lesniak NA, Ruffin MT, Wiens J, Schloss PD. 2020. A
+framework for effective application of machine learning to
+microbiome-based classification problems. mBio 11.
 
 \leavevmode\hypertarget{ref-r_citation_2020}{}%
-79. \textbf{R Core Team}. 2020. R: A language and environment for
-statistical computing. R Foundation for Statistical Computing, Vienna,
-Austria.
+79. R Core Team. 2020. R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria.
 
 \leavevmode\hypertarget{ref-Tidyverse2019}{}%
-80. \textbf{Wickham H}, \textbf{Averick M}, \textbf{Bryan J},
-\textbf{Chang W}, \textbf{McGowan LD}, \textbf{François R},
-\textbf{Grolemund G}, \textbf{Hayes A}, \textbf{Henry L}, \textbf{Hester
-J}, \textbf{Kuhn M}, \textbf{Pedersen TL}, \textbf{Miller E},
-\textbf{Bache SM}, \textbf{Müller K}, \textbf{Ooms J}, \textbf{Robinson
-D}, \textbf{Seidel DP}, \textbf{Spinu V}, \textbf{Takahashi K},
-\textbf{Vaughan D}, \textbf{Wilke C}, \textbf{Woo K}, \textbf{Yutani H}.
-2019. Welcome to the tidyverse. Journal of Open Source Software
-\textbf{4}:1686.
-doi:\href{https://doi.org/10.21105/joss.01686}{10.21105/joss.01686}.
+80. Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R,
+Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E,
+Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K,
+Vaughan D, Wilke C, Woo K, Yutani H. 2019. Welcome to the tidyverse.
+Journal of Open Source Software 4:1686.
 
 \newpage
 
