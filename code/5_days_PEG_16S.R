@@ -1207,6 +1207,21 @@ peg_impacted_genera_bb_plot <- peg_impacted_genera_bb %>%
         legend.position = "none") 
 save_plot(filename = paste0("results/figures/5_days_PEG_genera_impacted_by_PEG_barbell_v2.png"), peg_impacted_genera_bb_plot, base_height = 7, base_width = 6)
 
+#Create legend for barbell plot
+barbell_peg_legend_plot <- tibble(x = 1:6, y = c("a", "b","a", "b","a", "b")) %>%  #Create fake dataframe 
+  ggplot(aes(x = x, y = y, shape = y))+
+  geom_point()+
+  #Create shape scale based on actual barbell plot above
+  scale_shape_manual(name = NULL,
+                     values = c(1, 16),
+                     breaks = c("a", "b"),
+                     labels = c("baseline", "1-day post PEG treatment"))+
+  guides(shape = guide_legend(ncol = 2))+ 
+  theme(legend.position = "bottom")+
+  theme_classic()
+barbell_peg_legend <- get_legend(barbell_peg_legend_plot)
+save_plot("results/figures/5_days_PEG_genera_impacted_by_PEG_barbell_legend.png", barbell_peg_legend, base_height = .3, base_width = 2.8)
+
 #Examine genera of interest over time----
 genus_stools_t <- genus_stools %>% 
   mutate(day = as.integer(day))  #Day variable transformed to integer for over time plots
