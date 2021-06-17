@@ -16,7 +16,7 @@ Antibiotics are a major risk factor for *Clostridioides difficile* infections (C
 	| |- manuscript.pdf    # PDF version of *.Rmd file
 	| |- header.tex   # LaTeX header file to format pdf version of manuscript
 	| |- references.bib # BibTeX formatted references
-	| |- mSphere.csl     # csl file to format references for journal XXX
+	| |- mSphere.csl     # csl file to format references for journal 
 	|
 	|- data           # raw and primary data, are not changed once created
 	| |- references/  # reference files to be used in analysis
