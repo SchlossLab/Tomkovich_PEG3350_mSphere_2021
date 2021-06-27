@@ -21,7 +21,7 @@ PEG_treatment_legend <- ggplot() +
 save_plot("results/figures/post_CDI_PEG_treatment_legend.png", PEG_treatment_legend, base_height = 1, base_width = 9)
  
 #Figure with Schematic, CFU over time, and shannon over time
-a <- ggdraw() + draw_image("results/pictures/post_CDI_PEG_schematic.png")
+a <- ggdraw() + draw_image("results/pictures/post_CDI_PEG_exp_schematic.png")
 b <- ggdraw() + draw_image("results/figures/post_CDI_PEG_cfu.png")
 c <- ggdraw() + draw_image("results/figures/post_CDI_PEG_shannon_stool.png")
 d <- ggdraw() + draw_image("results/figures/post_CDI_PEG_richness_overtime_stool.png")
