@@ -16,5 +16,5 @@ b_right_panel <- plot_grid(e, NULL, labels = c("E", ""), label_size = 12, ncol =
 bottom_panel <- plot_grid(d, b_right_panel, labels = c("D", ""), label_size = 12, nrow = 1, rel_heights = c(1.2, 1))
 plot_grid(top_panel, legend, middle_panel, bottom_panel, ncol = 1, rel_heights = c(1, 0.2, 1, 2)) +
   ggsave("results/figures/figure_2.pdf", width = 6.875, height = 9)+
-  ggsave("submission/figure_2.pdf", width = 6.875, height = 9)
+  ggsave("submission/figure_2.tiff", width = 6.875, height = 9, dpi = 600, device = "tiff", compression = "lzw", units = "in")
 

@@ -5,4 +5,4 @@ b <- ggdraw() + draw_image("results/figures/5_days_PEG_genus_lineplot_stools_WMR
 
 plot_grid(a, b, labels = c("A", "B"), label_size = 12, ncol=1, rel_heights = c(1, 2))+
   ggsave("results/figures/figure_S1.pdf", width=6.875, height=9)+
-  ggsave("submission/figure_S1.pdf", width=6.875, height=9)
+  ggsave("submission/figure_S1.tiff", width=6.875, height=9, dpi = 600, device = "tiff", compression = "lzw", units = "in")

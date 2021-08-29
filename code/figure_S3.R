@@ -14,4 +14,4 @@ bottom_panel <- plot_grid(c, f, labels = c("C", "F"), label_size = 12, nrow=1)
 
 plot_grid(top_panel, middle_panel, bottom_panel, labels = NULL, label_size = 12, ncol=1, rel_heights = c(1.4, 1, 1))+
   ggsave("results/figures/figure_S3.pdf", width=6.875, height=7)+
-  ggsave("submission/figure_S3.pdf", width=6.875, height=7)
+  ggsave("submission/figure_S3.tiff", width=6.875, height=7, dpi = 600, device = "tiff", compression = "lzw", units = "in")

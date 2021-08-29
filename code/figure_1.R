@@ -7,5 +7,5 @@ c <- ggdraw() + draw_image("results/figures/5_days_PEG_cfu.png")#Note scale coul
 
 plot_grid(a, b, c, labels = c("A", "B", "C"), label_size = 12, ncol=1)+
   ggsave("results/figures/figure_1.pdf", width=6.875, height=8.375)+
-  ggsave("submission/figure_1.pdf", width=6.875, height=8.375)
+  ggsave("submission/figure_1.tiff", width=6.875, height=8.375, dpi = 600, device = "tiff", compression = "lzw", units = "in")
   

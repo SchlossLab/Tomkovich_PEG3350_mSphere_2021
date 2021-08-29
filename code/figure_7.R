@@ -6,6 +6,6 @@ c <- ggdraw() + draw_image("results/figures/ml_abund_5_genus_lineplot.png")
 
 plot_grid(a, b, c, labels = c("A", "B", "C"), label_size = 12, ncol=1, rel_heights = c(1, 2, 1))+
   ggsave("results/figures/figure_7.pdf", width=6.8, height=7.1)+
-  ggsave("submission/figure_7.pdf", width=6.8, height=7.1)
+  ggsave("submission/figure_7.tiff", width=6.8, height=7.1, dpi = 600, device = "tiff", compression = "lzw", units = "in")
 
 

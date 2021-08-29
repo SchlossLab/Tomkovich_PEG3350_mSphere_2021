@@ -29,5 +29,5 @@ e <- ggdraw() + draw_image("results/figures/post_CDI_PEG_treatment_legend.png")
 fig <- image_graph(width = 400, height = 400, res = 96)
 plot_grid(a, e, b, c, d, labels = c("A", "", "B", "C", "D"), label_size = 12, ncol=1, rel_heights = c(.8,.2, 1,1,1))+
   ggsave("results/figures/figure_5.pdf", width=5.5, height=9)+
-  ggsave("submission/figure_5.pdf", width=5.5, height=9)
+  ggsave("submission/figure_5.tiff", width=5.5, height=9, dpi = 600, device = "tiff", compression = "lzw", units = "in")
   

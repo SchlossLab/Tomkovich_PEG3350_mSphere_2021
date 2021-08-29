@@ -12,4 +12,4 @@ bottom_panel <- plot_grid(d, e, labels = c("D", "E"), label_size = 12, nrow = 1,
 
 plot_grid(a, middle_panel, bottom_panel, labels = c("A", "", ""), nrow = 3) +
   ggsave("results/figures/figure_3.pdf", width = 6.875, height = 9)+
-  ggsave("submission/figure_3.pdf", width = 6.875, height = 9)
+  ggsave("submission/figure_3.tiff", width = 6.875, height = 9,  dpi = 600, device = "tiff", compression = "lzw", units = "in")

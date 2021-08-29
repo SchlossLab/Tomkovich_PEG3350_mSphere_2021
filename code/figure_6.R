@@ -10,4 +10,4 @@ pcoa1 <- plot_grid(a ,b, labels = c("A", ""), label_size = 12, nrow = 1, rel_hei
 
 plot_grid(pcoa1, c, legend, lineplot, labels = c("", "B", "", "C"), label_size = 12, nrow = 4, rel_heights = c(1, 1, .2, 1))+
   ggsave("results/figures/figure_6.pdf", width = 6, height = 9)+
-  ggsave("submission/figure_6.pdf", width = 6, height = 9)
+  ggsave("submission/figure_6.tiff", width = 6, height = 9, dpi = 600, device = "tiff", compression = "lzw", units = "in")
