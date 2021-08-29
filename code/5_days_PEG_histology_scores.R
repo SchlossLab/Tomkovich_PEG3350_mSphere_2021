@@ -116,10 +116,6 @@ d4_plot_pairwise_stats <- d4_colon_pairwise %>%
 color_scheme <- c("#238b45", "#88419d", "#f768a1", "#225ea8") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("C", "WM", "WMC", "WMR")
 color_labels <- c( "Clind.", "5-day PEG", "5-day PEG + Clind.", "5-day PEG + 10-day recovery")
-#Define shape scheme for d4 and d6 histology based on whether mice were challenged with C. difficile:
-#Define shape scheme based on Infected status----
-shape_scheme <- c(1, 19)
-shape_infected <- c("no", "yes")
 
 #Function to plot histology scores that were collected on day 0, 4, and 6----
 #Arguments: df = dataframe to plot, pairwise_stats = dataframe of statistics to add to the plot
@@ -130,16 +126,16 @@ plot_histology <- function(df, pairwise_stats){
   histology_plot <- group_medians %>%
   ggplot(aes(x = Group, y = `summary_score`, color = Group))+
   geom_errorbar(aes(ymax = median_score, ymin = median_score), color = "gray70", size = 1.5)+ #Add lines to indicate the median for each group to the plot. Median calculated before y axis transformation
-  geom_jitter(aes(shape=Infected), alpha = 0.6, size = 2)+
+  geom_jitter(aes(shape=Group), alpha = 0.6, size = 2)+
   labs(y = "Summary Score", x = NULL)+
   scale_color_manual(name=NULL,
                      breaks=color_groups,
                      labels=color_labels,
                      values=color_scheme)+
-  scale_shape_manual(name="Infected",
+  scale_shape_manual(name=NULL,
                      values=shape_scheme,
                      breaks=shape_infected,
-                     labels=shape_infected) +
+                     labels=color_labels) + #make sure the shape scale matches the color scale
   facet_wrap(~Tissue)+
   scale_x_discrete(guide = guide_axis(n.dodge = 2))+  #So X axis labels don't overlap
   scale_y_continuous(limits = c(-0.5, 12), breaks = c(0, 4, 8, 12))+
@@ -155,6 +151,10 @@ plot_histology <- function(df, pairwise_stats){
 color_scheme <- c("#88419d", "#238b45", "#88419d", "#f768a1") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("WMN", "C", "WM", "WMC")
 color_labels <- c("5-day PEG without infection", "Clind.", "5-day PEG", "5-day PEG + Clind.")
+#Define shape scheme based on Infected status----
+shape_scheme <- c(1, 19, 19, 19)
+shape_infected <- c("WMN", "C", "WM", "WMC")
+
 
 #Format day 6 pairwise stats to add to plot----
 pairwise_day6_plot <-d6_plot_pairwise_stats %>%
@@ -171,6 +171,10 @@ save_plot("results/figures/5_days_PEG_histo_scores_d6.png", d6_plot) #Use save_p
 color_scheme <- c("#238b45", "#88419d", "#88419d", "#238b45", "#88419d") #Adapted from http://colorbrewer2.org/#type=sequential&scheme=BuPu&n=4
 color_groups <- c("CN", "D0 WMN", "WMN", "C", "WM")
 color_labels <- c("Clind. without infection", "After 5-day PEG (Day 0)", "5-day PEG without infection", "Clind.", "5-day PEG")
+#Define shape scheme based on Infected status----
+shape_scheme <- c(1, 5, 1, 19, 19)
+shape_infected <- c("CN", "D0 WMN", "WMN", "C", "WM")
+
 
 #Format day 4 pairwise stats to add to plot----
 pairwise_day4_plot <- d4_plot_pairwise_stats %>%
